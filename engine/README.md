@@ -24,10 +24,14 @@ cd engine && node --test tests/*.test.ts
 
 Each patch is marked in the file with a `$patchMasteryTax` key that explains the change.
 
-1. **California SDI excludes cafeteria-plan deductions** (`data/states/CA-2025.json`, `CA-2026.json`).
-   Upstream set `stateDisabilityEmployee.exemptPretax` to `[]`, which charged SDI on Section 125, HSA, FSA,
-   dependent-care and commuter deductions. SDI is levied on UI wages, and the engine already excludes
-   those deductions from California UI. 401(k) deferrals stay in SDI wages, as they do for UI.
+1. **California cafeteria-plan and HSA treatment** (`data/states/CA-2025.json`, `CA-2026.json`), checked against
+   EDD DE 231EB and DE 231TP (see `docs/verification.md`):
+   - `stateDisabilityEmployee.exemptPretax`: upstream `[]` charged SDI on cafeteria-plan health/dependent-care
+     deductions. It's now `section125, fsa, dependent_care, commuter`.
+   - `suiEmployer.exemptPretax`: upstream used the engine default, which also excludes HSA. California taxes HSA
+     contributions for UI/ETT, so it's now `section125, fsa, dependent_care, commuter`.
+   - `exemptPretax` (PIT): `hsa` removed. California doesn't conform to the federal HSA exclusion
+     (RTC 17131.4/17131.5).
 2. **`tests/tax-year-2025.test.ts`**: removed the one test that exercised the upstream website's API validator
    (`site/lib/validate.ts`), which isn't part of the engine.
 

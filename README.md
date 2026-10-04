@@ -129,5 +129,6 @@ python -m unittest discover -s tests       # 50 MasteryTax tests, including an e
 ## Disclaimer
 
 The engine's rates come with sources, verification dates and disclosed known gaps (`coverage --state XX`), and
-local patches are listed in [engine/README.md](engine/README.md). Verify before filing. MasteryTax doesn't give
+local patches are listed in [engine/README.md](engine/README.md). Facts checked against agency documents are
+logged in [docs/verification.md](docs/verification.md). Verify before filing. MasteryTax doesn't give
 tax advice.

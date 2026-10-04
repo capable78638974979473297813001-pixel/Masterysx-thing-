@@ -63,6 +63,21 @@ class StateTest(unittest.TestCase):
         self.assertEqual(total(liabs, "CA_ETT"), Decimal("7.00"))  # levy on UI wages
         self.assertEqual(total(liabs, "CA_DBL_EE"), Decimal("117.00"))  # 1.3% on 9,000: s125 excluded (patch)
 
+    def test_california_hsa_is_taxed_for_ui_sdi_and_pit(self):
+        # EDD DE 231EB / DE 231TP: HSA contributions are Subject to UI/ETT, SDI and PIT, cafeteria plan or not;
+        # cafeteria health premiums are Not Subject to any of them; 401(k) is Subject to UI/SDI, not PIT.
+        ln = line("2026-01-16", "5000", state="CA", s125="100", k401="300")
+        ln.deductions["hsa"] = Decimal("200")
+        liabs = liabilities([ln], {"CO": company(accounts={"CA": {"sui_rate": "0.03"}})})
+        self.assertEqual(total(liabs, "CA_SUI_ER", "taxable_wages"), Decimal("4900"))
+        self.assertEqual(total(liabs, "CA_DBL_EE", "taxable_wages"), Decimal("4900"))
+        self.assertEqual(total(liabs, "US_FIT", "taxable_wages"), Decimal("4400"))  # federal excludes HSA
+        hsa_only = line("2026-01-16", "5000", state="CA", emp="E2")
+        hsa_only.deductions["hsa"] = Decimal("200")
+        plain = line("2026-01-16", "5000", state="CA", emp="E3")
+        sit = {l.line.employee_id: l.taxable_wages for l in liabilities([hsa_only, plain]) if l.tax_code == "CA_SIT"}
+        self.assertEqual(sit["E2"], sit["E3"])  # HSA does not reduce California PIT wages
+
     def test_ny_2026_wage_base_default_rate_and_rsf(self):
         liabs, issues = run([line("2026-01-16", "30000", state="NY")], {"CO": company(accounts={"NY": {}})})
         self.assertEqual(total(liabs, "NY_SUI_ER", "taxable_wages"), Decimal("17600"))

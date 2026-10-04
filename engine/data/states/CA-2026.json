@@ -1787,7 +1787,6 @@
   "verification": "PROVEN via calculatePaycheck() against ALL SIX of EDD's own published worked examples in the source document itself: Example A (weekly $210, single, below the low-income threshold -> $0), Example B (biweekly $1,600, married with 2 regular + 1 estimated-deduction allowance -> $2.38), Example C (monthly $5,100, married, 5 allowances -> $0.82), Example D (weekly $950, HOH, 3 allowances -> $1.69), Example E (semi-monthly $2,400, married, 4 allowances, annualized-and-divided -> $4.13), Example F (monthly $4,750/annual $57,000, married, 4 allowances, annual-period-then-prorated -> $7.17) -- all reproduced to the cent. This is the most thoroughly source-verified state in this project to date, since EDD is unusual in publishing six full worked examples rather than the usual one or two. See tests/engine.test.ts, describe('California').",
   "exemptPretax": [
     "section125",
-    "hsa",
     "fsa",
     "dependent_care",
     "deferral_401k",
@@ -1809,13 +1808,12 @@
     "wageBase": null,
     "exemptPretax": [
       "section125",
-      "hsa",
       "fsa",
       "dependent_care",
       "commuter"
     ],
     "$comment": "State Disability Insurance (SDI), which ALSO funds California's Paid Family Leave -- unlike NY/NJ/CT/OR/WA, California does NOT have a separate PFL payroll tax; it's the SAME 1.3% SDI contribution, structurally the simplest of any state's disability/paid-leave combination in this project (one tax, one rate, funds both programs). Uncapped: 'Effective January 1, 2024, all wages are subject to SDI contributions' (SB 951, permanent as of the 2026 rate notice, the third consecutive uncapped year). Reuses the existing generic stateDisabilityEmployeeTax() dispatch -- no new engine code needed.",
-    "$patchMasteryTax": "MasteryTax patch: SDI is levied on UI wages (CUIC defines one wage base for UI, ETT and SDI; only the cap differs), so the cafeteria-plan exclusions this engine already applies to CA UI apply to SDI too. Upstream had [] (no exclusions), which taxed Section 125 premiums for SDI. Elective deferrals (401k etc.) stay IN SDI wages, as they do for UI."
+    "$patchMasteryTax": "MasteryTax patch (upstream had []): EDD DE 231EB Rev. 12 (6-17), 'Cafeteria Plans' and 'Health Savings Account' rows, and DE 231TP Rev. 1 (6-16), 'Health Savings Accounts' row (both read 2026-10-04): employee salary reductions for health, accident, group-term life and dependent care under a cafeteria plan are Not Subject to UI/ETT, SDI and PIT; qualified transportation benefits are Not Subject to all three; HSA contributions are SUBJECT to UI/ETT, SDI and PIT whether or not under a Section 125 plan (RTC 17131.4/17131.5 - California does not conform to the federal HSA exclusion); 401(k) salary reductions are Subject to UI/ETT and SDI, Not Subject to PIT."
   },
   "unemploymentInsurance": {
     "$comment": "Employer-only (SUI, called 'UI' by EDD) -- no employee contribution. A genuinely separate employer-only tax, the Employment Training Tax (ETT), is layered on the SAME wage base.",
@@ -1854,7 +1852,14 @@
       "max": 0.062
     },
     "employerSuppliedRateRequired": false,
-    "confidence": "inherited_from_this_file"
+    "confidence": "inherited_from_this_file",
+    "exemptPretax": [
+      "section125",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ],
+    "$patchMasteryTax": "MasteryTax patch (upstream fell back to the engine default, which excludes HSA): EDD DE 231EB Rev. 12 (6-17), 'Cafeteria Plans' and 'Health Savings Account' rows, and DE 231TP Rev. 1 (6-16), 'Health Savings Accounts' row (both read 2026-10-04): employee salary reductions for health, accident, group-term life and dependent care under a cafeteria plan are Not Subject to UI/ETT, SDI and PIT; qualified transportation benefits are Not Subject to all three; HSA contributions are SUBJECT to UI/ETT, SDI and PIT whether or not under a Section 125 plan (RTC 17131.4/17131.5 - California does not conform to the federal HSA exclusion); 401(k) salary reductions are Subject to UI/ETT and SDI, Not Subject to PIT."
   },
   "supplementalWages": {
     "$comment": "DE 44's own two-tier flat rate — bonuses/stock options at the higher rate, everything else DE 44 also calls supplemental (overtime pay, commissions, sales awards, severance, vacation pay) at the lower one — read directly and quoted verbatim in this file's own sources[] entry above. Both are EMPLOYER OPTIONS ('you may use either of the following two options'), not a mandate — the alternative is aggregating the supplemental wage with the current regular payment (see supplementalAggregation below) — and BOTH options apply only when the supplemental wage is 'not given to the employee at the same time as the employee's regular wages'; when it IS paid alongside regular wages, DE 44 requires aggregation ('you are required to treat the sum of the payments as regular wages'), which is exactly what happens by default when neither this config's flat method nor the aggregation config fires — the dollars simply stay in the ordinary base californiaWithholding() already computes. Modelled as a bespoke two-rate split (californiaSupplementalTax() in src/taxes/state.ts) rather than the generic single-rate rules.supplementalWages.flatRate path every other state uses, because California is the first state in this project whose own flat rate genuinely differs by WHAT the supplemental payment is, not just by whether it's paid separately.",
@@ -1866,5 +1871,6 @@
   "supplementalAggregation": {
     "supported": true,
     "source": "DE 44's own Option 1: \"Compute the amount of PIT to withhold from the supplemental wage based on the combined regular wages and the supplemental wage... From that amount, subtract the PIT you withheld from the regular wages. The difference is the PIT amount you should withhold from the supplemental wages.\" Wired via this project's existing aggregateWithPriorRegularPayment() mechanism — the same shape Connecticut/Idaho/Kentucky/Maine/Missouri/Montana/Nebraska/New York already use — reading input.priorRegularPayment for the prior/current regular cheque's taxable wages and tax withheld. DE 44 says 'the current regular gross wage payment,' not the prior one; the same caller-supplied-history boundary applies regardless, since a single calculatePaycheck() call cannot see any cheque but its own."
-  }
+  },
+  "$patchMasteryTaxExemptPretax": "MasteryTax patch: removed 'hsa' from PIT exemptPretax (upstream ['section125', 'hsa', 'fsa', 'dependent_care', 'deferral_401k', 'deferral_403b', 'deferral_457', 'deferral_simple', 'commuter']). EDD DE 231EB Rev. 12 (6-17), 'Cafeteria Plans' and 'Health Savings Account' rows, and DE 231TP Rev. 1 (6-16), 'Health Savings Accounts' row (both read 2026-10-04): employee salary reductions for health, accident, group-term life and dependent care under a cafeteria plan are Not Subject to UI/ETT, SDI and PIT; qualified transportation benefits are Not Subject to all three; HSA contributions are SUBJECT to UI/ETT, SDI and PIT whether or not under a Section 125 plan (RTC 17131.4/17131.5 - California does not conform to the federal HSA exclusion); 401(k) salary reductions are Subject to UI/ETT and SDI, Not Subject to PIT."
 }

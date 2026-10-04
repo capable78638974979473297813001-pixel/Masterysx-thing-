@@ -7,7 +7,8 @@
       "schedule": "federal_941",
       "return": "941",
       "penalty": "irc6656",
-      "eftps_tax_type": "94105"
+      "eftps_tax_type": "94105",
+      "eftps_source": "EFTPS Financial Institution Handbook (download.eftps.com), IRS tax forms table, Federal Tax Deposit codes; read 2026-10-04"
     },
     "US-940": {
       "name": "Federal unemployment (FUTA)",
@@ -16,7 +17,8 @@
       "threshold": "500",
       "return": "940",
       "penalty": "irc6656",
-      "eftps_tax_type": "09405"
+      "eftps_tax_type": "09405",
+      "eftps_source": "EFTPS Financial Institution Handbook (download.eftps.com), IRS tax forms table, Federal Tax Deposit codes; read 2026-10-04"
     },
     "US-CT1": {
       "name": "Railroad retirement (RRTA)",
@@ -24,7 +26,8 @@
       "schedule": "federal_941",
       "return": "CT-1",
       "penalty": "irc6656",
-      "eftps_tax_type": "11105"
+      "eftps_tax_type": "10005",
+      "eftps_source": "EFTPS Financial Institution Handbook (download.eftps.com), IRS tax forms table, Federal Tax Deposit codes; read 2026-10-04"
     },
     "US-RUIA": {
       "name": "Railroad unemployment (RUIA)",
@@ -355,7 +358,7 @@
       "rate": "0.001",
       "rate_key": "ett_rate",
       "group": "CA-UI",
-      "source": "CA UIC 976.6 (0.1% of UI taxable wages; 0 for negative-reserve employers via ett_rate)"
+      "source": "CA UIC 976.6; EDD DE 231EB/231TP treat ETT wages the same as UI wages (0.1%; set ett_rate to 0 for negative-reserve employers)"
     },
     {
       "code": "NY_RSF",
@@ -365,7 +368,7 @@
       "rate": "0.00075",
       "rate_key": "rsf_rate",
       "group": "NY-UI",
-      "source": "NY Labor Law 581-b (0.075% of UI taxable wages)"
+      "source": "NY DOL Unemployment Insurance Rate Information and Re-employment Service Fund pages (dol.ny.gov), read 2026-10-04: 0.075% of wages subject to contribution, NYS-45 line 5"
     }
   ],
   "wh_agencies": {
