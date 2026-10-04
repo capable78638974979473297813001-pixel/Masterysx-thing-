@@ -1,0 +1,73 @@
+{
+  "state": "NE",
+  "year": 2026,
+  "asOf": "2026-10-01",
+  "$comment": "Lincoln's ordinance is carried as NOT in effect (blocked by court order). Omaha's took effect 2026-10-01 after a Douglas County judge enjoined only its youth/training-wage provisions on 2026-09-28; its adult rate is $15.00, the same as the state's, so nothing changes in what an Omaha employer owes until the 2027-01-01 cost-of-living step. LB 258 (2026) created a $13.50 youth and training wage below the state's $15.00 and both cities legislated to undo that locally; the state sued.",
+  "jurisdictions": [
+    {
+      "id": "omaha",
+      "name": "Omaha",
+      "level": "city",
+      "hourly": 15.0,
+      "hourlyCents": 1500,
+      "effectiveFrom": "2026-10-01",
+      "adjustmentDate": "01-01",
+      "coverage": "Ordinance No. 44716 (Omaha Municipal Code ch. 39): $15.00 for hours worked in Omaha, rising each 2027-01-01 by the Midwest CPI-U increase (rounded up to the next 5 cents), published by the city by each October 15. Its removal of the state's youth and training wage is ENJOINED: employers qualifying under Neb. Rev. Stat. 48-1203(5) and 48-1203.01 may still pay $13.50 to non-emancipated 14-15 year olds and to 16-19 year old new hires for their first 90 days. The engine has no employee-age input, so those $13.50 figures are not computed here.",
+      "note": "IN EFFECT from 2026-10-01 for the general rate. Douglas County District Court (Judge Burns, CI 26-7306, order dated 2026-09-28) granted the State a temporary injunction only as to the youth/training-wage provisions and denied it as to the rest, including the faster cost-of-living increase starting 2027-01-01. The adult rate equals the state's $15.00 through 2026, so the binding figure is unchanged. The 2027 amount is deliberately not guessed: the city publishes it by 2026-10-15, and the Attorney General has said he expects further filings on the growth rate. A temporary injunction is not a final order -- re-verify before 2027-01-01.",
+      "sources": [
+        {
+          "title": "Order on Plaintiff's Motion for Temporary Injunction, State ex rel. Hilgers v. City of Omaha, CI 26-7306 (Douglas County District Court, 2026-09-28)",
+          "url": "https://nebraskaexaminer.com/wp-content/uploads/2026/09/CI-26-7306-State-v-City-of-Omaha-Order-Motion-Temp-Injunction.pdf",
+          "verifiedOn": "2026-10-01",
+          "verifiedBy": "PRIMARY: the court's order read in full this session (via a remote fetcher; the filing as hosted by the Nebraska Examiner). It states the ordinance's effective date of 2026-10-01, enjoins only the removal of the youth and training wage, and denies the injunction as to the general minimum wage and its annual increase."
+        },
+        {
+          "title": "Nebraska Examiner and WOWT coverage of the 2026-09-28 ruling",
+          "url": "https://nebraskaexaminer.com/2026/09/28/omaha-employers-can-continue-paying-13-50-youth-minimum-wage-judge-rules/",
+          "verifiedOn": "2026-10-01",
+          "verifiedBy": "cross_source_confirmed against the order itself: WOWT reports the ordinance 'is allowed to take effect on Thursday, October 1' and 'will not change the current minimum wage for Omaha'."
+        },
+        {
+          "title": "Nebraska Attorney General -- suit against the City of Omaha over its minimum wage ordinance",
+          "url": "https://ago.nebraska.gov/news/attorney-general-hilgers-sues-city-omaha-over-unconstitutional-minimum-wage-ordinance",
+          "verifiedOn": "2026-10-01",
+          "verifiedBy": "Fetched and read directly this session (posted 2026-08-18)."
+        }
+      ]
+    },
+    {
+      "id": "lincoln",
+      "name": "Lincoln",
+      "level": "city",
+      "hourly": 15.0,
+      "hourlyCents": 1500,
+      "effectiveFrom": null,
+      "adjustmentDate": null,
+      "status": "enacted, BLOCKED by court order",
+      "coverage": "Ordinance No. 21872 would have restored a uniform $15.00 and a CPI-U escalator effective 2026-07-18.",
+      "note": "NOT IN EFFECT. A Lancaster County District Court judge blocked Lincoln from enacting the ordinance on 2026-07-17, the day before it would have taken effect. Nebraska's state figures apply in Lincoln.",
+      "sources": [
+        {
+          "title": "Coverage of Lincoln Ordinance No. 21872 and the Lancaster County District Court order blocking it",
+          "url": "https://nebraskaexaminer.com/2026/07/15/omaha-joins-lincoln-in-restoring-15-minimum-wage-for-all-workers/",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session across independent Nebraska news reporting; the court order itself was not read."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Omaha's youth/training-wage carve-out is enjoined, not struck down: the order is a temporary injunction in a case at its initial stage and can change. The engine has no employee-age input, so the $13.50 youth and training figures are described here but not computed.",
+    "Omaha's 2027-01-01 cost-of-living figure is not yet published (due from the city by 2026-10-15) and is not guessed. The State disputes the faster growth rate and expects further filings.",
+    "Lincoln's ordinance is carried as blocked on the strength of news coverage; the Lancaster County order itself was not read."
+  ]
+}

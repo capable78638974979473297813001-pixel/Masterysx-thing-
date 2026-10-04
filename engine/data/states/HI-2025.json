@@ -1,0 +1,185 @@
+{
+  "code": "HI",
+  "name": "Hawaii",
+  "year": 2025,
+  "method": "hawaii_annual_bracket",
+  "sources": [
+    {
+      "title": "Hawaii Department of Taxation -- Booklet A, Employer's Tax Guide (Rev. 2025)",
+      "url": "https://files.hawaii.gov/tax/news/pubs/25BkltA.pdf",
+      "verifiedOn": "2026-09-29"
+    },
+    {
+      "title": "Hawaii DLIR Disability Compensation Division -- 2025 Maximum Weekly Wage Base and Maximum Weekly Benefit Amount (2024-12-02)",
+      "url": "https://labor.hawaii.gov/dcd/files/2023/05/2025-Max-Weekly-Wage-Base-Rev-2025.03.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "The 2025 Maximum Weekly Deduction ... 7.21 ... An employer may withhold TDI contributions of one-half the premium cost but not more than .5% of the employee's weekly wage, with the maximum not to exceed $7.21."
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "annualBracket": {
+    "$comment": "Booklet A Appendix Part 1 'Annualized Income Tax Withholding', read directly. The Guide itself sanctions using only the annual table plus per-period division rather than transcribing all 8 of Part 2's separately-published per-period tables.",
+    "allowanceAmountAnnual": 1144.0,
+    "extraLumpSumAllowanceAnnual": 4350.0,
+    "extraLumpSumComment": "Raised from $1,650 (2025) to $4,350 for 2026 -- a TCJA-standard-deduction-offset mechanism. Read as UNCONDITIONAL (applied even at zero allowances claimed), since Step 1(c) is its own lettered instruction outside the allowance-count branch (a)/(b) and the Guide's own worked example applies it as an independent subtraction -- disclosed as an inference from the instruction's structure, not a directly quoted 'always applies regardless' sentence.",
+    "bracketsComment": "'A. SINGLE PERSONS -- INCLUDING UNMARRIED HEADS OF HOUSEHOLD' -- HW-4's own instructions confirm HoH is treated as Single for withholding purposes. Both tables verified algebraically against the previous bracket's base + rate x width, and the 'single' table cross-checked against Booklet A's own worked example.",
+    "brackets": {
+      "single": [
+        {
+          "from": 0,
+          "to": 9600,
+          "base": 0,
+          "rate": 0.014
+        },
+        {
+          "from": 9600,
+          "to": 14400,
+          "base": 134.0,
+          "rate": 0.032
+        },
+        {
+          "from": 14400,
+          "to": 19200,
+          "base": 288.0,
+          "rate": 0.055
+        },
+        {
+          "from": 19200,
+          "to": 24000,
+          "base": 552.0,
+          "rate": 0.064
+        },
+        {
+          "from": 24000,
+          "to": 36000,
+          "base": 859.0,
+          "rate": 0.068
+        },
+        {
+          "from": 36000,
+          "to": 48000,
+          "base": 1675.0,
+          "rate": 0.072
+        },
+        {
+          "from": 48000,
+          "to": 125000,
+          "base": 2539.0,
+          "rate": 0.076
+        },
+        {
+          "from": 125000,
+          "to": null,
+          "base": 8391.0,
+          "rate": 0.079
+        }
+      ],
+      "married": [
+        {
+          "from": 0,
+          "to": 19200,
+          "base": 0,
+          "rate": 0.014
+        },
+        {
+          "from": 19200,
+          "to": 28800,
+          "base": 269.0,
+          "rate": 0.032
+        },
+        {
+          "from": 28800,
+          "to": 38400,
+          "base": 576.0,
+          "rate": 0.055
+        },
+        {
+          "from": 38400,
+          "to": 48000,
+          "base": 1104.0,
+          "rate": 0.064
+        },
+        {
+          "from": 48000,
+          "to": 72000,
+          "base": 1718.0,
+          "rate": 0.068
+        },
+        {
+          "from": 72000,
+          "to": 96000,
+          "base": 3350.0,
+          "rate": 0.072
+        },
+        {
+          "from": 96000,
+          "to": 250000,
+          "base": 5078.0,
+          "rate": 0.076
+        },
+        {
+          "from": 250000,
+          "to": null,
+          "base": 16782.0,
+          "rate": 0.079
+        }
+      ]
+    },
+    "verifiedExample": "Single, weekly $500, 3 allowances: 26,000 - 3,432 - 4,350 = 18,218 taxable; bracket [14,400-19,200): 288.00 + 5.5% x (18,218-14,400=3,818=209.99) = 497.99/yr / 52 = $9.5767 -> $9.58/wk. Matches Booklet A's own worked example exactly."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "HRS 235-2.4(a) operates IRC Section 63 (taxable income) for Hawaii purposes, which itself builds on Section 62 adjusted gross income -- the same evidentiary tier as LA/VA/WV/NM's federal-AGI-conformity citations, not an itemized 401(k)/125 list.",
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: search-synthesized (not independently fetched from a Hawaii-specific reciprocity statute this pass) -- multiple independent sources agree Hawaii has no reciprocal withholding agreement with any state.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Hawaii county levies a local income/wage tax anywhere in the state.",
+    "confidence": "cross_source_confirmed; not independently verified against a specific county-authority statute this pass."
+  },
+  "stateDisabilityEmployee": {
+    "rate": 0.005,
+    "weeklyCapDollars": 7.21,
+    "$comment": "Wired via the existing generic stateDisabilityEmployeeTax() weeklyCapDollars mechanism (New York DBL's shape) -- zero new code. Models the statutory CEILING (0.5% of wages, capped $7.50/wk), NOT a guaranteed exact figure -- see the DCD source note above for the real employer-elected-cost-share ambiguity underneath this ceiling."
+  },
+  "prepaidHealthCare": {
+    "rule": "Hawaii's Prepaid Health Care Act mandates employer-provided health coverage for employees working 20+ hours/week earning at least 86.67x the state minimum wage; employer may withhold up to half the premium, capped at 1.5% of wages. This is an EMPLOYER health-insurance mandate, not a wage-withholding tax -- out of scope for this engine, same convention as every other employer-side benefit mandate documented but not built elsewhere in this project (e.g. Washington's employer PFML share IS wired since it's a wage-based premium akin to UC; PHC's per-employee dollar-premium shape and coverage-eligibility gating make it a different kind of obligation entirely).",
+    "confidence": "primary_source_confirmed (same DCD PDF as TDI above)."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 62000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.024,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.056
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "Booklet A Section 14(e), quoted above: aggregate with the current or last preceding payroll period's regular wages, tax the combined amount, subtract tax already withheld on the regular portion."
+  },
+  "$yearNote": "2025 ruleset: Booklet A (Rev. 2025) annual brackets (1.4% to 7.9%) and $1,144 per allowance -- the same booklet the 2026 file uses. TDI employee share 0.5% of weekly wages up to $7.21 a week (the 2025 maximum weekly wage base of $1,441.72 x 0.5%; 2026: $7.50)."
+}

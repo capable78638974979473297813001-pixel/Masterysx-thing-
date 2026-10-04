@@ -1,0 +1,242 @@
+{
+  "code": "CO",
+  "name": "Colorado",
+  "year": 2026,
+  "method": "flat_rate_status_deduction",
+  "$methodComment": "The simplest formula built in this project in some time: DR 1098 (2026 Colorado Withholding Worksheet for Employers, fetched and read directly) has NO allowance-count mechanism at all — annualize wages, subtract a flat filing-status-dependent deduction ($11,000 MFJ / $5,500 otherwise, or a caller-supplied DR 0004 Line 2 override), multiply by a flat 4.40% rate, divide by periods. Genuinely closer to Iowa's/Kentucky's shape than anything built this session, but distinct from both: Iowa's allowance is a post-tax credit and varies by W-4 vintage; Kentucky's deduction is a single universal figure with no filing-status branch at all. WIRED INTO CALC CODE via coloradoWithholding() in state.ts.",
+  "sources": [
+    {
+      "title": "DR 1098 (10/21/25), 2026 Colorado Withholding Worksheet for Employers",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR_1098_Colorado_Withholding_Worksheet_for_Employees.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly, extracted CLEANLY with zero column-shift hazard — a rarity in this project. The worksheet's own Step 1/Step 2 lines were transcribed verbatim: annualize (1a x 1b), subtract Table 2a amount (DR 0004 Line 2 if filed, else $11,000 MFJ / $5,500 otherwise per W-4 Step 1(c) filing status), floor at zero, x 4.40%, divide by periods, add DR 0004 Line 3 additional withholding (routed through this engine's existing generic applyAdditionalStateWithholding() rather than duplicated here)."
+    },
+    {
+      "title": "Colorado Wage Withholding Tax Guide, January 2026",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Wage_Withholding_Tax_Guide_Jan_2026.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Contains NO mention of reciprocity anywhere in the document — consistent with, though not an explicit statement of, Colorado having no reciprocal withholding agreements with any state (cross-source confirmed separately, see reciprocity below)."
+    },
+    {
+      "title": "Family and Medical Leave Insurance (FAMLI) — Employers page",
+      "url": "https://famli.colorado.gov/employers",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly. Quoted verbatim: 'The premiums are set to 0.88% of the employee's wage, with 0.44% paid by the employer and 0.44% paid by the employee... Businesses with nine or fewer employees should submit wage reports and send in 0.44% of their employees wages' (i.e. small employers still owe the EMPLOYEE share, just not the employer share) and 'Premiums are paid on wages up to the Federal Social Security Wage Cap.'"
+    },
+    {
+      "title": "City and County of Denver Tax Guide, Topic No. 61 — Occupational Privilege Taxes",
+      "url": "https://denver.prelive.opencities.com/files/assets/public/v/2/finance/documents/treasury/tax-guides/taxguidetopic61_occupationalprivilegetaxes.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Quoted verbatim: employees earning 'at least five hundred dollars ($500) for a calendar month' owe the $5.75/month Employee OPT, employers separately owe $4.00/month Business OPT per taxable employee (plus $4.00/month per owner/partner/manager regardless of earnings)."
+    },
+    {
+      "title": "Aurora Occupational Privilege Tax repeal (multiple corroborating secondary sources: Denver Gazette, CU Boulder HCM blog, OnHavanaStreet)",
+      "url": "https://www.cu.edu/blog/hcm-community/employees-working-aurora-will-see-tax-changes",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "cross_source_confirmed across 3+ independent secondary sources (a university payroll office's own employee-facing announcement, a local news outlet, a neighborhood association), all agreeing: Aurora's City Council voted to repeal its $2/month OPT, effective 2025-01-01. NOT independently confirmed against auroragov.org's own current page this session — flagged as one tier below primary, but corroboration this consistent (including an institutional payroll office changing its own withholding as a direct result) is strong evidence."
+    },
+    {
+      "title": "Colorado Department of Labor & Employment — UI Premium Rates",
+      "url": "https://cdle.colorado.gov/employers/unemployment-insurance-premiums/premium-rates",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "cross_source_confirmed (multiple secondary sources agreeing on $30,600 wage base, 1.35% new-employer rate for 2026); not fetched directly from cdle.colorado.gov this session."
+    }
+  ],
+  "flatRateStatusDeduction": {
+    "standardDeduction": {
+      "mfj": 11000,
+      "other": 5500
+    },
+    "standardDeductionComment": "DR 1098 Step 2a: 'the appropriate amount based on the employee's expected filing status from IRS form W-4 Step 1(c): $11,000 if married filing jointly or qualifying surviving spouse; or $5,500 otherwise.' A DR 0004 Line 2 amount, if the employee filed one, OVERRIDES this entirely (not added to it) — DR 0004 lets an employee compute a more precise deduction figure accounting for federal itemized/estimated deductions, structurally similar in spirit to Oregon's federal-tax-subtraction override, though Colorado's own version is a flat caller-supplied dollar figure, not a formula this engine reconstructs.",
+    "rate": 0.044,
+    "noCertificateDefault": "DR 1098's own rule 4: 'If an employee does not submit a W-4 or DR 0004, complete Step 2a as if they submitted a W-4 with an expected filing status of \"single\"' — i.e. the $5,500 ('other') bucket applies.",
+    "annualizeMultiplier": {
+      "annual": 1,
+      "semiannual": 2,
+      "quarterly": 4,
+      "monthly": 12,
+      "semimonthly": 24,
+      "biweekly": 26,
+      "weekly": 52,
+      "daily": 260
+    },
+    "annualizeMultiplierComment": "DR 1098's own Pay Period Table, transcribed verbatim — identical to this engine's own PERIODS_PER_YEAR constant for every one of the 8 frequencies (no NJ-style daily-divisor mismatch to worry about here)."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "Colorado taxable income starts from federal taxable income (C.R.S. 39-22-104), which already nets out these categories at the federal level — the same 'starts from a federal figure, no addback' inference tier as several other states in this project, not yet upgraded to a direct DR 1098/guide quote naming each category by name.",
+  "reciprocity": {
+    "rule": "NONE. Colorado has no reciprocal withholding agreements with any state — cross-source confirmed, and consistent with the Wage Withholding Tax Guide's own complete silence on the topic (a state that DID have reciprocity agreements would need to document the mechanism somewhere in its own guide; this one simply never mentions it)."
+  },
+  "localIncomeTax": {
+    "occupationalPrivilegeTax": {
+      "Glendale": {
+        "employeeRate": 5,
+        "employerRatePerEmployee": 5,
+        "monthlyEarningsThreshold": 750,
+        "thresholdComparison": "above",
+        "source": {
+          "title": "City of Glendale, CO — Occupational Privilege Tax (municipal code Chapter 3.21 and the city's own OPT page)",
+          "url": "https://www.glendale.co.us/355/Occupational-Privilege-Tax",
+          "verifiedOn": "2026-08-25",
+          "note": "Glendale's own wording is 'earn more than $750 during a calendar month', which is why thresholdComparison is 'above' rather than Denver's at-or-above test — an employee earning exactly $750 in Glendale is NOT taxable, while an employee earning exactly $500 in Denver is."
+        }
+      },
+      "Greenwood Village": {
+        "employeeRate": 2,
+        "employerRatePerEmployee": 2,
+        "monthlyEarningsThreshold": 250,
+        "thresholdComparison": "at_or_above",
+        "source": {
+          "title": "City of Greenwood Village occupational privilege tax",
+          "url": "https://www.greenwoodvillage.com/206/Occupational-Privilege-Tax",
+          "verifiedOn": "2026-08-25",
+          "note": "$2 employee and $2 employer per month, both owed once an employee earns $250 or more in a calendar month. Cross-source confirmed rather than fetched from the city's own page this pass."
+        }
+      },
+      "Sheridan": {
+        "employeeRate": 3,
+        "employerRatePerEmployee": 3,
+        "monthlyEarningsThreshold": null,
+        "source": {
+          "title": "City of Sheridan, CO — Occupational Privilege Tax",
+          "url": "https://ci.sheridan.co.us/288/Occupational-Privilege-Tax",
+          "verifiedOn": "2026-08-25",
+          "note": "Fetched directly and quoted: '$3 per month' from each employee through payroll withholding, with a '$3 per month match ... due from the employer for each employee'. NO monthly earnings threshold appears anywhere on the city's own page — unlike Denver, Glendale and Greenwood Village, which all publish one. Recorded as null rather than borrowing a neighbour's figure; secondary aggregators cite $500 but the city itself does not, so the engine taxes each employee as the page says."
+        }
+      },
+      "Aurora": {
+        "employeeRate": 2,
+        "employerRatePerEmployee": 2,
+        "monthlyEarningsThreshold": 250,
+        "repealedOn": "2025-01-01",
+        "source": {
+          "title": "City of Aurora — Occupational Privilege Tax repeal",
+          "url": "https://www.auroragov.org/business_services/taxes__licensing/occupational_privilege_tax",
+          "verifiedOn": "2026-08-25",
+          "note": "Aurora imposed a $2/$2 OPT until it was REPEALED effective 2025-01-01. Kept here with its repeal date rather than deleted, so a 2024 check date still computes what was actually owed then and a 2026 one correctly computes nothing — a repeal is a fact about the tax, not an absence of one."
+        }
+      }
+    },
+    "$comment": "Colorado's locals are a genuinely different SHAPE from every other local tax in this project: a flat DOLLAR-PER-MONTH 'Occupational Privilege Tax' (a head tax, not a percentage of wages), gated by a monthly earnings THRESHOLD rather than a bracket. All five cities are wired via coloradoOccupationalPrivilegeTax() (src/taxes/state.ts, proven by tests/engine.test.ts's describe('Denver Occupational Privilege Tax (OPT)')): Denver, Glendale ($5/$5, more than $750/month), Greenwood Village ($2/$2, $250 or more), Sheridan ($3/$3, no published threshold), and Aurora (repealed, carried with its 2025-01-01 repeal date so a pre-repeal check date still computes it). See localIncomeTax.occupationalPrivilegeTax.",
+    "denver": {
+      "employeeRate": 5.75,
+      "employerRatePerEmployee": 4.0,
+      "monthlyEarningsThreshold": 500,
+      "source": {
+        "title": "City and County of Denver Tax Guide Topic No. 61 -- Occupational Privilege Taxes (OPT or Head Tax)",
+        "url": "https://www.denvergov.org/content/dam/denvergov/Portals/571/documents/TaxGuide/TaxGuideTopic61_OccupationalPrivilegeTaxes.pdf",
+        "verifiedOn": "2026-08-24",
+        "verifiedBy": "PDF fetched directly and text-extracted (WebFetch's own HTML conversion failed on this PDF -- pdftotext -layout on the raw bytes worked, same class of extraction hazard documented elsewhere in this project). Quoted verbatim: 'Employees who perform sufficient services in Denver to receive compensation of at least $500 per month meet the requirement of a taxable employee and are liable for the Employee OPT to be withheld by the employer at a rate of $5.75 per month. The employer is also required to pay the Business OPT at a rate of $4.00 per month for each taxable employee.'"
+      },
+      "note": "Employee OPT ($5.75/mo) owed only if the employee earns AT LEAST $500 from Denver-based work in that calendar month — genuinely a monthly on/off threshold, not a phase-in. Business OPT ($4.00/mo) is owed for that SAME taxable employee (i.e., gated on the identical $500 test) -- CORRECTED this pass, the previous note's wording on this point was ambiguous/wrong. SEPARATELY, and NOT gated on $500 at all, the Business OPT is also owed at $4.00/mo for each owner/partner/manager engaged in business in Denver regardless of how much they earn -- this owner/partner variant is NOT modelled in calc code (no 'is this person an owner/partner' input exists anywhere in this engine). Governmental/charitable entities are exempt from the Business OPT specifically (not the Employee OPT) -- also not modelled; this engine has no employer-type input.",
+      "multiEmployerCoordination": "CLOSED 2026-09-06 ('go to every state, fix real bugs' pass). An employee with two Denver-area employers only owes the $5.75 Employee OPT once (Form TD269 exempts the SECONDARY employer from withholding it), but that secondary employer still owes its OWN $4.00 Business OPT for this same taxable employee -- this had been left disclosed as 'not modelled' entirely, but a closer look at the existing code found something worse than a gap: the ONLY exemption flag that existed (denverOPTWithheldThisMonth) zeroed BOTH the employee AND employer lines together, which is correct for a same-employer repeat-paycheck-this-month case but would have been WRONG if reused for TD269 -- it would have silently dropped a Business OPT payment the secondary employer genuinely owes. Fixed with a SEPARATE, distinct flag (certificate.localOPTEmployeeWithheldByOtherEmployer) that zeros only the employee line while the employer line still computes normally, keeping the two real-world facts (same-employer monthly dedup vs. cross-employer TD269 exemption) from being conflated. Opt-in, defaults to false (charge normally), so this is additive.",
+      "engineFields": "certificate.locality === 'Denver' gates it on; certificate.denverMonthlyCompensation (cents, this calendar month's cumulative Denver-sourced compensation as of this check) drives the $500 test; certificate.denverOPTWithheldThisMonth (boolean) prevents re-withholding the flat monthly amount on a later paycheck the same month, zeroing BOTH the employee and employer lines (same employer, same month, already paid both); certificate.localOPTEmployeeWithheldByOtherEmployer (boolean, generic across every OPT city, not Denver-specific) implements Form TD269's cross-employer exemption, zeroing ONLY the employee line -- the employer's own Business OPT still computes normally. The caller must track all of these across paychecks, since this engine's only built-in running totals are input.ytd's YEAR-to-date figures, not monthly ones."
+    },
+    "aurora": {
+      "repealed": true,
+      "repealedEffective": "2025-01-01",
+      "formerRate": {
+        "employee": 2.0,
+        "employer": 2.0
+      },
+      "formerMonthlyEarningsThreshold": 250,
+      "repealOrdinance": "Ordinance 2022-77",
+      "note": "REPEALED, not merely reduced — Aurora City Council voted to eliminate its OPT entirely, effective for wages paid on/after 2025-01-01. A real, catchable trap: several payroll-guide sites found during this session's research still list Aurora as an active $2/$2 OPT jurisdiction without the repeal date, which would overstate withholding for any Aurora-based employee in 2026.",
+      "verification": "UPGRADED on a verification pass from cross_source_confirmed to primary_source_confirmed — fetched auroragov.org's own OPT page directly, which states plainly: 'Occupational Privilege Tax Repeal - Reminder. The city of Aurora Occupational Privilege Tax will be repealed effective Jan. 1, 2025.' Also picked up two facts this file didn't have before (the $250/month earnings threshold that used to trigger liability, and the repeal ordinance number) directly from that same primary fetch."
+    },
+    "otherOptJurisdictions": {
+      "$comment": "Colorado's other OPT cities — Glendale ($5/$5, more than $750/month), Greenwood Village ($2/$2, $250 or more) and Sheridan ($3/$3, no published threshold) — are now researched and computed by coloradoOccupationalPrivilegeTax(). See localIncomeTax.occupationalPrivilegeTax.",
+      "knownCities": [
+        "Glendale",
+        "Greenwood Village",
+        "Sheridan"
+      ]
+    }
+  },
+  "statePaidLeaveEmployee": {
+    "rate": 0.0044,
+    "wageBase": "ssWageBase",
+    "wageBaseFix": "CORRECTED 2026-09-06: was a hand-copied literal 184500, the same disclosed drift risk already closed for WA/CT/MA/DE/ME/CO's own SS-linked Paid Leave programs the same pass -- now resolved LIVE from data/federal/2026.json's own socialSecurity.wageBase by resolvePaidLeaveWageBase() in src/taxes/state.ts.",
+    "exemptPretax": [],
+    "$comment": "FAMLI employee share — reuses the existing generic statePaidLeaveEmployeeTax() dispatch (built for Washington), no new engine code needed. Wage base pegged to the federal Social Security wage cap, same must-keep-in-sync-with-federal.json risk already disclosed for CT/NY/WA's own SS-linked premiums in this project. Owed by EVERY employer regardless of size (unlike the employer share below) — FAMLI's own page: 'Businesses with nine or fewer employees should submit wage reports and send in 0.44% of their employees wages.'"
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.0088,
+    "employeeShareFraction": 0.5,
+    "wageBase": "ssWageBase",
+    "wageBaseFix": "CORRECTED 2026-09-06: same hand-copied-literal fix as statePaidLeaveEmployee above.",
+    "exemptPretax": [],
+    "$comment": "Gated on certificate.employerLiableForPaidLeaveShare, same convention as Washington/Massachusetts's own employer-size gate in this project — FAMLI's own threshold is 10+ employees (fewer than 10 owes $0 employer share). The caller supplies this determination; the exact headcount rule isn't itself encoded in the shared function, matching the existing WA/MA precedent's own documented limitation."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUI) — no employee contribution. UPGRADED on a verification pass, and a REAL BUG in this file's own first draft was caught in the process: the original newEmployerRate (0.0135) was actually just the Solvency Surcharge component of the introductory rate, not the combined rate — CDLE's own introductory-rates page shows the 2026 rate is built from THREE components (Beginning Rate + Support Rate + Solvency Surcharge), and 1.35% alone would have understated new-employer UI cost by more than half.",
+    "administeredBy": "Colorado Department of Labor and Employment (CDLE)",
+    "wageBase": 30600.0,
+    "introductoryRates2026": {
+      "nonConstruction": {
+        "beginningRate": 0.0153,
+        "supportRate": 0.0017,
+        "surchargeRate": 0.0135,
+        "combinedRate": 0.0305
+      },
+      "generalConstruction": {
+        "beginningRate": 0.0153,
+        "supportRate": 0.0017,
+        "surchargeRate": 0.0135,
+        "combinedRate": 0.0305
+      },
+      "heavyConstruction": {
+        "beginningRate": 0.0428,
+        "supportRate": 0.0048,
+        "surchargeRate": 0.01525,
+        "combinedRate": 0.06285
+      },
+      "trades": {
+        "beginningRate": 0.0153,
+        "supportRate": 0.0017,
+        "surchargeRate": 0.0135,
+        "combinedRate": 0.0305
+      },
+      "politicalSubdivisionGroup": {
+        "beginningRate": 0.002,
+        "supportRate": 0,
+        "surchargeRate": 0,
+        "combinedRate": 0.002
+      },
+      "note": "'New employer' is not one flat figure in Colorado — it's classification-dependent, same structural shape as Ohio's own construction/general split already documented elsewhere in this project. Employers new to Colorado who don't yet qualify for an experience (computed) rate pay this introductory rate; the Solvency Surcharge applies uniformly to ALL employers (introductory and experience-rated alike) when Colorado's UI Trust Fund solvency triggers it, per CDLE's own page."
+    },
+    "confidence": "primary_source_confirmed — fetched directly from cdle.colorado.gov/employers/unemployment-insurance-premiums/premium-rates (wage base) and .../introductory-rates (the full rate table) on a verification pass, upgraded from the original cross_source_confirmed tier."
+  },
+  "verification": "PROVEN via calculatePaycheck(): fixtures hand-derived from DR 1098's own worksheet formula (no official EDD-style worked example with a full dollar figure was found in DR 1098 itself, unlike California's Method B) plus FAMLI and Denver OPT fixtures. See tests/engine.test.ts, describe('Colorado').",
+  "knownGaps": [
+    "DR 0004 Line 2's own precise worksheet (for an employee who wants to compute a MORE ACCURATE deduction figure than the flat $11,000/$5,500) was not transcribed — this engine models it as an opaque caller-supplied override (certificate.dr0004Line2Amount), matching how Kentucky/Iowa-style caller-supplied figures already work elsewhere in this project.",
+    "All five Colorado OPT cities (Denver, Glendale, Greenwood Village, Sheridan, and the repealed Aurora) are modelled with real rate figures and wired via coloradoOccupationalPrivilegeTax() — see localIncomeTax.$comment above.",
+    "STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "The pre-mid-year-change formula does not apply here (DR 1098 has been a single, non-mid-year-changing formula for 2026 as far as this session found — no HB96/Ohio-style split-table situation was discovered for Colorado).",
+    "Supplemental wages: both DR 1098 (2026 Colorado Withholding Worksheet for Employers) and the Colorado Wage Withholding Tax Guide (January 2026) were fetched directly and searched -- neither contains a distinct supplemental-wage withholding procedure or flat rate; the only \"supplemental\" mention in either document is a citation to the FEDERAL IRS Publication 15-A, not a Colorado-specific rule. A standalone bonus therefore runs through the same flat-rate-with-status-deduction formula as any other wages, which is what this engine already does by default -- the same conclusion reached for South Carolina, Utah, Arkansas, DC, and Massachusetts in this project, each checked directly rather than assumed."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 30600,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0305,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.0072,
+      "max": 0.1085
+    },
+    "experienceRangeSource": "Primary: CDLE premium-rates page (cdle.colorado.gov/employers/unemployment-insurance-premiums/premium-rates), summing all three eligible-employer schedules for 2026 -- Standard Premium Rate (0.56%-7.34%) + Support Surcharge (0.06%-0.81%) + Solvency Surcharge (0.10%-2.70%) = 0.72% min, 10.85% max. Replaces a stale cross-sourced 0.81%-12.34% figure.",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  }
+}

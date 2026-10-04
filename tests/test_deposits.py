@@ -2,14 +2,14 @@ import unittest
 from datetime import date
 from decimal import Decimal
 
-from helpers import RULES, company, line, liabilities
+from helpers import REMIT, company, line, liabilities
 from masterytax.deposits import (apply_deposits, build_obligations, federal_schedule, penalty_rate,
                                  semiweekly_period_end)
 
 
 def obligations(lines, co, group="US-941"):
     liabs = liabilities(lines, {"CO": co})
-    return [o for o in build_obligations(liabs, {"CO": co}, RULES) if o.group == group]
+    return [o for o in build_obligations(liabs, {"CO": co}, REMIT) if o.group == group]
 
 
 class ScheduleTest(unittest.TestCase):
@@ -72,8 +72,29 @@ class ScheduleTest(unittest.TestCase):
 
     def test_ny_accumulated_threshold(self):
         lines = [line(f"2026-01-{d:02d}", "5000", state="NY", row=d, sit_withheld="300") for d in (9, 16, 23)]
-        obs = obligations(lines, company(), "NY-WT")
+        obs = obligations(lines, company(), "NY-WH")
         self.assertEqual([(o.amount, o.due) for o in obs][0], (Decimal("900"), date(2026, 1, 30)))
+
+
+class StateScheduleTest(unittest.TestCase):
+    def co(self, schedules):
+        return company(accounts={"GA": {"sui_rate": "0.027"}}, schedules=schedules)
+
+    def test_monthly_state_withholding_with_due_day(self):
+        lines = [line("2026-01-16", "4000", state="GA", sit_withheld="150"),
+                 line("2026-01-30", "4000", state="GA", row=2, sit_withheld="150")]
+        obs = obligations(lines, self.co({"GA-WH": {"schedule": "monthly", "due_day": 15}}), "GA-WH")
+        self.assertEqual([(o.amount, o.due) for o in obs], [(Decimal("300"), date(2026, 2, 17))])
+
+    def test_semimonthly_periods(self):
+        lines = [line("2026-01-09", "4000", state="GA", sit_withheld="100"),
+                 line("2026-01-23", "4000", state="GA", row=2, sit_withheld="100")]
+        obs = obligations(lines, self.co({"GA-WH": {"schedule": "semimonthly", "business_days": 3}}), "GA-WH")
+        self.assertEqual([o.due for o in obs], [date(2026, 1, 21), date(2026, 2, 4)])  # MLK skipped
+
+    def test_quarterly_ui_due_last_day_of_next_month(self):
+        obs = obligations([line("2026-02-13", "4000", state="GA")], self.co({}), "GA-UI")
+        self.assertEqual([(o.amount, o.due) for o in obs], [(Decimal("108.00"), date(2026, 4, 30))])
 
 
 class PenaltyTest(unittest.TestCase):
@@ -86,7 +107,7 @@ class PenaltyTest(unittest.TestCase):
         obs = obligations([line("2026-01-09", "50000"), line("2026-01-23", "50000", row=2)], co)
         amount = obs[0].amount
         deposits = [{"company_id": "CO", "deposit_group": "US-941", "date": date(2026, 1, 21), "amount": amount}]
-        statuses, credits = apply_deposits(obs, deposits, RULES, as_of=date(2026, 2, 20))
+        statuses, credits = apply_deposits(obs, deposits, as_of=date(2026, 2, 20))
         self.assertEqual(statuses[0].status, "late")
         self.assertEqual(statuses[0].days_late, 7)
         self.assertEqual(statuses[0].penalty, (amount * Decimal("0.05")).quantize(Decimal("0.01")))

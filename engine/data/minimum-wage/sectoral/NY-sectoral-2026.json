@@ -1,0 +1,56 @@
+{
+  "state": "NY",
+  "year": 2026,
+  "asOf": "2026-09-09",
+  "$comment": "New York's HOME CARE AIDE minimum wage -- a separate, higher wage floor set by Public Health Law 3614-f, not the state's ordinary Labor Law 652 rate carried in states/NY-2026.json. This file exists to close a knownGap that file explicitly disclosed: 'NYSDOL publishes it in fact sheet P105, which was not read this pass. No figure is asserted here rather than guessed.' It is stored as a sectoral (occupation-based) file rather than folded into the state file's own variants, the same way California's fast-food and health-care rates are kept separate from its state rate -- 'home care aide' is a statutory job classification, not a geography, and a covered worker is owed this rate regardless of which of New York's two Labor-Law-652 regions they work in.",
+  "sectors": [
+    {
+      "id": "home_care_aide_downstate",
+      "name": "Home care aides -- New York City, Nassau, Suffolk and Westchester counties",
+      "hourly": 19.65,
+      "hourlyCents": 1965,
+      "effectiveFrom": "2026-01-01",
+      "coverage": "Public Health Law 3614-f. A 'home care aide' is a home health aide or personal care aide whose primary responsibility is in-home assistance with activities of daily living for a Medicaid-funded or licensed/certified home care services agency, LHCSA or fiscal intermediary client -- narrower than 'anyone who does home care work'; casual/informal caregivers and relatives are excluded by the statute's own definition. Region matches the SAME four downstate counties as Labor Law 652's own 'downstate' region.",
+      "note": "$1.00 above the same region's ordinary Labor Law 652 rate of $17.00 -- home care aides are NOT paid the standard minimum wage, and an agency paying the ordinary state rate instead of this one is underpaying by a widening margin every year both schedules step.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "id": "home_care_aide_upstate",
+      "name": "Home care aides -- remainder of New York State",
+      "hourly": 18.65,
+      "hourlyCents": 1865,
+      "effectiveFrom": "2026-01-01",
+      "coverage": "Public Health Law 3614-f, same occupation test as the downstate figure, applied everywhere outside NYC, Nassau, Suffolk and Westchester.",
+      "note": "$2.65 above the same region's ordinary Labor Law 652 rate of $16.00 -- a WIDER gap than downstate's, because the home care aide schedule has stepped by a fixed statewide dollar amount each year while the two Labor Law 652 regions diverged from each other on a separate track.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "sources": [
+    {
+      "title": "New York State Department of Labor -- Home Care Aide Minimum Wage Fact Sheet (P105)",
+      "url": "https://dol.ny.gov/home-care-aide-minimum-wage-fact-sheet-p105",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched this session, but the page did not yield extractable rate figures through the fetch tool used (it resolved to a document viewer rather than plain text); the $19.65 / $18.65 figures below are instead cross-sourced from the independent pages listed below, which each cite this same fact sheet as their authority."
+    },
+    {
+      "title": "LeadingAge New York -- Home Care Minimum Wage Increases January 1st, 2026",
+      "url": "https://www.leadingageny.org/providers/home-and-community-based-services/lhcsa/home-care-minimum-wage-increases-january-1st-2026/",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. A home-care-industry trade association's own compliance bulletin, citing the NYSDOL fact sheet directly and stating the requirement 'applies across the board for agencies and all payor types,' including that the Department of Health separately directed Medicaid Managed Care Plans to apply it."
+    },
+    {
+      "title": "Rivkin Radler LLP -- NY Amends Home Care Worker Minimum Wage",
+      "url": "https://www.rivkinradler.com/publications/ny-amends-home-care-worker-minimum-wage/",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Found via search this session (not directly fetched) as a second, independent legal-industry source agreeing on the same $19.65 downstate / $18.65 upstate figures, satisfying this database's cross_source_confirmed standard alongside LeadingAge NY."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Whether a given worker meets Public Health Law 3614-f's own 'home care aide' definition (as opposed to the ordinary Labor Law 652 minimum wage applying instead) is a legal/statutory determination this file does not model.",
+    "Wage parity requirements for Medicaid-funded home care (Public Health Law 3614-c), which layer a benefits component on top of the cash wage in NYC, Nassau, Suffolk and Westchester, are a separate and larger obligation not carried here -- this file carries only the Public Health Law 3614-f minimum cash wage.",
+    "NY DOL's minimum wage page (read directly 2026-10-01) says the home care aide minimum wage rises on 2027-01-01 to $20.00 per hour in NYC, Long Island and Westchester and $19.00 in the rest of the state (from $19.65 / $18.65), capped at $3.00 above the standard wage. Not applied here: this is a 2026 file and the engine has no 2027 tax year yet.",
+    "The FARE (Fair Pay for Home Care) grant program that some agencies rely on to fund this wage is a funding mechanism, not a different wage floor, and is not modelled.",
+    "This file was not read against the NYSDOL fact sheet's own primary text this session (see that source's own verifiedBy note) -- only against two independent secondary summaries of it. Re-verify directly when the primary page is reachable."
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "state": "CA",
+  "year": 2026,
+  "asOf": "2026-09-09",
+  "$comment": "Minimum wages California sets by INDUSTRY rather than by geography. They are not local ordinances and not the state minimum wage; a covered employee is owed the sectoral rate even in a city with no local ordinance at all, and even where the local ordinance is lower. CORRECTED 2026-09-08: this file originally collapsed SB 525's SEVEN distinct health-care employer categories into a false 'large systems vs. other facilities' binary, sourced only to secondary summaries because the DIR's own FAQ page could not be located on the first research pass. The real page was found on a second pass (it lives at a different URL than the generic minimum-wage landing page) and gives each of the seven categories its own multi-year step schedule -- they do NOT all converge on the same figure, and three of the seven (safety net hospitals, small counties, and by extension any employer misclassified into one of them) are still years away from $25.00 in 2026. EXTENDED 2026-09-09: added the five city hotel/airport ordinances this file's own knownGaps previously named but did not price -- Los Angeles airport workers, and the Santa Monica, Long Beach, Glendale and West Hollywood hotel ordinances -- closing that gap. LAWA's own wage-rate letter and the amended ordinance itself (wagesla.lacity.gov, bca.lacity.gov) both 403'd on every direct fetch this session; every added figure below rests on two or more independent secondary sources (law-firm and HR-compliance outlets that track these ordinances professionally) agreeing, per this database's own cross_source_confirmed standard, EXCEPT Santa Monica, whose own city page was fetched and read directly.",
+  "sectors": [
+    {
+      "id": "fast_food",
+      "name": "Fast food restaurant employees",
+      "hourly": 20.0,
+      "hourlyCents": 2000,
+      "effectiveFrom": "2024-04-01",
+      "coverage": "Employees of limited-service restaurants that are part of a national chain with 60 or more establishments nationwide (AB 1228 / Labor Code 1475 et seq.), as set by the Fast Food Council.",
+      "note": "Unchanged at $20.00 through 2026 -- the Council has statutory authority to raise it each year by the lesser of 3.5% or CPI growth, and has adopted no increase for 2025 or 2026.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_large_systems",
+      "name": "Health care workers -- hospitals/health systems with 10,000+ full-time-equivalent employees, and dialysis clinics",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-12-31",
+      "coverage": "SB 525 (Health & Safety Code 1182.14). The fastest of the seven SB 525 schedules -- reaches $25.00 first.",
+      "note": "$23.00 from 2024-10-16, $24.00 from 2025-07-01, $25.00 from 2026-07-01 through 2027-12-31, then annual CPI adjustment from 2028-01-01.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_large_counties",
+      "name": "Health care workers -- counties with 5,000,000+ population",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-12-31",
+      "coverage": "SB 525. Applies to county-run health care facilities; the county schedule starts 2025-01-01 rather than the private-sector 2024-10-16 start date, but converges onto the SAME $25.00 figure on the same 2026-07-01 date as the large-hospital tier.",
+      "note": "Effectively Los Angeles County -- the only California county at or above 5,000,000 population.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_medium_counties",
+      "name": "Health care workers -- counties with 250,000-5,000,000 population",
+      "hourly": 23.0,
+      "hourlyCents": 2300,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2028-06-30",
+      "coverage": "SB 525 county-operated facilities.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_other_facilities",
+      "name": "Health care workers -- all other covered facilities not otherwise classified (includes skilled nursing facilities)",
+      "hourly": 23.0,
+      "hourlyCents": 2300,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2028-06-30",
+      "coverage": "SB 525 covered employees at facilities outside every other listed category.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_community_clinics",
+      "name": "Health care workers -- community clinics, rural health clinics, and urgent care clinics affiliated with either",
+      "hourly": 22.0,
+      "hourlyCents": 2200,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-06-30",
+      "coverage": "SB 525.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_safety_net_hospitals",
+      "name": "Health care workers -- safety net hospitals",
+      "hourly": 19.28,
+      "hourlyCents": 1928,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-06-30",
+      "coverage": "SB 525. The SLOWEST of the seven schedules -- safety net hospitals do not reach $25.00 until 2033-2034, in recognition of their thinner margins.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "health_care_small_counties",
+      "name": "Health care workers -- counties with fewer than 250,000 population",
+      "hourly": 19.28,
+      "hourlyCents": 1928,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-06-30",
+      "coverage": "SB 525 county-operated facilities. On the same slow schedule as safety net hospitals.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "los_angeles_hotel",
+      "name": "Los Angeles hotel workers",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "coverage": "Employees at Los Angeles hotels with 60 or more guest rooms, under the city's Hotel Worker Minimum Wage Ordinance (LAMC 186.02) as amended in 2025 (the 'Olympic Wage' amendments) and again on 2026-06-29.",
+      "healthBenefitSupplement": {
+        "hourly": 4.25,
+        "hourlyCents": 425,
+        "note": "An ADDITIONAL $4.25/hr for the provision of health care benefits; where the employer provides no health benefits, the $4.25 must be paid as additional hourly wages -- so the cash floor is $29.25. Rises to $6.00/hr on 2027-07-01."
+      },
+      "note": "Originally scheduled to reach $30.00 by 2028-07-01 in $2.50 annual steps; the 2026-06-29 amendment SLOWED that schedule -- $25.50 on 2027-07-01, $28.50 on 2028-07-01, $29.00 on 2029-07-01, $30.00 on 2030-01-01, then annual CPI-W adjustment. Two independent legal-compliance sources (California Workplace Law Blog and CalChamber's HRWatchdog) agree on every step of this revised schedule.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "id": "los_angeles_airport_worker",
+      "name": "Los Angeles airport and airport-hospitality workers",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "coverage": "Employees of service contractors, permittees, concessionaires and lessees at Los Angeles World Airports (LAX and Van Nuys) facilities, under the City's Living Wage Ordinance (LAMC Ch. 10, Art. 11) as amended alongside the 2025 Hotel Worker Minimum Wage Ordinance amendments -- the LWO traces back to a 2007 airport-area hotel ordinance and a 2009 airport-employee wage ordinance, both since folded into this one citywide schedule administered by the Bureau of Contract Administration and LAWA.",
+      "healthBenefitSupplement": {
+        "hourly": 7.65,
+        "hourlyCents": 765,
+        "note": "An ADDITIONAL $7.65/hr in employer-paid health benefits (or as additional wages if not provided) -- cash floor without health benefits is $32.65. Rises to $8.15/hr on 2027-07-01 and $8.35/hr on 2028-07-01."
+      },
+      "note": "Rises on the same amended schedule as the hotel worker rate -- $25.50 on 2027-07-01, $28.50 on 2028-07-01, $29.00 on 2029-07-01, $30.00 on 2030-01-01 -- per two independent legal-compliance sources. LAWA's own wage-rate letter (bca.lacity.gov) and the signed amended ordinance (wagesla.lacity.gov) both returned HTTP 403 on every direct fetch attempted this session, so this entry rests on secondary confirmation rather than the primary text itself; re-verify against those pages when they become reachable.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "id": "santa_monica_hotel",
+      "name": "Santa Monica hotel workers",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "coverage": "Employees at Santa Monica hotels covered by the city's Hotel Worker Living Wage Ordinance. Santa Monica's own municipal code provision requires the local hotel-worker wage to match whatever Los Angeles sets for its own hotel workers, so this figure moves in lockstep with los_angeles_hotel rather than being independently legislated.",
+      "note": "Unlike Los Angeles, Santa Monica imposes NO health benefit payment requirement on hotel employers -- the city considered but withdrew a proposal to align with LA's health-benefit rule, choosing to raise only the cash wage.",
+      "confidence": "primary_source_confirmed"
+    },
+    {
+      "id": "long_beach_hotel",
+      "name": "Long Beach hotel workers",
+      "hourly": 26.5,
+      "hourlyCents": 2650,
+      "effectiveFrom": "2026-07-01",
+      "coverage": "Employees at Long Beach hotels with 100 or more guest rooms or suites, under Measure RW (approved by voters in March 2024), codified in the Long Beach Municipal Code.",
+      "note": "Independent of Los Angeles's schedule -- Measure RW sets its own steps: $25.00 from 2025-07-01, $26.50 from 2026-07-01, $28.00 from 2027-07-01, $29.50 from 2028-07-01.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "id": "glendale_hotel",
+      "name": "Glendale hotel workers",
+      "hourly": 25.0,
+      "hourlyCents": 2500,
+      "effectiveFrom": "2026-07-01",
+      "coverage": "Employees at Glendale hotels with 60 or more guest rooms. Glendale's Hotel Workers Protection Ordinance requires the local wage to match whatever Los Angeles Municipal Code 186.02 sets, the same match-LA mechanism Santa Monica uses.",
+      "note": "Unlike Los Angeles, Glendale imposes no health benefit payment requirement. Because it tracks LA's cash wage, it inherits the same amended schedule: $25.50 on 2027-07-01, $28.50 on 2028-07-01, then CPI adjustment from 2029-07-01.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "id": "west_hollywood_hotel",
+      "name": "West Hollywood hotel workers",
+      "hourly": 20.87,
+      "hourlyCents": 2087,
+      "effectiveFrom": "2026-07-01",
+      "effectiveTo": "2027-06-30",
+      "coverage": "Employees at West Hollywood hotels, under the city's Hotel Worker Minimum Wage and Protection Ordinance -- a separate figure from the city's general minimum wage (see local/CA-local-2026.json), on its own July-to-June annual cycle rather than Los Angeles's.",
+      "note": "NOT tied to Los Angeles's rate the way Santa Monica's and Glendale's are -- West Hollywood's hotel wage is its own CPI-W-indexed figure (capped between 1.0% and 4.0% growth per year), which is why it sits noticeably below the LA/Santa Monica/Glendale hotel figure despite West Hollywood's general minimum wage ($20.25 from 2026-01-01) being among the highest in the state. Was $20.22/hour for the prior 2025-07-01 through 2026-06-30 cycle.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "sources": [
+    {
+      "title": "California Department of Industrial Relations -- Health Care Worker Minimum Wage Frequently Asked Questions",
+      "url": "https://www.dir.ca.gov/dlse/Health-Care-Worker-Minimum-Wage-FAQ.htm",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session -- the actual DIR FAQ page, found via search after the page's own generic /dlse/minimum_wage.htm landing page and a guessed URL both 404'd on the first research pass (that guessed URL is what the ORIGINAL version of this file cited as unreachable; the real page was findable all along, just not at the URL first tried). CORRECTED the sectoral file's own prior draft, which had folded SB 525's seven employer categories down to a false binary of 'large systems' vs. 'other facilities' -- the DIR FAQ's own wage-schedule table gives seven categories, each on its own multi-year step schedule, and the figures below are transcribed from that table's July 1, 2026 column specifically."
+    },
+    {
+      "title": "California Department of Industrial Relations -- Fast Food Minimum Wage Frequently Asked Questions",
+      "url": "https://www.dir.ca.gov/dlse/Fast-Food-Minimum-Wage-FAQ.htm",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Confirms $20.00/hour effective 2024-04-01, unchanged since, and that the Fast Food Council has statutory authority to raise it each year by the LESSER of 3.5% or CPI growth -- and has adopted no increase for 2025 or 2026."
+    },
+    {
+      "title": "City of Santa Monica -- Minimum Wage",
+      "url": "https://www.santamonica.gov/minimum-wage",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. States the hotel worker rate matches Los Angeles's own hotel worker wage ($25.00 effective 2026-07-01) and that Santa Monica imposes no health benefit payment requirement, unlike Los Angeles."
+    },
+    {
+      "title": "California Workplace Law Blog -- Los Angeles Amends Hotel Worker Minimum Wage Ordinance in Advance of July 2026",
+      "url": "https://www.californiaworkplacelawblog.com/2026/05/articles/wage-and-hour/los-angeles-amends-hotel-worker-minimum-wage-ordinance-in-advance-of-july-2026/",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. Independent legal-compliance source giving the full amended 2026-2030 hotel and airport wage schedule, cross-checked against HRWatchdog's own table below (both agree on every figure)."
+    },
+    {
+      "title": "CalChamber HRWatchdog -- Los Angeles City Revises Wage and Health Benefits Requirements for Hotel, Airport Workers",
+      "url": "https://hrwatchdog.calchamber.com/2026/06/los-angeles-city-revises-wage-and-health-benefits-requirements-for-hotel-airport-workers/",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. Source of the airport-worker health benefit figures ($7.65 rising to $8.15 then $8.35) and confirms the hotel schedule agrees with the California Workplace Law Blog source above. LAWA's own wage-rate letter (bca.lacity.gov) and the signed amended ordinance (wagesla.lacity.gov) both returned HTTP 403 on direct fetch this session -- this and the source above are relied on instead, per this database's cross_source_confirmed standard."
+    },
+    {
+      "title": "Silverman Law -- Glendale Minimum Wage (2026)",
+      "url": "https://www.jsilvermanlaw.com/minimum-wage/glendale/",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. States Glendale's Hotel Workers Protection Ordinance ties the local rate to LAMC 186.02, covers hotels with 60+ rooms, and imposes no health benefit requirement. Glendale's own city page (glendaleca.gov) returned HTTP 403 on direct fetch this session."
+    },
+    {
+      "title": "City of Long Beach -- Notice of Annual Adjustment, Hotel Worker Hourly Rate $26.50 (Measure RW, effective July 1, 2026)",
+      "url": "https://www.longbeach.gov/globalassets/city-clerk/media-library/documents/public-notices/public-notices/measure-rw-bulletin-effective-july-1-2026",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "The city's own official notice, found by search under this exact title and URL; the page itself returned HTTP 503 on direct fetch this session, so the $26.50 figure is additionally cross-checked against two independent HR-compliance summaries (HRMorning and Silverman Law) that both cite the same figure and Measure RW schedule."
+    },
+    {
+      "title": "Bloomberg Tax -- West Hollywood Minimum Wage Rising to $20.25 for 2026",
+      "url": "https://news.bloombergtax.com/payroll/west-hollywood-minimum-wage-rising-to-20-25-for-2026",
+      "verifiedOn": "2026-09-09",
+      "verifiedBy": "Fetched and read directly this session. Confirms the general (non-hotel) $20.25 rate from 2026-01-01 and the PRIOR hotel-worker cycle's $20.22 rate (2025-07-01 through 2026-06-30); the CURRENT-cycle $20.87 figure (2026-07-01 through 2027-06-30) comes from the city's own weho.org minimum-wage page via search, since a direct fetch of that page returned HTTP 403 this session."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Los Angeles also sets a minimum compensation ordinance for airport-area HOTEL workers specifically (the original 2007 predecessor of today's LWO) that may carry its own narrower coverage test distinct from the general airport LWO figure carried here as los_angeles_airport_worker; not independently distinguished.",
+    "Every added 2026-09-09 city hotel/airport figure above rests on secondary sources because the relevant government PDFs and pages (bca.lacity.gov, wagesla.lacity.gov, lawa.org, glendaleca.gov, weho.org, longbeach.gov) returned HTTP 403 or 503 on every direct fetch attempted this session -- Santa Monica's own page was the one exception that loaded. Re-verify against the primary pages when reachable.",
+    "Whether a particular restaurant or facility is 'covered', and which of the seven SB 525 categories a given health care facility falls into, is a legal determination under each statute's own definitions (FTE counts, county population as of the last federal census, clinic licensure type); this file carries rates, not that classification test.",
+    "The Health Care Worker Minimum Wage Clinic Waiver Program lets DIR grant an individual clinic a temporary waiver from SB 525 entirely; a waived clinic's real obligation can be lower than any figure in this file for a limited period. Not modelled.",
+    "The Los Angeles airport and hotel worker ordinances also carry non-wage entitlements this session did not research (guaranteed hours, panic buttons, workload limits, time off) -- this file carries only the wage and health-benefit-payment figures."
+  ]
+}

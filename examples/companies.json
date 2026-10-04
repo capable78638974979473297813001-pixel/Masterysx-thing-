@@ -6,7 +6,10 @@
       "fein": "94-1234567",
       "lookback_941_liability": "612000",
       "state_accounts": {
-        "CA": {"account": "123-4567-8", "sui_rate": "0.029"}
+        "CA": {
+          "account": "123-4567-8",
+          "sui_rate": "0.029"
+        }
       }
     },
     {
@@ -14,8 +17,39 @@
       "name": "Northwind Traders LLC",
       "fein": "13-7654321",
       "state_accounts": {
-        "NY": {"account": "50-12345"},
-        "TX": {"account": "99-887766-5", "sui_rate": "0.0215"}
+        "NY": {
+          "account": "50-12345"
+        },
+        "TX": {
+          "account": "99-887766-5",
+          "sui_rate": "0.0215"
+        }
+      }
+    },
+    {
+      "id": "KEYSTONE",
+      "name": "Keystone Fabrication Co.",
+      "fein": "25-1122334",
+      "lookback_941_liability": "38000",
+      "state_accounts": {
+        "PA": {
+          "account": "88-776655",
+          "sui_rate": "0.0365"
+        },
+        "OH": {
+          "account": "OH-5544332",
+          "sui_rate": "0.027"
+        }
+      },
+      "deposit_schedules": {
+        "PA-WH": {
+          "schedule": "semimonthly",
+          "business_days": 3
+        },
+        "OH-WH": {
+          "schedule": "monthly",
+          "due_day": 15
+        }
       }
     }
   ]

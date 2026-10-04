@@ -1,0 +1,82 @@
+{
+  "code": "SD",
+  "name": "South Dakota",
+  "year": 2026,
+  "method": "no_income_tax",
+  "$scopeNote": "South Dakota has NO state individual income tax of any kind, and never has -- it is one of the states whose constitution (Art. XI, sec. 2, via the sales-tax-in-lieu-of-income-tax structure adopted last century) has never been amended to permit one, not a phase-out state like New Hampshire. No local income tax anywhere: municipalities may levy local SALES tax (general municipal sales tax + a municipal gross receipts tax on lodging/alcohol/entertainment/restaurant meals) but South Dakota law does not authorize any city or county to levy a tax on wages or earned income. No employee-paid unemployment, disability, or paid-leave program of any kind -- Reemployment Assistance (South Dakota's name for UI) is funded entirely by the employer, and South Dakota has no state Paid Family/Medical Leave program at all (voluntary or mandatory) -- a genuine structural difference from Vermont/New Hampshire, which at least have a voluntary program on the books.",
+  "sources": [
+    {
+      "title": "South Dakota Department of Labor and Regulation -- Reemployment Assistance Tax FAQ",
+      "url": "https://dlr.sd.gov/ra/businesses/faq.aspx",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly (raw HTML, not just the summarized fetch). Quoted verbatim: 'For calendar year 2026 and each year thereafter, an administrative fee of eight-hundredths percent (.08%) or .0008 must be paid by the employer. For calendar year 2025 and 2024, if the employer's reserve ratio is less than two and one-quarter percent, an administrative fee of two hundredths percent (.02%) or .0002 shall be paid.' This resolved a real apparent conflict on first read: the page ALSO shows a 0.55% 'Administrative Fee' column in the NEW-EMPLOYER rate table. These are two DIFFERENT fees, not a contradiction -- the 0.55% is a component of the flat new-employer rate (years 1-3 only); the 0.08% (up from 0.02%, effective calendar year 2026) is a SEPARATE fee under SDCL 61-5-24 that applies only to employers who have graduated to experience rating, i.e. NOT new employers. Confirmed by the page's own structure: the 0.08% clause appears directly under its own 'Administrative Fee' subheading, distinct from and below the new-employer rate table."
+    },
+    {
+      "title": "South Dakota DLR -- Reemployment Assistance for Businesses (rate notices)",
+      "url": "https://dlr.sd.gov/ra/businesses/default.aspx",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched directly. Confirms the $15,000 taxable wage base (unchanged since 2015) and that '2026 rate notices were mailed to employers on Oct. 31, 2025' -- i.e. individual experienced-employer rates for 2026 are already final and notice-driven per employer, not something this engine can derive from a public table alone."
+    },
+    {
+      "title": "Wilmington-style local-tax and UI cross-check (secondary, corroborating only)",
+      "url": "https://onpay.com/payroll/calculator-tax-rates/south-dakota/",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Cross-source confirmation only, not independently fetched in full: corroborates no state or local income tax anywhere in South Dakota and the $15,000 UI wage base."
+    }
+  ],
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUTA/RA tax) -- no employee contribution, confirmed directly. South Dakota calls this 'Reemployment Assistance' (RA), not 'UI', but it is the same FUTA-certified employer payroll tax as every other state's SUTA.",
+    "administeredBy": "South Dakota Department of Labor and Regulation (DLR), Reemployment Assistance Tax Unit",
+    "wageBase": 15000.0,
+    "newEmployerRates": {
+      "year1": { "raTax": 0.012, "investmentFee": 0.06, "administrativeFee": 0.0055, "total": 0.0775 },
+      "years2and3": { "raTax": 0.01, "investmentFee": 0.03, "administrativeFee": 0.0055, "total": 0.0455 },
+      "comment": "Investment fee 'applies to those with a positive account balance' per the source's own footnote -- a hold-harmless clause also caps an employer's investment-fee rate at their 1987 fee rate if their account had a positive balance at the end of the last two years, an unusual legacy provision unique to South Dakota's statute among every state built in this project so far."
+    },
+    "experienceRatedAdministrativeFee": {
+      "2026andLater": 0.0008,
+      "2024and2025": { "rate": 0.0002, "condition": "only if the employer's reserve ratio is less than 2.25%" },
+      "statutoryAuthority": "SDCL 61-5-24",
+      "comment": "A REAL rate change effective exactly this tax year: the administrative fee for experience-rated (3+ year) employers rose from 0.02% (and only for low-reserve-ratio employers) to a flat 0.08% for ALL experience-rated employers starting calendar year 2026 -- both a rate increase and a base-broadening in the same change. This fee sits on top of the reserve-ratio-based Schedule A/B contribution rate below; it is not a component of the new-employer table above."
+    },
+    "experienceRatedSchedule": {
+      "$comment": "Reserve-ratio-based Schedule A/B contribution rate table (SDCL 61-5), 'Beginning 2018' vintage, transcribed from the FAQ page's own table -- comprehensive but not directly usable by this engine, same class of gap as Wisconsin's 26-row Schedule D table: applying it requires an employer's account reserve ratio, which nothing in types.ts carries.",
+      "sampleRows": [
+        { "reserveRatio": "2.25% and Over", "scheduleA": 0.0, "scheduleB": 0.0 },
+        { "reserveRatio": "1.00% and Less than 1.25%", "scheduleA": 0.0055, "scheduleB": 0.0045 },
+        { "reserveRatio": "0.75% and Less than 1.00%", "scheduleA": 0.007, "scheduleB": 0.006 },
+        { "reserveRatio": "0.50% and Less than 0.75%", "scheduleA": 0.0095, "scheduleB": null }
+      ],
+      "note": "NOT a full transcription -- only a representative sample of the reserve-ratio bands was captured (the source table has many more rows spanning both positive and negative reserve ratios, plus a separate 2011-vintage Investment Fee table keyed by its own reserve-ratio bands). Flagged honestly as partial rather than padded out with unread rows; South Dakota has no state income tax, so this table is lower-priority than an income-tax bracket table would be, and was intentionally not pursued to full completeness in this pass."
+    },
+    "knownGap": "Experience-rated schedule is only partially transcribed (see note above), and even fully transcribed would need a reserve-ratio input this engine's types.ts doesn't carry -- same structural gap as every other state's experience-rated SUTA in this project."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. South Dakota has no constitutional or statutory mechanism for any city, county, or municipality to levy a tax on wages or earned income. Municipalities may levy local SALES tax (general + gross receipts on lodging/alcohol/restaurants/entertainment) -- a genuinely different tax, flagged explicitly so it isn't mistaken for a local income tax the way Wisconsin's county sales-tax table was flagged in that file.",
+    "confidence": "cross_source_confirmed -- consistent across every source checked, no dissent found, but not tied to one specific enabling/prohibiting statute citation the way this project's strongest 'no local tax' claims (e.g. Wisconsin's) are."
+  },
+  "paidLeave": {
+    "rule": "NONE. South Dakota has no state Paid Family/Medical Leave program, mandatory or voluntary -- a genuine structural difference from New Hampshire and Vermont, which each have at least a voluntary program on the books. Nothing to disclose as a knownGap here because there is no program of any kind to model, not an unmodelled one."
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable rather than 'checked, none found' -- South Dakota has no income tax to be reciprocal about. reciprocalStates left structurally empty for consistency with every other state file's shape, same convention as New Hampshire's."
+  },
+  "knownGaps": [
+    "The experience-rated Schedule A/B contribution-rate table is only partially transcribed (4 of many rows) -- not pursued to full completeness because South Dakota has no income tax and the table is unusable without a reserve-ratio input this engine doesn't carry regardless of completeness.",
+    "Local-tax and UI figures rest on the DLR's own primary pages (strong) plus one secondary cross-check (onpay.com, not independently fetched in full) -- not a weakness specific to this file, but recorded per this project's standing confidence-tier convention."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 15000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.012,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.095
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "WA",
+    "name": "Washington"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 17.13,
+    "hourlyCents": 1713,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All covered employers, aged 16 and over. The highest STATE minimum wage in the country for 2026.",
+    "note": "RCW 49.46.020 annual CPI-W adjustment."
+  },
+  "tipped": {
+    "tipCreditAllowed": false,
+    "cashWage": 17.13,
+    "cashWageCents": 1713,
+    "maxTipCredit": 0.0,
+    "maxTipCreditCents": 0,
+    "tippedEmployeeThreshold": null,
+    "note": "This state allows NO tip credit: the full state minimum wage must be paid in cash before any tips. RCW 49.46.020 -- Washington has never allowed a tip credit, and neither do any of its eight local ordinances."
+  },
+  "variants": [
+    {
+      "hourly": 14.56,
+      "hourlyCents": 1456,
+      "id": "minor_14_15",
+      "label": "Employees aged 14 and 15",
+      "test": "85% of the state minimum wage -- 85% of $17.13 = $14.5605, published as $14.56.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W (US city average)",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Eight Washington cities and counties set higher local rates, several with employer-size tiers and one with a MID-YEAR step -- see local/WA-local-2026.json."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Washington State Department of Labor & Industries -- Washington's minimum wage going up to $17.13 an hour in 2026",
+      "url": "https://www.lni.wa.gov/news-events/article/25-27",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session: L&I's own announcement gives $17.13 for 2026 and states that employers may pay 85 percent of the minimum wage to workers aged 14-15, i.e. $14.56."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

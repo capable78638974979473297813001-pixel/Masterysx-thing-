@@ -1,0 +1,618 @@
+{
+  "$comment": "Alabama's municipal Occupational Tax (Code of Ala. Sec. 11-51-90, home-rule municipal license/privilege taxing power) -- a flat percentage of GROSS WAGES earned working within the municipality, applied to residents and nonresidents alike (work-location-based, no separate resident/nonresident rate the way Michigan's cities have). Unlike Ohio/Pennsylvania, Alabama has NO state-run bulk database of local rates -- the closest thing to an authoritative aggregator is the Alabama League of Municipalities' own member survey.",
+  "year": 2026,
+  "asOf": "2026-09-28",
+  "source": {
+    "title": "Alabama League of Municipalities -- Municipal Tax Rates, 'Municipal Occupational Taxes' section",
+    "url": "https://almonline.org/TaxRates.aspx",
+    "fetchedOn": "2026-08-25",
+    "fetchedBy": "Raw HTML fetched directly via curl (not just a WebFetch AI summary -- the summary was independently cross-checked byte-for-byte against the raw HTML's <div id=\"OccupationalTax\"> section before trusting it; both matched exactly). This is the Alabama League of Municipalities' own tax-rate reference, the closest thing this state has to a centralized aggregator (there is no state-government-run database the way Ohio's Finder or Kentucky's SOS site are) -- but the page itself is explicit about its own limits: 'All city and county rates are those given to the League by survey and should be verified with the appropriate entity for updates' and 'The Alabama League of Municipalities takes no responsibility for and makes no assertions as to the accuracy of this tax rate information.'"
+  },
+  "reverification": {
+    "on": "2026-08-26",
+    "how": "ALM's TaxRates.aspx re-fetched with curl and the raw <div id=\"OccupationalTax\"> block re-read directly (not via an AI summary), during the Alabama input/output pass. Result: UNCHANGED -- the same 25 municipalities at the same 25 rates, in the same three columns. No city added, none removed, no rate moved.",
+    "why": "A survey-sourced list is exactly the kind that goes stale silently, so 'still says the same thing' is a finding worth dating rather than an assumption worth carrying."
+  },
+  "nameMatching": {
+    "$comment": "Lookup is by name, so a name the caller spells the way the WORLD spells it must still resolve. ALM's own page prints \"Hacklebug\", which is not a place: the Marion County town is HACKLEBURG (population ~1,500, the one flattened by the 2011 tornado), and it sits among the other Marion/Winston County towns on ALM's own list -- Bear Creek, Brilliant, Guin, Hamilton, Lynn -- which is exactly where a Hackleburg entry belongs. Rather than silently correct a source this project quotes, the entry keeps ALM's spelling as its canonical name and gains an alias, so both spellings resolve to the same 1% and the discrepancy stays visible instead of being tidied away. If ALM's spelling turns out to be right and some other 'Hacklebug' exists, nothing has been lost -- the alias simply never matches.",
+    "aliasesAreMatchedBy": "alMunicipalityRuleset() in src/registry.ts, case-insensitively, against name and every alias."
+  },
+  "confidence": "Per entry -- see each entry's confirmation.tier. primary_source: the levying body's own ordinance, form or page, or the collecting agent's current return (Neumo 01/2026), or statute. league_survey_only: only the Alabama League of Municipalities' survey; these lines carry a secondary_source notice. conflicting_sources: Tuskegee, whose own form (3%) disagrees with the League (2%). As of 2026-09-28: 20 municipalities + Macon County primary, 8 league-survey-only (Bear Creek, Brilliant, Gadsden, Glencoe, Goodwater, Haleyville, Lynn, Red Bay), 1 conflicting (Tuskegee).",
+  "municipalityCount": 29,
+  "municipalities": [
+    {
+      "name": "Attalla",
+      "rate": 0.02,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Attalla 2% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Auburn",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Auburn -- Occupational License Fee",
+            "url": "https://www.auburnal.gov/revenue/tax-information/occupational-license-fee/",
+            "says": "occupational license fee of 1%",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bear Creek",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Beaverton",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Beaverton 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      },
+      "$addedNote": "ADDED 2026-09-28: collected by Neumo, never on the League survey."
+    },
+    {
+      "name": "Bessemer",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Bessemer Revenue Department -- Occupational Tax return (older text-layer copy; the current city copy is a scanned image)",
+            "url": "http://www.zillionforms.com/2008/F108407145.PDF",
+            "says": "Each employer of one or more persons must withhold an occupational tax at the rate of 1% from gross salaries, wages, and commissions",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Birmingham",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Birmingham -- Employers Return of Occupational Tax Withheld",
+            "url": "https://birminghamal.hdlgov.com/base64files/TAXES_FORM_4.pdf",
+            "says": "Each employer of one or more persons must withhold an occupational tax at the rate of 1% from gross salaries, wages and commissions",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Brilliant",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Fairfield",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Fairfield -- Ordinance 1019, Occupational Tax",
+            "url": "https://cityoffairfieldal.org/wp-content/uploads/2025/02/Ordinance-1019-Occupational-Tax_rotated.pdf",
+            "says": "a Fee in the amount of One Percent (1%) of the Gross Receipts and Compensation",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Gadsden",
+      "rate": 0.02,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          },
+          {
+            "title": "Gadsden-Etowah Industrial Development Authority -- Taxes and Fees",
+            "url": "https://gadsdenida.org/taxes-and-fees/",
+            "fetchedOn": "2026-09-30",
+            "says": "Gadsden and some other municipalities have an occupational license fee of 2%, withheld from employee salaries and remitted by the employer.",
+            "note": "Corroborates the survey but is not the city's own document; the city's Form G-3 (Ordinance No. 1777, as amended) prints no rate, so the tier stays league_survey_only."
+          }
+        ]
+      }
+    },
+    {
+      "name": "Glencoe",
+      "rate": 0.02,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Glencoe -- Form G-1, Employer's Monthly/Quarterly Return of Occupational Tax Withheld (Ordinance #2010-002)",
+            "url": "https://cityofglencoe.org/wp-content/uploads/2021/09/Glencoe-Occupational-Tax-Form.pdf",
+            "fetchedOn": "2026-09-30",
+            "says": "Each employer of one or more persons must withhold an occupational tax at the rate of 2% from gross salaries, wages and commissions paid for work or services performed within the City of Glencoe."
+          },
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Goodwater",
+      "rate": 0.0075,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Guin",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Guin 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      },
+      "policeJurisdictionNote": "ADOR notice 2026-05-27: Guin missed its Ala. Code 11-51-91(c) police-jurisdiction report, so from 2026-06-01 it may not collect license taxes in its police jurisdiction OUTSIDE the city limits. Work inside the city limits (the only case this file models) is unaffected."
+    },
+    {
+      "name": "Hacklebug",
+      "rate": 0.01,
+      "aliases": [
+        "Hackleburg"
+      ],
+      "$aliasNote": "ALM prints \"Hacklebug\"; the real Marion County town is Hackleburg. See nameMatching above.",
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Hackleburg 1% -- Neumo spells it correctly, confirming the alias (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Haleyville",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Hamilton",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Hamilton 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Irondale",
+      "rate": 0.005,
+      "effectiveFrom": "2024-07-02",
+      "rateHistory": [
+        {
+          "from": "2018-08-01",
+          "rate": 0.01,
+          "basis": "original levy"
+        },
+        {
+          "from": "2022-07-19",
+          "rate": 0.0075,
+          "basis": "Ordinance 2022-14"
+        },
+        {
+          "from": "2024-07-02",
+          "rate": 0.005,
+          "basis": "Ordinance 2024-12"
+        }
+      ],
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Irondale -- Occupational License Fee",
+            "url": "https://cityofirondaleal.gov/occupational-license-fee/",
+            "says": "1% from 2018-08-01; reduced to 0.75% by Ord. 2022-14 (2022-07-19) and to 0.50% by Ord. 2024-12 (2024-07-02)",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      },
+      "$addedNote": "ADDED 2026-09-28: self-administered, never on the League survey."
+    },
+    {
+      "name": "Leeds",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Leeds -- Occupational Tax",
+            "url": "https://www.leedsalabama.gov/471/Occupational-Tax",
+            "says": "The Occupational Tax is set at 1% of gross receipts or compensation",
+            "fetchedOn": "2026-08-31"
+          },
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Leeds 1% (rate column on the 01/2026 return)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Lynn",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Midfield",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Midfield 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Mosses",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Mosses 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Notasulga",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Town of Notasulga -- Occupational License (Ordinance No. 97-11-01)",
+            "url": "https://notasulgaal.com/occupational-license",
+            "says": "a license fee equal to one percent (1%) of any salaries, wages, commissions ... earned in Notasulga",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      },
+      "$addedNote": "ADDED 2026-09-28: self-administered, never on the League survey. Straddles Macon and Lee counties; the town tax applies throughout its limits."
+    },
+    {
+      "name": "Opelika",
+      "rate": 0.01,
+      "$correctionNote": "CORRECTED 2026-08-31: this file had 0.015 (1.5%), stale since 2025-04-01. Opelika City Council cut the occupational tax back to its original rate of 1%, effective 2025-04-01, confirmed directly from the city's own announcement (opelika-al.gov/CivicAlerts.aspx?AID=1092): 'After 34 years at 1.5 percent, the city council has voted to lower the occupational tax back to its original rate of 1 percent, effective April 1, 2025.' Every 2026 check date is past that effective date, so 1.5% was actively wrong money for this entire tax year until this fix.",
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Opelika -- announcement of the occupational tax cut",
+            "url": "https://www.opelika-al.gov/CivicAlerts.aspx?AID=1092",
+            "says": "lower the occupational tax back to its original rate of 1 percent, effective April 1, 2025",
+            "fetchedOn": "2026-08-31"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rainbow City",
+      "rate": 0.02,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Rainbow City -- Form G-1 (Rev 12/20), occupational license fee return",
+            "url": "https://www.rbcalabama.com/download/revenue-g-1/?wpdmdl=730&masterkey=60c8bce41072f",
+            "says": "Each employer ... must withhold the license fee of 2% from gross salaries, wages, and ...",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Red Bay",
+      "rate": 0.005,
+      "confirmation": {
+        "tier": "league_survey_only",
+        "sources": [
+          {
+            "title": "Alabama League of Municipalities survey",
+            "url": "https://almonline.org/TaxRates.aspx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Shorter",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Shorter 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Southside",
+      "rate": 0.02,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Southside 2% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "City of Southside -- Occupational Tax Return (06/30/2022)",
+            "url": "https://cityofsouthside.com/wp-content/uploads/2023/02/Occupational-Tax-Return.pdf",
+            "says": "2%",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sulligent",
+      "rate": 0.01,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Sulligent 1% (rate column on the 01/2026 return)"
+          },
+          {
+            "title": "Neumo -- Universal Annual Reconciliation, Occupational, 2026 (same jurisdiction list)",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Universal%20Annual%20Reconciliation-Occupational%202026.pdf",
+            "fetchedOn": "2026-09-28"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tarrant",
+      "rate": 0.005,
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "City of Tarrant -- occupational license fee ordinance (Municode)",
+            "url": "https://mcclibraryfunctions.azurewebsites.us/api/ordinanceDownload/10178/1047327/pdf",
+            "says": "one-half percent (0.5%) of the gross income and compensation; set to expire 2020-09-30 unless extended",
+            "fetchedOn": "2026-09-28"
+          },
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Tarrant 1/2% -- shows the levy was extended past its 2020 sunset (rate column on the 01/2026 return)"
+          }
+        ]
+      },
+      "policeJurisdictionNote": "ADOR letter 2025-04-18: Tarrant missed its Act 2021-297 police-jurisdiction report, so police-jurisdiction collections OUTSIDE the city limits were cut to zero from 2025-06-01 and ADOR's 2026-04-21 list does not restore them. Work inside the city limits is unaffected.",
+      "$addedNote": "ADDED 2026-09-28: collected by Neumo, never on the League survey."
+    },
+    {
+      "name": "Tuskegee",
+      "rate": 0.03,
+      "confirmation": {
+        "tier": "conflicting_sources",
+        "sources": [
+          {
+            "title": "City of Tuskegee -- Occupational Tax Reporting form",
+            "url": "https://www.tuskegeealabama.gov/finance-department/files/occupational-tax-form",
+            "says": "TOTAL TAX DUE (3% OF LINE 2)",
+            "fetchedOn": "2026-09-28"
+          },
+          {
+            "title": "City of Tuskegee -- business information brochure",
+            "url": "https://www.tuskegeealabama.gov/sites/g/files/vyhlif3946/f/uploads/infobrochure_word.pdf",
+            "says": "readable fragment: \"to 3% of\" in the occupational license section",
+            "fetchedOn": "2026-09-28"
+          }
+        ],
+        "conflict": "The Alabama League of Municipalities survey (and this file until 2026-09-28) says 2%. Tuskegee's own current return form computes the tax at 3%, and the city is the levying body, so 3% is used. The ordinance itself was not found online. The 2016 ADOR notice about a 2% Tuskegee levy is a SALES tax extension and says nothing about the occupational rate. Confirm with Tuskegee's Finance Department (334-720-0500) before relying on either figure."
+      },
+      "$correctionNote": "CORRECTED 2026-09-28: was 0.02 from the League survey; Tuskegee's own form says 3%. See confirmation.conflict."
+    }
+  ],
+  "jeffersonCountyOccupationalTax": {
+    "status": "DOES NOT EXIST -- corrects a real error this project's own AL-2026.json previously carried ('Jefferson County ALSO levies its own separate county-level occupational tax'). PRIMARY-SOURCE CONFIRMED DEAD: the Alabama State Comptroller's own memo (dated 2011-03-23, fetched directly via pdftotext after WebFetch's HTML conversion failed on the scanned PDF) instructs verbatim: 'In accordance with the Supreme Court's ruling, all collections for Jefferson County Occupational Tax must be stopped immediately... No deductions will be withheld on the April 1, 2011 payday.' Root cause per secondary corroboration: the Alabama Legislature repealed the enabling statute in 1999 and never validly replaced it; the county kept collecting anyway until the Alabama Supreme Court definitively ended it in March 2011. Jefferson County's own current official Revenue page (jccal.org) lists business/sales/lodging/motor-vehicle taxes but no occupational or wage tax, confirming no reinstatement as of this pass. Birmingham (which sits in Jefferson County) is NOT double-taxed -- only its own 1% municipal occupational tax applies.",
+    "source": {
+      "title": "Alabama State Comptroller -- Memorandum, 'Jefferson County Occupational Tax'",
+      "url": "https://comptroller.alabama.gov/wp-content/uploads/2018/01/Jefferson-County-Occupational-Tax.pdf",
+      "verifiedOn": "2026-08-25",
+      "verifiedBy": "PDF fetched directly, text extracted via pdftotext -layout (same extraction-hazard class as Denver's OPT guide -- WebFetch's own HTML conversion failed on this scanned document). Quoted verbatim above."
+    }
+  },
+  "notCapturedYet": "Nothing known. Macon County's 1% county fee, deliberately left out before for lack of a source, is now in counties[] on the strength of its statute and Neumo's 01/2026 return, which lists it as a live jurisdiction.",
+  "knownGaps": [
+    "RESOLVED 2026-09-28 for 20 of 29 municipalities and Macon County (see confirmation on each entry). Glencoe confirmed 2026-09-30 from its own Form G-1 (2%). Still survey-only: Bear Creek, Brilliant, Gadsden, Goodwater, Haleyville, Lynn, Red Bay (Gadsden's 2% is corroborated by the Gadsden-Etowah IDA but not by a city document; Haleyville's 2026 return is a .docx no available fetcher could read; Goodwater's published fee schedule covers business licenses only) -- each carries a secondary_source notice on every paycheck.",
+    "No taxable-base detail (exemptions, minimum earnings thresholds, residency treatment) was independently confirmed per city beyond Birmingham's general 'gross pay, residents and nonresidents alike' convention -- assumed uniform across all 25 cities, not individually verified.",
+    "No inter-jurisdiction credit mechanism (the OH ORC-718.121 equivalent, for an employee who lives in one taxing AL city and works in another) was found or confirmed to exist for Alabama -- unlike Ohio, no evidence was found that Alabama cities tax based on RESIDENCE at all, only work location, so this may be a non-issue rather than an unmodelled gap; not certain either way. CHECKED AGAIN (this pass) and the answer sharpened rather than repeated: Birmingham's own occupational tax code DOES contain an inter-municipal provision, but it is a refund procedure for tax ERRONEOUSLY paid to another municipality — the paying city refunds it and Birmingham holds off assessing until the refund arrives. That is a correction mechanism for a misdirected payment, not an Ohio-style credit for an employee who legitimately owes two cities. So the absence stands, and it is now an absence that was looked for in the right place.",
+    "This list may not be exhaustive -- the 2026-09-28 pass found 4 towns and 1 county the League survey never listed (Beaverton, Irondale, Notasulga, Tarrant, Macon County). Alabama has no state register of occupational taxes, so another unlisted town is possible.",
+    "PARTIAL SPOT-CHECK 2026-08-25/2026-08-31 with real internet access: 9 of the 25 cities now have independent corroboration beyond the ALM survey. Confirmed MATCHING the rate on file: Birmingham 1% (Bhamwiki + the city's own Ordinance 20-38, indexed via Municode), Auburn 1% (the city's own auburnal.gov occupational-license-fee page), Bessemer 1% (consistent across multiple payroll-industry guides), and Gadsden/Attalla/Glencoe/Rainbow City/Southside all 2% (a single ABC 33/40 news article naming all five Etowah County cities together at 2%, independent of the ALM survey). One REAL CORRECTION found and fixed: Opelika was on file at 1.5%, but the city cut it to 1% effective 2025-04-01 (confirmed directly from opelika-al.gov's own announcement) -- every 2026 check date was using a stale, too-high rate until this pass. One INVESTIGATED BUT UNCONFIRMED lead, deliberately NOT added: a 2023 news article and a payroll-aggregator page both claim Macon County (not just Tuskegee, its county seat, which is already on this list) separately levies its own 1% COUNTY-level occupational tax -- but Macon County's own two government sites (maconalabama.com, maconcountyal.com) make no mention of it anywhere on their revenue/finance pages, and this project has direct precedent for exactly this failure mode: an earlier pass added a very similar-sounding 'Jefferson County occupational tax' claim that turned out to be a tax the AL Supreme Court struck down in 2011, with the county still not collecting it today (see jeffersonCountyOccupationalTax above). Given that precedent, a thin secondary claim with no county-site corroboration is not enough to add a new jurisdiction here; flagged for a future pass with time to find the county's own ordinance or contact its revenue office. The other 16 cities (Bear Creek, Brilliant, Fairfield, Goodwater, Guin, Hacklebug/Hackleburg, Haleyville, Hamilton, Leeds, Lynn, Midfield, Mosses, Red Bay, Shorter, Sulligent, Tuskegee) remain on ALM-survey-only confidence -- small towns with little independent web presence to cross-check against; not attempted further this pass. FOLLOW-UP 2026-08-31: Leeds confirmed 1% directly from the city’s own page (leedsalabama.gov/471/Occupational-Tax, fetched and read: ‘The Occupational Tax is set at 1% of gross receipts or compensation’), independent primary confirmation, moved up with Birmingham/Auburn/etc. Hamilton, Guin, Brilliant, Sulligent, Bear Creek, and Red Bay all came back matching this file exactly (1%, 1%, 1%, 1%, 1%, 0.5% respectively) via WebSearch, but every result traced back to the same ALM survey data already on file rather than each city’s own ordinance -- consistent, not independently corroborated, so left at ALM-survey confidence rather than upgraded. Haleyville: found what should be a strong primary source (an Alabama Dept of Revenue-hosted PDF specifically named for the city, revenue.alabama.gov), but it is a scanned image with no text layer and this environment has no OCR tooling (no tesseract/pdftoppm/pdftotext available) to read it -- a real, disclosed access limitation, not a skipped attempt. Fairfield, Midfield, Goodwater, Shorter, and Mosses: searched, found nothing beyond what ALM already provides. FOLLOW-UP 2026-08-31, same day, user asked for a no-restraints push after reverting an unrelated KY change: (1) Independently corroborated this file's scope, not just individual rates -- a Revenue Discovery Systems-sourced figure states '25 cities in Alabama collect an occupational license tax' (matching this file's count exactly) and separately that 'seven municipalities' were above 1% before Opelika's 2025 cut to 1% (5 Etowah County cities + Tuskegee + pre-cut Opelika = 7, consistent with this file's own history) -- real evidence this is the correct, complete list, not just an assumption. (2) Ran down the Montgomery lead one general search surfaced ('over two dozen cities... Montgomery' as having an occupational tax): found and read the actual source, a 2020 Alabama Daily News article headlined 'Montgomery occupational tax becomes state issue' -- its own dateline and metadata describe a PROPOSED tax facing opposition from state employee groups and a bill to ban it statewide, not an enacted one. Montgomery correctly remains absent from this list. (3) Macon County: searched again with different terms (commission minutes, ordinance text) -- still nothing found beyond the original low-confidence claim; status unchanged, deliberately still not added. (4) Attempted the primary ordinance PDFs directly for Fairfield (Ordinance 1019, cityoffairfieldal.org) and Tuskegee (its own info brochure, tuskegeealabama.gov) -- both are scanned or malformed-encoding PDFs that extract as blank or badly garbled text (Tuskegee's did yield a readable fragment 'to 3% of' near billing-cycle language, but immediately adjacent text reads '5% [penalty]... 1% [interest] each month' -- a late-payment penalty structure, not the tax rate itself, so NOT used to override the existing 2% figure). Same OCR-tooling gap already disclosed for Haleyville. (5) Tried direct city-hall lookups and guessed official-domain fetches for Bear Creek, Brilliant, Guin, Hackleburg, Lynn, Red Bay, Sulligent, Hamilton, Shorter, Mosses -- most of these towns have no functioning website reachable from this environment at all (connection rejected or refused, not merely thin content), a genuinely different and harder wall than KY's small towns (which mostly had a site, just not a rate published on it). No new per-city rate upgrades resulted from this pass beyond what was already confirmed 2026-08-25/31. This is believed to be close to the practical ceiling for a web-research-only pass on Alabama -- closing the remaining 14 (Bear Creek, Brilliant, Fairfield, Goodwater, Guin, Hacklebug/Hackleburg, Haleyville, Hamilton, Lynn, Midfield, Mosses, Red Bay, Shorter, Sulligent, plus Tuskegee at only-2%-not-primary-confirmed) would need phone or mail contact with each town clerk, or OCR tooling this environment does not have. ONE MORE LEAD CHASED DOWN, ALSO A DEAD END: the AL Dept of Revenue's own 'self-administered localities' contact page (revenue.alabama.gov) reveals that 11 of the remaining unconfirmed cities -- Hamilton, Brilliant, Sulligent, Lynn, Bear Creek, Hackleburg, Red Bay, Shorter, Mosses, Midfield, and Goodwater -- are ALL administered by the same private third-party agent (Avenu Insights/Revenue Discovery Systems, rebranding to 'Neumo' as of this pass). That looked like exactly the kind of single-aggregator shortcut that closed out Ohio's and Kentucky's local-tax gaps elsewhere in this project, so it was chased hard: RDS's own taxpayer portal (revds.com) does publish a public 'Rate Sheet' for the cities and counties it administers, fetched and read directly -- but it covers only SALES/USE tax rates (general, manufacturing, farm, auto, linen, grocery columns), with zero mention of occupational, payroll, or wage tax anywhere in the document. RDS's own 'Occupational Withholding Tax' forms folder has exactly two files, both blank fillable templates ('Universal Annual Reconciliation' and a generic 'Occupational Form') with no rate table embedded -- confirming this administrator simply does not publish occupational tax rates publicly the way it does for sales tax. This closes off what looked like the most promising remaining avenue; the wall for these 11 (and the other 3-4 not on RDS) is real, not a search that stopped short."
+  ],
+  "counties": [
+    {
+      "name": "Macon",
+      "rate": 0.01,
+      "statute": "Ala. Code 45-44-244.31 (Act 97-522; Act 2000-490; Act 2019-467)",
+      "appliesTo": "Work performed in the parts of Macon County that were NOT subject to a municipal occupational tax on 2019-06-10. Land annexed into a taxing town after that date stays subject to the county fee.",
+      "exempt": [
+        "persons over 65 who are not gainfully employed",
+        "domestic servants employed in private homes"
+      ],
+      "credit": "Reduced by any license fee the person pays under Ala. Code 40-12-40 (state professional license). Not modelled -- it is a per-person annual credit the employer cannot see.",
+      "excludedMunicipalities": [
+        {
+          "name": "Notasulga",
+          "basis": "Ordinance 97-11-01 (1997) -- taxed long before 2019-06-10."
+        },
+        {
+          "name": "Tuskegee",
+          "basis": "On the League's occupational-tax list in the earliest snapshot found (web.archive.org, 2019-07-08, four weeks after the cutoff) and in every later one."
+        },
+        {
+          "name": "Shorter",
+          "basis": "Same 2019-07-08 League snapshot. Adoption date not published; a town adopting a tax and reaching the survey in those four weeks is implausible, but not proven."
+        }
+      ],
+      "confirmation": {
+        "tier": "primary_source",
+        "sources": [
+          {
+            "title": "Ala. Code 45-44-244.31 (Justia, 2025 code)",
+            "url": "https://law.justia.com/codes/alabama/title-45/chapter-44/article-24/part-5/subpart-2/section-45-44-244-31/",
+            "says": "All employees working within Macon County shall pay a one percent occupational tax relative to the earnings of the employee",
+            "fetchedOn": "2026-09-28"
+          },
+          {
+            "title": "Neumo (formerly Avenu Insights / Revenue Discovery Systems) -- Occupational License Tax Return, rev. 01/2026, the collecting agent's own return form with a per-jurisdiction rate column",
+            "url": "https://revds.com/taxpayerpdfs/Alabama/taxpayerforms/Occupational%20Withholding%20Tax/Neumo%20Occupational%20Form.pdf",
+            "fetchedOn": "2026-09-28",
+            "says": "Macon County (code 7044) 1% (rate column on the 01/2026 return)"
+          }
+        ]
+      }
+    }
+  ],
+  "reverification2026_09_28": "Primary-source pass. Neumo's 01/2026 occupational return lists 13 jurisdictions with rates (Attalla, Beaverton, Guin, Hackleburg, Hamilton, Leeds, Macon County, Midfield, Mosses, Shorter, Southside, Sulligent, Tarrant) -- the rate table the 2026-08-31 pass could not find. City forms/ordinances confirmed Birmingham, Bessemer, Fairfield, Rainbow City, Auburn, Leeds, Opelika. Found four taxing towns the League never listed (Beaverton, Irondale, Notasulga, Tarrant) and one county (Macon). Corrected Tuskegee 2% -> 3%. Gadsden (city form omits the rate), Glencoe, Goodwater, Haleyville, Bear Creek, Brilliant, Lynn and Red Bay: no primary source reachable; they keep the survey figure and a notice."
+}

@@ -1,0 +1,99 @@
+{
+  "code": "GA",
+  "name": "Georgia",
+  "year": 2026,
+  "method": "georgia_status_deduction",
+  "sources": [
+    {
+      "title": "Employer's Withholding Tax Guide 2026 (Revised June 2026, reflecting HB 463 signed 2026-05-11)",
+      "url": "https://dor.georgia.gov/document/document/2026-employers-tax-guide-updated-june-2026/download",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded directly from dor.georgia.gov's own current document link (found via dor.georgia.gov/employers-tax-guide -- two earlier attempts at guessed/search-indexed URL variants both 404'd) and read in full. REAL CATCH mid-pass: a third-party mirror fetched FIRST (accountingware.com, since dor.georgia.gov's search-indexed URLs 404'd) turned out to be the STALE pre-HB-463 version -- still showing 5.19%/$12,000/$24,000/$4,000 figures. Cross-checked against the Governor's own press release (gov.georgia.gov, 'lowers Georgia's state income tax rate from 5.19% to 4.99%, beginning January 1, 2026') and Bloomberg Tax's coverage before trusting either figure, then found and fetched the ACTUAL current dor.georgia.gov document directly rather than building off the stale mirror. Both Table E and Table F worked examples reproduced exactly (semimonthly $2,000 MFJ/1 dependent -> $27.03; biweekly $935 HoH/2 dependents -> $0.00)."
+    },
+    {
+      "title": "Governor Brian Kemp -- press release, HB 463 signed 2026-05-11",
+      "url": "https://gov.georgia.gov/press-releases/2026-05-11/gov-kemp-signs-legislation-lowering-taxes-and-supporting-economic-growth",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly. Quoted verbatim: 'lowers Georgia's state income tax rate from 5.19% to 4.99%, beginning January 1, 2026.' This is the source for the MID-YEAR EMPLOYER TRANSITION DATE (2026-05-11) -- the employer's guide itself states the rate change is 'retroactive to taxable years beginning on or after January 1, 2026' for the RETURN, but 'Employers must continue to withhold at the rate of 5.19% before the effective date of the change and can begin withholding at the new rate of 4.99%, starting May 11, 2026' for WITHHOLDING specifically -- the same shape as Ohio's HB96 mid-year cut elsewhere in this project (a retroactive statutory change with a later withholding-transition date)."
+    },
+    {
+      "title": "Georgia DOR Issues Revised 2026 Employer's Withholding Tax Guide (Bloomberg Tax)",
+      "url": "https://news.bloombergtax.com/daily-tax-report-state/georgia-dor-issues-revised-2026-employers-withholding-tax-guide",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Cross-source confirmation of the same figures independently found in the primary document: standard deduction $30,000 MFJ / $15,000 Single-HoH-MFS, dependent allowance raised from $4,000 to $5,000, rate 5.19%->4.99%."
+    },
+    {
+      "title": "Form G-4 (Rev. 06/03/26) -- State of Georgia Employee's Withholding Allowance Certificate",
+      "url": "https://dor.georgia.gov/document/form/tsdemployeeswithholdingallowancecertificateg-4pdf/download",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly, both pages. Already reflects HB 463's NEW $15,000/$30,000 standard deduction figures in its own 'Worksheet for Calculating Additional Allowances' (used only for a SEPARATE itemizer's-additional-allowance calculation, not the base withholding formula) -- this was the first signal this pass that the initially-fetched guide mirror was stale, since the G-4 form's own numbers didn't match it. Confirms the 4-letter marital-status code (A=Single, B=MFJ/MFS both spouses working, C=MFJ one spouse working, D=HoH) and zero reciprocity language."
+    },
+    {
+      "title": "USDA National Finance Center -- Georgia State Income Tax Withholding bulletin (2026)",
+      "url": "https://help.nfc.usda.gov/bulletins/2026/1784643404.htm",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly ('verify Alabama and Georgia, make sure it's right' pass) -- an independent federal payroll shared-service that re-derives every state's own withholding formula for its own processing, the same source class that caught a real Massachusetts formula error earlier in this project. CAUGHT A REAL BUG: this file's original version read certificate.filingStatus === 'married_filing_joint' as sufficient to grant the higher $30,000/$24,000 standard deduction, with no distinction for whether both spouses work. NFC's own bulletin (using its own S/M/N/H lettering, not G-4's A/B/C/D, but identical substance) states directly: code M = 'Married, Filing Joint Return (One Spouse Working)' -> $30,000; code N = 'Married, Filing Separate Returns or Joint Return (Both Spouses Working)' -> $15,000, the SAME lower figure as Single/HoH. Fixed: georgiaWithholding() now reads certificate.georgiaMaritalStatus as G-4's own A/B/C/D letters and grants the higher deduction ONLY for C."
+    }
+  ],
+  "georgiaStatusDeduction": {
+    "$comment": "A genuine MID-YEAR change, not just a year-over-year one -- HB 463 cut the rate and raised the standard deduction/dependent allowance retroactively to 2026-01-01, but the EMPLOYER WITHHOLDING transition date is 2026-05-11 specifically (quoted directly from both the Governor's press release and the employer guide itself). Both tables verified against the guide's own worked examples for their respective periods. CORRECTED after an independent verification pass (2026-08-21): the higher MFJ standard deduction applies ONLY when one spouse works (G-4's own Status C). An employee who is MFJ with BOTH spouses working (G-4's Status B) gets the SAME lower deduction as Single/HoH/MFS -- confirmed independently via USDA NFC's own withholding bulletin (help.nfc.usda.gov/bulletins/2026/1784643404.htm), which uses its own S/M/N/H lettering but states the identical substance verbatim: code M = 'Married, Filing Joint Return (One Spouse Working)' = $30,000; code N = 'Married, Filing Separate Returns or Joint Return (Both Spouses Working)' = $15,000. The original version of this file only checked for a generic 'married_filing_joint' status with no one-vs-both-working distinction at all, which would have silently overpaid the $30,000 deduction to any MFJ-both-working employee.",
+    "statusCodesG4": "Form G-4's own Line 3 letters: A=Single, B=Married Filing Separate OR Married Filing Joint (both spouses working), C=Married Filing Joint (one spouse working), D=Head of Household. ONLY C gets the higher standard deduction below -- engine reads certificate.georgiaMaritalStatus as one of these 4 letters, defaulting to the lower bucket (same as A/B/D) when absent, consistent with this project's 'absent certificate defaults to the least generous outcome' convention.",
+    "effectiveDateOfNewTable": "2026-05-11",
+    "beforeMay11_2026": {
+      "rate": 0.0519,
+      "standardDeductionAnnual": { "marriedFilingJointOneSpouseWorks": 24000.0, "everyoneElse": 12000.0 },
+      "dependentAllowanceAnnual": 4000.0,
+      "verifiedExample1": "Semimonthly $1,470.83, MFJ one spouse working (Status C), 1 dependent: 1,470.83 - 1,000.00 (Table E(1)) - 166.67 (Table E(4)) = 304.16 taxable x 5.19% = $15.79.",
+      "verifiedExample2": "Biweekly $730.77, HoH, 2 dependents: 730.77 - 461.54 (Table F(1)) - 307.70 (Table F(4), 153.85x2) = -38.47 -> floored to $0.00 taxable x 5.19% = $0.00."
+    },
+    "fromMay11_2026": {
+      "rate": 0.0499,
+      "standardDeductionAnnual": { "marriedFilingJointOneSpouseWorks": 30000.0, "everyoneElse": 15000.0 },
+      "dependentAllowanceAnnual": 5000.0,
+      "verifiedExample1": "Semimonthly $2,000.00, MFJ one spouse working (Status C), 1 dependent: 2,000.00 - 1,250.00 (Table E(1)) - 208.33 (Table E(4)) = 541.67 taxable x 4.99% = $27.03.",
+      "verifiedExample2": "Biweekly $935.00, HoH, 2 dependents: 935.00 - 576.92 (Table F(1)) - 384.62 (Table F(4), 192.31x2) = -26.54 -> floored to $0.00 taxable x 4.99% = $0.00."
+    },
+    "formula": "Annualize wages (periodWages x periodsPerYear). Subtract the standard deduction: the HIGHER figure ONLY for MFJ-one-spouse-working (Status C); every other status (A/B/D -- Single, HoH, MFS, MFJ-both-working) shares the SAME lower figure. If dependents are claimed, also subtract dependentAllowanceAnnual x count. Multiply the remainder (floored at $0) by the flat rate. Divide by periods. No whole-dollar rounding (cent precision throughout, confirmed by both worked examples' own cent-level answers)."
+  },
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "Confirmed directly via the guide's own FAQ, the cleanest confirmation tier this project uses for this recurring question: 'Are contributions to qualified 401(k), profit sharing, or deferred compensation plans taxable? No.'",
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: the current 2026 guide (read in full) and Form G-4 both contain zero reciprocity language. Georgia has no bilateral reciprocity agreement with any state.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. Georgia statutorily preempts any city or county from levying a local income/wage tax -- confirmed structural, not just an observed absence, consistent with every source checked.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE. No mandatory or voluntary state-authorized paid family/medical leave program of any kind found for Georgia.",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "Georgia Department of Labor",
+    "wageBase": 9500.0,
+    "newEmployerRate": 0.027,
+    "newEmployerRateNote": "Maximum annual contribution $256.50/employee at this rate (9,500 x 2.7%), per GA DOL's own 2026 Annual Tax Rate Notice framing.",
+    "experiencedEmployerRateRange": [0.0004, 0.081],
+    "confidence": "cross_source_confirmed only, not independently fetched from dol.georgia.gov's own DOL-626 notice this pass.",
+    "knownGap": "STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "This state's employer-side UC rate is cross-source only, not primary-sourced. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "Qualified Overtime Compensation and Cash Tips (a new HB 463 provision, Georgia's own limited-adoption version of the federal overtime/tips exemptions) is named in the guide's 'What's New' section but not independently researched or modelled this pass -- flagged as a real, dated (2026) provision worth a follow-up, not silently ignored.",
+    "The SALT-deduction-cap decoupling and other HB 1199 federal-conformity details are noted in the guide but don't bear on wage withholding specifically -- out of scope, noted for completeness only."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 9500,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.0004,
+      "max": 0.081
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

@@ -1,0 +1,307 @@
+{
+  "state": "NY",
+  "year": 2026,
+  "asOf": "2026-09-09",
+  "$comment": "Employee-COUNT-triggered legal obligations for a New York employer -- NOT wage or tax figures, and NOT wired into this engine's calculate() path. See this folder's own README for full scope, and data/minimum-wage/states/NY-2026.json's own employer-SIZE-tier machinery (none exists for NY's minimum wage itself) for the different, narrower kind of size question that IS sometimes machine-readable elsewhere in this project.",
+  "thresholds": [
+    {
+      "id": "ny_paid_sick_leave",
+      "law": "N.Y. Lab. Law 196-b (Paid Sick Leave Law)",
+      "level": "state",
+      "counts": "Employees anywhere the employer operates (not just NY), counted for the PRIOR calendar year -- and a fourth test, net income, that has nothing to do with headcount at all.",
+      "tiers": [
+        {
+          "employeeCountMax": 4,
+          "condition": "net income <= $1,000,000 in the prior tax year",
+          "entitlement": "40 hours/year, UNPAID"
+        },
+        {
+          "employeeCountMax": 4,
+          "condition": "net income > $1,000,000 in the prior tax year",
+          "entitlement": "40 hours/year, PAID"
+        },
+        {
+          "employeeCountMin": 5,
+          "employeeCountMax": 99,
+          "entitlement": "40 hours/year, PAID"
+        },
+        {
+          "employeeCountMin": 100,
+          "entitlement": "56 hours/year, PAID"
+        }
+      ],
+      "note": "The only NY employee-count law in this file whose smallest tier depends on a SECOND, non-headcount test (net income) -- a 3-employee employer's obligation genuinely cannot be answered from headcount alone.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "N.Y. Labor Law 196-b",
+          "url": "https://codes.findlaw.com/ny/labor-law/lab-sect-196-b/",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (statutory text, not the NY DOL's own summary page)."
+        },
+        {
+          "title": "NY.gov -- New York State Paid Sick Leave FAQ",
+          "url": "https://www.ny.gov/sites/default/files/atoms/files/PSL_FAQ_PaidSickLeaveFAQ.pdf",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "The state's own FAQ document, surfaced by search; agrees with the statutory text on all four tiers. Not fetched and read directly this session -- title and URL confirmed via search, content cross-checked against two independent compliance summaries (SixFifty, EmployerPass) that both cite the same four tiers."
+        }
+      ]
+    },
+    {
+      "id": "ny_paid_family_leave",
+      "law": "N.Y. Workers' Compensation Law Article 9 (Paid Family Leave)",
+      "level": "state",
+      "counts": "N/A -- there is no employee-count floor at all.",
+      "tiers": [
+        {
+          "employeeCountMin": 1,
+          "entitlement": "Every private employer with 1+ employees working in NY on each of 30 days in a calendar year becomes a covered employer 4 weeks after that 30th day."
+        }
+      ],
+      "note": "Included deliberately as a CONTRAST to Paid Sick Leave above: two NY leave laws that sound similar have completely different size logic -- one is a 4-tier headcount ladder, the other has no floor at all. Assuming they share a threshold is a real, easy mistake.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "NY Paid Family Leave -- Private Employer Coverage Requirements",
+          "url": "https://paidfamilyleave.ny.gov/private-employer-coverage-requirements",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "The state's own Paid Family Leave site, surfaced by search this session (not fetched directly); content cross-checked against a second independent compliance summary (Paychex) agreeing there is no size threshold."
+        }
+      ]
+    },
+    {
+      "id": "ny_warn_act",
+      "law": "N.Y. Lab. Law Article 25-A (WARN Act)",
+      "level": "state",
+      "counts": "Full-time employees in New York State.",
+      "employerCoverage": {
+        "employeeCountMin": 50,
+        "note": "Lower than the FEDERAL WARN Act's 100-employee floor -- a NY employer can be covered by state WARN while being too small for federal WARN."
+      },
+      "triggeringEvents": [
+        {
+          "id": "plant_closing",
+          "description": "Closing affecting 25 or more employees."
+        },
+        {
+          "id": "mass_layoff_percentage",
+          "description": "25 or more full-time employees laid off, if that represents at least 33% of all employees at the site."
+        },
+        {
+          "id": "mass_layoff_absolute",
+          "description": "250 or more full-time employees laid off, regardless of what percentage of the site's workforce that represents."
+        },
+        {
+          "id": "relocation_or_hours_reduction",
+          "description": "Certain relocations and covered reductions in work hours also trigger notice; NY's own regulations (not re-fetched in full this session) define these further."
+        }
+      ],
+      "noticePeriod": "90 days -- 50% longer than the federal WARN Act's 60 days.",
+      "confidence": "primary_source_confirmed",
+      "sources": [
+        {
+          "title": "NY Department of Labor -- Worker Adjustment and Retraining Notification (WARN)",
+          "url": "https://dol.ny.gov/worker-adjustment-and-retraining-notification-warn",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Fetched and read directly this session. Source of the 50-employee coverage floor, the 90-day notice period, and the three quoted triggering-event thresholds verbatim."
+        }
+      ],
+      "knownGaps": [
+        "The exact regulatory definition of a covered 'relocation' or 'reduction in work hours' was not fetched this session -- NY DOL's own WARN fact sheet PDF returned unparseable binary content to the fetch tool used; re-fetch it directly, or consult dol.ny.gov's WARN regulations page, before relying on this entry for those two triggers specifically."
+      ]
+    },
+    {
+      "id": "ny_mini_cobra",
+      "law": "N.Y. Insurance Law 3221(m) / 4305(e) (state continuation coverage)",
+      "level": "state",
+      "counts": "Employees, for determining whether the EMPLOYER is small enough for state law to apply (the opposite direction from most thresholds in this file, which turn an obligation ON above a floor -- this one turns state law ON below a ceiling, precisely to cover the employers federal COBRA below leaves out).",
+      "tiers": [
+        {
+          "employeeCountMax": 19,
+          "entitlement": "Employer's INSURED group health plan must offer up to 36 months of state continuation coverage -- filling the gap federal COBRA (20+ employees) leaves for small employers."
+        },
+        {
+          "employeeCountMin": 20,
+          "entitlement": "Federal COBRA applies instead (see the federal thresholds below); NY also requires insured plans to extend federal COBRA's own 18/36-month periods further under separate provisions, not modelled here."
+        }
+      ],
+      "note": "Applies only to INSURED group health plans, not self-insured ones -- a self-insured small employer is covered by neither federal COBRA nor NY's mini-COBRA.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "NY Department of Financial Services -- COBRA and Premium Assistance",
+          "url": "https://www.dfs.ny.gov/consumers/health_insurance/cobra_and_premium_assistance",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (not fetched directly); cross-checked against a second independent source (cobrainsurance.com's NY page) agreeing on the <20-employee threshold, the 36-month period, and the insured-plans-only limitation."
+        }
+      ]
+    },
+    {
+      "id": "ny_human_rights_law",
+      "law": "N.Y. Executive Law Article 15 (NY State Human Rights Law)",
+      "level": "state",
+      "counts": "N/A for most claims as of 2020 -- see note.",
+      "tiers": [
+        {
+          "employeeCountMin": 1,
+          "entitlement": "Covers discrimination, harassment and retaliation claims against employers of ANY size, for claims accruing on or after 2020-02-08."
+        }
+      ],
+      "note": "Historically limited to employers with 4+ employees; sexual harassment claims were opened to all employers regardless of size in 2018, and 2019 amendments (effective 2020-02-08) eliminated the 4-employee floor entirely for discrimination and retaliation claims generally. A payroll or HR system still gating NYSHRL coverage on a 4-employee test is running six years out of date.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "Loeb & Loeb -- New York State amends workplace discrimination, harassment and retaliation laws",
+          "url": "https://www.loeb.com/en/insights/publications/2019/08/new-york-state-amends-workplace-discrimination-harassment-and-retaliation-laws",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session; cross-checked against a second independent law-firm summary (Kauff McGuire & Margolis) agreeing on the 2020-02-08 effective date and the elimination of the 4-employee floor."
+        }
+      ]
+    },
+    {
+      "id": "ny_ui_registration",
+      "law": "N.Y. Lab. Law Article 18 (Unemployment Insurance)",
+      "level": "state",
+      "counts": "Wages paid, not headcount -- included here because it is the lowest, most-crossed threshold a brand-new NY employer hits, and it is easy to assume (wrongly) that it is headcount-shaped like the others in this file.",
+      "tiers": [
+        {
+          "employeeCountMin": null,
+          "condition": "$300 or more in wages paid in ANY calendar quarter",
+          "entitlement": "Employer becomes liable for NY unemployment insurance from the FIRST DAY of that quarter, and must register (Form NYS-100)."
+        }
+      ],
+      "note": "Not a headcount test at all -- a single employee earning $300 in a quarter triggers this. Listed here for completeness against the 'how many employees before X applies' framing, but the honest answer for UI is 'one, immediately, if they're paid enough.'",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "NY Department of Labor -- Register for Unemployment Insurance",
+          "url": "https://dol.ny.gov/register-unemployment-insurance-0",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (not fetched directly); cross-checked against a second independent payroll-compliance source (Rho) agreeing on the $300/quarter threshold and first-day-of-quarter liability."
+        }
+      ]
+    },
+    {
+      "id": "federal_flsa_enterprise_coverage",
+      "law": "29 U.S.C. 203(s) (FLSA enterprise coverage)",
+      "level": "federal",
+      "counts": "Annual gross business volume in DOLLARS, not headcount -- the one entry in this file that is a revenue test, included because it is the single most common cause of a mistaken belief that 'small businesses are exempt from minimum wage.'",
+      "tiers": [
+        {
+          "revenueThreshold": 500000,
+          "entitlement": "Enterprise coverage under the FLSA (including its $7.25 federal minimum wage) applies once a business does $500,000+ in annual gross volume."
+        }
+      ],
+      "note": "This does NOT mean a smaller NY business is unregulated -- an employee individually engaged in interstate commerce is covered regardless of enterprise revenue (29 U.S.C. 206(a)), AND New York's own minimum wage (data/minimum-wage/states/NY-2026.json) has NO revenue or size exemption of its own, unlike Arizona's or Missouri's state minimum wage statutes, which explicitly exempt the same small, non-FLSA-covered businesses. A New York employer under $500,000 in revenue is still bound by the state's $16.00/$17.00 floor either way.",
+      "confidence": "primary_source_confirmed",
+      "sources": [
+        {
+          "title": "data/minimum-wage/federal-2026.json (this engine's own federal minimum wage file)",
+          "url": "https://www.dol.gov/agencies/whd/flsa",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Cross-referenced from this engine's own already-verified federal-2026.json standard.coverage field rather than re-researched from scratch."
+        }
+      ]
+    },
+    {
+      "id": "federal_aca_employer_mandate",
+      "law": "26 U.S.C. 4980H (ACA employer shared-responsibility mandate)",
+      "level": "federal",
+      "counts": "Full-time employees (30+ hours/week or 130+ hours/month) PLUS full-time-equivalents computed from part-timers' hours, averaged over the PRIOR calendar year.",
+      "tiers": [
+        {
+          "employeeCountMin": 50,
+          "entitlement": "'Applicable Large Employer' status: must offer minimum essential coverage to at least 95% of full-time employees (and dependents to age 26) or face a penalty."
+        }
+      ],
+      "note": "2025's workforce data determines 2026 ALE status -- this is a LOOKING-BACK test, not a real-time one. The 2026 affordability percentage (the maximum share of household income an employee can be charged for the cheapest qualifying plan) is 9.96%.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "IRS -- Determining if an employer is an applicable large employer",
+          "url": "https://www.irs.gov/affordable-care-act/employers/determining-if-an-employer-is-an-applicable-large-employer",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (not fetched directly); cross-checked against multiple independent ACA-compliance summaries agreeing on the 50-FTE threshold, the FTE-from-part-timers calculation, and the 9.96% 2026 affordability figure."
+        }
+      ]
+    },
+    {
+      "id": "federal_fmla",
+      "law": "29 U.S.C. 2611 (Family and Medical Leave Act)",
+      "level": "federal",
+      "counts": "Employees within 75 miles of the worksite -- a GEOGRAPHIC headcount, not a companywide one.",
+      "tiers": [
+        {
+          "employeeCountMin": 50,
+          "condition": "within a 75-mile radius of the worksite",
+          "entitlement": "Employer must provide up to 12 weeks of unpaid, job-protected leave to eligible employees."
+        }
+      ],
+      "note": "An employee is separately only ELIGIBLE after 12 months of employment and 1,250 hours worked in the prior 12 months -- employer coverage and employee eligibility are two different tests, both of which must be met.",
+      "confidence": "primary_source_confirmed",
+      "sources": [
+        {
+          "title": "29 U.S.C. 2611(4)(A)(i)-(ii)",
+          "url": "https://www.dol.gov/agencies/whd/fmla",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Statutory citation for the long-stable 50-employees/75-mile and 12-months/1,250-hours figures, not independently re-fetched this session as they have not changed in over a decade."
+        }
+      ]
+    },
+    {
+      "id": "federal_cobra",
+      "law": "29 U.S.C. 1161 et seq. (federal COBRA)",
+      "level": "federal",
+      "counts": "Employees on a typical business day in the prior calendar year.",
+      "tiers": [
+        {
+          "employeeCountMin": 20,
+          "entitlement": "Group health plan must offer 18-36 months of continuation coverage (length depends on the qualifying event) after a qualifying loss of coverage."
+        }
+      ],
+      "note": "Below this floor, NY's own mini-COBRA (ny_mini_cobra above) fills the gap for insured plans -- a NY employer is essentially never fully outside SOME continuation-coverage obligation, federal or state, though a small SELF-insured plan can fall through both.",
+      "confidence": "primary_source_confirmed",
+      "sources": [
+        {
+          "title": "U.S. DOL -- COBRA Continuation Coverage",
+          "url": "https://www.dol.gov/general/topic/health-plans/cobra",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Statutory citation for the long-stable 20-employee floor, not independently re-fetched this session."
+        }
+      ]
+    },
+    {
+      "id": "federal_eeo_thresholds",
+      "law": "Title VII of the Civil Rights Act of 1964; the ADA; the ADEA",
+      "level": "federal",
+      "counts": "Employees for each working day in each of 20+ calendar weeks in the current or preceding calendar year.",
+      "tiers": [
+        {
+          "employeeCountMin": 15,
+          "entitlement": "Title VII (race/color/religion/sex/national origin) and the ADA (disability) coverage begins."
+        },
+        {
+          "employeeCountMin": 20,
+          "entitlement": "ADEA (age 40+) coverage begins -- a HIGHER floor than Title VII/ADA, and state/local government employers are covered by ADEA regardless of size."
+        }
+      ],
+      "note": "New York's OWN Human Rights Law (ny_human_rights_law above) has no size floor at all for the same categories of claim -- a NY employer with 10 employees is outside federal EEO law entirely but fully inside NYSHRL, which is why 'am I covered by anti-discrimination law' cannot be answered by federal law alone for a New York employer.",
+      "confidence": "primary_source_confirmed",
+      "sources": [
+        {
+          "title": "EEOC -- Section 2, Threshold Issues",
+          "url": "https://www.eeoc.gov/laws/guidance/section-2-threshold-issues",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (not fetched directly); the 15-employee (Title VII/ADA) and 20-employee (ADEA) figures are long-stable statutory thresholds cross-checked against a second independent legal reference summary."
+        }
+      ]
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "NYC Human Rights Law's own 4-employee floor, NYC's Fair Chance Act, NYC's Earned Safe and Sick Time Act (which predates and interacts with the state Paid Sick Leave law above), and other NYC-specific thresholds are not researched here -- state and federal only.",
+    "'Single employer' / common-ownership aggregation rules -- whether commonly-owned or affiliated companies must be combined to reach a threshold -- are a fact-specific legal test under each individual statute and are not modelled for any entry in this file.",
+    "Several primary NY DOL and NY DFS pages were found by search but not fetched and read directly this session (their own binary/PDF format defeated the fetch tool used, or a live fetch was not attempted) -- each such entry's own sources say so explicitly; treat those as cross_source_confirmed via independent legal-compliance summaries, not as independently primary-verified.",
+    "This file is a snapshot as of the asOf date above, not a monitored feed the way data/minimum-wage/ is (see harvester/). None of these thresholds are known to have year-over-year adjustment schedules the way minimum wage figures do, but that has not been independently confirmed for every entry."
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "IA",
+    "name": "Iowa"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2009-07-24",
+    "coverage": "Covered employers under this state's own act, which adopts or matches the federal rate.",
+    "note": "Iowa's own rate is $7.25 (Iowa Code 91D.1), reached 2008-01-01 -- Iowa hit $7.25 six months BEFORE the federal rate did."
+  },
+  "stateStatutoryRate": null,
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 4.35,
+    "cashWageCents": 435,
+    "maxTipCredit": 2.9,
+    "maxTipCreditCents": 290,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Iowa caps the tip credit at 40% of the minimum wage, giving a $4.35 cash wage -- well above the federal $2.13."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 6.35,
+      "hourlyCents": 635,
+      "id": "initial_employment_wage",
+      "label": "Initial employment wage",
+      "eligibility": "First 90 CALENDAR days of employment, any age -- Iowa Code 91D.1(1)(d). Note this is not age-limited, unlike the federal under-20 youth wage."
+    }
+  ],
+  "indexation": {
+    "indexed": false,
+    "note": "Not indexed; moves only if the legislature (or Congress) moves it."
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "title": "Iowa Workforce Development / Iowa Division of Labor -- Your Rights Under the Iowa Minimum Wage Law and Wage FAQs",
+      "url": "https://workforce.iowa.gov/media/234/download",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session against Iowa's own published wage FAQ and poster text for the $6.35 initial-employment wage and the $4.35 tipped cash wage."
+    },
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "knownGaps": [],
+  "confidence": "primary_source_confirmed"
+}

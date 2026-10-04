@@ -1,0 +1,186 @@
+{
+  "jurisdiction": {
+    "level": "territory",
+    "code": "AS",
+    "name": "American Samoa"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasOwnMinimumWage": true,
+  "$comment": "American Samoa has NO single minimum wage. Federal law itself sets 18 different industry rates there, all below $7.25, stepping up $0.40 every three years on September 30 until they converge on the generally applicable federal rate. Any lookup that answers '$7.25' for American Samoa is wrong in both directions -- too high for garment manufacturing, too low for finance and insurance.",
+  "standard": null,
+  "industryRates": [
+    {
+      "hourly": 6.36,
+      "hourlyCents": 636,
+      "id": "fish_canning",
+      "label": "Fish canning and processing, and can manufacturing",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 7.19,
+      "hourlyCents": 719,
+      "id": "shipping_a",
+      "label": "Shipping and transportation, Classification A: stevedoring, lighterage and maritime shipping agency activities",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 7.02,
+      "hourlyCents": 702,
+      "id": "shipping_b",
+      "label": "Shipping and transportation, Classification B: unloading of fish",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.98,
+      "hourlyCents": 698,
+      "id": "shipping_c",
+      "label": "Shipping and transportation, Classification C: all other activities",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.58,
+      "hourlyCents": 658,
+      "id": "tour_travel",
+      "label": "Tour and travel services",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.95,
+      "hourlyCents": 695,
+      "id": "petroleum",
+      "label": "Petroleum marketing",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.7,
+      "hourlyCents": 670,
+      "id": "construction",
+      "label": "Construction",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.1,
+      "hourlyCents": 610,
+      "id": "hotel",
+      "label": "Hotel",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.2,
+      "hourlyCents": 620,
+      "id": "retail_wholesale",
+      "label": "Retailing, wholesaling and warehousing",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.61,
+      "hourlyCents": 661,
+      "id": "ship_maintenance",
+      "label": "Ship maintenance",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.29,
+      "hourlyCents": 629,
+      "id": "bottling_dairy",
+      "label": "Bottling, brewing and dairy products",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.6,
+      "hourlyCents": 660,
+      "id": "printing",
+      "label": "Printing",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 7.09,
+      "hourlyCents": 709,
+      "id": "finance_insurance",
+      "label": "Finance and insurance",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.43,
+      "hourlyCents": 643,
+      "id": "hospitals_education",
+      "label": "Private hospitals and educational institutions",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.01,
+      "hourlyCents": 601,
+      "id": "government",
+      "label": "Government employees",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 5.8,
+      "hourlyCents": 580,
+      "id": "miscellaneous",
+      "label": "Miscellaneous activities (includes domestic work)",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 5.78,
+      "hourlyCents": 578,
+      "id": "garment",
+      "label": "Garment manufacturing",
+      "effectiveFrom": "2024-09-30"
+    },
+    {
+      "hourly": 6.73,
+      "hourlyCents": 673,
+      "id": "publishing",
+      "label": "Publishing",
+      "effectiveFrom": "2024-09-30"
+    }
+  ],
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 5.12,
+    "maxTipCreditCents": 512,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "The federal $2.13 cash wage and $5.12 maximum tip credit apply, measured against the employee's own INDUSTRY rate above, not against $7.25."
+  },
+  "scheduledChanges": [
+    {
+      "change": "+$0.40 per hour to every industry rate",
+      "note": "Fair Minimum Wage Act of 2007 (P.L. 110-28) as amended by P.L. 114-61: $0.40 every three years on September 30 (2021, 2024, 2027, ...) until each rate reaches the federal minimum wage. The 2024-09-30 step is the one currently in effect; nothing changes on 2026-09-30.",
+      "effectiveDate": "2027-09-30"
+    }
+  ],
+  "sources": [
+    {
+      "id": "dol-as-poster",
+      "title": "U.S. DOL WH1088 AMS (Rev. 09/24) -- Federal Minimum Wage in American Samoa by Industry (required workplace poster)",
+      "url": "https://www.dol.gov/sites/dolgov/files/WHD/legacy/files/ASminwagePoster.pdf",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "PDF downloaded and its text extracted directly this session (WebFetch's own HTML conversion returned only binary noise; decompressing the PDF's content streams and pulling the text-showing operators worked). All 18 industry rates and the '$0.40 every three years on September 30' rule are transcribed verbatim from the poster's own text, including the paired 2021 and 2024 figures."
+    },
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": [
+    "Which of the 18 classifications a particular employer falls into is a determination under DOL's own special industry committee definitions; this file carries the rates, not the classification test."
+  ]
+}

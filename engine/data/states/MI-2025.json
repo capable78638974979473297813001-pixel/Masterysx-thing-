@@ -1,0 +1,113 @@
+{
+  "code": "MI",
+  "name": "Michigan",
+  "year": 2025,
+  "method": "flat_rate",
+  "sources": [
+    {
+      "title": "Michigan Treasury -- Withholding Tax Information by Calendar Year",
+      "url": "https://www.michigan.gov/taxes/business-taxes/withholding/calendar-year-tax-information",
+      "verifiedOn": "2026-09-29",
+      "quote": "2025. Withholding Rate: 4.25% Personal Exemption: $5,800"
+    },
+    {
+      "title": "Michigan Treasury -- 446 Michigan Income Tax Withholding Guide (2025)",
+      "url": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/SUW/TY2025/446_Withholding-Guide_2025.pdf",
+      "verifiedOn": "2026-09-29"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "flatRate": {
+    "rate": 0.0425,
+    "allowanceAmount": 5800.0,
+    "comment": "Michigan withholds 4.25% after subtracting the annual personal/dependency exemption allowance: $5,800 per exemption for 2025 (2025 Form 446). The employee's MI-W4 exemption count goes in workState.certificate.allowances."
+  },
+  "supplementalWages": {
+    "flatRate": 0.0425
+  },
+  "supplementalComment": "WIRED (a later 'go to every state' pass): bonuses/other separate payments withhold at a flat 4.25% with NO exemption adjustment (Form 446) -- reused the existing generic flatRateSupplementalFromConfig() mechanism (already built for New Mexico/New York) by renaming this field from a bare supplementalRate number to the supplementalWages.flatRate shape that helper reads, rather than writing MI-specific code. Zero new engine code needed.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "MCL 206.30 defines MI taxable income as federal adjusted gross income (with statutory adjustments), so anything already excluded from federal AGI — Section 125 cafeteria benefits (RAB 1988-27, an actual named enumeration) and elective retirement deferrals (401k/403b/457/SIMPLE, pretax for federal purposes) — is excluded from the MI base too. This is the OPPOSITE of Pennsylvania, which taxes elective deferrals as compensation when earned. The WITHHOLDING OBLIGATION statute (MCL 206.703(2)) was fetched and read directly this session, confirming it ties Michigan withholding to the same 'compensation' concept the IRC uses for federal withholding — supporting, though not itself individually enumerating, the exclusion. 206.30 itself is still cited but not directly fetched; RAB 1988-27 remains the strongest single piece of evidence (an explicit named enumeration for cafeteria plans specifically).",
+  "withholdingCertificate": {
+    "$comment": "NEW this session: the actual MI-W4 form, fetched and read directly. This is Michigan's federal-W4 equivalent and a real gap to have skipped — 'exemptions claimed' upstream of the rate calc has to come from somewhere, and this is that somewhere.",
+    "source": {
+      "title": "MI-W4 (Rev. 12-20) — Employee's Michigan Withholding Exemption Certificate",
+      "url": "https://www.michigan.gov/-/media/Project/Websites/taxes/Forms/All-Years/MIW4.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and text-extracted directly this session"
+    },
+    "fields": {
+      "personalAndDependentExemptions": "Line 6 — a single count, feeds directly into flatRate.allowanceAmount x count in this engine's existing flat_rate calc.",
+      "additionalWithholdingPerPay": "Line 7 — a flat dollar amount added per pay period, same concept as federal W-4 Step 4(c). NOT currently modelled in the engine (state.ts's flatRate() has no field for this).",
+      "newHireFlag": "Line 5 — yes/no plus date of hire; feeds Michigan's new-hire reporting requirement, not the tax calc itself.",
+      "driverLicenseOrStateId": "Required field on the form itself (unusual — most states' withholding certificates don't require this)."
+    },
+    "exemptionClaims": {
+      "$comment": "Line 8 — three distinct reasons an employee can claim FULL exemption from MI withholding. All three are currently unmodelled; the engine has no equivalent to federal W4.exempt for state-level MI, and no concept of the third reason at all.",
+      "noLiabilityExpected": "Standard 'I don't expect to owe MI tax this year' claim, analogous to federal W-4 exempt.",
+      "wagesExempt": "Wages themselves are exempt from withholding, with a free-text explanation field on the form (no enumerated list of what qualifies).",
+      "renaissanceZone": "A genuinely Michigan-specific concept NOT touched anywhere else in this dataset: certain economically-distressed areas of Michigan are designated Renaissance Zones under the Michigan Renaissance Zone Act, and residents domiciled in an active zone can be fully exempt from MI income tax (state AND applicable city tax) for the zone's duration. NOT researched further this session (which zones are currently active, expiration dates, whether it's full or partial exemption) — flagged as a real, disclosed unknown rather than silently omitted."
+    },
+    "knownGap": "PARTIALLY RESOLVED: 'additional per-pay withholding' and the generic 'no liability expected' exemption claim are now modelled — state.ts's applyStateWithholdingExemption()/applyAdditionalStateWithholding() read certificate.exempt/certificate.additionalWithholding GENERICALLY off any state's certificate (built for Minnesota's W-4MN, but wraps every income-tax method by its shared `${code}_SIT` id prefix, so Michigan's flatRate() output is covered with zero MI-specific code — see tests/engine.test.ts, describe('Michigan'), 'certificate.exempt and certificate.additionalWithholding are GENERIC'). Still NOT modelled: the free-text 'wages exempt' reason (no enumerated categories to check against, unlike Minnesota's 6-box Section 2) and Renaissance Zone status (a distinct exemption mechanism this engine has no representation for at all)."
+  },
+  "reciprocity": {
+    "source": {
+      "title": "Michigan Treasury — Withholding Reciprocity Examples (Analysis section: MCL 206.703(2), MCL 206.110, MCL 206.256, RAB 2017-13)",
+      "url": "https://www.michigan.gov/taxes/business-taxes/payroll-service-providers/withholding-reciprocity-examples",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "fetched directly via browser; text quoted below is from the page's own Analysis section"
+    },
+    "reciprocalStates": [
+      "IL",
+      "IN",
+      "KY",
+      "MN",
+      "OH",
+      "WI"
+    ],
+    "rule": "MCL 206.256. A resident of a reciprocal state remains subject to ONLY their home state's income tax regardless of where services are performed. This is symmetric and direction-matters: (1) a resident of IL/IN/KY/MN/OH/WI working IN Michigan is EXEMPT from Michigan withholding — the employer withholds nothing for MI; (2) a MICHIGAN RESIDENT working in one of those six states remains subject to MICHIGAN tax on those wages (the reciprocal state does not tax them, and MI does not credit/exempt them) — confirmed by the source's own Example 4 (a MI resident earning wages in Ohio Jan-Mar remains MI-taxable on that Ohio income).",
+    "nonReciprocalNote": "Absent a reciprocity agreement, the general MCL 206.110 rule applies: MI residents are taxed by MI on ALL income regardless of work location; nonresidents are taxed by MI only on MI-source income. Example: a Tennessee resident working in Michigan (TN is not reciprocal) IS subject to MI withholding on Michigan wages.",
+    "mechanism": "Employee claims exemption from MI withholding via Form MI-W4's reciprocity line (or an employer-created equivalent form per the source page).",
+    "knownGap": "RESOLVED for the direction this file actually documents: state.ts's reciprocityExemptionReason() reads reciprocalStates generically and zeroes MI_SIT when input.residenceState is IL/IN/KY/MN/OH/WI, proven in tests/engine.test.ts, describe('Michigan'). The OUTBOUND direction (a Michigan resident working in one of those six states remains MI-taxable on that income per this file's own nonReciprocalNote/Example 4) is NOT modelled and structurally can't be with this engine's current architecture — stateIncomeTax() only ever computes tax for input.workState, never a separate 'residence state also wants its cut' line for a DIFFERENT state than the one being paid out of. That's a bigger, project-wide gap (worldwide/residence-based taxation isn't modelled for any state), not specific to Michigan."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN, not just plausible: 4 hand-derived fixtures (baseline, zero-exemption, 401k-reduces-base, section125-reduces-base) run through the actual calculatePaycheck() engine and matched to the cent — see tests/engine.test.ts describe('Michigan'). This confirms MI's flat-rate-plus-exemption structure genuinely dispatches through the engine's existing flat_rate method (built for PA), not just that the JSON looks compatible.",
+    "notCoveredByThoseFixtures": "Supplemental (bonus) wages, reciprocity, and SUTA are NOT exercised by any test — see knownGaps below. Only the regular-wages state-income-tax path has been proven end-to-end."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": {
+      "default": 9500,
+      "qualifiedEmployer": 9000
+    },
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax) -- two-tier base kept from override",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.0006,
+      "max": 0.103
+    },
+    "experienceRangeNote": "CORRECTED 2026-09-06: this field previously stated an invented {min: 0.0006, max: 0.103} range that directly contradicted unemploymentInsurance.confidence above, which explicitly says 'No simple published min/max bound exists for experienced employers ... stating an invented min/max here would be less accurate than the real formula.' The field was never actually READ by stateUnemploymentEmployerTax() (confirmed by reading the function) so this was a self-contradictory, unused, silently-stale value, not a live calculation bug — but a real data-integrity issue worth fixing on its own, the same class of 'disclosed gap says one thing, the actual field says another' error as WV's Charleston rate and Denver's false already-wired claim elsewhere in this project.",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed for the wage base and the year-1/2 new-employer rate (both now consistent with unemploymentInsurance above); years 3+ genuinely unmodellable without per-employer history, disclosed rather than approximated.",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: 4.25% flat, $5,800 per exemption (2026: $5,900)."
+}

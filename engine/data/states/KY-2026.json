@@ -1,0 +1,249 @@
+{
+  "code": "KY",
+  "name": "Kentucky",
+  "year": 2026,
+  "method": "flat_rate_fixed_deduction",
+  "$methodComment": "AUDIT PASS (2026-08-13): the original version of this file used method 'flat_rate' and documented a footgun (callers must remember to pass certificate.allowances=1). That footgun is now CLOSED, not just disclosed: src/taxes/state.ts gained a dedicated flatRateFixedDeduction() method that subtracts a flat annual deductionAmount with no certificate-driven multiplier at all, matching Form K-4's actual shape (fetched and read directly: no personal/dependent exemption count field exists anywhere on it). Verified against the DOR's own 2026 Withholding Tax Formula worked examples — see tests/engine.test.ts, describe('Kentucky').",
+  "sources": [
+    {
+      "title": "42A003 (TCF)(10-2025) -- 2026 Kentucky Withholding Tax Formula",
+      "url": "https://revenue.ky.gov/Forms/2026%20Withholding%20Formula.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and read directly (WebFetch's text extraction failed on this PDF's encoding; fell back to reading the saved binary directly). Quoted: '2026 Kentucky Standard Deduction: $3,360', '2026 Kentucky Tax Rate: 3.5% of taxable income'. NOTE: the document's own bi-weekly worked example has an internal arithmetic error -- step 2 computes $35,640 but step 3 multiplies $35,730 instead (off by $90), AND the final division result '$47' is itself truncated (1,247.40 / 26 = $47.98, not $47). Both are flaws in the primary source's own example, not silently corrected or propagated: tests/engine.test.ts's Kentucky fixtures use the corrected $47.98, with the source's own typo documented in the test comment."
+    },
+    {
+      "title": "42A804 (K-4)(12-2025) -- Kentucky's Withholding Certificate 2026",
+      "url": "https://revenue.ky.gov/Forms/42A804%20(K-4)%20(2026).pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and read directly, full 2-page text captured, including the 6-question military-spouse worksheet and the reciprocal-state checkbox list."
+    },
+    {
+      "title": "103 KAR 17:140 -- Individual income tax - reciprocity - nonresidents",
+      "url": "https://revenue.ky.gov/Dor%20Training%20Materials/103%20KAR%2017.140.%20Individual%20income%20tax%20-%20reciprocity%20-%20nonresidents.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and read directly, full regulatory text captured including every per-state clause and the incorporated-agreement dates."
+    },
+    {
+      "title": "KRS 141.019 -- Calculation of adjusted gross income and net income for taxpayers other than corporations",
+      "url": "https://statecodesfiles.justia.com/kentucky/2025/chapter-141/section-141-019/section-141-019.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "AUDIT PASS UPGRADE: the earlier version of this file cited 'KRS 141.010/141.0101' from a search summary and left exemptPretax as inferred. Direct fetch this pass found that assumption WRONG in one respect: KRS 141.0101 is actually titled 'Depreciation methods and transitional rules' — the real AGI-modifications statute is KRS 141.019 (confirmed via apps.legislature.ky.gov's own Chapter 141 index, then fetched in full via Justia's PDF mirror since apps.legislature.ky.gov's own PDF endpoint would not text-extract). Read the COMPLETE enumerated list, subsection (1)(a)-(q) plus (2)(a)-(i) — same discipline as Indiana's IC 6-3-1-3.5 full-list read. None of the 17 addition/subtraction items touch 401(k)/403(b)/457/SIMPLE deferrals or Section 125/132 cafeteria benefits. This upgrades exemptPretax from 'inferred from federal-conformity structure' to 'confirmed by a completed direct read that no add-back exists' — the same confidence tier as Indiana, one tier below Michigan's RAB-1988-27 named enumeration. Bonus finding: (1)(l) excludes ALL military active-duty pay for KY RESIDENTS outright — broader than the K-4's Fort Campbell exemption (which only covers NONresidents) — a genuinely new fact this project didn't have before."
+    },
+    {
+      "title": "Kentucky Technical Advice Memorandum KY-TAM-18-03 -- Credit for Income Tax Paid to Another State",
+      "url": "https://revenue.ky.gov/DOR%20Training%20Materials/KY-TAM-18-03%20Credit%20for%20Income%20Tax%20Paid%20to%20Another%20State%20FINAL%20(UPDATED%20HYPERLINKS).pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "AUDIT PASS: PDF fetched and read directly. This is a DOR-issued official answer to the exact question the prior version of this file left open (whether a KY resident working in a reciprocal state is exempt the way MI's/OH's reciprocity works for their own residents). Quoted directly: 'Kentucky residents are taxed on all sources of income even if earned and taxed in another state... Kentucky has reciprocal agreements with several states that eliminate individual income taxation on income covered under the reciprocal agreements. However, since the income covered by these reciprocal agreements is not taxed in Kentucky, no credit is allowed to be taken for income tax paid to another state on the exempted income' and 'Benefits under the reciprocal agreements are limited to nonresidents of Kentucky.' RESOLVED, not just disclosed — see reciprocity.kyResidentWorkingInReciprocalState below."
+    },
+    {
+      "title": "103 KAR 18:070 -- Supplemental wages and other payments subject to withholding",
+      "url": "https://www.law.cornell.edu/regulations/kentucky/103-KAR-18-070_v2",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "AUDIT PASS: fetched and read directly via Cornell LII's mirror (the regulations.justia.com equivalent 403'd). This CORRECTED a mistake in the prior version of this file: that version guessed Kentucky supplemental wages get a separate flat-rate treatment (copying Wisconsin's carve-out pattern) with no primary source for it. The actual regulation, Section 3, prescribes AGGREGATION instead: 'If supplemental wages are paid at the same time as regular wages, the tax to be withheld shall be determined as if the aggregate of the supplemental and regular wages were a single wage payment.' src/taxes/state.ts's flatRateFixedDeduction() was rewritten to match — see supplementalTreatment below. DATE CAVEAT: Cornell captions this page '[Effective 7/27/2026]'; whether the substance differs from what was in force 2026-01-01 through 2026-07-26 was not separately checked (same class of gap as Ohio's HB96 mid-year change)."
+    },
+    {
+      "title": "Kentucky Office of Unemployment Insurance -- Tax Rate Schedules",
+      "url": "https://kewes.ky.gov/Contact/contacts.aspx?strid=4",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "AUDIT PASS UPGRADE: the prior version of this file sourced SUTA figures from Bloomberg Tax's reporting (secondary). This pass fetched kewes.ky.gov directly (browsed live — the page renders via a dropdown/postback, not a static document) and read the full rate-schedule table: confirms Schedule A in effect for 2026 (and every year 2019-2026), and the COMPLETE 20-row reserve-ratio-to-rate table across all five schedules (A-E), not just Schedule A's own two endpoints. Now the same confidence tier as MI/IN's SUTA sourcing."
+    },
+    {
+      "title": "Kentucky Office of Unemployment Insurance -- Taxable Wage Base and Surcharge Information",
+      "url": "https://kewes.ky.gov/Contact/contacts.aspx?strid=2",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "AUDIT PASS UPGRADE: direct fetch confirms $12,000 for 2026 (up from $11,700 in 2025) and 0.00% surcharge, plus the full 2011-2026 history ($8,000 in 2011, climbing roughly $300/yr in recent years). Matches Bloomberg Tax's figure exactly — an independent corroboration, now superseded by this direct primary read."
+    },
+    {
+      "title": "Kentucky Raises Unemployment Insurance Wage Base for 2026 (Bloomberg Tax)",
+      "url": "https://news.bloombergtax.com/payroll/kentucky-raises-unemployment-insurance-wage-base-for-2026",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "Retained as the source for the new-employer rate (2.7%, 9% for contract construction) — not re-verified against a primary kewes.ky.gov page this pass (the Employer Guide PDF at kewes.ky.gov/Documents/EMPLOYER_GUIDE.pdf was found but is a large scanned/complex document not fully read this session; a targeted new-employer-rate search within it was not completed). One tier below the wage-base and experience-schedule figures above."
+    }
+  ],
+  "flatRate": {
+    "rate": 0.035,
+    "deductionAmount": 3360.0,
+    "comment": "3.5% flat rate for 2026, applied to annual wages less the $3,360 standard deduction, subtracted ONCE regardless of dependents (Kentucky has no personal/dependent exemption count mechanism at all — confirmed by K-4's own field list). Formula and both figures read directly from the DOR's own 2026 Withholding Tax Formula document. HB 8 (2022) set up automatic phased rate cuts gated on state revenue-growth and reserve-fund triggers (path so far: 5% in 2018 (HB 366) -> 4.5% (2023-24) -> 4.0% (2025) -> 3.5% (2026)); further cuts are NOT scheduled/automatic on a calendar, they depend on the trigger being met each year, so this rate should not be assumed to auto-decrement for 2027 without a fresh check."
+  },
+  "supplementalTreatment": {
+    "$comment": "AUDIT PASS FINDING (replaces the prior version's guessed 'supplementalRate: 0.035' field, which implied a Wisconsin-style separate flat line — WRONG, see below).",
+    "source": {
+      "title": "103 KAR 18:070, Section 3",
+      "url": "https://www.law.cornell.edu/regulations/kentucky/103-KAR-18-070_v2",
+      "verifiedOn": "2026-08-13"
+    },
+    "rule": "Supplemental wages (bonuses, commissions — anything 'paid to an employee by the individual's employer in addition to regular wages') paid on the SAME cheque as regular wages are aggregated and taxed as a single payment — exactly what src/taxes/state.ts's flatRateFixedDeduction() does with no special-casing, since it just taxes ctx.taxableWagesFor(exempt) as a whole regardless of each earning's category. Supplemental wages paid on a SEPARATE cheque are aggregated with the CURRENT or LAST PRECEDING regular payroll period by aggregateWithPriorRegularPayment() (gated by this file's supplementalAggregation block below) when the caller supplies input.priorRegularPayment.",
+    "engineGap": "The separate-cheque case is NOT modelled. A standalone bonus run through calculatePaycheck() by itself (only a supplemental earning, no regular wages in that call) gets the full $3,360 deduction applied to it as if it were a complete period's only wages — which both UNDER-withholds relative to 103 KAR 18:070 (the deduction should have already been consumed by the regular wages it's supposed to aggregate with) and has no way to reach back into a prior calculatePaycheck() call's data even if the engine wanted to. Same class of disclosed cross-period gap as Indiana's 30-day nonresident rule and Michigan's Renaissance Zone."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "CONFIRMED this pass by a complete direct read of KRS 141.019(1)(a)-(q) — see sources above. None of the 17 enumerated AGI addition/subtraction items add back 401(k)/403(b)/457/SIMPLE deferrals or Section 125/132 cafeteria-plan benefits; since Kentucky AGI starts from federal AGI (Sec 62-adjusted federal gross income) and these categories are already excluded from federal gross income at the point of measurement, they stay excluded from the Kentucky base too. Same confidence tier as Indiana's IC 6-3-1-3.5 (a completed list-read confirming absence of add-back), one tier below Michigan's RAB-1988-27 (which names cafeteria plans specifically). This CONTRASTS with Kentucky's own LOCAL occupational tax (data/local/KY-occupational-2026.json): KRS 67.750(2)(a)-(b) explicitly ADDS these same categories back for the local base — a genuine, now double-confirmed within-one-state split between state and local pretax treatment, not an artifact of incomplete research on either side.",
+  "residentMilitaryPayExclusion": {
+    "$comment": "NEW FACT this pass, found while reading KRS 141.019 for the exemptPretax question — not previously documented anywhere in this project.",
+    "source": { "title": "KRS 141.019(1)(l)", "verifiedOn": "2026-08-13" },
+    "rule": "'Exclude all military pay received by members of the Armed Forces while on active duty' — unconditional, applies to KENTUCKY RESIDENTS (the Fort Campbell exemption on Form K-4 is a separate, narrower provision that only benefits NONresidents). A Kentucky-resident servicemember's active-duty pay is fully excluded from the state income tax base regardless of duty station.",
+    "knownGap": "Not modelled in the engine — no military-service flag exists anywhere in PaycheckInput/types.ts. Also not cross-checked against the local occupational tax's own treatment of military pay (KRS 68.180(3)(d)/68.197(5)(a) exempt only KY National Guard training pay specifically, not all active-duty pay generally — a narrower local exemption than this broader state one, not reconciled further this session)."
+  },
+  "withholdingCertificate": {
+    "$comment": "Form K-4 (fetched and read directly). Structurally unlike every other state's withholding certificate modelled in this project: NO personal/dependent exemption count field exists anywhere on the form. Kentucky's standard deduction is a single flat $3,360, identical for every employee regardless of filing status or dependents -- the certificate exists ONLY to claim one of four full-exemption categories, or request additional flat-dollar withholding.",
+    "source": {
+      "title": "42A804 (K-4)(12-2025)",
+      "url": "https://revenue.ky.gov/Forms/42A804%20(K-4)%20(2026).pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and read directly, both pages."
+    },
+    "fields": {
+      "additionalWithholdingPerPayPeriod": "A flat dollar amount, same concept as federal W-4 Step 4(c). RESOLVED generically: state.ts's applyAdditionalStateWithholding() reads certificate.additionalWithholding (cents) and adds it to KY_SIT, wrapping flatRateFixedDeduction() the same as every other method.",
+      "exemptionClaims": "Four checkboxes, ALL-OR-NOTHING (there is no partial-exemption or per-category-count concept the way other states' certificates work):",
+      "exemption1_noLiabilityExpected": "For 2026: both (a) the employee had a right to a full 2025 refund because they owed zero KY tax, AND (b) they expect a full 2026 refund. Gated on modified-gross-income poverty-level thresholds by family size ($15,650 single / $21,150 family of 2 / $26,650 family of 3 / $32,150 family of 4+, all 2025 figures per the form). Expires 2027-02-15.",
+      "exemption2_fortCampbell": "Public Law 105-261 -- wages earned AT the Fort Campbell, KY military base are exempt from KY income tax if the employee is a NONresident of Kentucky (residency defined by KRS 141.010(32): domiciled in KY, OR maintains a KY abode and is present 183+ days/year). Must be revoked within 10 days of moving to Kentucky. Narrower than residentMilitaryPayExclusion above, which covers KY-resident servicemembers everywhere, not just nonresidents at this one base.",
+      "exemption3_militarySpouse": "Servicemembers Civil Relief Act as amended by the Military Spouses Residence Relief Act. Requires a 6-statement worksheet (spouse is a servicemember with current KY orders, employee is not a servicemember, they share an address, employee is present in KY solely to accompany the spouse, spouse's domicile state is elsewhere and employee elects to use it) all answered YES, plus a copy of the spouse's military photo ID. Terminates on the earliest of: spouse leaves military, employee enlists, they no longer share an address, or spouse's duty station moves outside KY.",
+      "exemption4_reciprocalState": "See reciprocity below -- this is the SAME form/box that operationalizes 103 KAR 17:140's exemption; a reciprocal-state resident checks this box (with the Virginia-commute / Ohio-S-corp carve-outs applied via the form's own sub-checkboxes) rather than filing a separate document."
+    },
+    "employerInstructions": "K-4 is required ONLY to document a claimed exemption or a requested additional-withholding amount -- if neither applies, the employer is not required to keep a K-4 on file at all (i.e. the default/no-form case is 'withhold via the standard formula', not 'no withholding'). This is a meaningfully different default than a W-4-style 'no form filed' ambiguity.",
+    "knownGap": "PARTIALLY RESOLVED: the additional-withholding amount (see additionalWithholdingPerPayPeriod above) now has a working engine field. For the four exemption categories, certificate.exempt (a generic boolean, built for Minnesota's Section 2) DOES produce the CORRECT $0-withholding result regardless of which of the four a caller intends -- all four are full exemptions from a withholding-amount standpoint, so the calculation is right even though the engine has no field for WHICH category applies. What's genuinely still missing is that per-category tracking (needed for anything beyond the withholding amount itself, e.g. audit/paperwork purposes, or a future rule that treats one category differently from another) -- input.workState.certificate still has no Kentucky-specific shape defined in types.ts."
+  },
+  "reciprocity": {
+    "source": {
+      "title": "103 KAR 17:140 -- Individual income tax - reciprocity - nonresidents",
+      "url": "https://revenue.ky.gov/Dor%20Training%20Materials/103%20KAR%2017.140.%20Individual%20income%20tax%20-%20reciprocity%20-%20nonresidents.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF fetched and read directly, full regulatory text."
+    },
+    "reciprocalStates": ["IL", "IN", "MI", "OH", "VA", "WV", "WI"],
+    "commuterOnlyStates": ["VA"],
+    "commuterOnlyStatesNote": "BUG FOUND AND FIXED on an audit pass: reciprocityExemptionReason() (state.ts) previously treated all 7 reciprocalStates identically -- an unconditional exemption on bare residence. That's correct for IL/IN/MI/OH/WV/WI, but WRONG for Virginia specifically: this file's own perStateConditions.VA already documented 'Residents of Virginia exempt ONLY if they commute DAILY to their Kentucky workplace,' and Virginia's OWN VA-2026.json independently confirms the identical daily-commute condition from its side (reciprocity.narrowerCommuterException) -- a genuine cross-confirmed fact that the ENGINE simply wasn't enforcing. A Virginia resident working in Kentucky WITHOUT a daily commute (e.g. fully remote, or an occasional in-office day) was being wrongly granted a full $0 KY_SIT exemption. Closed via a new generic reciprocity.commuterOnlyStates mechanism (not Kentucky-specific code) gated on certificate.dailyCommuter === true on the RESIDENCE state's own certificate, defaulting to NO exemption when absent -- see tests/engine.test.ts, describe('Kentucky').",
+    "mechanismDiffersFromMIAndOH": "Structurally different from every reciprocity relationship already modelled in this project: this is SOURCE-STATE exemption (Kentucky, the WORK state, simply does not tax the nonresident's wages at all), not a residence-based credit. 103 KAR 17:140 explicitly scopes this to nonresidents; it says nothing on its own about the outbound direction.",
+    "kyResidentWorkingInReciprocalState": {
+      "$comment": "RESOLVED this pass — the prior version of this file left this as an unconfirmed inference. Now confirmed by a DOR-issued Technical Advice Memorandum, the strongest tier of source used anywhere in this project for a reciprocity direction (an actual agency ruling, not a statute read alone).",
+      "source": {
+        "title": "KY-TAM-18-03 -- Credit for Income Tax Paid to Another State",
+        "url": "https://revenue.ky.gov/DOR%20Training%20Materials/KY-TAM-18-03%20Credit%20for%20Income%20Tax%20Paid%20to%20Another%20State%20FINAL%20(UPDATED%20HYPERLINKS).pdf",
+        "verifiedOn": "2026-08-13"
+      },
+      "rule": "'Kentucky residents are taxed on all sources of income even if earned and taxed in another state.' 'Benefits under the reciprocal agreements are limited to nonresidents of Kentucky.' A KY resident working in one of the 7 reciprocal states gets NO exemption from KY tax on that income (the reciprocity regulation simply doesn't apply in that direction) — they remain fully KY-taxable. KRS 141.070 offers a credit for tax ACTUALLY assessed and paid to the other state, capped at the KY tax that income would have generated — but since the OTHER state's OWN reciprocity statute (a mirror-image provision this session did not individually verify for all 6 non-Kentucky states) would typically exempt a Kentucky resident from ITS tax in turn, there is usually nothing to credit: the KY resident just pays ordinary KY tax on that income, full stop.",
+      "confidenceNote": "The 'other state's own reciprocity typically exempts the Kentucky resident' half of this reasoning is a structural inference from how bilateral reciprocity normally works, not independently confirmed by reading all 6 other states' statutes this session — but the core conclusion (no KY exemption in this direction; ordinary residence-based taxation applies) comes directly from KY-TAM-18-03's own words, not from that inference."
+    },
+    "perStateConditions": {
+      "IL": "Residents of Illinois exempt on wages and salaries. No further condition stated.",
+      "IN": "Residents of Indiana exempt on wages, salaries, AND commissions (broader than the other six, which say only 'wages and salaries' / 'personal services').",
+      "MI": "Residents of Michigan exempt on income earned from 'personal services' in Kentucky, which the regulation itself defines to include salaries and wages.",
+      "OH": "Residents of Ohio exempt on salaries and wages EXCEPT: effective for tax years beginning on/after 2007-01-01, wages an S corporation pays to a shareholder-employee who is a 20%-or-greater direct or indirect equity investor in that S corp are NOT covered by the exemption -- that specific person remains KY-taxable.",
+      "VA": "Residents of Virginia exempt ONLY if they commute DAILY to their Kentucky workplace. A Virginia resident who does not commute daily does not qualify -- the daily-commute condition is load-bearing, not a formality.",
+      "WV": "Residents of West Virginia exempt on salaries and wages. No further condition stated.",
+      "WI": "Residents of Wisconsin exempt on income earned from 'personal services' in Kentucky (same phrasing/scope as Michigan)."
+    },
+    "residencyOverride": "Section 4: a person domiciled in one of the 7 reciprocal states who ALSO maintains a Kentucky abode and spends more than 183 days/year in Kentucky loses reciprocity entirely and is treated as a Kentucky resident for tax purposes -- same 183-day mechanism used elsewhere in KY law (KRS 141.010(32), also the Fort Campbell exemption's residency test).",
+    "mechanism": "Employee self-certifies via Form K-4 box 4 (see withholdingCertificate.exemption4_reciprocalState above), filed with and held by the employer. A secondary source (not verified this session) separately referenced 'Form 42A809' as a reciprocity-related form -- possibly a return-side claim for someone who already had KY tax withheld despite qualifying, distinct from K-4's prospective withholding exemption; NOT reconciled, flagged rather than guessed at.",
+    "underlyingAgreements": "Section 5 incorporates seven bilaterally-negotiated agreements by reference, with original execution dates ranging from 1964 (Virginia) to 1972 (Ohio) -- these are old, individually-negotiated treaties, not one uniform multi-state compact.",
+    "knownGap": "RESOLVED for the basic case: state.ts's reciprocityExemptionReason() zeroes KY_SIT generically when input.residenceState is one of the 7 reciprocal states, proven in tests/engine.test.ts, describe('Kentucky'). ALSO RESOLVED on an audit pass: Virginia's daily-commute condition (see reciprocalStates.commuterOnlyStatesNote above) is now actually enforced, not just documented as prose -- previously the engine granted VA residents an unconditional exemption identical to the other 6 states, which was wrong. STILL NOT modelled: the Section 4 residencyOverride above (183-day KY-abode test that revokes reciprocity even for a resident of a reciprocal state) -- this engine trusts input.residenceState at face value and has no mechanism to independently flip it based on days-present, the same trust-the-input simplification already disclosed for every other state's reciprocity."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUI) -- no employee contribution, consistent with every other state modelled in this project. AUDIT PASS: upgraded from secondary (Bloomberg Tax) to primary (kewes.ky.gov, fetched live via browser) sourcing for both the wage base and the full experience-rating schedule.",
+    "sources": [
+      {
+        "title": "Kentucky Office of Unemployment Insurance -- Tax Rate Schedules",
+        "url": "https://kewes.ky.gov/Contact/contacts.aspx?strid=4",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Browsed directly (the page is dropdown/table-driven, not a static document). Full 20-row reserve-ratio table read for all 5 schedules (A-E); confirms Schedule A in effect continuously 2019-2026."
+      },
+      {
+        "title": "Kentucky Office of Unemployment Insurance -- Taxable Wage Base and Surcharge Information",
+        "url": "https://kewes.ky.gov/Contact/contacts.aspx?strid=2",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Browsed directly. Full 2011-2026 wage-base history table read."
+      },
+      {
+        "title": "Kentucky Raises Unemployment Insurance Wage Base for 2026 (Bloomberg Tax)",
+        "url": "https://news.bloombergtax.com/payroll/kentucky-raises-unemployment-insurance-wage-base-for-2026",
+        "verifiedOn": "2026-08-12",
+        "verifiedBy": "Secondary source, retained only for the new-employer rate (not re-verified against a primary page this pass)."
+      }
+    ],
+    "administeredBy": "Kentucky Office of Unemployment Insurance",
+    "wageBase": 12000.0,
+    "wageBaseComment": "Up from $11,700 in 2025, confirmed by DIRECT primary read (kewes.ky.gov's own history table), which also resolves the prior version's disclosed $11,100/$11,400 confusion: those are the 2023 and 2024 wage bases respectively, not competing claims about 2026 — they were two other years' correct figures being mis-surfaced by search results, not a real conflict.",
+    "surcharge": 0.0,
+    "rateScheduleTable": {
+      "$comment": "The FULL table, not just Schedule A's two endpoints — kept in full because an employer's schedule assignment (A-E) depends on statewide Trust Fund health (the 'Trust Fund Adequacy Rate' column) while each employer's OWN rate within that schedule depends on its individual reserve ratio. Rates are percentages.",
+      "scheduleForCalendarYear": { "2026": "A", "2025": "A", "2024": "A", "2023": "A", "2022": "A", "2021": "A", "2020": "A", "2019": "A", "2018": "B", "2017": "D", "2016": "E" },
+      "byReserveRatio": [
+        { "reserveRatioMin": 0.08, "reserveRatioMax": null, "trustFundAdequacyRate": 0.0, "A": 0.003, "B": 0.004, "C": 0.005, "D": 0.006, "E": 0.01 },
+        { "reserveRatioMin": 0.07, "reserveRatioMax": 0.08, "trustFundAdequacyRate": 0.0, "A": 0.004, "B": 0.005, "C": 0.006, "D": 0.008, "E": 0.0105 },
+        { "reserveRatioMin": 0.06, "reserveRatioMax": 0.07, "trustFundAdequacyRate": 0.00008, "A": 0.005, "B": 0.006, "C": 0.007, "D": 0.009, "E": 0.011 },
+        { "reserveRatioMin": 0.05, "reserveRatioMax": 0.06, "trustFundAdequacyRate": 0.00208, "A": 0.007, "B": 0.008, "C": 0.01, "D": 0.012, "E": 0.014 },
+        { "reserveRatioMin": 0.046, "reserveRatioMax": 0.05, "trustFundAdequacyRate": 0.00508, "A": 0.01, "B": 0.012, "C": 0.014, "D": 0.016, "E": 0.018 },
+        { "reserveRatioMin": 0.042, "reserveRatioMax": 0.046, "trustFundAdequacyRate": 0.00808, "A": 0.013, "B": 0.015, "C": 0.018, "D": 0.021, "E": 0.023 },
+        { "reserveRatioMin": 0.039, "reserveRatioMax": 0.042, "trustFundAdequacyRate": 0.01008, "A": 0.015, "B": 0.017, "C": 0.022, "D": 0.024, "E": 0.027 },
+        { "reserveRatioMin": 0.036, "reserveRatioMax": 0.039, "trustFundAdequacyRate": 0.01308, "A": 0.018, "B": 0.018, "C": 0.024, "D": 0.026, "E": 0.03 },
+        { "reserveRatioMin": 0.032, "reserveRatioMax": 0.036, "trustFundAdequacyRate": 0.01508, "A": 0.02, "B": 0.021, "C": 0.025, "D": 0.027, "E": 0.031 },
+        { "reserveRatioMin": 0.027, "reserveRatioMax": 0.032, "trustFundAdequacyRate": 0.01608, "A": 0.021, "B": 0.023, "C": 0.026, "D": 0.028, "E": 0.032 },
+        { "reserveRatioMin": 0.02, "reserveRatioMax": 0.027, "trustFundAdequacyRate": 0.01708, "A": 0.022, "B": 0.025, "C": 0.027, "D": 0.029, "E": 0.033 },
+        { "reserveRatioMin": 0.013, "reserveRatioMax": 0.02, "trustFundAdequacyRate": 0.01808, "A": 0.023, "B": 0.026, "C": 0.028, "D": 0.03, "E": 0.034 },
+        { "reserveRatioMin": 0.0, "reserveRatioMax": 0.013, "trustFundAdequacyRate": 0.01907, "A": 0.024, "B": 0.027, "C": 0.029, "D": 0.031, "E": 0.035 },
+        { "reserveRatioMin": -0.005, "reserveRatioMax": 0.0, "trustFundAdequacyRate": 0.065, "A": 0.065, "B": 0.0675, "C": 0.07, "D": 0.0725, "E": 0.075 },
+        { "reserveRatioMin": -0.01, "reserveRatioMax": -0.005, "trustFundAdequacyRate": 0.0675, "A": 0.0675, "B": 0.07, "C": 0.0725, "D": 0.075, "E": 0.0775 },
+        { "reserveRatioMin": -0.015, "reserveRatioMax": -0.01, "trustFundAdequacyRate": 0.07, "A": 0.07, "B": 0.0725, "C": 0.075, "D": 0.0775, "E": 0.08 },
+        { "reserveRatioMin": -0.02, "reserveRatioMax": -0.015, "trustFundAdequacyRate": 0.0725, "A": 0.0725, "B": 0.075, "C": 0.0775, "D": 0.08, "E": 0.0825 },
+        { "reserveRatioMin": -0.03, "reserveRatioMax": -0.02, "trustFundAdequacyRate": 0.075, "A": 0.075, "B": 0.0775, "C": 0.08, "D": 0.0825, "E": 0.085 },
+        { "reserveRatioMin": -0.04, "reserveRatioMax": -0.03, "trustFundAdequacyRate": 0.0775, "A": 0.0775, "B": 0.08, "C": 0.0825, "D": 0.085, "E": 0.0875 },
+        { "reserveRatioMin": -0.06, "reserveRatioMax": -0.04, "trustFundAdequacyRate": 0.0825, "A": 0.0825, "B": 0.085, "C": 0.0875, "D": 0.09, "E": 0.0925 },
+        { "reserveRatioMin": -0.08, "reserveRatioMax": -0.06, "trustFundAdequacyRate": 0.085, "A": 0.085, "B": 0.0875, "C": 0.09, "D": 0.0925, "E": 0.095 },
+        { "reserveRatioMin": null, "reserveRatioMax": -0.08, "trustFundAdequacyRate": 0.09, "A": 0.09, "B": 0.0925, "C": 0.095, "D": 0.0975, "E": 0.1 }
+      ],
+      "mechanismNote": "Two-stage lookup, both primary-confirmed: (1) statewide Trust Fund health selects which SCHEDULE (A-E) is in effect for the year — 2026 uses A, the lowest-rate schedule, per kewes.ky.gov's own year-to-schedule table; (2) each employer's individual reserve ratio picks the ROW within that schedule. The mechanism connecting Trust Fund health to schedule selection (i.e. why 2026 gets 'A' specifically) was not independently derived from a formula — it's read as a direct fact from the year/schedule table, not reconstructed from the Trust Fund Adequacy Rate column's own logic."
+    },
+    "rates": {
+      "newEmployer": 0.027,
+      "newEmployerConstruction": 0.09,
+      "confidenceNote": "These two figures remain Bloomberg-Tax-sourced (secondary) — not re-verified against kewes.ky.gov's own Employer Guide PDF, which was located but is large (2.9MB) and not fully read this session."
+    },
+    "confidence": "primary_source_confirmed for wage base, surcharge, and the full experience-rating schedule table (kewes.ky.gov, fetched live). New-employer rates remain secondary-sourced (Bloomberg Tax) -- see rates.confidenceNote.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual rate depends on employer-specific reserve-ratio history no static jurisdiction constant can supply, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. The Trust-Fund-health-to-schedule-selection mechanism itself (why the state picks A vs. B vs. C for a given year) was not derived from a formula, only read as a fact for 2026. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "localOccupationalTax": {
+    "$comment": "Kentucky's PA-EIT/OH-municipal equivalent, but structurally distinct from both and the most complex local-tax shape modelled in this project so far -- see the dedicated file for the full writeup.",
+    "pointer": "data/local/KY-occupational-2026.json",
+    "summary": "Cities, counties, AND school districts can each independently levy an occupational license tax on wages/salaries/commissions AND on business net profits, and these can STACK -- but for the 30,000-300,000 population county tier there is a mandatory CITY-TAX-CREDITS-AGAINST-COUNTY-TAX mechanism (KRS 68.197(6)-(7)) rather than simple additive stacking. Counties are statutorily rate-capped (population-tiered: 1.25% for the one 300,000+ county, Jefferson/Louisville; 1% for 30,000+); CITIES ARE NOT CAPPED BY STATUTE AT ALL (KRS 92.281 traces city taxing power to the KY Constitution's Section 181 with no numeric ceiling). The taxable-wage BASE definition (KRS 67.750(2)) explicitly ADDS BACK 401(k)/403(b)/457/SIMPLE deferrals and Section 125/132 benefits -- the opposite of this file's own exemptPretax for the STATE tax, now doubly confirmed by this pass's KRS 141.019 read.",
+    "knownGap": "WIRED, then EXPANDED same day (2026-08-25, 'do kentucky find a way' then 'fix kentucky in one pass now' -- right after Alabama). kentuckyLocalTax() in src/taxes/state.ts now reads 59 CONFIRMED entries (57 of 225 individually-scraped + Louisville Metro + Lexington-Fayette) via registry.ts's allKYJurisdictions() -- up from 39 at first wiring, via three follow-up passes the same day: (1) fixed a parser gap that missed 'gross payroll' phrasing (Hardin County Industrial Tax District, +1), (2) promoted 14 entries by hand out of the 'ambiguous multi-base category' bucket after their own SOURCE field turned out to already contain a primary ordinance quote or a KACo payroll-column citation confirming the wage figure specifically, and (3) cross-checked a USDA NFC independent bulletin against the remaining bare 'Net Profits' entries, confirming 4 more (Bowling Green/Frankfort/Owensboro/Richmond) and surfacing a genuine gap the SOS scrape had entirely missed (Florence's real 2.00% payroll tax, a SEPARATE levy from the 0.001% Gross Receipts figure already on file) plus one unresolved cross-source DISCREPANCY (Covington: SOS 2.5% vs NFC 2.45%, deliberately left unconfirmed rather than picking one). Also implemented the KRS 68.197(10)(c) SS-wage-base-cap mechanism for real this pass, for BOTH of its now-confirmed real-world users (Walton and Florence) -- tracked per-jurisdiction via input.ytd.localIncomeTax, reading the live federal SS wage base from federalRuleset() rather than a hardcoded copy (which caught and fixed a real transcription typo in Walton's own cap note: '$84,500' should have been '$184,500'). Roster completeness was ALSO independently re-verified this pass: fetched the live SOS site directly and diffed its current 225-name dropdown (+ Louisville + Lexington = 227) against this project's own file -- zero discrepancies either direction, meaning every currently-listed Kentucky taxing district's NAME is captured, correcting a stale '227 of 230' claim this file had carried since the original scrape. 19 total tests now cover this (up from 9): both credit directions, the pretax add-back, Louisville's resident/nonresident split, both SS-wage-base-cap users tracked independently, the Hardin/Allen/Estill/Bowling-Green/Florence promotions, and Covington's discrepancy correctly staying unconfirmed. Genuinely still NOT resolved: the KRS 68.197 credit still ASSUMES the 30,000-300,000-population tier applies to whichever county is supplied (Jefferson/Fayette can't trigger it by construction); the other ~168 of 225 scraped entries remain unconfirmed and correctly produce no line (most genuinely DO levy a tax, just without a safe enough wage-specific number yet); school-district-level occupational tax (KRS 67.750(10)'s third layer) is still not modelled at all."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN, not just plausible: 2 hand-derived fixtures reproducing the DOR's own 2026 Withholding Tax Formula worked examples (monthly $104.65 exactly; biweekly, corrected to $47.98 from the source's own truncated $47) run through the actual calculatePaycheck() engine via flatRateFixedDeduction() — see tests/engine.test.ts, describe('Kentucky'). Plus 2 fixtures designed to hit the deduction's own edge behavior (wages below the $3,360 deduction clamp taxable to zero; a same-cheque supplemental+regular aggregation case proving 103 KAR 18:070's aggregation rule, not a Wisconsin-style carve-out, is what the code actually does).",
+    "notCoveredByThoseFixtures": "SUTA and the separate-cheque supplemental aggregation case (103 KAR 18:070 Section 3(2)) are NOT exercised by any test. Reciprocity, certificate.exempt, and certificate.additionalWithholding ARE now exercised — see the 3 new fixtures added alongside the generic engine mechanism."
+  },
+  "knownGaps": [
+    "supplementalTreatment.engineGap: a standalone bonus cheque (no regular wages in the same calculatePaycheck() call) cannot correctly reproduce 103 KAR 18:070's separate-cheque aggregation rule — the engine has no way to reach into a prior period's regular wages.",
+    "The K-4's additional-withholding amount and the CORRECT WITHHOLDING AMOUNT for all four exemption-claim categories are now modelled generically (certificate.additionalWithholding / certificate.exempt). WHICH of the four categories applies (including the newly-found residentMilitaryPayExclusion) still has zero representation — not needed for the dollar amount, but needed for anything downstream that cares which category was claimed.",
+    "Reciprocity's data question is fully resolved for both directions (see reciprocity.kyResidentWorkingInReciprocalState), and the inbound direction now has working CODE too (reciprocityExemptionReason() in state.ts). The Section 4 residencyOverride (183-day test) and the outbound direction's own code path remain unmodelled.",
+    "SUTA's new-employer rate (2.7%/9%) remains secondary-sourced; the experience-rating wage-base and full schedule table are now primary-confirmed but the Trust-Fund-to-schedule-selection mechanism was read as a fact for 2026, not derived from a formula.",
+    "Local occupational tax: CORRECTED, then NORMALIZED, then WIRED — 227 of 230 authoritative jurisdictions have a captured rate. CORRECTED 2026-08-31: the “39 confirmed decimal wage rate” figure on this line was stale and contradicted the local file's own “122” claim elsewhere in the project; ground truth counted directly from data/local/KY-occupational-2026.json is 131 (127 of 250 scraped rows carry a flat wageRateDecimal, 2 more use a resident/nonresident split instead, plus Louisville Metro and Lexington-Fayette which also use the split shape) — see that file's coverage note for the corrected count. kentuckyLocalTax() in src/taxes/state.ts now actually computes it, including the KRS 68.197 city-vs-county credit and the KRS 67.750(2) inverted pretax base (see localOccupationalTax.knownGap above for exactly what remains open, most notably that the credit mechanism's population-tier applicability isn't individually verified per county).",
+    "The 103 KAR 18:070 fetch is captioned effective 2026-07-27 by its own source page; whether it differs from what was in force earlier in 2026 was not checked."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 12000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.003,
+      "max": 0.09
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "103 KAR 18:070 Section 3 prescribes aggregation directly — the regulation's own method, which this file previously recorded as unreachable because the engine could not look back at a prior cheque.",
+    "engineNote": "Wired via aggregateWithPriorRegularPayment(): the caller supplies input.priorRegularPayment (that cheque's taxable wages and the state tax withheld from it), and a bonus paid on its own cheque is taxed on the combined figure less what was already withheld, floored at zero. Nothing changes when the caller omits it."
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "NY",
+    "name": "New York"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 16.0,
+    "hourlyCents": 1600,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "Remainder of New York State -- everywhere OUTSIDE New York City, Nassau, Suffolk and Westchester. Recorded as the standard because it is the lower of the two and applies to the larger land area; the downstate rate is in variants and must be used for those four jurisdictions.",
+    "note": "N.Y. Lab. Law 652 as amended in 2023: $16.00 upstate / $17.00 downstate for 2026. NY DOL's page (read 2026-10-01) says the CPI increase scheduled for 2027 will NOT happen: the law's 'off-ramp' condition was met, so the rates stay $16.00 / $17.00 on 2027-01-01. The Governor has proposed changing the off-ramp, which is not law."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 10.7,
+    "cashWageCents": 1070,
+    "maxTipCredit": 5.3,
+    "maxTipCreditCents": 530,
+    "tippedEmployeeThreshold": null,
+    "note": "Upstate FOOD SERVICE worker cash wage. New York splits tipped employees into food service workers and 'service employees' with different credits, and does so separately in each region -- four tipped figures in total, all in variants."
+  },
+  "variants": [
+    {
+      "hourly": 17.0,
+      "hourlyCents": 1700,
+      "id": "downstate",
+      "label": "New York City, Nassau, Suffolk and Westchester counties",
+      "test": "Work performed in NYC or in Nassau, Suffolk or Westchester county.",
+      "note": "A payroll engine keyed on a bare two-letter state code cannot get New York right; this is a genuine county-level split inside a state file.",
+      "regionalOverrideOf": "standard"
+    },
+    {
+      "hourly": 11.35,
+      "hourlyCents": 1135,
+      "id": "downstate_food_service",
+      "label": "Food service worker cash wage (downstate)",
+      "maxTipCredit": 5.65,
+      "regionalOverrideOf": "tipped",
+      "region": "downstate",
+      "occupation": "food_service"
+    },
+    {
+      "hourly": 14.15,
+      "hourlyCents": 1415,
+      "id": "downstate_service_employee",
+      "label": "Service employee cash wage (downstate)",
+      "maxTipCredit": 2.85,
+      "regionalOverrideOf": "tipped",
+      "region": "downstate",
+      "occupation": "service_employee"
+    },
+    {
+      "hourly": 13.3,
+      "hourlyCents": 1330,
+      "id": "upstate_service_employee",
+      "label": "Service employee cash wage (remainder of state)",
+      "maxTipCredit": 2.7,
+      "regionalOverrideOf": "tipped",
+      "region": "upstate",
+      "occupation": "service_employee"
+    }
+  ],
+  "youthAndTraining": [],
+  "exemptions": {
+    "$comment": "Who this file's rate does NOT apply to at all -- N.Y. Lab. Law 651(5)'s own list of exclusions from the definition of 'employee' for Article 19 (minimum wage) purposes. This is a coverage/classification question, not a rate, so nothing here is machine-tested by minimumWage() -- consistent with this database's own discipline (see the top-level README's 'What makes this hard' section: coverage tests are recorded in prose, not guessed at in code).",
+    "categories": [
+      {
+        "id": "executive_administrative_professional",
+        "label": "Bona fide executive, administrative, or professional capacity",
+        "statute": "Lab. Law 651(5)(c)",
+        "note": "A DUTIES test, not a job title -- see exemptSalaryThresholds below for the separate SALARY floor that must also be met."
+      },
+      {
+        "id": "outside_salesperson",
+        "label": "Outside salesperson",
+        "statute": "Lab. Law 651(5)(d)",
+        "note": "Someone whose job is to sell away from the employer's place of business -- the same category name the FLSA uses, and NY does not define it more narrowly."
+      },
+      {
+        "id": "taxicab_driver",
+        "label": "Driver engaged in operating a taxicab",
+        "statute": "Lab. Law 651(5)(e)"
+      },
+      {
+        "id": "part_time_babysitter",
+        "label": "Casual part-time babysitter in the employer's own home",
+        "statute": "Lab. Law 651(5)(b)"
+      },
+      {
+        "id": "farm_labor",
+        "label": "Labor on a farm",
+        "statute": "Lab. Law 651(5)(a)",
+        "note": "Excluded from ARTICLE 19's definition of 'employee' -- but NOT left unpaid. Article 19-A (Lab. Law 673) separately covers farm laborers and sets their minimum wage by cross-reference to the SAME Lab. Law 652(1) figure this file carries, so in practice the rate is identical; what genuinely differs is overtime, which kicks in after 60 hours/week for farm labor rather than 40, with the state's own Farm Laborers Wage Board directed to phase that down toward 40 by 2032. A payroll system that reads 'farm labor is exempt' and stops there will underpay overtime, not the base rate."
+      },
+      {
+        "id": "government_employee",
+        "label": "Employed by a federal, state or municipal government or political subdivision thereof",
+        "statute": "Lab. Law 651(5)(n)",
+        "note": "The single broadest exclusion on this list, and the one most likely to be misread. It means NEW YORK'S OWN Article 19 minimum wage does not separately apply to government employees -- it does NOT mean they are unpaid or unprotected: the FEDERAL FLSA minimum wage (extended to state and local government employers by Garcia v. San Antonio Metropolitan Transit Authority, 469 U.S. 528 (1985)) still applies to an ordinary government employee. See the electionWorkers entry below for the one category of NY government worker where this actually matters in practice."
+      },
+      {
+        "id": "religious_charitable_volunteer",
+        "label": "Volunteer, learner or apprentice for a religious, charitable or educational corporation",
+        "statute": "Lab. Law 651(5)(f)"
+      },
+      {
+        "id": "clergy",
+        "label": "Member of a religious order, or ordained/commissioned/licensed minister, priest, rabbi, or sexton",
+        "statute": "Lab. Law 651(5)(g)"
+      },
+      {
+        "id": "charitable_aid_recipient",
+        "label": "Individual whose work is incidental to or in return for charitable aid conferred on them",
+        "statute": "Lab. Law 651(5)(h)"
+      },
+      {
+        "id": "student",
+        "label": "Student (in the specific settings the statute names)",
+        "statute": "Lab. Law 651(5)(i)"
+      },
+      {
+        "id": "impaired_earning_capacity",
+        "label": "Individual whose earning capacity is impaired by age or physical/mental deficiency, at a licensed nonprofit institution",
+        "statute": "Lab. Law 651(5)(j)"
+      },
+      {
+        "id": "summer_camp_staff",
+        "label": "Staff at a summer camp or conference of a religious, charitable or educational institution, for not more than 3 months a year",
+        "statute": "Lab. Law 651(5)(k)"
+      },
+      {
+        "id": "childrens_camp_counselor",
+        "label": "Staff counselor at a children's camp",
+        "statute": "Lab. Law 651(5)(l)"
+      },
+      {
+        "id": "college_student_association_staff",
+        "label": "Student working for their own college/university fraternity, sorority, student association or faculty association",
+        "statute": "Lab. Law 651(5)(m)"
+      },
+      {
+        "id": "recreational_event_volunteer",
+        "label": "Volunteer at a recreational or amusement event run by a business that operates such events",
+        "statute": "Lab. Law 651(5)(o)"
+      },
+      {
+        "id": "newspaper_carrier",
+        "label": "Delivery of newspapers or shopping news to the consumer",
+        "statute": "Lab. Law 651(5)(p)"
+      },
+      {
+        "id": "minor_league_baseball_player",
+        "label": "Individual under contract to play baseball at the minor league level",
+        "statute": "Lab. Law 651(5)(q)"
+      },
+      {
+        "id": "computer_professional",
+        "label": "Computer systems analyst, computer programmer, software engineer or similarly skilled worker",
+        "statute": "Lab. Law 651(5), computer-employee clause",
+        "note": "NY ties this exemption to the SAME conditions the FLSA uses (29 U.S.C. 213(a)(17)) rather than defining its own -- see federal-2026.json's whiteCollarExemptions.computerEmployee for the federal $27.63/hour or $684/week alternative-basis figures NY imports by reference. Not independently re-verified against a NY-specific dollar figure this session; treat the federal number as the applicable one unless NY DOL publishes a different one."
+      }
+    ],
+    "electionWorkers": {
+      "conclusion": "Likely outside both NY's own minimum wage and the federal FLSA floor, but this is a judgment call resting on how a court would apply an 'economic realities' test to the specific per-diem paid -- not a bright-line statutory carve-out naming election workers by name, at either level.",
+      "nyAnalysis": "NY election inspectors and poll clerks are appointed by COUNTY BOARDS OF ELECTIONS (Election Law 3-400), which are political subdivisions of the state -- so they fall within Lab. Law 651(5)(n)'s government-employee exclusion from Article 19 above, meaning NEW YORK'S OWN minimum wage statute does not independently reach them. Election Law 3-400 itself sets no wage floor; it authorizes counties to set inspector/poll-clerk compensation (commonly reported in the $100-$300+ per-diem range depending on the county and role, well below what an hourly minimum wage would yield over a 15+ hour election day) and is silent on whether Labor Law applies at all.",
+      "federalAnalysis": "That leaves the question of whether the FEDERAL FLSA reaches them instead (Garcia v. SAMTA extended FLSA to state/local government employers generally). U.S. DOL's own May 1986 Wage and Hour Opinion Letter states DOL 'has taken no position as to whether persons serving as election judges, officials, or poll workers on election days are employees of the public agency which receives their services' -- an explicit non-answer, not a ruling either way. The one federal appellate decision on point, Evers v. Tart, 48 F.3d 319 (8th Cir. 1995), held election clerks paid $35/day and judges paid $50/day (plus mileage) were 'volunteers' under the FLSA's public-agency volunteer exclusion (29 U.S.C. 203(e)(4)(A); 29 CFR 553.106), not employees -- because the per-diem was a 'nominal fee' rather than a substitute for compensation. DOL's own 20%-of-a-regular-employee's-pay guideline for what counts as 'nominal' (29 CFR 553.106) means the answer can flip on the facts of a specific county's own per-diem: a modest stipend for one election day reads as nominal under Evers; a large per-diem, or per-diem pay for many training/setup days beyond election day itself, could push a specific county's arrangement over the line into real employment.",
+      "confidence": "cross_source_confirmed",
+      "sources": [
+        {
+          "title": "N.Y. Election Law 3-400 -- Election inspectors and poll clerks",
+          "url": "https://www.nysenate.gov/legislation/laws/ELN/3-400",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Fetched and read directly this session. Authorizes county boards of elections to fix inspector/poll-clerk compensation (including 'adjusted compensation' for split shifts) and is silent on Labor Law's applicability -- confirming this is not a statute that resolves the minimum-wage question either way."
+        },
+        {
+          "title": "N.Y. Labor Law 651(5) -- Definitions (exclusions from 'employee')",
+          "url": "https://www.nysenate.gov/legislation/laws/LAB/651",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Fetched this session for the full exclusion list transcribed into the categories array above, including the government-employee exclusion this election-worker analysis rests on."
+        },
+        {
+          "title": "U.S. DOL Wage and Hour Opinion Letter (1986-05-07) on county-appointed poll workers",
+          "url": "https://www.dol.gov/agencies/whd/compliance-assistance/handy-reference-guide-flsa",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session (not fetched directly): quoted secondhand as stating DOL 'has taken no position as to whether persons serving as election judges, officials, or poll workers on election days are employees of the public agency which receives their services and, thus, subject to the monetary requirements of FLSA.' Re-verify against DOL's own opinion-letter archive before relying on this for a specific compliance decision."
+        },
+        {
+          "title": "Evers v. Tart, 48 F.3d 319 (8th Cir. 1995)",
+          "url": "https://www.courtlistener.com/",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via secondary legal summaries this session (case text itself not fetched directly): election clerks paid $35/day and judges paid $50/day plus $0.25/mile held to be FLSA volunteers, not employees, applying 29 U.S.C. 203(e)(4)(A)'s public-agency volunteer exclusion. Re-verify against the reported opinion before relying on this for a specific compliance decision."
+        },
+        {
+          "title": "29 CFR 553.106 -- Payment of expenses, benefits, or fees",
+          "url": "https://www.ecfr.gov/current/title-29/subtitle-B/chapter-V/subchapter-A/part-553/subpart-B/section-553.106",
+          "verifiedOn": "2026-09-09",
+          "verifiedBy": "Found via search this session: source of the approximately-20%-of-a-comparable-employee's-pay 'nominal fee' guideline this analysis relies on to explain why the answer is fact-specific rather than a bright line."
+        }
+      ],
+      "knownGaps": [
+        "No specific NY county's actual election-inspector per-diem was individually tested against the 20% 'nominal fee' guideline this session -- the conclusion above is a legal framework, not a per-county determination.",
+        "Whether an EARLY VOTING or absentee-processing worker (as opposed to a single Election Day inspector) falls under the same analysis was not separately researched -- more days of service could itself push a per-diem arrangement past 'nominal'.",
+        "This entire analysis concerns MINIMUM WAGE coverage only. It says nothing about these workers' tax treatment; that is a separate, already-modelled question -- see data/federal/2026.json's employmentCategories.electionWorker for the $2,500 FICA/Social-Security coverage threshold, which is settled by statute (26 U.S.C. 3121(b)(7)(F)(iv)) rather than by case-by-case economic-realities analysis the way minimum wage coverage is."
+      ]
+    }
+  },
+  "exemptSalaryThresholds": {
+    "$comment": "The SALARY half of the executive/administrative exemption test named in exemptions.categories above (the DUTIES half is a legal determination this file does not model). NY sets its own figure, well above the federal one, and splits it the same downstate/upstate way as the hourly rate. The PROFESSIONAL exemption (as opposed to executive/administrative) has no NY-specific salary floor at all -- 12 NYCRR 142 is silent on it -- so federal law's $684/week governs professionals by default; see federal-2026.json's whiteCollarExemptions for that figure and the highly-compensated-employee and computer-employee alternatives NY also imports by reference rather than restating.",
+    "executiveAdministrative": {
+      "downstate": {
+        "weekly": 1275.0,
+        "annualized": 66300.0,
+        "label": "New York City, Nassau, Suffolk and Westchester counties",
+        "effectiveFrom": "2026-01-01"
+      },
+      "upstate": {
+        "weekly": 1199.1,
+        "annualized": 62353.2,
+        "label": "Remainder of New York State",
+        "effectiveFrom": "2026-01-01"
+      },
+      "note": "Often described as 'roughly 75 times the applicable hourly minimum wage' -- $17.00 x 75 = $1,275.00 downstate lines up exactly, but $16.00 x 75 would be $1,200.00, 90 cents above the actual $1,199.10 upstate figure. The two schedules are set by the same wage orders that set the hourly rate but are not a live formula recomputed from it every year; the published weekly figures are what governs, not the multiplier."
+    },
+    "confidence": "cross_source_confirmed",
+    "sources": [
+      {
+        "title": "Proskauer Rose -- New York State Minimum Wage and Exempt Salary Updates for 2026",
+        "url": "https://www.proskauer.com/blog/new-york-state-minimum-wage-and-exempt-salary-updates-for-2026",
+        "verifiedOn": "2026-09-09",
+        "verifiedBy": "Found via search this session (not fetched directly). Independent employment-law source giving both regional 2026 figures."
+      },
+      {
+        "title": "Seyfarth Shaw -- 2026 Wage Updates for New York Employers",
+        "url": "https://www.seyfarth.com/news-insights/2026-wage-updates-for-new-york-employers.html",
+        "verifiedOn": "2026-09-09",
+        "verifiedBy": "Found via search this session as a second, independent legal-compliance source agreeing on both figures, satisfying this database's cross_source_confirmed standard. NY DOL's own wage order was not fetched directly this session -- re-verify against 12 NYCRR 142 before relying on this for a specific classification decision."
+      }
+    ]
+  },
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W (Northeast region), beginning 2027",
+    "adjustmentDate": "01-01",
+    "note": "The 2027 adjustment is switched off by the law's off-ramp: NY DOL (read 2026-10-01) states the 2027 rates are unchanged at $17.00 (NYC, Long Island, Westchester) and $16.00 (rest of state)."
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "title": "New York State Department of Labor -- Minimum Wage (rates effective 01/01/2026)",
+      "url": "https://dol.ny.gov/minimum-wage-0",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of all six New York figures: $17.00 downstate / $16.00 remainder, food service worker cash wages of $11.35 / $10.70 (tip credits $5.65 / $5.30), and service employee cash wages of $14.15 / $13.30 (tip credits $2.85 / $2.70)."
+    },
+    {
+      "title": "New York State Department of Labor -- Minimum Wage (2027 update: rates unchanged, home care aide increase)",
+      "url": "https://dol.ny.gov/minimum-wage-0",
+      "verifiedOn": "2026-10-01",
+      "verifiedBy": "Read directly by the daily source watch on 2026-10-01 (the page's headings changed from 'as of 01/01/2026' to 'as of 01/01/2027'). It states that on 2027-01-01 the minimum wage stays $17.00 per hour in New York City, Long Island and Westchester County and $16.00 in the rest of the state, because an off-ramp condition was met, and that home care aides rise to $20.00 / $19.00 (capped at $3.00 above the standard wage). Informational only: no 2027 file exists because the engine has no 2027 tax year."
+    },
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "knownGaps": [
+    "New York's HOME CARE AIDE minimum wage is a separate, higher figure set by Public Health Law 3614-f -- $19.65 downstate / $18.65 upstate from 2026-01-01 -- and is now carried in sectoral/NY-sectoral-2026.json rather than here, the same way California keeps its fast-food and health-care sectoral rates out of its own state file.",
+    "The hospitality and building-service wage orders carry their own allowances (uniform maintenance, meals, lodging) that can change the effective cash figure; not modelled.",
+    "This engine's own garnishment data (data/garnishment/state-overrides-2026.json) uses the LOWER $16.00 figure for New York's 30x minimum-wage floor and discloses that as a simplification. Both files are now consistent about the fact that there are two rates.",
+    "The exemptions.categories list above answers WHICH occupations Article 19 does not reach; it does not model the DUTIES tests themselves (what makes a job genuinely 'executive' vs. a title used to misclassify one) -- that is the same kind of legal determination this database has always declined to adjudicate, consistent with 'coverage tests are not modelled' in the top-level README.",
+    "Employee-COUNT-based obligations for a NY employer (paid sick leave's 4/99/100-employee tiers, the state WARN Act's 50-employee threshold, federal ACA/FMLA/COBRA/Title VII/ADEA thresholds, etc.) are a different question from minimum WAGE and are deliberately kept OUT of this file -- see data/employer-thresholds/NY-2026.json, a separate reference dataset with its own scope and its own disclaimer that it is not wired into any calculation this engine performs."
+  ],
+  "confidence": "primary_source_confirmed"
+}

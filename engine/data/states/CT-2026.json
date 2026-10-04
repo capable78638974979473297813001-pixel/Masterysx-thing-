@@ -1,0 +1,3140 @@
+{
+  "code": "CT",
+  "name": "Connecticut",
+  "year": 2026,
+  "method": "connecticut_withholding_code",
+  "$scopeNote": "STATE income tax and Paid Leave only. Connecticut has no local income tax anywhere and no reciprocity agreements with any state (residents working elsewhere are taxed in both states and claim a credit on their CT-1040, a return-level mechanism this per-cheque withholding engine does not model, same disclosed scope as every other state's credit-for-taxes-paid-elsewhere convention in this project). This is the most structurally complex withholding formula built in this project so far -- five chained tables (exemption phase-down, a genuine progressive bracket, a step-function 2% bracket phase-out add-back, a step-function high-earner tax recapture, and a step-function personal-credit decimal multiplier applied last), all keyed off ANNUALIZED salary, not one flat percentage or a single bracket lookup.",
+  "$methodComment": "Circular CT (IP 2026(1)) / TPG-211's own 16-step \"Withholding Calculation Rules\" (fetched and read directly, effective 2026-01-01, \"unchanged from 2025\"). Steps 1-3: per-period wages -> annualized salary. Step 4: Form CT-W4's own \"Withholding Code\" (A/B/C/D/F; E is exempt, handled generically). Steps 5-6: Table A's personal exemption (phase-out formula independently VERIFIED against every explicitly-paired row for all 4 codes -- see extractionNote) subtracted from annualized salary. Step 7: Table B initial progressive bracket tax on the result. Steps 8-9: Table C (2% bracket phase-out add-back) and Table D (tax recapture) are BOTH step functions -- a single flat dollar amount for the whole row, confirmed from the source's own column headers (\"...Add-Back\" / \"Recapture Amount\", not \"of excess over\") -- keyed by annualized SALARY (not the post-exemption taxable figure), a genuinely easy detail to get wrong since Step 7 and Steps 8/9 look up different quantities in the same formula. Steps 10-12: sum, then apply Table E's personal-credit decimal multiplier (also a step function, also keyed by annualized salary) as (1 - credit). Step 13: divide by pay periods.",
+  "extractionNote": "Tables A and C suffered the same multi-column PDF layout-shift hazard already documented elsewhere in this project (NJ's Rate Tables, NY's Table A): pdftotext -layout printed a boundary value on its own line, visually separated from the row it belongs to. Reconstructed via the same method already validated for NJ -- pair the ordered boundary sequence with the ordered value sequence -- and cross-checked: Table A's formula (wide band V, then V/1000-1 steps of $1,000 each decrementing by $1,000, then $0) reproduces every explicitly-legible row for all 4 codes with zero discrepancies. Table E's raw extraction initially looked like it needed twice as many boundary rows as were printed (an interleaved .75/.70/.65/.60/... sequence), which turned out to be the OTHER 3 codes' own legend values bleeding across columns during -layout reconstruction (Codes A/B/C/F sit side-by-side in the source and start at different incomes, so they reach each row at different vertical positions) -- resolved by trusting only the same-line boundary+value pairs, which are internally consistent and complete on their own. Table B and Table D extracted cleanly with no shift at all.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "Circular CT (fetched and read directly): \"The amount of Connecticut wages paid to a resident employee will generally equal the amount of the employee's wages for federal income tax withholding purposes\" -- i.e. Connecticut conforms to the FEDERAL withholding-wages figure, the opposite of Pennsylvania's non-conformity and the same conformity pattern already established for Michigan/Ohio/Idaho in this project. Reuses the same exemptPretax list as federal.json's incomeTax.",
+  "sources": [
+    {
+      "title": "IP 2026(1), Connecticut Employer's Tax Guide, Circular CT",
+      "url": "https://portal.ct.gov/-/media/drs/publications/pubsip/2026/ip-2026-1.pdf?rev=4482a3dca0a44b28ae39381a91fb0916&hash=57C34787EE2C1D4A7F989EE1F6B8F0F8",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout, a 39-page document). ENGINE-CONSUMED: all 16 withholding-calculation-rule steps, all 5 tables (A-E) for all 5 non-exempt codes, the flat-6.99%-no-form rule, the aggregation-only supplemental-wage rule (Examples 8-12), Line 2/Line 3 (additional/reduced withholding) semantics, and the federal-wages-conformity statement for 'gross Connecticut wages.'"
+    },
+    {
+      "title": "CT Paid Leave \u2014 Contributions",
+      "url": "https://www.ctpaidleave.org/how-ct-paid-leave-works/contributions",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly. Verbatim: \"The CT Paid Leave Board of Directors has voted to maintain the contribution rate at 0.5% for 2026.\" Wage cap stated as \"until they reach the Social Security contribution limit\" without restating the dollar figure on this specific page -- cross-checked against this project's own data/federal/2026.json socialSecurity.wageBase ($184,500), which the CT Paid Leave Authority's own program design ties to by reference. UPDATE 2026-09-06: statePaidLeaveEmployee.wageBase above now uses the 'ssWageBase' sentinel, resolved live from federal.json, so it no longer needs to be manually kept in sync -- this note is left here as historical context for why the sentinel exists, not as a live warning."
+    },
+    {
+      "title": "Form CT-W4, Employee's Withholding Certificate (Rev. 12/25, effective 2026-01-01)",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2026/wth/ct-w4_1225fillable.pdf?rev=9e9e0216cd394f579961e1d4cd5c7ab3&hash=4D496BCBD10659462D3799732B5A91F2",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout) as a follow-up check after Scott asked whether this file was Symmetry-level -- the same discipline that caught a real bug in Idaho's build (Form ID W-4's Box C). This one came back clean: Line 1 (Withholding Code), Line 2 (additional withholding per pay period), and Line 3 (reduced withholding per pay period) match connecticutWithholdingCode()/applyAdditionalStateWithholding()/applyReducedStateWithholding() exactly, with no undiscovered checkbox or field. ALSO closed a real documentation-only gap: the Code-A/B/C/D/F-to-filing-status mapping this file previously only had from a secondary WebSearch synthesis is now primary-confirmed directly off the form: A = Married Filing Separately (or MFJ with both spouses working, mid-income), B = Head of Household, C = MFJ or Qualifying Surviving Spouse with a non-working spouse, F = Single, D = an elective highest-withholding option available to EVERY filing status (significant nonwage income, a nonresident with substantial other income, or a high-combined-income MFJ/MFS couple) -- not itself engine-consumed (certificate.withholdingCode is supplied directly by the caller), but confirms resolveCTCode()'s accepted letter set (A/B/C/D/F, with E routed through certificate.exempt) has no missing option, unlike Idaho's Box C gap."
+    },
+    {
+      "title": "TPG-211, 2026 Withholding Calculation Rules (Rev. 12/25)",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/wth/tpg-211_1225.pdf?rev=e16ef13773ec42d4bf0afd2e192e0176&hash=CCF9990D8EE0AA580A11BC6E97235650",
+      "verifiedOn": "2026-09-02",
+      "verifiedBy": "Downloaded directly and text-extracted with pypdfium2 (WebFetch's own summarizer couldn't parse this specific PDF's compressed stream, same class of PDF hazard already documented elsewhere in this project). Page 6 of 6 is Table E - Personal Tax Credits in full, all four codes (A/B/C/F) side by side, every boundary/decimal pair -- closes this file's own previously-disclosed Table E gap outright (see connecticutTables.tableE and this file's knownGaps entry for the fix)."
+    }
+  ],
+  "connecticutTables": {
+    "noFormRate": 0.0699,
+    "noFormRateQuote": "Circular CT, verbatim: \"If an employee fails to give you a completed Form CTW4, you must withhold at a flat rate of 6.99%, without allowance.\" Genuinely different from every other state's no-form convention in this project (which default to a marital-status assumption, usually single) -- Connecticut's own rule is a flat top-marginal-rate cut with NO exemption, credit, or bracket relief at all, modeled here as its own path rather than forced into the project's usual 'default single' convention.",
+    "tableA": {
+      "A": [
+        {
+          "from": 0,
+          "to": 24000,
+          "exemption": 12000
+        },
+        {
+          "from": 24000,
+          "to": 25000,
+          "exemption": 11000
+        },
+        {
+          "from": 25000,
+          "to": 26000,
+          "exemption": 10000
+        },
+        {
+          "from": 26000,
+          "to": 27000,
+          "exemption": 9000
+        },
+        {
+          "from": 27000,
+          "to": 28000,
+          "exemption": 8000
+        },
+        {
+          "from": 28000,
+          "to": 29000,
+          "exemption": 7000
+        },
+        {
+          "from": 29000,
+          "to": 30000,
+          "exemption": 6000
+        },
+        {
+          "from": 30000,
+          "to": 31000,
+          "exemption": 5000
+        },
+        {
+          "from": 31000,
+          "to": 32000,
+          "exemption": 4000
+        },
+        {
+          "from": 32000,
+          "to": 33000,
+          "exemption": 3000
+        },
+        {
+          "from": 33000,
+          "to": 34000,
+          "exemption": 2000
+        },
+        {
+          "from": 34000,
+          "to": 35000,
+          "exemption": 1000
+        },
+        {
+          "from": 35000,
+          "to": null,
+          "exemption": 0
+        }
+      ],
+      "B": [
+        {
+          "from": 0,
+          "to": 38000,
+          "exemption": 19000
+        },
+        {
+          "from": 38000,
+          "to": 39000,
+          "exemption": 18000
+        },
+        {
+          "from": 39000,
+          "to": 40000,
+          "exemption": 17000
+        },
+        {
+          "from": 40000,
+          "to": 41000,
+          "exemption": 16000
+        },
+        {
+          "from": 41000,
+          "to": 42000,
+          "exemption": 15000
+        },
+        {
+          "from": 42000,
+          "to": 43000,
+          "exemption": 14000
+        },
+        {
+          "from": 43000,
+          "to": 44000,
+          "exemption": 13000
+        },
+        {
+          "from": 44000,
+          "to": 45000,
+          "exemption": 12000
+        },
+        {
+          "from": 45000,
+          "to": 46000,
+          "exemption": 11000
+        },
+        {
+          "from": 46000,
+          "to": 47000,
+          "exemption": 10000
+        },
+        {
+          "from": 47000,
+          "to": 48000,
+          "exemption": 9000
+        },
+        {
+          "from": 48000,
+          "to": 49000,
+          "exemption": 8000
+        },
+        {
+          "from": 49000,
+          "to": 50000,
+          "exemption": 7000
+        },
+        {
+          "from": 50000,
+          "to": 51000,
+          "exemption": 6000
+        },
+        {
+          "from": 51000,
+          "to": 52000,
+          "exemption": 5000
+        },
+        {
+          "from": 52000,
+          "to": 53000,
+          "exemption": 4000
+        },
+        {
+          "from": 53000,
+          "to": 54000,
+          "exemption": 3000
+        },
+        {
+          "from": 54000,
+          "to": 55000,
+          "exemption": 2000
+        },
+        {
+          "from": 55000,
+          "to": 56000,
+          "exemption": 1000
+        },
+        {
+          "from": 56000,
+          "to": null,
+          "exemption": 0
+        }
+      ],
+      "C": [
+        {
+          "from": 0,
+          "to": 48000,
+          "exemption": 24000
+        },
+        {
+          "from": 48000,
+          "to": 49000,
+          "exemption": 23000
+        },
+        {
+          "from": 49000,
+          "to": 50000,
+          "exemption": 22000
+        },
+        {
+          "from": 50000,
+          "to": 51000,
+          "exemption": 21000
+        },
+        {
+          "from": 51000,
+          "to": 52000,
+          "exemption": 20000
+        },
+        {
+          "from": 52000,
+          "to": 53000,
+          "exemption": 19000
+        },
+        {
+          "from": 53000,
+          "to": 54000,
+          "exemption": 18000
+        },
+        {
+          "from": 54000,
+          "to": 55000,
+          "exemption": 17000
+        },
+        {
+          "from": 55000,
+          "to": 56000,
+          "exemption": 16000
+        },
+        {
+          "from": 56000,
+          "to": 57000,
+          "exemption": 15000
+        },
+        {
+          "from": 57000,
+          "to": 58000,
+          "exemption": 14000
+        },
+        {
+          "from": 58000,
+          "to": 59000,
+          "exemption": 13000
+        },
+        {
+          "from": 59000,
+          "to": 60000,
+          "exemption": 12000
+        },
+        {
+          "from": 60000,
+          "to": 61000,
+          "exemption": 11000
+        },
+        {
+          "from": 61000,
+          "to": 62000,
+          "exemption": 10000
+        },
+        {
+          "from": 62000,
+          "to": 63000,
+          "exemption": 9000
+        },
+        {
+          "from": 63000,
+          "to": 64000,
+          "exemption": 8000
+        },
+        {
+          "from": 64000,
+          "to": 65000,
+          "exemption": 7000
+        },
+        {
+          "from": 65000,
+          "to": 66000,
+          "exemption": 6000
+        },
+        {
+          "from": 66000,
+          "to": 67000,
+          "exemption": 5000
+        },
+        {
+          "from": 67000,
+          "to": 68000,
+          "exemption": 4000
+        },
+        {
+          "from": 68000,
+          "to": 69000,
+          "exemption": 3000
+        },
+        {
+          "from": 69000,
+          "to": 70000,
+          "exemption": 2000
+        },
+        {
+          "from": 70000,
+          "to": 71000,
+          "exemption": 1000
+        },
+        {
+          "from": 71000,
+          "to": null,
+          "exemption": 0
+        }
+      ],
+      "D": "ZERO",
+      "F": [
+        {
+          "from": 0,
+          "to": 30000,
+          "exemption": 15000
+        },
+        {
+          "from": 30000,
+          "to": 31000,
+          "exemption": 14000
+        },
+        {
+          "from": 31000,
+          "to": 32000,
+          "exemption": 13000
+        },
+        {
+          "from": 32000,
+          "to": 33000,
+          "exemption": 12000
+        },
+        {
+          "from": 33000,
+          "to": 34000,
+          "exemption": 11000
+        },
+        {
+          "from": 34000,
+          "to": 35000,
+          "exemption": 10000
+        },
+        {
+          "from": 35000,
+          "to": 36000,
+          "exemption": 9000
+        },
+        {
+          "from": 36000,
+          "to": 37000,
+          "exemption": 8000
+        },
+        {
+          "from": 37000,
+          "to": 38000,
+          "exemption": 7000
+        },
+        {
+          "from": 38000,
+          "to": 39000,
+          "exemption": 6000
+        },
+        {
+          "from": 39000,
+          "to": 40000,
+          "exemption": 5000
+        },
+        {
+          "from": 40000,
+          "to": 41000,
+          "exemption": 4000
+        },
+        {
+          "from": 41000,
+          "to": 42000,
+          "exemption": 3000
+        },
+        {
+          "from": 42000,
+          "to": 43000,
+          "exemption": 2000
+        },
+        {
+          "from": 43000,
+          "to": 44000,
+          "exemption": 1000
+        },
+        {
+          "from": 44000,
+          "to": null,
+          "exemption": 0
+        }
+      ]
+    },
+    "tableB": {
+      "A": [
+        {
+          "from": 0,
+          "to": 10000,
+          "base": 0,
+          "rate": 0.02
+        },
+        {
+          "from": 10000,
+          "to": 50000,
+          "base": 200,
+          "rate": 0.045
+        },
+        {
+          "from": 50000,
+          "to": 100000,
+          "base": 2000,
+          "rate": 0.055
+        },
+        {
+          "from": 100000,
+          "to": 200000,
+          "base": 4750,
+          "rate": 0.06
+        },
+        {
+          "from": 200000,
+          "to": 250000,
+          "base": 10750,
+          "rate": 0.065
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "base": 14000,
+          "rate": 0.069
+        },
+        {
+          "from": 500000,
+          "to": null,
+          "base": 31250,
+          "rate": 0.0699
+        }
+      ],
+      "B": [
+        {
+          "from": 0,
+          "to": 16000,
+          "base": 0,
+          "rate": 0.02
+        },
+        {
+          "from": 16000,
+          "to": 80000,
+          "base": 320,
+          "rate": 0.045
+        },
+        {
+          "from": 80000,
+          "to": 160000,
+          "base": 3200,
+          "rate": 0.055
+        },
+        {
+          "from": 160000,
+          "to": 320000,
+          "base": 7600,
+          "rate": 0.06
+        },
+        {
+          "from": 320000,
+          "to": 400000,
+          "base": 17200,
+          "rate": 0.065
+        },
+        {
+          "from": 400000,
+          "to": 800000,
+          "base": 22400,
+          "rate": 0.069
+        },
+        {
+          "from": 800000,
+          "to": null,
+          "base": 50000,
+          "rate": 0.0699
+        }
+      ],
+      "C": [
+        {
+          "from": 0,
+          "to": 20000,
+          "base": 0,
+          "rate": 0.02
+        },
+        {
+          "from": 20000,
+          "to": 100000,
+          "base": 400,
+          "rate": 0.045
+        },
+        {
+          "from": 100000,
+          "to": 200000,
+          "base": 4000,
+          "rate": 0.055
+        },
+        {
+          "from": 200000,
+          "to": 400000,
+          "base": 9500,
+          "rate": 0.06
+        },
+        {
+          "from": 400000,
+          "to": 500000,
+          "base": 21500,
+          "rate": 0.065
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "base": 28000,
+          "rate": 0.069
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "base": 62500,
+          "rate": 0.0699
+        }
+      ],
+      "D": [
+        {
+          "from": 0,
+          "to": 10000,
+          "base": 0,
+          "rate": 0.02
+        },
+        {
+          "from": 10000,
+          "to": 50000,
+          "base": 200,
+          "rate": 0.045
+        },
+        {
+          "from": 50000,
+          "to": 100000,
+          "base": 2000,
+          "rate": 0.055
+        },
+        {
+          "from": 100000,
+          "to": 200000,
+          "base": 4750,
+          "rate": 0.06
+        },
+        {
+          "from": 200000,
+          "to": 250000,
+          "base": 10750,
+          "rate": 0.065
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "base": 14000,
+          "rate": 0.069
+        },
+        {
+          "from": 500000,
+          "to": null,
+          "base": 31250,
+          "rate": 0.0699
+        }
+      ],
+      "F": [
+        {
+          "from": 0,
+          "to": 10000,
+          "base": 0,
+          "rate": 0.02
+        },
+        {
+          "from": 10000,
+          "to": 50000,
+          "base": 200,
+          "rate": 0.045
+        },
+        {
+          "from": 50000,
+          "to": 100000,
+          "base": 2000,
+          "rate": 0.055
+        },
+        {
+          "from": 100000,
+          "to": 200000,
+          "base": 4750,
+          "rate": 0.06
+        },
+        {
+          "from": 200000,
+          "to": 250000,
+          "base": 10750,
+          "rate": 0.065
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "base": 14000,
+          "rate": 0.069
+        },
+        {
+          "from": 500000,
+          "to": null,
+          "base": 31250,
+          "rate": 0.0699
+        }
+      ]
+    },
+    "tableC": {
+      "A": [
+        {
+          "from": 0,
+          "to": 50250,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 50250,
+          "to": 52750,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 52750,
+          "to": 55250,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 55250,
+          "to": 57750,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 57750,
+          "to": 60250,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 60250,
+          "to": 62750,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 62750,
+          "to": 65250,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 65250,
+          "to": 67750,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 67750,
+          "to": 70250,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 70250,
+          "to": 72750,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 72750,
+          "to": null,
+          "base": 250,
+          "rate": 0
+        }
+      ],
+      "B": [
+        {
+          "from": 0,
+          "to": 78500,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 78500,
+          "to": 82500,
+          "base": 40,
+          "rate": 0
+        },
+        {
+          "from": 82500,
+          "to": 86500,
+          "base": 80,
+          "rate": 0
+        },
+        {
+          "from": 86500,
+          "to": 90500,
+          "base": 120,
+          "rate": 0
+        },
+        {
+          "from": 90500,
+          "to": 94500,
+          "base": 160,
+          "rate": 0
+        },
+        {
+          "from": 94500,
+          "to": 98500,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 98500,
+          "to": 102500,
+          "base": 240,
+          "rate": 0
+        },
+        {
+          "from": 102500,
+          "to": 106500,
+          "base": 280,
+          "rate": 0
+        },
+        {
+          "from": 106500,
+          "to": 110500,
+          "base": 320,
+          "rate": 0
+        },
+        {
+          "from": 110500,
+          "to": 114500,
+          "base": 360,
+          "rate": 0
+        },
+        {
+          "from": 114500,
+          "to": null,
+          "base": 400,
+          "rate": 0
+        }
+      ],
+      "C": [
+        {
+          "from": 0,
+          "to": 100500,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 100500,
+          "to": 105500,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 105500,
+          "to": 110500,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 110500,
+          "to": 115500,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 115500,
+          "to": 120500,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 120500,
+          "to": 125500,
+          "base": 250,
+          "rate": 0
+        },
+        {
+          "from": 125500,
+          "to": 130500,
+          "base": 300,
+          "rate": 0
+        },
+        {
+          "from": 130500,
+          "to": 135500,
+          "base": 350,
+          "rate": 0
+        },
+        {
+          "from": 135500,
+          "to": 140500,
+          "base": 400,
+          "rate": 0
+        },
+        {
+          "from": 140500,
+          "to": 145500,
+          "base": 450,
+          "rate": 0
+        },
+        {
+          "from": 145500,
+          "to": null,
+          "base": 500,
+          "rate": 0
+        }
+      ],
+      "D": [
+        {
+          "from": 0,
+          "to": 50250,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 50250,
+          "to": 52750,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 52750,
+          "to": 55250,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 55250,
+          "to": 57750,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 57750,
+          "to": 60250,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 60250,
+          "to": 62750,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 62750,
+          "to": 65250,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 65250,
+          "to": 67750,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 67750,
+          "to": 70250,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 70250,
+          "to": 72750,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 72750,
+          "to": null,
+          "base": 250,
+          "rate": 0
+        }
+      ],
+      "F": [
+        {
+          "from": 0,
+          "to": 56500,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 56500,
+          "to": 61500,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 61500,
+          "to": 66500,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 66500,
+          "to": 71500,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 71500,
+          "to": 76500,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 76500,
+          "to": 81500,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 81500,
+          "to": 86500,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 86500,
+          "to": 91500,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 91500,
+          "to": 96500,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 96500,
+          "to": 101500,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 101500,
+          "to": null,
+          "base": 250,
+          "rate": 0
+        }
+      ]
+    },
+    "tableD": {
+      "A": [
+        {
+          "from": 0,
+          "to": 105000,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 105000,
+          "to": 110000,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 110000,
+          "to": 115000,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 115000,
+          "to": 120000,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 120000,
+          "to": 125000,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 125000,
+          "to": 130000,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 130000,
+          "to": 135000,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 135000,
+          "to": 140000,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 140000,
+          "to": 145000,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 145000,
+          "to": 150000,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 150000,
+          "to": 200000,
+          "base": 250,
+          "rate": 0
+        },
+        {
+          "from": 200000,
+          "to": 205000,
+          "base": 340,
+          "rate": 0
+        },
+        {
+          "from": 205000,
+          "to": 210000,
+          "base": 430,
+          "rate": 0
+        },
+        {
+          "from": 210000,
+          "to": 215000,
+          "base": 520,
+          "rate": 0
+        },
+        {
+          "from": 215000,
+          "to": 220000,
+          "base": 610,
+          "rate": 0
+        },
+        {
+          "from": 220000,
+          "to": 225000,
+          "base": 700,
+          "rate": 0
+        },
+        {
+          "from": 225000,
+          "to": 230000,
+          "base": 790,
+          "rate": 0
+        },
+        {
+          "from": 230000,
+          "to": 235000,
+          "base": 880,
+          "rate": 0
+        },
+        {
+          "from": 235000,
+          "to": 240000,
+          "base": 970,
+          "rate": 0
+        },
+        {
+          "from": 240000,
+          "to": 245000,
+          "base": 1060,
+          "rate": 0
+        },
+        {
+          "from": 245000,
+          "to": 250000,
+          "base": 1150,
+          "rate": 0
+        },
+        {
+          "from": 250000,
+          "to": 255000,
+          "base": 1240,
+          "rate": 0
+        },
+        {
+          "from": 255000,
+          "to": 260000,
+          "base": 1330,
+          "rate": 0
+        },
+        {
+          "from": 260000,
+          "to": 265000,
+          "base": 1420,
+          "rate": 0
+        },
+        {
+          "from": 265000,
+          "to": 270000,
+          "base": 1510,
+          "rate": 0
+        },
+        {
+          "from": 270000,
+          "to": 275000,
+          "base": 1600,
+          "rate": 0
+        },
+        {
+          "from": 275000,
+          "to": 280000,
+          "base": 1690,
+          "rate": 0
+        },
+        {
+          "from": 280000,
+          "to": 285000,
+          "base": 1780,
+          "rate": 0
+        },
+        {
+          "from": 285000,
+          "to": 290000,
+          "base": 1870,
+          "rate": 0
+        },
+        {
+          "from": 290000,
+          "to": 295000,
+          "base": 1960,
+          "rate": 0
+        },
+        {
+          "from": 295000,
+          "to": 300000,
+          "base": 2050,
+          "rate": 0
+        },
+        {
+          "from": 300000,
+          "to": 305000,
+          "base": 2140,
+          "rate": 0
+        },
+        {
+          "from": 305000,
+          "to": 310000,
+          "base": 2230,
+          "rate": 0
+        },
+        {
+          "from": 310000,
+          "to": 315000,
+          "base": 2320,
+          "rate": 0
+        },
+        {
+          "from": 315000,
+          "to": 320000,
+          "base": 2410,
+          "rate": 0
+        },
+        {
+          "from": 320000,
+          "to": 325000,
+          "base": 2500,
+          "rate": 0
+        },
+        {
+          "from": 325000,
+          "to": 330000,
+          "base": 2590,
+          "rate": 0
+        },
+        {
+          "from": 330000,
+          "to": 335000,
+          "base": 2680,
+          "rate": 0
+        },
+        {
+          "from": 335000,
+          "to": 340000,
+          "base": 2770,
+          "rate": 0
+        },
+        {
+          "from": 340000,
+          "to": 345000,
+          "base": 2860,
+          "rate": 0
+        },
+        {
+          "from": 345000,
+          "to": 500000,
+          "base": 2950,
+          "rate": 0
+        },
+        {
+          "from": 500000,
+          "to": 505000,
+          "base": 3000,
+          "rate": 0
+        },
+        {
+          "from": 505000,
+          "to": 510000,
+          "base": 3050,
+          "rate": 0
+        },
+        {
+          "from": 510000,
+          "to": 515000,
+          "base": 3100,
+          "rate": 0
+        },
+        {
+          "from": 515000,
+          "to": 520000,
+          "base": 3150,
+          "rate": 0
+        },
+        {
+          "from": 520000,
+          "to": 525000,
+          "base": 3200,
+          "rate": 0
+        },
+        {
+          "from": 525000,
+          "to": 530000,
+          "base": 3250,
+          "rate": 0
+        },
+        {
+          "from": 530000,
+          "to": 535000,
+          "base": 3300,
+          "rate": 0
+        },
+        {
+          "from": 535000,
+          "to": 540000,
+          "base": 3350,
+          "rate": 0
+        },
+        {
+          "from": 540000,
+          "to": null,
+          "base": 3400,
+          "rate": 0
+        }
+      ],
+      "B": [
+        {
+          "from": 0,
+          "to": 168000,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 168000,
+          "to": 176000,
+          "base": 40,
+          "rate": 0
+        },
+        {
+          "from": 176000,
+          "to": 184000,
+          "base": 80,
+          "rate": 0
+        },
+        {
+          "from": 184000,
+          "to": 192000,
+          "base": 120,
+          "rate": 0
+        },
+        {
+          "from": 192000,
+          "to": 200000,
+          "base": 160,
+          "rate": 0
+        },
+        {
+          "from": 200000,
+          "to": 208000,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 208000,
+          "to": 216000,
+          "base": 240,
+          "rate": 0
+        },
+        {
+          "from": 216000,
+          "to": 224000,
+          "base": 280,
+          "rate": 0
+        },
+        {
+          "from": 224000,
+          "to": 232000,
+          "base": 320,
+          "rate": 0
+        },
+        {
+          "from": 232000,
+          "to": 240000,
+          "base": 360,
+          "rate": 0
+        },
+        {
+          "from": 240000,
+          "to": 320000,
+          "base": 400,
+          "rate": 0
+        },
+        {
+          "from": 320000,
+          "to": 328000,
+          "base": 540,
+          "rate": 0
+        },
+        {
+          "from": 328000,
+          "to": 336000,
+          "base": 680,
+          "rate": 0
+        },
+        {
+          "from": 336000,
+          "to": 344000,
+          "base": 820,
+          "rate": 0
+        },
+        {
+          "from": 344000,
+          "to": 352000,
+          "base": 960,
+          "rate": 0
+        },
+        {
+          "from": 352000,
+          "to": 360000,
+          "base": 1100,
+          "rate": 0
+        },
+        {
+          "from": 360000,
+          "to": 368000,
+          "base": 1240,
+          "rate": 0
+        },
+        {
+          "from": 368000,
+          "to": 376000,
+          "base": 1380,
+          "rate": 0
+        },
+        {
+          "from": 376000,
+          "to": 384000,
+          "base": 1520,
+          "rate": 0
+        },
+        {
+          "from": 384000,
+          "to": 392000,
+          "base": 1660,
+          "rate": 0
+        },
+        {
+          "from": 392000,
+          "to": 400000,
+          "base": 1800,
+          "rate": 0
+        },
+        {
+          "from": 400000,
+          "to": 408000,
+          "base": 1940,
+          "rate": 0
+        },
+        {
+          "from": 408000,
+          "to": 416000,
+          "base": 2080,
+          "rate": 0
+        },
+        {
+          "from": 416000,
+          "to": 424000,
+          "base": 2220,
+          "rate": 0
+        },
+        {
+          "from": 424000,
+          "to": 432000,
+          "base": 2360,
+          "rate": 0
+        },
+        {
+          "from": 432000,
+          "to": 440000,
+          "base": 2500,
+          "rate": 0
+        },
+        {
+          "from": 440000,
+          "to": 448000,
+          "base": 2640,
+          "rate": 0
+        },
+        {
+          "from": 448000,
+          "to": 456000,
+          "base": 2780,
+          "rate": 0
+        },
+        {
+          "from": 456000,
+          "to": 464000,
+          "base": 2920,
+          "rate": 0
+        },
+        {
+          "from": 464000,
+          "to": 472000,
+          "base": 3060,
+          "rate": 0
+        },
+        {
+          "from": 472000,
+          "to": 480000,
+          "base": 3200,
+          "rate": 0
+        },
+        {
+          "from": 480000,
+          "to": 488000,
+          "base": 3340,
+          "rate": 0
+        },
+        {
+          "from": 488000,
+          "to": 496000,
+          "base": 3480,
+          "rate": 0
+        },
+        {
+          "from": 496000,
+          "to": 504000,
+          "base": 3620,
+          "rate": 0
+        },
+        {
+          "from": 504000,
+          "to": 512000,
+          "base": 3760,
+          "rate": 0
+        },
+        {
+          "from": 512000,
+          "to": 520000,
+          "base": 3900,
+          "rate": 0
+        },
+        {
+          "from": 520000,
+          "to": 528000,
+          "base": 4040,
+          "rate": 0
+        },
+        {
+          "from": 528000,
+          "to": 536000,
+          "base": 4180,
+          "rate": 0
+        },
+        {
+          "from": 536000,
+          "to": 544000,
+          "base": 4320,
+          "rate": 0
+        },
+        {
+          "from": 544000,
+          "to": 552000,
+          "base": 4460,
+          "rate": 0
+        },
+        {
+          "from": 552000,
+          "to": 800000,
+          "base": 4600,
+          "rate": 0
+        },
+        {
+          "from": 800000,
+          "to": 808000,
+          "base": 4680,
+          "rate": 0
+        },
+        {
+          "from": 808000,
+          "to": 816000,
+          "base": 4760,
+          "rate": 0
+        },
+        {
+          "from": 816000,
+          "to": 824000,
+          "base": 4840,
+          "rate": 0
+        },
+        {
+          "from": 824000,
+          "to": 832000,
+          "base": 4920,
+          "rate": 0
+        },
+        {
+          "from": 832000,
+          "to": 840000,
+          "base": 5000,
+          "rate": 0
+        },
+        {
+          "from": 840000,
+          "to": 848000,
+          "base": 5080,
+          "rate": 0
+        },
+        {
+          "from": 848000,
+          "to": 856000,
+          "base": 5160,
+          "rate": 0
+        },
+        {
+          "from": 856000,
+          "to": 864000,
+          "base": 5240,
+          "rate": 0
+        },
+        {
+          "from": 864000,
+          "to": null,
+          "base": 5320,
+          "rate": 0
+        }
+      ],
+      "C": [
+        {
+          "from": 0,
+          "to": 210000,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 210000,
+          "to": 220000,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 220000,
+          "to": 230000,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 230000,
+          "to": 240000,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 240000,
+          "to": 250000,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 250000,
+          "to": 260000,
+          "base": 250,
+          "rate": 0
+        },
+        {
+          "from": 260000,
+          "to": 270000,
+          "base": 300,
+          "rate": 0
+        },
+        {
+          "from": 270000,
+          "to": 280000,
+          "base": 350,
+          "rate": 0
+        },
+        {
+          "from": 280000,
+          "to": 290000,
+          "base": 400,
+          "rate": 0
+        },
+        {
+          "from": 290000,
+          "to": 300000,
+          "base": 450,
+          "rate": 0
+        },
+        {
+          "from": 300000,
+          "to": 400000,
+          "base": 500,
+          "rate": 0
+        },
+        {
+          "from": 400000,
+          "to": 410000,
+          "base": 680,
+          "rate": 0
+        },
+        {
+          "from": 410000,
+          "to": 420000,
+          "base": 860,
+          "rate": 0
+        },
+        {
+          "from": 420000,
+          "to": 430000,
+          "base": 1040,
+          "rate": 0
+        },
+        {
+          "from": 430000,
+          "to": 440000,
+          "base": 1220,
+          "rate": 0
+        },
+        {
+          "from": 440000,
+          "to": 450000,
+          "base": 1400,
+          "rate": 0
+        },
+        {
+          "from": 450000,
+          "to": 460000,
+          "base": 1580,
+          "rate": 0
+        },
+        {
+          "from": 460000,
+          "to": 470000,
+          "base": 1760,
+          "rate": 0
+        },
+        {
+          "from": 470000,
+          "to": 480000,
+          "base": 1940,
+          "rate": 0
+        },
+        {
+          "from": 480000,
+          "to": 490000,
+          "base": 2120,
+          "rate": 0
+        },
+        {
+          "from": 490000,
+          "to": 500000,
+          "base": 2300,
+          "rate": 0
+        },
+        {
+          "from": 500000,
+          "to": 510000,
+          "base": 2480,
+          "rate": 0
+        },
+        {
+          "from": 510000,
+          "to": 520000,
+          "base": 2660,
+          "rate": 0
+        },
+        {
+          "from": 520000,
+          "to": 530000,
+          "base": 2840,
+          "rate": 0
+        },
+        {
+          "from": 530000,
+          "to": 540000,
+          "base": 3020,
+          "rate": 0
+        },
+        {
+          "from": 540000,
+          "to": 550000,
+          "base": 3200,
+          "rate": 0
+        },
+        {
+          "from": 550000,
+          "to": 560000,
+          "base": 3380,
+          "rate": 0
+        },
+        {
+          "from": 560000,
+          "to": 570000,
+          "base": 3560,
+          "rate": 0
+        },
+        {
+          "from": 570000,
+          "to": 580000,
+          "base": 3740,
+          "rate": 0
+        },
+        {
+          "from": 580000,
+          "to": 590000,
+          "base": 3920,
+          "rate": 0
+        },
+        {
+          "from": 590000,
+          "to": 600000,
+          "base": 4100,
+          "rate": 0
+        },
+        {
+          "from": 600000,
+          "to": 610000,
+          "base": 4280,
+          "rate": 0
+        },
+        {
+          "from": 610000,
+          "to": 620000,
+          "base": 4460,
+          "rate": 0
+        },
+        {
+          "from": 620000,
+          "to": 630000,
+          "base": 4640,
+          "rate": 0
+        },
+        {
+          "from": 630000,
+          "to": 640000,
+          "base": 4820,
+          "rate": 0
+        },
+        {
+          "from": 640000,
+          "to": 650000,
+          "base": 5000,
+          "rate": 0
+        },
+        {
+          "from": 650000,
+          "to": 660000,
+          "base": 5180,
+          "rate": 0
+        },
+        {
+          "from": 660000,
+          "to": 670000,
+          "base": 5360,
+          "rate": 0
+        },
+        {
+          "from": 670000,
+          "to": 680000,
+          "base": 5540,
+          "rate": 0
+        },
+        {
+          "from": 680000,
+          "to": 690000,
+          "base": 5720,
+          "rate": 0
+        },
+        {
+          "from": 690000,
+          "to": 1000000,
+          "base": 5900,
+          "rate": 0
+        },
+        {
+          "from": 1000000,
+          "to": 1010000,
+          "base": 6000,
+          "rate": 0
+        },
+        {
+          "from": 1010000,
+          "to": 1020000,
+          "base": 6100,
+          "rate": 0
+        },
+        {
+          "from": 1020000,
+          "to": 1030000,
+          "base": 6200,
+          "rate": 0
+        },
+        {
+          "from": 1030000,
+          "to": 1040000,
+          "base": 6300,
+          "rate": 0
+        },
+        {
+          "from": 1040000,
+          "to": 1050000,
+          "base": 6400,
+          "rate": 0
+        },
+        {
+          "from": 1050000,
+          "to": 1060000,
+          "base": 6500,
+          "rate": 0
+        },
+        {
+          "from": 1060000,
+          "to": 1070000,
+          "base": 6600,
+          "rate": 0
+        },
+        {
+          "from": 1070000,
+          "to": 1080000,
+          "base": 6700,
+          "rate": 0
+        },
+        {
+          "from": 1080000,
+          "to": null,
+          "base": 6800,
+          "rate": 0
+        }
+      ],
+      "D": [
+        {
+          "from": 0,
+          "to": 105000,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 105000,
+          "to": 110000,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 110000,
+          "to": 115000,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 115000,
+          "to": 120000,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 120000,
+          "to": 125000,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 125000,
+          "to": 130000,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 130000,
+          "to": 135000,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 135000,
+          "to": 140000,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 140000,
+          "to": 145000,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 145000,
+          "to": 150000,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 150000,
+          "to": 200000,
+          "base": 250,
+          "rate": 0
+        },
+        {
+          "from": 200000,
+          "to": 205000,
+          "base": 340,
+          "rate": 0
+        },
+        {
+          "from": 205000,
+          "to": 210000,
+          "base": 430,
+          "rate": 0
+        },
+        {
+          "from": 210000,
+          "to": 215000,
+          "base": 520,
+          "rate": 0
+        },
+        {
+          "from": 215000,
+          "to": 220000,
+          "base": 610,
+          "rate": 0
+        },
+        {
+          "from": 220000,
+          "to": 225000,
+          "base": 700,
+          "rate": 0
+        },
+        {
+          "from": 225000,
+          "to": 230000,
+          "base": 790,
+          "rate": 0
+        },
+        {
+          "from": 230000,
+          "to": 235000,
+          "base": 880,
+          "rate": 0
+        },
+        {
+          "from": 235000,
+          "to": 240000,
+          "base": 970,
+          "rate": 0
+        },
+        {
+          "from": 240000,
+          "to": 245000,
+          "base": 1060,
+          "rate": 0
+        },
+        {
+          "from": 245000,
+          "to": 250000,
+          "base": 1150,
+          "rate": 0
+        },
+        {
+          "from": 250000,
+          "to": 255000,
+          "base": 1240,
+          "rate": 0
+        },
+        {
+          "from": 255000,
+          "to": 260000,
+          "base": 1330,
+          "rate": 0
+        },
+        {
+          "from": 260000,
+          "to": 265000,
+          "base": 1420,
+          "rate": 0
+        },
+        {
+          "from": 265000,
+          "to": 270000,
+          "base": 1510,
+          "rate": 0
+        },
+        {
+          "from": 270000,
+          "to": 275000,
+          "base": 1600,
+          "rate": 0
+        },
+        {
+          "from": 275000,
+          "to": 280000,
+          "base": 1690,
+          "rate": 0
+        },
+        {
+          "from": 280000,
+          "to": 285000,
+          "base": 1780,
+          "rate": 0
+        },
+        {
+          "from": 285000,
+          "to": 290000,
+          "base": 1870,
+          "rate": 0
+        },
+        {
+          "from": 290000,
+          "to": 295000,
+          "base": 1960,
+          "rate": 0
+        },
+        {
+          "from": 295000,
+          "to": 300000,
+          "base": 2050,
+          "rate": 0
+        },
+        {
+          "from": 300000,
+          "to": 305000,
+          "base": 2140,
+          "rate": 0
+        },
+        {
+          "from": 305000,
+          "to": 310000,
+          "base": 2230,
+          "rate": 0
+        },
+        {
+          "from": 310000,
+          "to": 315000,
+          "base": 2320,
+          "rate": 0
+        },
+        {
+          "from": 315000,
+          "to": 320000,
+          "base": 2410,
+          "rate": 0
+        },
+        {
+          "from": 320000,
+          "to": 325000,
+          "base": 2500,
+          "rate": 0
+        },
+        {
+          "from": 325000,
+          "to": 330000,
+          "base": 2590,
+          "rate": 0
+        },
+        {
+          "from": 330000,
+          "to": 335000,
+          "base": 2680,
+          "rate": 0
+        },
+        {
+          "from": 335000,
+          "to": 340000,
+          "base": 2770,
+          "rate": 0
+        },
+        {
+          "from": 340000,
+          "to": 345000,
+          "base": 2860,
+          "rate": 0
+        },
+        {
+          "from": 345000,
+          "to": 500000,
+          "base": 2950,
+          "rate": 0
+        },
+        {
+          "from": 500000,
+          "to": 505000,
+          "base": 3000,
+          "rate": 0
+        },
+        {
+          "from": 505000,
+          "to": 510000,
+          "base": 3050,
+          "rate": 0
+        },
+        {
+          "from": 510000,
+          "to": 515000,
+          "base": 3100,
+          "rate": 0
+        },
+        {
+          "from": 515000,
+          "to": 520000,
+          "base": 3150,
+          "rate": 0
+        },
+        {
+          "from": 520000,
+          "to": 525000,
+          "base": 3200,
+          "rate": 0
+        },
+        {
+          "from": 525000,
+          "to": 530000,
+          "base": 3250,
+          "rate": 0
+        },
+        {
+          "from": 530000,
+          "to": 535000,
+          "base": 3300,
+          "rate": 0
+        },
+        {
+          "from": 535000,
+          "to": 540000,
+          "base": 3350,
+          "rate": 0
+        },
+        {
+          "from": 540000,
+          "to": null,
+          "base": 3400,
+          "rate": 0
+        }
+      ],
+      "F": [
+        {
+          "from": 0,
+          "to": 105000,
+          "base": 0,
+          "rate": 0
+        },
+        {
+          "from": 105000,
+          "to": 110000,
+          "base": 25,
+          "rate": 0
+        },
+        {
+          "from": 110000,
+          "to": 115000,
+          "base": 50,
+          "rate": 0
+        },
+        {
+          "from": 115000,
+          "to": 120000,
+          "base": 75,
+          "rate": 0
+        },
+        {
+          "from": 120000,
+          "to": 125000,
+          "base": 100,
+          "rate": 0
+        },
+        {
+          "from": 125000,
+          "to": 130000,
+          "base": 125,
+          "rate": 0
+        },
+        {
+          "from": 130000,
+          "to": 135000,
+          "base": 150,
+          "rate": 0
+        },
+        {
+          "from": 135000,
+          "to": 140000,
+          "base": 175,
+          "rate": 0
+        },
+        {
+          "from": 140000,
+          "to": 145000,
+          "base": 200,
+          "rate": 0
+        },
+        {
+          "from": 145000,
+          "to": 150000,
+          "base": 225,
+          "rate": 0
+        },
+        {
+          "from": 150000,
+          "to": 200000,
+          "base": 250,
+          "rate": 0
+        },
+        {
+          "from": 200000,
+          "to": 205000,
+          "base": 340,
+          "rate": 0
+        },
+        {
+          "from": 205000,
+          "to": 210000,
+          "base": 430,
+          "rate": 0
+        },
+        {
+          "from": 210000,
+          "to": 215000,
+          "base": 520,
+          "rate": 0
+        },
+        {
+          "from": 215000,
+          "to": 220000,
+          "base": 610,
+          "rate": 0
+        },
+        {
+          "from": 220000,
+          "to": 225000,
+          "base": 700,
+          "rate": 0
+        },
+        {
+          "from": 225000,
+          "to": 230000,
+          "base": 790,
+          "rate": 0
+        },
+        {
+          "from": 230000,
+          "to": 235000,
+          "base": 880,
+          "rate": 0
+        },
+        {
+          "from": 235000,
+          "to": 240000,
+          "base": 970,
+          "rate": 0
+        },
+        {
+          "from": 240000,
+          "to": 245000,
+          "base": 1060,
+          "rate": 0
+        },
+        {
+          "from": 245000,
+          "to": 250000,
+          "base": 1150,
+          "rate": 0
+        },
+        {
+          "from": 250000,
+          "to": 255000,
+          "base": 1240,
+          "rate": 0
+        },
+        {
+          "from": 255000,
+          "to": 260000,
+          "base": 1330,
+          "rate": 0
+        },
+        {
+          "from": 260000,
+          "to": 265000,
+          "base": 1420,
+          "rate": 0
+        },
+        {
+          "from": 265000,
+          "to": 270000,
+          "base": 1510,
+          "rate": 0
+        },
+        {
+          "from": 270000,
+          "to": 275000,
+          "base": 1600,
+          "rate": 0
+        },
+        {
+          "from": 275000,
+          "to": 280000,
+          "base": 1690,
+          "rate": 0
+        },
+        {
+          "from": 280000,
+          "to": 285000,
+          "base": 1780,
+          "rate": 0
+        },
+        {
+          "from": 285000,
+          "to": 290000,
+          "base": 1870,
+          "rate": 0
+        },
+        {
+          "from": 290000,
+          "to": 295000,
+          "base": 1960,
+          "rate": 0
+        },
+        {
+          "from": 295000,
+          "to": 300000,
+          "base": 2050,
+          "rate": 0
+        },
+        {
+          "from": 300000,
+          "to": 305000,
+          "base": 2140,
+          "rate": 0
+        },
+        {
+          "from": 305000,
+          "to": 310000,
+          "base": 2230,
+          "rate": 0
+        },
+        {
+          "from": 310000,
+          "to": 315000,
+          "base": 2320,
+          "rate": 0
+        },
+        {
+          "from": 315000,
+          "to": 320000,
+          "base": 2410,
+          "rate": 0
+        },
+        {
+          "from": 320000,
+          "to": 325000,
+          "base": 2500,
+          "rate": 0
+        },
+        {
+          "from": 325000,
+          "to": 330000,
+          "base": 2590,
+          "rate": 0
+        },
+        {
+          "from": 330000,
+          "to": 335000,
+          "base": 2680,
+          "rate": 0
+        },
+        {
+          "from": 335000,
+          "to": 340000,
+          "base": 2770,
+          "rate": 0
+        },
+        {
+          "from": 340000,
+          "to": 345000,
+          "base": 2860,
+          "rate": 0
+        },
+        {
+          "from": 345000,
+          "to": 500000,
+          "base": 2950,
+          "rate": 0
+        },
+        {
+          "from": 500000,
+          "to": 505000,
+          "base": 3000,
+          "rate": 0
+        },
+        {
+          "from": 505000,
+          "to": 510000,
+          "base": 3050,
+          "rate": 0
+        },
+        {
+          "from": 510000,
+          "to": 515000,
+          "base": 3100,
+          "rate": 0
+        },
+        {
+          "from": 515000,
+          "to": 520000,
+          "base": 3150,
+          "rate": 0
+        },
+        {
+          "from": 520000,
+          "to": 525000,
+          "base": 3200,
+          "rate": 0
+        },
+        {
+          "from": 525000,
+          "to": 530000,
+          "base": 3250,
+          "rate": 0
+        },
+        {
+          "from": 530000,
+          "to": 535000,
+          "base": 3300,
+          "rate": 0
+        },
+        {
+          "from": 535000,
+          "to": 540000,
+          "base": 3350,
+          "rate": 0
+        },
+        {
+          "from": 540000,
+          "to": null,
+          "base": 3400,
+          "rate": 0
+        }
+      ]
+    },
+    "tableE": {
+      "A": [
+        {
+          "from": 0,
+          "to": 12000,
+          "credit": 0.75
+        },
+        {
+          "from": 12000.0,
+          "to": 15000.0,
+          "credit": 0.75
+        },
+        {
+          "from": 15000.0,
+          "to": 15500.0,
+          "credit": 0.7
+        },
+        {
+          "from": 15500.0,
+          "to": 16000.0,
+          "credit": 0.65
+        },
+        {
+          "from": 16000.0,
+          "to": 16500.0,
+          "credit": 0.6
+        },
+        {
+          "from": 16500.0,
+          "to": 17000.0,
+          "credit": 0.55
+        },
+        {
+          "from": 17000.0,
+          "to": 17500.0,
+          "credit": 0.5
+        },
+        {
+          "from": 17500.0,
+          "to": 18000.0,
+          "credit": 0.45
+        },
+        {
+          "from": 18000.0,
+          "to": 18500.0,
+          "credit": 0.4
+        },
+        {
+          "from": 18500.0,
+          "to": 20000.0,
+          "credit": 0.35
+        },
+        {
+          "from": 20000.0,
+          "to": 20500.0,
+          "credit": 0.3
+        },
+        {
+          "from": 20500.0,
+          "to": 21000.0,
+          "credit": 0.25
+        },
+        {
+          "from": 21000.0,
+          "to": 21500.0,
+          "credit": 0.2
+        },
+        {
+          "from": 21500.0,
+          "to": 25000.0,
+          "credit": 0.15
+        },
+        {
+          "from": 25000.0,
+          "to": 25500.0,
+          "credit": 0.14
+        },
+        {
+          "from": 25500.0,
+          "to": 26000.0,
+          "credit": 0.13
+        },
+        {
+          "from": 26000.0,
+          "to": 26500.0,
+          "credit": 0.12
+        },
+        {
+          "from": 26500.0,
+          "to": 27000.0,
+          "credit": 0.11
+        },
+        {
+          "from": 27000.0,
+          "to": 48000.0,
+          "credit": 0.1
+        },
+        {
+          "from": 48000.0,
+          "to": 48500.0,
+          "credit": 0.09
+        },
+        {
+          "from": 48500.0,
+          "to": 49000.0,
+          "credit": 0.08
+        },
+        {
+          "from": 49000.0,
+          "to": 49500.0,
+          "credit": 0.07
+        },
+        {
+          "from": 49500.0,
+          "to": 50000.0,
+          "credit": 0.06
+        },
+        {
+          "from": 50000.0,
+          "to": 50500.0,
+          "credit": 0.05
+        },
+        {
+          "from": 50500.0,
+          "to": 51000.0,
+          "credit": 0.04
+        },
+        {
+          "from": 51000.0,
+          "to": 51500.0,
+          "credit": 0.03
+        },
+        {
+          "from": 51500.0,
+          "to": 52000.0,
+          "credit": 0.02
+        },
+        {
+          "from": 52000.0,
+          "to": 52500.0,
+          "credit": 0.01
+        },
+        {
+          "from": 52500.0,
+          "to": null,
+          "credit": 0.0
+        }
+      ],
+      "B": [
+        {
+          "from": 0,
+          "to": 19000,
+          "credit": 0.75
+        },
+        {
+          "from": 19000.0,
+          "to": 24000.0,
+          "credit": 0.75
+        },
+        {
+          "from": 24000.0,
+          "to": 24500.0,
+          "credit": 0.7
+        },
+        {
+          "from": 24500.0,
+          "to": 25000.0,
+          "credit": 0.65
+        },
+        {
+          "from": 25000.0,
+          "to": 25500.0,
+          "credit": 0.6
+        },
+        {
+          "from": 25500.0,
+          "to": 26000.0,
+          "credit": 0.55
+        },
+        {
+          "from": 26000.0,
+          "to": 26500.0,
+          "credit": 0.5
+        },
+        {
+          "from": 26500.0,
+          "to": 27000.0,
+          "credit": 0.45
+        },
+        {
+          "from": 27000.0,
+          "to": 27500.0,
+          "credit": 0.4
+        },
+        {
+          "from": 27500.0,
+          "to": 34000.0,
+          "credit": 0.35
+        },
+        {
+          "from": 34000.0,
+          "to": 34500.0,
+          "credit": 0.3
+        },
+        {
+          "from": 34500.0,
+          "to": 35000.0,
+          "credit": 0.25
+        },
+        {
+          "from": 35000.0,
+          "to": 35500.0,
+          "credit": 0.2
+        },
+        {
+          "from": 35500.0,
+          "to": 44000.0,
+          "credit": 0.15
+        },
+        {
+          "from": 44000.0,
+          "to": 44500.0,
+          "credit": 0.14
+        },
+        {
+          "from": 44500.0,
+          "to": 45000.0,
+          "credit": 0.13
+        },
+        {
+          "from": 45000.0,
+          "to": 45500.0,
+          "credit": 0.12
+        },
+        {
+          "from": 45500.0,
+          "to": 46000.0,
+          "credit": 0.11
+        },
+        {
+          "from": 46000.0,
+          "to": 74000.0,
+          "credit": 0.1
+        },
+        {
+          "from": 74000.0,
+          "to": 74500.0,
+          "credit": 0.09
+        },
+        {
+          "from": 74500.0,
+          "to": 75000.0,
+          "credit": 0.08
+        },
+        {
+          "from": 75000.0,
+          "to": 75500.0,
+          "credit": 0.07
+        },
+        {
+          "from": 75500.0,
+          "to": 76000.0,
+          "credit": 0.06
+        },
+        {
+          "from": 76000.0,
+          "to": 76500.0,
+          "credit": 0.05
+        },
+        {
+          "from": 76500.0,
+          "to": 77000.0,
+          "credit": 0.04
+        },
+        {
+          "from": 77000.0,
+          "to": 77500.0,
+          "credit": 0.03
+        },
+        {
+          "from": 77500.0,
+          "to": 78000.0,
+          "credit": 0.02
+        },
+        {
+          "from": 78000.0,
+          "to": 78500.0,
+          "credit": 0.01
+        },
+        {
+          "from": 78500.0,
+          "to": null,
+          "credit": 0.0
+        }
+      ],
+      "C": [
+        {
+          "from": 0,
+          "to": 24000,
+          "credit": 0.75
+        },
+        {
+          "from": 24000.0,
+          "to": 30000.0,
+          "credit": 0.75
+        },
+        {
+          "from": 30000.0,
+          "to": 30500.0,
+          "credit": 0.7
+        },
+        {
+          "from": 30500.0,
+          "to": 31000.0,
+          "credit": 0.65
+        },
+        {
+          "from": 31000.0,
+          "to": 31500.0,
+          "credit": 0.6
+        },
+        {
+          "from": 31500.0,
+          "to": 32000.0,
+          "credit": 0.55
+        },
+        {
+          "from": 32000.0,
+          "to": 32500.0,
+          "credit": 0.5
+        },
+        {
+          "from": 32500.0,
+          "to": 33000.0,
+          "credit": 0.45
+        },
+        {
+          "from": 33000.0,
+          "to": 33500.0,
+          "credit": 0.4
+        },
+        {
+          "from": 33500.0,
+          "to": 40000.0,
+          "credit": 0.35
+        },
+        {
+          "from": 40000.0,
+          "to": 40500.0,
+          "credit": 0.3
+        },
+        {
+          "from": 40500.0,
+          "to": 41000.0,
+          "credit": 0.25
+        },
+        {
+          "from": 41000.0,
+          "to": 41500.0,
+          "credit": 0.2
+        },
+        {
+          "from": 41500.0,
+          "to": 50000.0,
+          "credit": 0.15
+        },
+        {
+          "from": 50000.0,
+          "to": 50500.0,
+          "credit": 0.14
+        },
+        {
+          "from": 50500.0,
+          "to": 51000.0,
+          "credit": 0.13
+        },
+        {
+          "from": 51000.0,
+          "to": 51500.0,
+          "credit": 0.12
+        },
+        {
+          "from": 51500.0,
+          "to": 52000.0,
+          "credit": 0.11
+        },
+        {
+          "from": 52000.0,
+          "to": 96000.0,
+          "credit": 0.1
+        },
+        {
+          "from": 96000.0,
+          "to": 96500.0,
+          "credit": 0.09
+        },
+        {
+          "from": 96500.0,
+          "to": 97000.0,
+          "credit": 0.08
+        },
+        {
+          "from": 97000.0,
+          "to": 97500.0,
+          "credit": 0.07
+        },
+        {
+          "from": 97500.0,
+          "to": 98000.0,
+          "credit": 0.06
+        },
+        {
+          "from": 98000.0,
+          "to": 98500.0,
+          "credit": 0.05
+        },
+        {
+          "from": 98500.0,
+          "to": 99000.0,
+          "credit": 0.04
+        },
+        {
+          "from": 99000.0,
+          "to": 99500.0,
+          "credit": 0.03
+        },
+        {
+          "from": 99500.0,
+          "to": 100000.0,
+          "credit": 0.02
+        },
+        {
+          "from": 100000.0,
+          "to": 100500.0,
+          "credit": 0.01
+        },
+        {
+          "from": 100500.0,
+          "to": null,
+          "credit": 0.0
+        }
+      ],
+      "F": [
+        {
+          "from": 0,
+          "to": 15000,
+          "credit": 0.75
+        },
+        {
+          "from": 15000.0,
+          "to": 18800.0,
+          "credit": 0.75
+        },
+        {
+          "from": 18800.0,
+          "to": 19300.0,
+          "credit": 0.7
+        },
+        {
+          "from": 19300.0,
+          "to": 19800.0,
+          "credit": 0.65
+        },
+        {
+          "from": 19800.0,
+          "to": 20300.0,
+          "credit": 0.6
+        },
+        {
+          "from": 20300.0,
+          "to": 20800.0,
+          "credit": 0.55
+        },
+        {
+          "from": 20800.0,
+          "to": 21300.0,
+          "credit": 0.5
+        },
+        {
+          "from": 21300.0,
+          "to": 21800.0,
+          "credit": 0.45
+        },
+        {
+          "from": 21800.0,
+          "to": 22300.0,
+          "credit": 0.4
+        },
+        {
+          "from": 22300.0,
+          "to": 25000.0,
+          "credit": 0.35
+        },
+        {
+          "from": 25000.0,
+          "to": 25500.0,
+          "credit": 0.3
+        },
+        {
+          "from": 25500.0,
+          "to": 26000.0,
+          "credit": 0.25
+        },
+        {
+          "from": 26000.0,
+          "to": 26500.0,
+          "credit": 0.2
+        },
+        {
+          "from": 26500.0,
+          "to": 31300.0,
+          "credit": 0.15
+        },
+        {
+          "from": 31300.0,
+          "to": 31800.0,
+          "credit": 0.14
+        },
+        {
+          "from": 31800.0,
+          "to": 32300.0,
+          "credit": 0.13
+        },
+        {
+          "from": 32300.0,
+          "to": 32800.0,
+          "credit": 0.12
+        },
+        {
+          "from": 32800.0,
+          "to": 33300.0,
+          "credit": 0.11
+        },
+        {
+          "from": 33300.0,
+          "to": 60000.0,
+          "credit": 0.1
+        },
+        {
+          "from": 60000.0,
+          "to": 60500.0,
+          "credit": 0.09
+        },
+        {
+          "from": 60500.0,
+          "to": 61000.0,
+          "credit": 0.08
+        },
+        {
+          "from": 61000.0,
+          "to": 61500.0,
+          "credit": 0.07
+        },
+        {
+          "from": 61500.0,
+          "to": 62000.0,
+          "credit": 0.06
+        },
+        {
+          "from": 62000.0,
+          "to": 62500.0,
+          "credit": 0.05
+        },
+        {
+          "from": 62500.0,
+          "to": 63000.0,
+          "credit": 0.04
+        },
+        {
+          "from": 63000.0,
+          "to": 63500.0,
+          "credit": 0.03
+        },
+        {
+          "from": 63500.0,
+          "to": 64000.0,
+          "credit": 0.02
+        },
+        {
+          "from": 64000.0,
+          "to": 64500.0,
+          "credit": 0.01
+        },
+        {
+          "from": 64500.0,
+          "to": null,
+          "credit": 0.0
+        }
+      ],
+      "D": "ZERO"
+    }
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Connecticut has no income-tax reciprocity agreement with any other state (cross-source confirmed) -- deliberately empty, not omitted, per this project's \"checked, found none\" convention."
+  },
+  "statePaidLeaveEmployee": {
+    "$comment": "CT Paid Leave (launched 2022) -- dispatched via the SAME generic statePaidLeaveEmployeeTax() built for Minnesota, zero new code.",
+    "rate": 0.005,
+    "wageBase": "ssWageBase",
+    "wageBaseComment": "Tracks the federal Social Security taxable wage base by the CT Paid Leave program's own design (ctpaidleave.org: contributions apply \"until they reach the Social Security contribution limit\"), NOT an independently-set CT figure. CORRECTED 2026-09-06: this used to be a hand-copied literal 184500, self-flagged as needing manual updates 'or this file will silently drift stale' -- a real, disclosed drift risk with no enforcement. Now the 'ssWageBase' sentinel, resolved LIVE from data/federal/2026.json's own socialSecurity.wageBase by resolvePaidLeaveWageBase() in src/taxes/state.ts (same fix applied to Washington and Massachusetts's own SS-cap-linked Paid Leave programs the same pass) -- this can no longer drift, by construction.",
+    "quote": "ctpaidleave.org, verbatim: \"The CT Paid Leave Board of Directors has voted to maintain the contribution rate at 0.5% for 2026.\""
+  },
+  "knownGaps": [
+    "CLOSED 2026-09-02: this used to say Table E's .70 credit band (and, it turned out once actually checked, most of the rest of the table above roughly $16,000-$27,000 depending on code) couldn't be paired with a specific income boundary and was left unreachable, plus that the lowest band was modeled as a flat 0.75. Both were real gaps -- the table on file was genuinely incomplete, not just missing one edge value: the OLD data had each code's credit reaching 0.00 far too early (Code A by $25,000, for one) and several bands (including the entire .70/.65/.60/.55/.50/.45/.40/.30/.25/.20 sequence and the .14 down to .01 tail) missing or compressed into the wrong boundaries entirely. Re-fetched TPG-211 (2026 Withholding Calculation Rules, Rev. 12/25) directly and extracted Table E's own page 6 in full via pdfplumber/pypdfium2 after WebFetch's own summarizer failed on the compressed PDF stream -- the full 28-row table for all four codes (A/B/C/F), transcribed programmatically from the raw extracted text rather than by hand to avoid transcription error, replaces the old data outright. Code D's credit is unaffected (always the 'ZERO' sentinel, never read from Table E). Verified against 3 real income levels this pass, each independently recomputed from the primary source before checking the engine's own output: Code A at $52,000 (now 1%, was wrongly 0%), Code F at $30,000 (now 15%, was wrongly 1%), Code A at $41,600 (now 10%, was wrongly 0%) -- see tests/engine.test.ts's Connecticut describe block, all updated to the corrected figures. The lowest band (below each code's first published boundary) is still modeled as 0.75 by extension of the first published row (not a separate published boundary), the same convention as before -- that part was already correct.",
+    "Supplemental wages paid on a SEPARATE cheque from regular wages are handled per Circular CT's own Example 12 by aggregateWithPriorRegularPayment() (src/taxes/state.ts, gated by this file's supplementalAggregation block below): the bonus is combined with the LAST REGULAR PAY PERIOD's wages (input.priorRegularPayment) and the tax already withheld from that period is subtracted.",
+    "Nonresident partial-Connecticut-service allocation (Form CT-W4NA, the percentage-of-services-in-Connecticut mechanism in Circular CT's Examples 8-10) is applied via applyNonresidentAllocation() (src/taxes/state.ts), which scales this state's income tax by certificate.nonresidentAllocationFraction. The engine does not compute that fraction itself \u2014 Connecticut's own percentage-of-services test is a fact only the caller has.",
+    "Every pay frequency this engine supports (weekly/biweekly/semimonthly/monthly/quarterly/semiannual/annual/daily) works correctly with this method, unlike the per-period-TABLE states (NY/NJ/Montana/Idaho) which hard-stop on unpublished frequencies -- Connecticut's formula annualizes via ctx.periodsPerYear directly (Steps 3 and 13), so there is no per-frequency table to be missing rows from."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters \u2014 the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 27000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.019,
+    "newEmployerRateSource": "Connecticut DOL's own 'Information on Unemployment Tax Rate for Calendar Year 2026' announcement (wage base $27,000, new employer 1.9%, experienced 1.1%-9.9%).",
+    "experienceRange": {
+      "min": 0.011,
+      "max": 0.099
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026",
+    "experienceRangeCorrection": "CORRECTED 2026-08-28 by auditing against CTDOL's own rate table (portal.ct.gov/dol/knowledge-base/articles/unemployment-taxes/tax-rates-and-taxable-wage-base), fetched and read directly. Its 2026 row reads: $27,000 taxable / 1.90% new employer / 1.10% minimum / 9.90% MAXIMUM. This field previously held 0.10 (10.0%), which contradicted this file's OWN newEmployerRateSource note two lines above ('experienced 1.1%-9.9%') \u2014 the prose was right and the number was wrong. 10.0% appears to have come from Connecticut's statutory maximum CHARGED rate, a different figure from the maximum rate actually assigned in the 2026 schedule. No computed paycheck changes: the engine reads newEmployerRate (correct at 1.90%) unless the caller supplies the employer's own assigned rate, and experienceRange is carried for reference only. Wage base and new-employer rate were both verified correct in the same pass."
+  },
+  "nonresidentAllocation": {
+    "basis": "percentage_of_services",
+    "form": "CT-W4NA",
+    "$comment": "Circular CT's Examples 8-10: a nonresident who performs only part of their services in Connecticut files Form CT-W4NA giving the percentage, and the employer withholds that percentage of the tax that would otherwise apply. The caller supplies the percentage as certificate.nonresidentAllocationFraction; Connecticut defines it as a share of SERVICES, not of hours or of income."
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "Circular CT's Examples 8-12 make aggregation the ONLY supplemental-wage method Connecticut publishes: a bonus paid separately is combined with the last regular pay period's wages, tax is computed on the total, and the tax already withheld from that regular payment is subtracted.",
+    "engineNote": "Wired via aggregateWithPriorRegularPayment(): the caller supplies input.priorRegularPayment (that cheque's taxable wages and the state tax withheld from it), and a bonus paid on its own cheque is taxed on the combined figure less what was already withheld, floored at zero. Nothing changes when the caller omits it."
+  }
+}

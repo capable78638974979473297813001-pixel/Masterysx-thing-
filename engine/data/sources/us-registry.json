@@ -1,0 +1,563 @@
+{
+  "$comment": [
+    "AUTHORITATIVE SOURCE REGISTRY — not a rate table.",
+    "This file maps every US wage-withholding jurisdiction to its PRIMARY government source and its verification status.",
+    "It deliberately holds NO rate values. Rates are added to data/federal/*.json and data/states/*.json ONLY after a human verifies them against the cited source (verifiedOn + verifiedBy).",
+    "'pending_verification' means: source located, rate NOT yet transcribed or checked. It is never a placeholder for a guessed number.",
+    "This is the 'watch the registers' backbone: ~2,500 PA + ~600 OH local jurisdictions collapse to the two aggregator sources below."
+  ],
+  "generatedOn": "2026-08-11",
+  "localAggregators": [
+    {
+      "id": "pa-dced-act32",
+      "state": "PA",
+      "covers": "~2,500 Act 32 EIT jurisdictions (municipality + school district), resident and non-resident rates + PSD codes",
+      "url": "https://apps.dced.pa.gov/munstats-public/FindLocalTax.aspx",
+      "landingPage": "https://dced.pa.gov/local-government/local-income-tax-information/",
+      "authority": "PA Dept of Community & Economic Development — the only legally recognized source for PSD codes and EIT rates",
+      "format": "address lookup web tool + downloadable tables",
+      "resolvesBy": "home AND work address (resident vs non-resident rate differs)",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "web-confirmed official domain; rates NOT yet imported. STALE, corrected (GROKBOT_AUDIT.md finding 18): the rates have since been imported -- data/local/PA-EIT-LST-2026.json holds 2,627 PSD rows, read by pennsylvaniaLocalTax() in src/taxes/state.ts."
+    },
+    {
+      "id": "oh-finder",
+      "state": "OH",
+      "covers": "~600 municipal income taxes",
+      "url": "https://thefinder.tax.ohio.gov/?tab=fileDownloads",
+      "authority": "Ohio Dept of Taxation — municipal income tax rate database (The Finder)",
+      "format": "downloadable rate table",
+      "resolvesBy": "address; many munis tax residents and non-residents (workplace) differently",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "web-confirmed official domain; rates NOT yet imported. STALE, corrected (GROKBOT_AUDIT.md finding 18): the rates have since been imported -- data/local/OH-municipalities-2026.json holds 679 municipalities (municode-keyed), data/local/OH-school-districts-2026.json holds 214 school districts, and data/local/OH-jedd-jedz-2026.json holds the JEDD/JEDZ rows, all read by ohioWithholding()/ohioSchoolDistrictTax() in src/taxes/state.ts."
+    }
+  ],
+  "states": [
+    {
+      "code": "AL",
+      "name": "Alabama",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.revenue.alabama.gov/individual-corporate/withholding-tax-2/",
+      "sourceDoc": "whbooklet_0126.pdf (84pp), fetched and read directly. Wired into calc code (alabamaWithholding()) -- genuinely unusual shape: the employee's own ANNUAL FEDERAL WITHHOLDING is one of the deduction components (computed by calling federalIncomeTax() directly, the same pattern Oregon's federal-subtraction method already established), alongside a standard deduction that steps DOWN as income rises (differently per one of 5 status codes: 0/S/MS/M/H), a flat personal exemption by status, and a per-dependent allowance that steps down by GROSS INCOME rather than status. Two bracket schedules (M vs everyone else). Reproduced the booklet's own worked example exactly. No reciprocity with any state; no mandatory paid leave. STALE, corrected (GROKBOT_AUDIT.md finding 18): the 31-day nonresident de minimis rule and the local occupational taxes are no longer 'disclosed, not modelled' -- both are wired. nonresidentDayCountReason() in src/taxes/state.ts reads this state's reciprocity.exemptWhenDaysWorkedAtMost (30, see data/states/AL-2026.json) and exempts a nonresident who worked 30 days or fewer. alabamaLocalTax() in src/taxes/state.ts computes the Birmingham/Bessemer/Gadsden/Jefferson County occupational taxes from data/local/AL-municipalities-2026.json (including municipality name aliases, e.g. Hackleburg), resolved through geocode/resolve.ts's matchALMunicipalityByName().",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "AK",
+      "name": "Alaska",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax. Employee-paid UI wired into calc code (data/states/AK-2026.json): flat 0.50% for every employer regardless of experience class, $54,200 wage base, both primary-confirmed directly from labor.alaska.gov's own 2026 rate table -- one of only three states in this project (with PA and NJ) taxing the employee for unemployment insurance. No local tax, no mandatory paid leave.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "AZ",
+      "name": "Arizona",
+      "wageIncomeTax": true,
+      "structure": "employee_elected_flat",
+      "withholdingSource": "https://azdor.gov/business/withholding-tax",
+      "sourceDoc": "Form A-4 percentage election (employee picks 0.0-3.5%; 2.0% default). Not a bracket table.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code 2026-08-20 (employeeElectedFlat() in state.ts), verified against calculatePaycheck() -- elected rate, no-form default, and zero election all pass."
+    },
+    {
+      "code": "AR",
+      "name": "Arkansas",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.dfa.arkansas.gov/office/taxes/income-tax-administration/withholding-tax-branch/withholding-tax-forms-instructions/",
+      "sourceDoc": "whformula_2026.pdf (Formula Method), fetched and read directly. Wired into calc code (arkansasWithholding()): a genuinely unusual 37-band bracket table (flat 3.9% rate above $26,400, but the ADJUSTMENT constant steps down $10/$100 through a $94,700-$97,800 smoothing zone before the formula goes truly flat), a real $50-midrange-rounding step for incomes under $100,001 that applies even inside wide brackets, a mid-formula whole-dollar rounding step, and a flat $29/exemption POST-bracket credit. Reproduced the document's own full worked example to the cent. AR4EC's separate 'low-income tax rates' election (a 1,062-line, 28-page wage-bracket table for a narrow income band by filing status) is documented with its exact 2026 thresholds but deliberately not digitized this pass -- see AR-2026.json's lowIncomeElection block. No reciprocity with any state (checked, zero mentions in either primary document). No local income tax, no mandatory paid leave.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "CA",
+      "name": "California",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/",
+      "sourceDoc": "DE 44 California Employer's Guide + 2026 Method A (wage bracket) / Method B (exact calc, 26metha/26methb). Form DE 4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (californiaWithholding()) 2026-08-20: Method B exact-calculation, all 8 native pay periods, verified against ALL SIX of EDD 2026 Method B's own worked examples (A-D exact matches; E/F match this engine's primary per-period-table method, a cent or two off EDD's own alternate annualized-method answer -- disclosed, not a bug). SDI (1.3%, uncapped) wired via the existing generic stateDisabilityEmployeeTax() -- which had a latent wageBase:null bug this addition surfaced and fixed (every wage was silently capped to $0 when wageBase was JSON null; CA is the first state in this project to actually need genuine uncapped disability tax). Reciprocity with AZ/OR/VA is commonly claimed but NOT modelled -- every source found describes an Other-State-Tax-Credit (return-level) mechanism, not a DE-4 withholding exemption, the same open question already flagged on Arizona's and Oregon's side."
+    },
+    {
+      "code": "CO",
+      "name": "Colorado",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://tax.colorado.gov/withholding-tax-guide",
+      "sourceDoc": "DR 1098 Withholding Worksheet for Employers (https://tax.colorado.gov/DR1098)",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (coloradoWithholding()) 2026-08-20: DR 1098 formula (flat filing-status deduction, 4.40% rate, no allowance-count field), FAMLI (0.44%/0.44% split, uncapped-to-SS-cap) via the existing generic paid-leave dispatch. Denver Occupational Privilege Tax documented (flat $5.75/mo employee + $4.00/mo employer, gated on a $500/mo earnings threshold) but NOT wired -- a genuinely new tax shape (flat monthly dollar, not percentage-of-wages). Aurora's OPT repeal (effective 2025-01-01) confirmed cross-source. No reciprocity, no local income tax otherwise."
+    },
+    {
+      "code": "CT",
+      "name": "Connecticut",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://portal.ct.gov/drs",
+      "sourceDoc": "TPG-211 Withholding Calculation Rules + Circular CT (IP-2025-1). Form CT-W4 withholding codes; no percentage method.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11",
+      "note": "Uses CT-W4 withholding-code tables, not a straight percentage method."
+    },
+    {
+      "code": "DE",
+      "name": "Delaware",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://revenue.delaware.gov/employers-guide-withholding-tables/",
+      "sourceDoc": "Employer's Guide (Withholding Regulations and Duties) + bracket tables per pay period.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-19",
+      "note": "Annualized bracket withholding (2.20%-6.60%, 7 brackets), flat $3,250/$6,500 standard deduction, POST-BRACKET $110-per-exemption tax credit (unlike OH/WI/MI's pre-bracket exemption deductions). No reciprocity (confirmed). City of Wilmington 1.25% wage tax and Delaware Paid Leave (0.8% combined, employer-size-gated, employer-elected cost-share) documented in data/states/DE-2026.json but not yet built as engine calc paths."
+    },
+    {
+      "code": "DC",
+      "name": "District of Columbia",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://otr.cfo.dc.gov/page/income-tax-withholding-instructions-and-tables",
+      "sourceDoc": "FR-230 Income Tax Withholding Instructions and Tables. Form D-4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (dcWithholding()) 2026-08-20: single bracket table, flat per-allowance deduction, sourced from a 2022 NFC federal-payroll bulletin (DC's own current-year FR-230 was not locatable) whose BRACKETS were cross-checked against fresh 2026 sources and held up -- the allowance dollar amount specifically is disclosed as unconfirmed for 2026. DC does not tax nonresident wages at all under a federal statutory prohibition (Home Rule Act), modelled as a direct check rather than a reciprocalStates list. Universal Paid Leave (0.75%, 100% employer-funded) and UI not wired/researched."
+    },
+    {
+      "code": "FL",
+      "name": "Florida",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax (constitutional prohibition, Fla. Const. Art. VII sec. 5). State data captured in data/states/FL-2026.json: Reemployment Tax (FL's name for SUTA, administered by the Dept of Revenue not a labor agency) wage base $7,000, new-employer 2.7%/10 quarters, range 0.1%-5.4%, all primary-confirmed directly from floridarevenue.com. No local income tax (and localities are additionally barred from creating any paid-leave mandate of their own). No mandatory paid leave; a 2026 Paid Family Leave Insurance Act authorizes voluntary private coverage only.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "GA",
+      "name": "Georgia",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://dor.georgia.gov/taxes/withholding-tax-employers",
+      "sourceDoc": "Employer's Withholding Tax Guide, revised June 2026 (reflecting HB 463, signed 2026-05-11) -- fetched directly from dor.georgia.gov after an initial third-party mirror turned out to be a STALE pre-HB-463 version (caught by cross-checking the Governor's own press release before trusting either). Wired into calc code (georgiaWithholding()): a genuine MID-YEAR change, not just year-over-year -- the statute cut the rate 5.19%->4.99% and raised the standard deduction ($24k/$12k -> $30k/$15k MFJ/other) and dependent allowance ($4,000->$5,000) retroactive to 2026-01-01, but employer WITHHOLDING transitions specifically on 2026-05-11 (same shape as Ohio's HB96 mid-year cut). Both before/after tables verified against the guide's own worked examples exactly. 401(k)/deferred-comp confirmed NOT taxable via the guide's own direct FAQ. No reciprocity with any state; no local income tax (state-preempted); no mandatory paid leave. Structure corrected from 'bracket' to 'flat' -- Georgia completed its HB 1437 flat-tax transition.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "HI",
+      "name": "Hawaii",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://tax.hawaii.gov/geninfo/a2_b2_4empl_whhold/",
+      "sourceDoc": "Booklet A Employer's Tax Guide Appendix (eff. 2025-12-05 for wages paid 2026 and after), fetched and read directly. Wired into calc code (hawaiiWithholding()): annualize wages, subtract $1,144/allowance plus an unconditional $4,350 extra lump sum allowance, run through an 8-bracket annual schedule (1.40%-7.90%) keyed by only 2 statuses (Single incl. unmarried HoH, and Married). Reproduced the Guide's own worked example exactly. Form HW-4 (Rev. 2025) read directly: Hawaii law does NOT allow generic 'exempt' status -- the two real $0 routes (certified disabled person; nonresident military spouse) modelled as distinct certificate.hawaiiMaritalStatus values rather than the generic exempt flag. TDI (employee disability, 0.5%/$7.50-wk ceiling) wired via the existing generic disability dispatch. No reciprocity, no local tax; HFLL is unpaid-only (out of scope).",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "ID",
+      "name": "Idaho",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://tax.idaho.gov/taxes/income-tax/withholding/computing/",
+      "sourceDoc": "A Guide to Idaho Income Tax Withholding + Percentage Computation Method table (EPB00744). 2026 tables updated.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11"
+    },
+    {
+      "code": "IL",
+      "name": "Illinois",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://tax.illinois.gov/forms/withholding/currentyear/il-700-t-withholding-guide-tables.html",
+      "sourceDoc": "2026 IL-700-T, fetched and transcribed directly 2026-08-12. State modelled in data/states/IL-2026.json: 4.95% flat rate, IL-W-4 two-tier exemption schedule (basic $2,925 / additional $1,000 per allowance), reciprocity (IA/KY/MI/WI via Form IL-W-5-NR — clean full exemption, no local-tax carve-out since IL has none), NO local income tax anywhere in the state (constitutionally permitted for larger cities, none currently levy one), SUI (primary-sourced via IDES's EA-50 2026 report: $14,250 wage base, full Benefit-Ratio formula, small-employer relief clause).",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-12",
+      "note": "New state.ts method flatRateTwoTierExemption() dispatches the state line only (no spurious local line, unlike Indiana's county add-on) — proven against 5 hand-derived fixtures in tests/engine.test.ts, describe('Illinois') (74/74 project-wide). One fixture explicitly pins a resolved discrepancy: IL-700-T's own narrative worked example states $8.38 for a scenario the page's own formula plus the Comptroller-confirmed exemption amounts compute as $8.33 — treated as stale prose, disclosed rather than silently matched. AUDITED same day: Form IL-W-5-NR fetched and read directly (was previously secondary-only); supplementalRate upgraded from bare inference to confirmed-absence (searched IL's own site for 'supplemental wages'/'supplemental withholding' — zero results, consistent with no such category existing); and a real new find — Illinois has its own nonresident 30-day threshold (Form IL-W-6, with continuous proration past the threshold, unlike Indiana's all-or-nothing rule) — discovered and documented, not previously known. Still open: the exact 'Mary' discrepancy cause, Line 2's worksheet derivation, and SUI experience-rating (employer-specific, same as every state) — see IL-2026.json knownGaps."
+    },
+    {
+      "code": "IN",
+      "name": "Indiana",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://www.in.gov/dor/files/dn01.pdf",
+      "sourceDoc": "Departmental Notice #1 (R46/01-26), fetched and transcribed directly 2026-08-12. State modelled in data/states/IN-2026.json: 2.95% flat rate, WH-4 four-tier exemption schedule (personal/dependent/first-time-dependent/adopted-child), reciprocity (KY/MI/OH/PA/WI via WH-47 — state-exemption only, county tax still applies, a real gotcha), 30-day nonresident relief rule, SUTA ($9,500 wage base, primary-sourced headline rates, industry-keyed new-employer table NOT yet pulled). County layer (mandatory in all 92 counties, unlike MI/OH's optional local taxes) in data/local/IN-counties-2026.json, bulk-transcribed from the same source PDF.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-12",
+      "note": "UPGRADED 2026-08-12: new state.ts method flatRateMultiExemption() dispatches BOTH the state line and a stacked county add-on line (via new registry.ts countyRuleset()) in one pass, covering all four WH-4 exemption tiers — proven against Departmental Notice #1's own worked example plus 4 more fixtures in tests/engine.test.ts, describe('Indiana') (5 total, 69/69 project-wide). AUDITED same day to the MI/OH bar: the 92-county table was independently re-extracted with a second, differently-written parser and diffed field-by-field against the shipped data (0 discrepancies); the Oct 2025 (R45) prior county table was reconstructed and added (data/local/IN-counties-2026.json's priorTable); exemptPretax was upgraded from a secondary-citation inference to a direct full read of IC 6-3-1-3.5's ~35-item modifications list; supplementalRate was upgraded from inferred to a quoted confirmation (PayrollOrg); SUTA's industry-keyed new-employer table (construction/government/successor) was added, and the $902.50-vs-$893 delinquent-cap discrepancy was traced to a solvency-surcharge mechanism, though the exact 2026 surcharge percentage remains unconfirmed. Still open: the residence-vs-work county-status determination itself (engine takes an already-resolved county as input) and reciprocity's state-exempt-but-county-taxable split — see IN-2026.json knownGaps."
+    },
+    {
+      "code": "IA",
+      "name": "Iowa",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://revenue.iowa.gov/taxes/tax-guidance/withholding-tax/iowa-withholding-tax-information",
+      "sourceDoc": "Iowa Individual Income Tax Withholding Formula + tables, effective 2026-01-01. IA W-4.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11",
+      "note": "2026 formula/IA W-4 revised for the federal One Big Beautiful Bill Act (2025)."
+    },
+    {
+      "code": "KS",
+      "name": "Kansas",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.ksrevenue.gov/kw100.html",
+      "sourceDoc": "KW-100 Kansas Withholding Tax Guide. Form K-4.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11"
+    },
+    {
+      "code": "KY",
+      "name": "Kentucky",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://revenue.ky.gov/Business/Pages/Employer-Payroll-Withholding.aspx",
+      "sourceDoc": "2026 Kentucky Withholding Tax Formula (42A003 TCF, flat 3.5%, std deduction $3,360). Form K-4. Reciprocity: 103 KAR 17:140 + KY-TAM-18-03 (IL/IN/MI/OH/VA/WV/WI). Supplemental wages: 103 KAR 18:070 (aggregation, not a separate rate). exemptPretax confirmed via full read of KRS 141.019.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-13",
+      "note": "State tax WIRED and TESTED: dedicated flatRateFixedDeduction() method in src/taxes/state.ts, verified against the DOR's own worked examples (one exactly, one corrected for the source's own arithmetic typo) plus 3 more fixtures (below-deduction floor, same-cheque supplemental aggregation, 401k deferral) — 5/5 passing in tests/engine.test.ts describe('Kentucky'), 86/86 project-wide. Local occupational license tax (cities+counties+school districts, statutory county caps but NO city cap, county-tier city-credit mechanism) documented structurally in data/local/KY-occupational-2026.json with 29 of 230 authoritative jurisdictions (per the KRS 67.766 Secretary of State database, web.sos.ky.gov/occupationaltax) rate-populated — not yet wired into the engine (no dispatch method exists for the local layer)."
+    },
+    {
+      "code": "LA",
+      "name": "Louisiana",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://revenue.louisiana.gov/tax-forms/businesses/r-1306-tf-01-01-2025/",
+      "sourceDoc": "R-1306 (1/26) Louisiana Withholding Tables and Formulas, fetched and read directly (curl workaround, same class of PDF hazard documented elsewhere in this project). Wired into calc code (louisianaWithholding()): flat 3.09% on annual wages less a standard deduction selected ENTIRELY by the employee's own Form L-4 Block A claim (0/1/2 -- $0/$12,875/$25,750), not filingStatus. Reproduced both of R-1306's own worked examples exactly ($13.98 weekly claim-1, $111.54 bi-weekly claim-2). No dependents, no local tax, no reciprocity (checked, zero mentions). exemptPretax confirmed via R.S. 47:293's federal-AGI-conformity language. UI wage base $7,000 primary-confirmed (resolved a $7,000/$7,700 secondary conflict via laworks.net's own rate table). VERIFY PASS (2026-08-22) caught and fixed a real bug: R-1306's own Daily payroll count is 365, not this engine's generic 260-workday convention (the same class of mismatch NJ's/Delaware's daily tables needed their own override for) -- added a dedicated annualizeMultiplier map, throws for quarterly/semiannual rather than guessing. Also confirmed via a THIRD independent source that the $12,875/$25,750 standard deduction figures (which conflict with a stale 2025 NFC bulletin's $12,500/$25,000) are correct: Louisiana's standard deduction became CPI-U-inflation-adjusted starting 2026.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "ME",
+      "name": "Maine",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/26_wh_tab_instr.pdf",
+      "sourceDoc": "MRS Withholding Tables for Individual Income Tax 2026 (5.8/6.75/7.15%). Supplemental wage rate 5%.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11"
+    },
+    {
+      "code": "MD",
+      "name": "Maryland",
+      "wageIncomeTax": true,
+      "structure": "bracket_plus_local",
+      "withholdingSource": "https://marylandtaxes.gov/business/income/withholding/index.php",
+      "sourceDoc": "Maryland Employer Withholding Guide (annual PDF, e.g. https://www.marylandtaxes.gov/forms/24-forms/Withholding-Guide.pdf)",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (marylandWithholding()) 2026-08-20: state 10-tier bracket + all 24 county local rates (2 tiered: Anne Arundel, Frederick) summed on the same taxable income, verified against the guide's own published combined-rate table (7-for-7 exact match). Closed a real reciprocity asymmetry -- PA/VA/WV already listed MD as reciprocal; MD itself had no data until now. UI and PFML status not researched."
+    },
+    {
+      "code": "MA",
+      "name": "Massachusetts",
+      "wageIncomeTax": true,
+      "structure": "flat_plus_surtax",
+      "withholdingSource": "https://www.mass.gov/lists/massachusetts-dor-withholding-tax-forms",
+      "sourceDoc": "Circular M Income Tax Withholding Tables, effective 2026-01-01 (5% + 4% millionaire surtax). Form M-4.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11"
+    },
+    {
+      "code": "MI",
+      "name": "Michigan",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/SUW/TY2026/446_Withholding-Guide_2026.pdf",
+      "sourceDoc": "Form 446 (Rev. 02-26) 2026 Withholding Guide, PDF fetched and read directly: '4.25% ... Personal Exemption Amount: $5,900' (corrected from an earlier, stale $5,800/2025 figure recorded here previously). State data modelled in data/states/MI-2026.json.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22",
+      "note": "State flat rate modelled + fixture-ready. All 24 city income taxes catalogued in data/local/MI-cities-2026.json, now ALL primary_source_confirmed for both rates and exemption amounts (upgraded in an earlier pass from the original consolidated-table sourcing). WIRED (a later 'go to every state' pass): michiganLocalTax() computes resident/nonresident local tax via certificate.residenceCity/workCity; supplemental (bonus) wages now withhold at a flat 4.25% via the existing generic supplemental mechanism; reciprocity's inbound direction was already wired in an earlier pass."
+    },
+    {
+      "code": "MN",
+      "name": "Minnesota",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.revenue.state.mn.us/withholding-tax",
+      "sourceDoc": "2026 Minnesota Withholding Tax Instructions and Tables (wh-inst-26), Computer Formula (p.34) fetched and read directly, formula independently re-derived and cross-checked against 3 cells of the document's own published tables (pp.16-33). Form W-4MN. State modelled in data/states/MN-2026.json: 'bracket_flat_allowance' engine method (progressive bracket schedule -- genuinely DIFFERENT thresholds for single vs. married, unlike Wisconsin's one shared schedule -- reduced by a flat $5,300/allowance amount, no phase-out), plus a flat 6.25% supplemental-wage rate (simpler than Wisconsin's bracket-dependent one). No local income tax anywhere in MN (statute-cited, Minn. Stat. 477A.016). exemptPretax backed by a checked statutory additions-list (290.0131, all 14 items, none relevant), same evidentiary tier as Wisconsin. Reciprocity (MI/ND only, via Form MWR by Feb 28 -- WI's historical reciprocity was terminated in 2010 and is not currently active, though Rule 8002.0200 still names it as structurally eligible) plus a $15,300 nonresident de-minimis threshold, both engine-implemented via a generic mechanism in state.ts (reciprocityExemptionLine()/nonresidentDeMinimisLine(), zeroing only `${code}_SIT`-prefixed lines) that also went live for free on every other state's already-documented reciprocity data -- MI/IL/KY/WI/IN/OH/PA -- with zero per-state code, and in the process surfaced and fixed a real bug it would otherwise have introduced for Indiana (whose reciprocity exempts state tax only, not its mandatory county tax; see IN-2026.json). Minnesota Paid Leave (0.88% 2026 rate, corrected from a stale 0.7% statute figure via 3 independent official sources; 1.1% statutory ceiling; wage base pegged to, and rounded from, the federal OASDI cap) is engine-implemented via statePaidLeaveEmployeeTax(), emitting MN_PFML_EE; the small-employer question is FULLY RESOLVED (not just modelled) via a second independent primary source (DEED's own small-employer PDF) proving the employee's 0.44% share never varies by employer size, so no employer-size branch was needed at all. Employer SUTA: $44,000 2026 wage base primary-confirmed (resolved a $44k/$43k secondary conflict), plus essentially all 22 non-construction NAICS new-employer rates and a construction sample (26 of ~51 rows total) -- context only, not engine-consumable (no state has per-employer experience-rating input). Reading Form W-4MN directly surfaced four real gaps, ALL FOUR now closed generically across the whole project: the Section 2 withholding exemption (certificate.exempt), Line 2's additional withholding (certificate.additionalWithholding, the state-level equivalent of federalW4.extraWithholding), the 3rd marital-status checkbox ('married_withhold_as_single', now explicitly validated -- an unrecognized value throws rather than silently defaulting), and nonresident-alien handling (certificate.nonresidentAlien, reusing a NEW federal.ts Pub 15-T Table 2 adjustment table also used by US_FIT -- disclosed discrepancy: MN's own text says 'Table 1', but this project's FederalW4 model only represents 2020+-style forms, matching Table 2). Beyond ordinary wage withholding, six other Minnesota withholding/tax mechanisms found in wh-inst-26 (nonresident entertainer tax 2%, mining/exploration royalty withholding 6.25%, non-MN construction contractor surety deposits 8%, Form IC134 contractor affidavits, backup withholding 9.85% -- corrected from an initial misread as the federal 24% rate -- and W-4MNP pension/annuity withholding) are now captured as DATA in otherMinnesotaWithholdingTypes, none previously documented at all; none are wired into calculatePaycheck() since several aren't ordinary employee wage withholding to begin with (e.g. the entertainer tax is paid by a promoter). 22 MN test fixtures (plus 6 more across MI/IL/IN/KY proving the generic mechanisms), 115/115 passing project-wide.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-15"
+    },
+    {
+      "code": "MS",
+      "name": "Mississippi",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.dor.ms.gov/business/withholding-tax",
+      "sourceDoc": "Pub 89-700-25-1 (Rev. 07/25) Withholding Instructions and Tax Tables, fetched and read directly (curl workaround). No formula page exists in the source -- Tables A/B/C/D are the primary artifact; the annual formula was reverse-derived and verified by reproducing 3 of Table A's own cells exactly. Wired into calc code (mississippiWithholding()): annual wages less a filing-status standard deduction ($2,300 Single / $3,400 Head of Family / $4,600 Married-spouse-not-employed / $2,300 Married-both-employed, per Section 13(d)'s own 'divided equally' statement) less the employee's own pre-summed Form 89-350 Line 6 total, taxed 0% on the first $10,000 and 4.0% above -- NOT the 4.1% figure repeated uncited by several secondary sources; the primary document plus this file's own reproduction both confirm 4.0% for 2026. No local tax, no reciprocity (checked). exemptPretax flagged as this project's weakest evidentiary tier: MS Code 27-7-15's only textual salary-reduction exclusion ties to Section 25-17-5, which is written for state/local GOVERNMENT employee cafeteria plans specifically, not general private-sector 401(k)/125 conformity -- modelled per universal industry practice anyway, disclosed honestly rather than silently upgraded.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "MO",
+      "name": "Missouri",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://dor.mo.gov/taxation/business/tax-types/withholding/",
+      "sourceDoc": "Missouri Employer's Withholding Tax Formula + tables. Form MO W-4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code 2026-08-20 (missouriWithholding() in state.ts), verified against calculatePaycheck() reproducing the DOR's own worked example exactly (9/month) plus the married-spouse-doesn't-work double deduction."
+    },
+    {
+      "code": "MT",
+      "name": "Montana",
+      "wageIncomeTax": true,
+      "structure": "bracket_per_period_gross",
+      "withholdingSource": "https://revenuefiles.mt.gov/files/Forms/Montana_Employer_and_Information_Agent_Guide_with_Tax_Tables.pdf",
+      "sourceDoc": "Montana Employer and Information Agent Guide (V4, Nov 2025) + Publication 1 + Form MW-4, all fetched and read directly (HB337: top rate drops to 5.65% for 2026). State modelled in data/states/MT-2026.json: bracketPerPeriodGross() applies published PER-PERIOD bracket tables (3 filing-status groups x 6 frequencies) DIRECTLY to gross wages -- no annualization step, genuinely different from every other bracket state in this project. Building started from a user-pasted specification, deliberately NOT trusted directly -- every number was checked against Montana's own primary documents. One real error was caught: the pasted spec's 11% interest rate was wrong; the guide's own text says 10.25%/yr, 0.0281%/day, corrected. All 7 of the guide's own worked examples (single/MFS, MFJ/QSS, HOH x multiple frequencies) reproduced exactly to the dollar. Rounding resolved the same way as Ohio/Wisconsin: prose says round up, worked examples prove ordinary nearest-dollar. MW-4 line 4 (specifiedWithholding) implemented as a full override; line 3 and the exemption (line 5, 4 categories) reuse this project's existing generic certificate.additionalWithholding/certificate.exempt mechanisms with zero MT-specific code. Reciprocity (ND only, via MW-4 line 5c) reuses the generic reciprocity mechanism. Supplemental wages: flat 5% Method 3 modelled; Methods 1/2 (combining with a different period's wages) are not, same class of gap as Kentucky's own supplemental treatment. UI wage base, Schedule I, reserve-ratio bands, new-employer industry rates, and all AFT rates (0.18%/0.13%/0.09%/0.08%) now confirmed via two direct DLI PDF fetches, which also surfaced a previously-uncaptured 50%-higher delinquency penalty rate. exemptPretax upgraded to Wisconsin/Minnesota-tier evidence via Publication 1's full Montana Additions/Subtractions lists, checked item by item -- also surfaced that MT's UI wage base (unlike its income-tax base) does NOT exclude 401(k)/cafeteria-125 amounts. No local income tax anywhere in Montana. 15 MT test fixtures, 130/130 passing project-wide.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-15"
+    },
+    {
+      "code": "NE",
+      "name": "Nebraska",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://revenue.nebraska.gov/businesses/nebraska-income-tax-withholding",
+      "sourceDoc": "2026 Nebraska Circular EN (all tables changed; top rate 4.55%). Form W-4N.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code 2026-08-20 (nebraskaWithholding() in state.ts), verified against calculatePaycheck() with 2 hand-derived fixtures. Uses an annualize-then-divide approximation of Circular EN's real per-period tables (not verified cell-by-cell -- see knownGaps)."
+    },
+    {
+      "code": "NV",
+      "name": "Nevada",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "Deep data pass 2026-08-20: no income tax (structural fact unchanged). Modified Business Tax (employer excise) corrected from stale 1.378%/1.475% secondary-source figures to the real current 1.17% general / 1.554% financial-institution rates, plus UI. Not wired into calc code.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20"
+    },
+    {
+      "code": "NH",
+      "name": "New Hampshire",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No tax on earned wages (former interest/dividends tax repealed) — nothing to withhold from payroll.",
+      "status": "structural_fact"
+    },
+    {
+      "code": "NJ",
+      "name": "New Jersey",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://nj.gov/treasury/taxation/businesses/payroll/index.shtml",
+      "sourceDoc": "NJ-WT Gross Income Tax Instructions for Employers + Supplemental Withholding Tables. Form NJ-W4.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11",
+      "note": "Employee-paid SUI/SDI/FLI (separate). PA-NJ reciprocity exists; NY-NJ is credit-based, not reciprocal."
+    },
+    {
+      "code": "NM",
+      "name": "New Mexico",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.tax.newmexico.gov/governments/wage-withholding-taxes/",
+      "sourceDoc": "FYI-104 (REV. 11/2025), fetched and read directly (realfile.tax.newmexico.gov, since the commonly-linked URL 404's). Wired into calc code (newMexicoWithholding()): a genuinely different shape from every other bracket state in this project -- NO annualize/divide step, FYI-104 publishes a COMPLETE independent {from,to,base,rate} table for each of 8 native pay periods x 3 filing statuses (24 schedules total), looked up directly. A real multi-column PDF extraction hazard shifted every bracket's base value one tier early in a naive read; caught via FYI-104's own worked example (weekly $1,000 married -> $21.80) and fixed via a sequential non-column re-extraction, independently verified bracket-by-bracket via cumulative-base algebra, and cross-checked against a 2025 USDA NFC bulletin whose base figures match this file's exactly. Also found and corrected a second real error IN New Mexico's own published PDF: the Semi-Monthly table's own 'Not Over' summary line prints $304/$608/$456, but the table's own bracket row and Annual-table scaling both prove the correct figures are $335/$671/$503. No local tax, no bilateral reciprocity (return-level credit only). exemptPretax confirmed via NMSA 7-2-2's federal-AGI-conformity language.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "NY",
+      "name": "New York",
+      "wageIncomeTax": true,
+      "structure": "bracket_per_period_net",
+      "withholdingSource": "https://www.tax.ny.gov/pdf/publications/withholding/nys50_t_nys.pdf",
+      "sourceDoc": "NYS-50-T-NYS + NYS-50-T-NYC + NYS-50-T-Y (all 1/26), fetched and read directly, built across four passes. NYS: bracketPerPeriodNet() subtracts Table A's combined deduction+exemption allowance from PER-PERIOD gross wages, then looks up a per-period bracket table (6 periods x 2 statuses, 10-13 brackets each), falling back to Method III (flat rate on annualized wages) for very high earners. A transcription bug (row 2 of every table had base:0) was caught by the first test run and fixed by rebuilding all tables programmatically. Corrected a $0.01 slip in the source's own Example 2. NYC (nycLocalTax, dispatched via certificate.nycResident): same Table-A-plus-bracket shape but NO Method III, and single/married share ONE bracket schedule (confirmed identical by direct comparison) -- only the allowance differs. NYC nonresident tax confirmed to not exist (1999 repeal). Yonkers (yonkersLocalTax): a RESIDENT surcharge that is literally 16.75% of the exact NYS calculation (byte-for-byte identical Table A/brackets/Method III, reused via a factored-out computeNYSStyleTax() helper) plus a structurally unrelated NONRESIDENT earnings tax (flat 0.50% after a wage-level step-function exemption, independent of marital status). Building Yonkers caught a real field-name-mismatch bug (NaN until the first test run) and a SECOND source arithmetic slip ($599.08 stated vs. $599.09 correct). PFL (statePaidLeaveEmployee) reuses Minnesota's exact mechanism with zero new code (annual $411.91 cap confirmed mathematically equal to a $95,348.76 wage base x 0.432%). DBL (stateDisabilityEmployee) is a genuinely new PER-PERIOD cap shape (flat $0.60/week, resets every pay period, unlike every other capped employee-paid program here) -- reconfirmed unchanged for 2026 against WCB's own current page. UI (unemploymentInsuranceEmployer) is now primary-confirmed for 2026: $17,600 wage base (18% of state average annual wage, rounded up to nearest $100), new-employer total rate 4.1% (4.025% UI + 0.075% RSF), experience range 1.7%-9.5% total -- found and rejected a genuine cross-source conflict along the way (one search result citing the same NYS-45 instructions claimed $13,000/16% instead; the actual PDF says $17,600/18%). Also found, but not built, a separate employer tax: the Metropolitan Commuter Transportation Mobility Tax (MCTMT). UI is context-only like every other state's employer UI here -- not engine-consumable. A post-build self-check found IT-2104 Line 5 (Yonkers' own additional withholding) was missing entirely -- not even documented as a gap -- and closed it the same session with its own dedicated field (certificate.additionalWithholdingYonkers), proven not to collide with NYS's Line 3 or NYC's Line 4. Nonresident-alien silence now confirmed across all FOUR NY documents (Yonkers was the one left unchecked before). One question remains genuinely unresolved and disclosed rather than guessed: whether PFL/DBL's own wage bases follow NYS income tax's same pretax-exclusion list -- a primary DOT notice (N-17-12) answered a related but different question, and no source answering this specific one was found. Full detail in data/states/NY-2026.json. 50 NY test fixtures, 180/180 passing project-wide.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-16",
+      "note": "This is now the most fully documented state in this project (state income tax, NYC, Yonkers, PFL, DBL, and UI). MCTMT (a separate MTA-area employer tax) was found during UI scouting but not built."
+    },
+    {
+      "code": "NC",
+      "name": "North Carolina",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://www.ncdor.gov/taxes-forms/withholding-tax",
+      "sourceDoc": "NC-30 Income Tax Withholding Tables & Instructions, fetched and read directly in full (2026: 3.99% + 0.1% add-on = 4.09% actual withholding rate, confirmed via the document's own worked example). Wired into calc code (northCarolinaWithholding()): annualize wages, subtract a 2-tier standard deduction ($12,750 Single/Married/Surviving Spouse, $19,125 Head of Household) plus $2,500/allowance, multiply by 4.09%, round to the nearest whole dollar. No reciprocity with any state (checked, zero mentions in the full document). No local income tax, no mandatory paid leave.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "ND",
+      "name": "North Dakota",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2026-iit/2026-income-tax-withholding-rates-booklet.pdf",
+      "sourceDoc": "2026 Income Tax Withholding Rates and Instructions, fetched and text-extracted directly. Dual-track system: Section 1 (pre-2020 W-4, allowance-based) and Section 2 (2020+ W-4, 3-status annual bracket table, 0%/1.95%/2.50%) both fully documented. State data captured in data/states/ND-2026.json.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22",
+      "note": "WIRED to calc code (northDakotaWithholding() in state.ts, dispatched via method north_dakota_dual_vintage): both Section 1 (pre-2020 W-4, allowance-based) and Section 2 (2020+ W-4, reads status directly off input.federalW4.filingStatus) now compute real ND_SIT lines. Wiring surfaced and fixed two real pre-existing data bugs: Section 1's own Single bracket table had rate 0.0195 instead of 0 on its first bracket (inconsistent with the file's own prose and with Section 2's identical table), and exemptPretax was stored as a note object rather than an array, which threw ('object is not iterable') on the very first test run. Reciprocity with MN/MT confirmed. No local income tax; no mandatory paid leave (and localities are statutorily preempted from creating their own)."
+    },
+    {
+      "code": "OH",
+      "name": "Ohio",
+      "wageIncomeTax": true,
+      "structure": "bracket_per_period",
+      "withholdingSource": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/employer_withholding/2026%20Withholding%20Tables/WHT_PercentageMethod_2026.pdf",
+      "sourceDoc": "Percentage Method PDF (eff. 2026-08-01, HB96 mid-year change), fetched and transcribed directly. State modelled in data/states/OH-2026.json: 3-tier per-period brackets, 2.75% supplemental, reciprocity (IN/KY/MI/PA/WV, cross-source), SUTA (primary-sourced: $9,000 wage base, 2.85% new-employer rate, 0.4%-10.1% experienced range), 214-district school income tax (aggregate count only, primary-sourced).",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-11",
+      "note": "Method genuinely differs from PA/MI's flat_rate — no engine dispatch case exists for bracket_per_period, so unlike MI this cannot be proven by test execution without new calc code. UPGRADED: locals now comprehensive and primary-sourced — data/local/OH-municipalities-2026.json (679 municipalities) and data/local/OH-jedd-jedz-2026.json (146 zones), both bulk-downloaded directly from Ohio's own Finder API this session, not hand-searched. This is now materially better local coverage than the 3-anchor-city version.",
+      "localAggregator": "oh-finder"
+    },
+    {
+      "code": "OK",
+      "name": "Oklahoma",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://oklahoma.gov/tax/businesses/withholding.html",
+      "sourceDoc": "Packet OW-2 2026 Oklahoma Income Tax Withholding Tables (Rev. 11-2025), fetched and read directly. Wired into calc code (oklahomaWithholding()): $1,000/allowance/periodsPerYear subtracted from period wages, then a genuine per-period 4-bracket table (0%/2.5%/3.5%/4.5%, all 8 published periods transcribed directly) by status (Single, or Married -- 'withhold at higher Single rate' resolves to Single per OW-2's own instruction). Reproduced OW-2's own Sample Computation exactly; caught a real typo in the source's own narrative sentence ($12.19 vs the table's actual $9.10, not followed). Confirmed via a second source that HB 2764 collapsed OK's prior 6-bracket schedule into these 4 for 2026 -- a genuine bracket-COUNT change, not just a rate change. exemptPretax confirmed via 68 O.S. Sec. 2358's federal-conformity language. No reciprocity, no local tax, no mandatory paid leave.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "OR",
+      "name": "Oregon",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.oregon.gov/dor/programs/businesses/pages/withholding-and-payroll-tax.aspx",
+      "sourceDoc": "Oregon Withholding Tax Formulas 150-206-436 (Rev. 12-31-25, 2026). Statewide Transit Tax 0.1% (separate). Form OR-W-4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code 2026-08-20 (oregonWithholding() in state.ts) -- base state income tax only, verified against calculatePaycheck() with the real federal-withholding dependency exercised, not just a federal-exempt shortcut. Statewide transit tax, TriMet/LTD, Paid Leave Oregon, and Portland-area local taxes remain data-only, not wired."
+    },
+    {
+      "code": "PA",
+      "name": "Pennsylvania",
+      "wageIncomeTax": true,
+      "structure": "flat",
+      "withholdingSource": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/employer-withholding",
+      "status": "modelled",
+      "localAggregator": "pa-dced-act32",
+      "note": "State flat 3.07% + employee-paid UC withholding (0.07%, uncapped -- PA is the first state in this project taxing the employee for UC, not just the employer) + reciprocity (IN/MD/NJ/OH/VA/WV) modelled in data/states/PA-2026.json. Act 32 local EIT + Local Services Tax documented structurally (localTax block) and built as a data file/engine path. STALE, corrected (GROKBOT_AUDIT.md finding 18): this note previously said the DCED PSD/rate spreadsheet was 'not yet imported' -- it has been: data/local/PA-EIT-LST-2026.json holds all 2,627 PSD rows, read by pennsylvaniaLocalTax() in src/taxes/state.ts."
+    },
+    {
+      "code": "RI",
+      "name": "Rhode Island",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://tax.ri.gov/tax-sections/withholding-tax",
+      "sourceDoc": "2026 Rhode Island Employer's Income Tax Withholding Tables booklet. Form RI W-4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (rhodeIslandWithholding()) 2026-08-20: single bracket table for all filing statuses, genuine per-period tables (not annualized-derived), verified against the booklet's own worked example (7.57) exactly. TDI (1.1%, 00k wage base, also funds TCI/paid-caregiver-leave) wired via the existing generic disability dispatch. No reciprocity, no local tax."
+    },
+    {
+      "code": "SC",
+      "name": "South Carolina",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://dor.sc.gov/tax/withholding",
+      "sourceDoc": "WH-1603F 2026 Withholding Tax Formula (the formula document, not just WH-1603's tables), fetched and read directly. Wired into calc code (southCarolinaWithholding()): annualize wages, and IF 1+ allowances are claimed, subtract a $5,000/allowance personal allowance PLUS a 10%-of-wages standard deduction capped at $7,500 (claiming 0 allowances forfeits both at once -- a genuine all-or-nothing quirk confirmed directly from the source); run through a 3-bracket schedule (0%/3%/6%, top rate above $18,230 annualized). Reproduced the document's own worked example exactly ($10.58/week). No reciprocity with any state (checked across WH-1603F/WH-105/SC W-4). No local income tax; Paid Family Leave Insurance Act (2024) is voluntary-insurance-only, no mandatory payroll deduction.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "SD",
+      "name": "South Dakota",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "Data-only pass (no income tax to wire into calc code). No local income tax, no paid leave program of any kind.",
+      "status": "modelled",
+      "withholdingSource": "https://dlr.sd.gov/ra/businesses/faq.aspx",
+      "sourceDoc": "No state income tax (constitutional structure, never has had one). Reemployment Assistance (SUTA) fully documented: $15,000 wage base, new-employer tiers, and the 2026 experience-rated administrative-fee change (0.02% -> 0.08%) all primary-sourced. State data captured in data/states/SD-2026.json.",
+      "sourceVerifiedOn": "2026-08-20"
+    },
+    {
+      "code": "TN",
+      "name": "Tennessee",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax (former Hall tax on investment income repealed effective 2021). State data captured in data/states/TN-2026.json: UI wage base $7,000 primary-confirmed directly from tn.gov (unchanged since 2018), reserve-ratio Premium Rate Table mechanism documented (T.C.A. 50-7-403). No local income tax; Paid Family Leave Insurance Act (2023) is voluntary-insurance-only, no mandatory deduction.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-21"
+    },
+    {
+      "code": "TX",
+      "name": "Texas",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax -- constitutionally barred (Tex. Const. Art. VIII sec. 24, added by 2019 voter referendum; any future income tax itself requires a statewide vote). State data captured in data/states/TX-2026.json: UI (TWC, $9,000 fixed wage base, 0.32%-6.32% 2026 range, new employers 2.7%, primary-confirmed via twc.texas.gov's own rate page). VERIFY PASS (2026-08-22) fetched TWC's own 2025-11-17 Discussion Paper directly and found the 5 underlying rate components (GTR/RTR/OA/DTR/ETIA) sum to a CALCULATED 0.36%/7.86% range, not the published 0.32%/6.32% -- resolved by exact arithmetic: the gap at both ends matches the calculated Deficit Tax Rate component precisely, meaning the Commission zeroed out DTR under its own Sec. 204.067 discretion for the final 2026 rates. No local income tax; no mandatory paid leave, and Texas affirmatively preempts local paid-leave/paid-sick-leave ordinances via H.B. 2127 (2023) -- already enforced in court against real Austin/Dallas/San Antonio ordinances, a litigation-tested preemption stronger than most other states' bare absence finding.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    },
+    {
+      "code": "UT",
+      "name": "Utah",
+      "wageIncomeTax": true,
+      "structure": "flat_with_allowance",
+      "withholdingSource": "https://tax.utah.gov/business/withholding-overview/withholding/",
+      "sourceDoc": "Publication 14 Withholding Tax Guide (flat rate with income-based allowance that phases out). Uses federal W-4.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Wired into calc code (utahWithholding()) 2026-08-20: Publication 14's post-2026-06-01 formula (flat 4.45% rate less a PHASING-OUT credit -- base allowance minus 1.3% of wages over a threshold), verified against ALL SIX of the guide's own worked examples reproduced exactly, including its multi-step whole-dollar rounding convention. The PRE-2026-06-01 formula (4.5%, older allowance figures) is NOT modelled -- a real, disclosed gap for any check date before the mid-year change. No reciprocity, no local income tax, no PFML/disability program exists in Utah."
+    },
+    {
+      "code": "VT",
+      "name": "Vermont",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://tax.vermont.gov/business/withholding",
+      "sourceDoc": "GB-1210 2026 Income Tax Withholding Instructions, Tables and Charts (4 brackets, 3.35-8.75%). Form W-4VT.",
+      "status": "source_verified",
+      "sourceVerifiedOn": "2026-08-11"
+    },
+    {
+      "code": "VA",
+      "name": "Virginia",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/employer-withholding-instructions.pdf",
+      "sourceDoc": "Income Tax Withholding Guide for Employers (Rev. 05/25) + Form VA-4, both fetched and text-extracted directly. 4-bracket annualized formula (2%-5.75%) with a flat $8,750 standard deduction that does NOT vary by marital status for withholding purposes (a real, easy-to-miss structural quirk). State data captured in data/states/VA-2026.json.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Data-only pass -- NOT wired into engine calc code. Reciprocity with MD/PA/WV plus a narrower KY/DC daily-commuter exception, cross-checked mutually consistent with WV's own reciprocity list. No local income tax. UI wage base corrected mid-pass from a wrongly-sourced $32,100 (U.S. Virgin Islands) figure to the real VEC-confirmed $8,000. A 2026-enacted PFML program exists but its contributions don't start until 2028 -- not a 2026 input."
+    },
+    {
+      "code": "WA",
+      "name": "Washington",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax. Employee-paid Paid Family & Medical Leave + WA Cares — to model separately.",
+      "status": "structural_fact"
+    },
+    {
+      "code": "WV",
+      "name": "West Virginia",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://tax.wv.gov/Documents/Withholding/it100.2a.pdf",
+      "sourceDoc": "IT-100.2A Percentage Method tables (March 2026 revision) + IT-104 exemption certificate, both fetched and text-extracted directly. 5-bracket schedule (2.11%-4.58%) with an unusual two-earner/one-earner table-election mechanic (not marital-status-driven). State data captured in data/states/WV-2026.json.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-20",
+      "note": "Data-only pass -- NOT wired into engine calc code. 5-state reciprocity (KY/MD/OH/PA/VA) primary-confirmed off IT-104NR itself -- the largest reciprocity cluster in this project. Local tax is a flat per-week City Service Fee in several cities (Charleston/Huntington/Morgantown/Parkersburg), a structurally different shape from every percentage-based local tax modelled elsewhere."
+    },
+    {
+      "code": "WI",
+      "name": "Wisconsin",
+      "wageIncomeTax": true,
+      "structure": "bracket",
+      "withholdingSource": "https://www.revenue.wi.gov/DOR%20Publications/pb166.pdf",
+      "sourceDoc": "Publication W-166 (1/26). State modelled in data/states/WI-2026.json: 'bracket_phaseout_deduction' engine method (4-bracket progressive schedule over a base reduced by an income-phased-out standard deduction plus a flat $400/exemption amount), PLUS a genuine supplemental-wage method (bracketSupplementalTax — flat bracket-dependent rate off estimated annual gross salary). Both proven against W-166's own worked examples and hand-derived fixtures to the cent (7 WI test fixtures total). No local income tax anywhere in WI. Reciprocity (IL/IN/KY/MI via Form W-220) a fully symmetric 5-state cross-check with MI/IL/IN's own reciprocity data. exemptPretax now backed by a direct statute read (Wis. Stat. 71.03(13)). SUTA now has the FULL Schedule D experience-rated table (26 rows x 2 payroll tiers), not just new-employer rates.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-13",
+      "note": "Resolved this session: the $1,500-vs-$2,000 minimal-earnings-threshold conflict was a real legislative change (2023 Wis. Act 146, raised $1,500->$2,000) that W-166 simply hadn't caught up on in that one clause — $2,000 is correct, confirmed via DOR's own '2024 Wisconsin Tax Update.' Withholding-table brackets remain intentionally different from (lower than) the annual Form-1 return brackets — the withholding tables are static since 2022 while the return brackets are inflation-indexed yearly; a real structural fact, not an error."
+    },
+    {
+      "code": "WY",
+      "name": "Wyoming",
+      "wageIncomeTax": false,
+      "structure": "none",
+      "note": "No state wage income tax (never has). State data captured in data/states/WY-2026.json: UI wage base $33,800 primary-confirmed directly from dws.wyo.gov (adjusts annually), new-employer rate genuinely industry/experience-driven under W.S. 27-3 Article 5 (no single flat figure, same shape as Louisiana's), no employee-paid UI component (unlike AK/PA/NJ). No local income tax, no mandatory or voluntary paid leave program. This is the LAST of the 51 jurisdictions in this project's registry to receive a data/states/*.json file -- every state now has at least a data-captured ruleset.",
+      "status": "modelled",
+      "sourceVerifiedOn": "2026-08-22"
+    }
+  ]
+}

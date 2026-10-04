@@ -1,0 +1,111 @@
+{
+  "code": "ME",
+  "name": "Maine",
+  "year": 2026,
+  "method": "bracket_phaseout_deduction_whole_dollar",
+  "roundFinalToWholeDollar": true,
+  "$scopeNote": "STATE income tax + Paid Family & Medical Leave (PFML, employee AND employer shares, contributions began 2025-01-01, benefits available from 2026-05-01). Maine has NO local income tax anywhere and NO reciprocity agreement with any state -- residents working elsewhere instead claim a RETURN-level credit for taxes paid to another jurisdiction (out of scope, same convention as every other state's return-level credit already disclosed in this project, e.g. Connecticut's).",
+  "$methodComment": "See maineWithholding()'s own doc comment in src/taxes/state.ts for the full mechanism (phased standard deduction + flat per-allowance amount + progressive bracket, structurally close to Wisconsin's bracketPhaseoutDeduction() but with a genuinely different, easy-to-miss feature: Maine rounds to the nearest WHOLE DOLLAR at multiple intermediate steps, not once at the end -- confirmed against all 3 of the source document's own worked examples, reproduced exactly in tests/engine.test.ts).",
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "INFERRED, not directly confirmed: Maine's own 2026 withholding instructions explicitly state 'Maine does not conform to the federal deductions that may be used to reduce the required federal withholding amount' -- but that statement is specifically about federal Form W-4 Step 4(b) (the optional itemized-deductions adjustment line), a genuinely DIFFERENT concept from whether pretax elective deferrals (401(k), section 125, etc.) reduce the wage base BEFORE withholding is computed at all. No source found this session directly addresses pretax-deferral conformity either way, so this reuses the federal-conforming exemptPretax list by inference (standard payroll practice, the same conformity pattern as Michigan/Ohio/Idaho/Connecticut/Iowa/Vermont/Massachusetts in this project) rather than PA's non-conforming empty list -- lower confidence than this project's directly-quoted conformity findings for those states.",
+  "sources": [
+    {
+      "title": "Maine Revenue Services — Withholding Tables for Individual Income Tax (2026)",
+      "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/26_wh_tab_instr.pdf",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout, extracted cleanly, no column-garbling hazard). ENGINE-CONSUMED: the complete 6-step Percentage Method formula, the $5,300 flat per-allowance amount, the phased standard-deduction bands (single: full $12,450 at/below $102,250, $0 at/above $177,250, linear between; married: full $27,750 at/below $204,550, $0 at/above $354,550), both bracket schedules (single: 5.80%/6.75%/7.15% at $0/$27,400/$64,850; married: same rates at $0/$54,850/$129,750), the whole-dollar rounding instruction ('round to the nearest dollar'), the no-form-filed default (single, no allowances), the 3-checkbox marital status shape, and the supplemental-wages rule (aggregate if paid with regular wages; payer MAY withhold a flat 5% if paid separately -- optional, not mandatory). Includes 3 fully worked examples covering both marital statuses and the standard-deduction phase-out band -- reproduced exactly in tests/engine.test.ts, describe('Maine')."
+    },
+    {
+      "title": "Form W-4ME, Employee's Withholding Allowance Certificate (Revised: December 2025)",
+      "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/26_form_w-4me_fillable.pdf",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout), the same 'check the actual form' discipline that caught a real bug in Idaho's build. Confirmed the Personal Allowances Worksheet (Lines A-E: personal, spouse, HOH, dependents, summed into Line 4), Line 5 (additional withholding, matches the existing generic mechanism), and FIVE distinct exemption reasons on Line 6 (federal-W-4-exempt, federal-W-4P-no-withholding, resident-no-prior/current-year-liability, retirement-payee-no-liability, Military Spouse Residency Relief Act) plus a SIXTH, structurally separate one on Line 7 (enrolled tribal member working on tribal land) -- all six collapse to the same $0-withholding engine outcome via the existing generic certificate.exempt mechanism, since this engine does not adjudicate WHICH reason applies, the same eligibility-adjudication scope boundary as every other state's exemption certificate in this project. No undisclosed field found."
+    },
+    {
+      "title": "USDA National Finance Center — Maine State Income Tax Withholding (NFC-26-1771620053)",
+      "url": "https://help.nfc.usda.gov/bulletins/2026/1771620053.htm",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly (HTML, not PDF) as a follow-up verification pass, the same source category that caught a real formula bug in Massachusetts. Published 2026-03-13, effective Pay Period 04 2026. A fully INDEPENDENT re-derivation of Maine's formula for federal payroll processing, and it matches this file's own Maine Revenue Services figures EXACTLY with zero discrepancies: the $5,300 per-allowance amount, both standard-deduction phase-out bands verbatim, both bracket schedules verbatim (rates, thresholds, AND pre-computed bases), the S00 no-form default, and the whole-dollar rounding convention. Two independent sources -- one state, one federal -- now agree on every figure in this file's core formula, the strongest confirmation tier reached for any state in this project so far. Also surfaced one genuine implementation gap: NFC's own Step 9 instruction is 'Add the additional amount... and round to the nearest dollar' -- i.e. Maine rounds AGAIN after adding Line 5 additional withholding, not just at the base-tax step. This engine's generic applyAdditionalStateWithholding() (shared by every state) adds cents without re-rounding, which is correct for every cent-rounding state but would leave a non-whole-dollar final amount for Maine if a caller ever supplied a non-whole-dollar additionalWithholding value -- disclosed in knownGaps rather than silently left as an assumed-fine edge case."
+    },
+    {
+      "title": "Maine Department of Labor — June 2026 Paid Family and Medical Leave (PFML) Employer FAQ",
+      "url": "https://www.maine.gov/paidleave/docs/2026/employers/faq/employerFAQenglish.pdf",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout). Verbatim: 'For calendar years 2025-2027, the joint contribution rate for employers and employees is set at either 0.5 or 1 percent of wages based on the size of the employer. No more than 0.5 percent can come from the employee. Employers with 15 or more employees will contribute 1 percent of wages and may deduct up to half of the contribution from the employees' wages. Employers with less than 15 employees will contribute 0.5 percent of wages and may deduct the entire amount from the employees' wages.' Wage base: 'excludes amounts above the annual base limit set by the U.S. Social Security Administration.' Modeled as a flat 0.5% employee rate (the maximum either tier may charge, matching every payroll provider's own described practice) plus a 0.5% employer share ONLY for the 15+-employee tier (reusing Washington's exact existing statePaidLeaveEmployee/Employer mechanism with zero new code, since 1.0% total × 50% employee-share-fraction = 0.5% happens to fit that shape precisely) -- see knownGaps for the disclosed small-employer discretion this simplification doesn't capture."
+    }
+  ],
+  "maineWithholding": {
+    "allowanceAmount": 5300,
+    "standardDeduction": {
+      "single": { "max": 12450, "phaseOutStart": 102250, "phaseOutEnd": 177250 },
+      "married": { "max": 27750, "phaseOutStart": 204550, "phaseOutEnd": 354550 }
+    },
+    "brackets": {
+      "single": [
+        { "from": 0, "to": 27400, "base": 0, "rate": 0.058 },
+        { "from": 27400, "to": 64850, "base": 1589, "rate": 0.0675 },
+        { "from": 64850, "to": null, "base": 4117, "rate": 0.0715 }
+      ],
+      "married": [
+        { "from": 0, "to": 54850, "base": 0, "rate": 0.058 },
+        { "from": 54850, "to": 129750, "base": 3181, "rate": 0.0675 },
+        { "from": 129750, "to": null, "base": 8237, "rate": 0.0715 }
+      ]
+    }
+  },
+  "statePaidLeaveEmployee": {
+    "rate": 0.005,
+    "wageBase": "ssWageBase",
+    "wageBaseComment": "Maine's own statute (quoted above in maineWithholding's sources) ties the wage base to 'the annual base limit set by the U.S. Social Security Administration.' CORRECTED 2026-09-06: this was a hand-copied literal 184500 (a real, undisclosed drift risk found on a \"go to every state\" pass, the same anti-pattern already fixed for Washington/Connecticut/Massachusetts/Delaware's own SS-linked Paid Leave programs the same pass) -- now the 'ssWageBase' sentinel, resolved LIVE from data/federal/2026.json's own socialSecurity.wageBase by resolvePaidLeaveWageBase() in src/taxes/state.ts.",
+    "exemptPretax": []
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.01,
+    "employeeShareFraction": 0.5,
+    "wageBase": "ssWageBase",
+    "exemptPretax": []
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Maine has no reciprocity agreement with any state -- cross-source confirmed. Residents working elsewhere claim a return-level 'Credit for Income Tax Paid to Other Jurisdiction' instead, per Maine Revenue Services' own guide (maine.gov/revenue) -- out of scope for this per-paycheck withholding engine, same convention as every other state's return-level credit mechanism already disclosed in this project."
+  },
+  "localTaxAbsence": {
+    "$comment": "CLOSED with a primary constitutional citation, on the 'fix it, find a way' pass -- upgraded from cross-source-only general knowledge.",
+    "source": "Maine Constitution, Article IX, Section 9 (Power of taxation)",
+    "url": "https://law.justia.com/constitution/maine/consar9.html",
+    "verifiedOn": "2026-08-18",
+    "verifiedBy": "Fetched directly via curl with a browser User-Agent (plain WebFetch 403s justia.com, the same pattern already documented for Vermont's law.justia.com citation). Verbatim: 'The Legislature shall never, in any manner, suspend or surrender the power of taxation.' The Legislature retains EXCLUSIVE taxing power under this provision and has never enacted legislation authorizing a municipal income tax (cross-source confirmed on this same pass, consistent with Massachusetts's own parallel finding under its Article XLIV) -- so no Maine city or town may levy one, the same two-part structure (constitutional exclusivity + no enabling legislation) already established for Massachusetts."
+  },
+  "knownGaps": [
+    "Supplemental wages paid on a SEPARATE cheque are aggregated with the prior regular payment by aggregateWithPriorRegularPayment() (gated by this file's supplementalAggregation block below) when the caller supplies input.priorRegularPayment. Maine's own instructions make a flat-5% method OPTIONAL for this case instead ('the payer MAY withhold a flat five percent') — an employer election this engine does not model as a distinct path; the aggregation default is Maine's other, non-optional description (paid WITH regular wages)."
+  ],
+  "verification": {
+    "wholeDollarFinalRounding": "CLOSED on the NFC verification pass: rules.roundFinalToWholeDollar (a new generic flag, not Maine-specific code) now re-rounds the primary SIT line to the nearest dollar AFTER additional/reduced withholding is applied, matching NFC's own Step 9 instruction exactly. Verified with a non-whole-dollar additionalWithholding test case ($33 base + $10.60 = $43.60 -> $44).",
+    "pfmlSmallEmployerDiscretion": "CLOSED on the 'fix it, find a way' pass: certificate.paidLeaveEmployeeRateOverride (a new generic field on the SHARED statePaidLeaveEmployeeTax(), not Maine-specific) lets a caller who knows a specific small employer's own chosen rate supply it directly, while the 0.5% default remains correct for the common case (Maine's own FAQ: 'no more than 0.5 percent can come from the employee' applies as the statutory MAXIMUM to BOTH the 15+ and under-15 tiers identically -- there was never a formula difference in the employee's own cap, only in whether the EMPLOYER'S net cost is zero or 0.5%, which this file already handles via the existing employerLiableForPaidLeaveShare gate).",
+    "tribalExemptionGranularity": "CLOSED on the 'fix it, find a way' pass: certificate.exemptWages (cents, this pay period) added to maineWithholding() lets a caller exclude just the tribal-land-sourced portion of wages from the taxable base, rather than the all-or-nothing certificate.exempt flag. The caller still determines eligibility and the dollar split (the same boundary as every exemption in this project) -- this only removes the previous forced choice between 'exempt the whole cheque' and 'exempt nothing' for a genuinely mixed tribal/non-tribal pay period."
+  },
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 12000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0254,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.0031,
+      "max": 0.066
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  },
+  "supplementalWages": {
+    "flatRate": 0.05,
+    "appliesWhen": "paid_separately",
+    "election": "employer_option",
+    "source": "Maine's own instructions, quoted in this file's knownGaps: aggregate if paid with regular wages; 'the payer MAY withhold a flat five percent' if paid separately. The permissive verb is why this is an election rather than a rule."
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "Maine's instructions: aggregate if paid with regular wages; the payer MAY instead withhold a flat 5% if paid separately. Aggregation is the default this block wires.",
+    "engineNote": "Wired via aggregateWithPriorRegularPayment(): the caller supplies input.priorRegularPayment (that cheque's taxable wages and the state tax withheld from it), and a bonus paid on its own cheque is taxed on the combined figure less what was already withheld, floored at zero. Nothing changes when the caller omits it."
+  }
+}

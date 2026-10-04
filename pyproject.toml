@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "masterytax"
 version = "0.1.0"
-description = "Open, explainable payroll tax liabilities, deposits and filings"
+description = "Open, explainable payroll tax compliance: liabilities, deposits and filings for federal, 50 states + DC and local taxes"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
@@ -15,6 +15,8 @@ masterytax = "masterytax.cli:main"
 
 [tool.setuptools]
 packages = ["masterytax"]
+# The tax engine lives in ../engine (Node.js 22.6+). Run from a checkout, or point
+# MASTERYTAX_ENGINE at a copy of engine/ when installed elsewhere.
 
 [tool.setuptools.package-data]
 masterytax = ["data/*.json"]

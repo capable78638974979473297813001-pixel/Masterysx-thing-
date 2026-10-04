@@ -1,0 +1,99 @@
+{
+  "code": "WA",
+  "name": "Washington",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$scopeNote": "NO state or local income tax on wages -- Washington has no personal income tax at all, and RCW 1.90.100 plus the older RCW 36.65.030 (1984, also fetched directly) both PROHIBIT any state, county, city, or local jurisdiction from taxing personal income, statutorily foreclosing the whole category, not just a 'none exist yet' observation. Washington DOES have three genuinely distinct WAGE-BASED payroll levies modelled here despite having no income tax: Paid Family & Medical Leave (PFML, employee AND employer shares) and the WA Cares Fund long-term-care premium (employee only, uncapped). Washington's Capital Gains Tax (chapter 82A.04 RCW, the specific carve-out RCW 1.90.100(2) references) is a RETURN-level excise tax on investment gains above a ~$1,000,000 threshold, not a payroll withholding -- out of scope, same convention as every other return-level tax already disclosed in this project (e.g. Connecticut's out-of-state credit, Iowa's school district surtax). Seattle's JumpStart payroll tax (an EMPLOYER-only tax on total payroll expense, ~0.746%-2.557% by tiered thresholds around $9M total payroll and a $194,452+ individual-wage trigger) is a REAL, separate, not-yet-modelled item -- structurally similar to Newark's payroll tax in this project (employer-aggregate, not per-paycheck) but genuinely more complex (multi-tier rate matrix, not one flat rate) -- flagged in knownGaps as a natural follow-up, not built this pass.",
+  "exemptPretax": [],
+  "exemptPretaxComment": "DISCLOSED INFERENCE, not a directly-quoted statement: Washington's own Employer Wage Reporting and Premiums Toolkit defines 'gross wages' for BOTH PFML and WA Cares as an enumerated list of wage TYPES (salary, hourly wages, bonuses, commissions, PTO cash-outs, etc.) built from RCW 50A.05.010/WAC 192-510-025, rather than by reference to 'wages subject to federal income tax withholding' the way every federal-conforming state in this project (MI/OH/ID/CT/IA/VT) explicitly states. The absence of that federal-conformity phrasing, combined with a wage list that never mentions retirement-plan or cafeteria-plan deferrals as excluded, is read as evidence these premiums apply to TRUE gross wages BEFORE any pretax reduction -- the same non-conforming shape as Pennsylvania's state income tax, not the federal-conforming majority. Lower confidence than this project's federal-conformity findings for other states, since no source directly and explicitly addresses 401(k)/section 125 treatment either way -- disclosed as an inference, not asserted as directly sourced.",
+  "statePaidLeaveEmployee": {
+    "rate": 0.00657984,
+    "wageBase": "ssWageBase",
+    "$comment": "0.0092 (2025 total PFML premium) x 0.7152 (2025 employee share), wage base = the 2025 Social Security base via the ssWageBase sentinel.",
+    "exemptPretax": []
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.0092,
+    "employeeShareFraction": 0.7152,
+    "wageBase": "ssWageBase",
+    "exemptPretax": []
+  },
+  "stateLongTermCareEmployee": {
+    "rate": 0.0058,
+    "wageBase": null,
+    "$comment": "WA Cares Fund. Quoted verbatim: 'Employees are responsible for the full WA Cares premium... The Social Security cap does not apply.' Uncapped, 100% employee-paid, no employer share at all -- structurally the simplest of Washington's three payroll levies.",
+    "exemptPretax": []
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable rather than 'checked, none found' — Washington has no income tax to be reciprocal about, so no resident-vs-nonresident withholding question can arise here at all. Same framing as New Hampshire in this project. reciprocalStates left structurally empty for consistency with every other state file's shape."
+  },
+  "localIncomeTax": {
+    "seattlePayrollExpenseTax": {
+      "employerPayrollThreshold": 8837302,
+      "compensationThreshold": 189371,
+      "upperCompensationBand": 504989,
+      "tiers": [
+        {
+          "maxPriorYearPayroll": 126247176,
+          "lowerBandRate": 0.00746,
+          "upperBandRate": 0.01811
+        },
+        {
+          "maxPriorYearPayroll": 1262471758,
+          "lowerBandRate": 0.00746,
+          "upperBandRate": 0.02024
+        },
+        {
+          "maxPriorYearPayroll": null,
+          "lowerBandRate": 0.01492,
+          "upperBandRate": 0.02557
+        }
+      ],
+      "$comment": "Seattle's payroll expense tax (JumpStart) — an EMPLOYER tax, not a withholding, banded on two axes at once: the employer's prior-year Seattle payroll and the individual employee's compensation. A business owes nothing unless its 2025 Seattle payroll reached $9,074,409, and then only on compensation above $194,452 per employee. Rates run 0.746% to 2.557%, so the tier is not a rounding detail. Every figure is inflation-adjusted annually by the city, which is why they are data rather than constants.",
+      "$placement": "Filed under localIncomeTax even though Washington levies no local INCOME tax, because that is the key src/taxes/state.ts reads for city-level levies. The tax is on payroll expense, not on income, and nothing is withheld from the employee.",
+      "source": {
+        "title": "City of Seattle, City Finance -- Payroll expense tax (2025 thresholds and rates)",
+        "url": "https://www.seattle.gov/city-finance/business-taxes-and-licenses/seattle-taxes/payroll-expense-tax",
+        "verifiedOn": "2026-09-28",
+        "quote": "2025 Thresholds: Payroll expense of less than $126,247,176 ... at least $126,247,176 but less than $1,262,471,758 ... Annual compensation $189,371 - less than $504,989: 0.746% / 0.746% / 1.492%; $504,989 or more: 1.811% / 2.024% / 2.557%"
+      },
+      "notModelled": "Seattle's separate 5% excess compensation tax, and the grocery-business and government-entity exemptions, are not modelled — this engine has no employer-industry or entity-type input."
+    }
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer, the paid-leave and WA Cares rates, and Seattle's payroll expense tax). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 72800,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.0,
+      "max": 0.054
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": true,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    },
+    {
+      "title": "Washington ESD -- Paid Family & Medical Leave premiums to increase in 2025 (2024-10-23)",
+      "url": "https://esd.wa.gov/about-us/news-release/2024/paid-family-medical-leave-premiums-increase-2025",
+      "verifiedOn": "2026-09-28",
+      "quote": "Starting Jan. 1, 2025: The premium rate will be 0.92%. Employers will pay 28.48% of the total premium and employees will pay 71.52%"
+    },
+    {
+      "title": "WA Cares Fund premium, RCW 50B.04.080 -- 0.58% of wages since 2023-07-01, unchanged through 2026",
+      "url": "https://app.leg.wa.gov/RCW/default.aspx?cite=50B.04.080",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

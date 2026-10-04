@@ -1,0 +1,47 @@
+{
+  "year": 2026,
+  "sources": [
+    {
+      "title": "DOL Fact Sheet #30: Wage Garnishment Protections of the Consumer Credit Protection Act (CCPA)",
+      "url": "https://www.dol.gov/agencies/whd/fact-sheets/30-cppa",
+      "verifiedOn": "2026-09-03",
+      "verifiedBy": "Cross-source confirmed via search synthesis of the fact sheet's own published text (the ordinary-garnishment lesser-of-25%-or-30x-minimum-wage rule, the $217.50/$290.00 weekly worked example, and the 50/60% support-order rule with the +5% arrears bonus), not an independently rendered direct fetch of the DOL page this pass."
+    },
+    {
+      "title": "DOL elaws: FLSA/CCPA Wage Garnishment — Basic Provisions/Requirements",
+      "url": "https://webapps.dol.gov/elaws/elg/garnish.htm",
+      "verifiedOn": "2026-09-03",
+      "verifiedBy": "Directly fetched and quoted: disposable-earnings definition ('earnings left after legally required deductions... Federal, state and local taxes; the individual's share of Social Security, Medicare and unemployment insurance taxes'), the 25%/30x rule, and the 50/60/+5% support-order figures."
+    },
+    {
+      "title": "29 CFR Part 870 — Restriction on Garnishment (weekly/biweekly/semimonthly/monthly minimum-wage multiplier table: 30/60/65/130)",
+      "url": "https://www.ecfr.gov/current/title-29/subtitle-B/chapter-V/subchapter-D/part-870",
+      "verifiedOn": "2026-09-03",
+      "verifiedBy": "Cross-source confirmed via search synthesis (multiple independent payroll/legal references quoting the regulation's own $217.50/$435.00/$471.25/$942.50 worked figures at $7.25/hr, which only reconcile to a 30/60/65/130 multiplier table). eCFR's own page redirected through a bot-check wall this pass rather than serving readable text directly."
+    },
+    {
+      "title": "34 CFR Part 34 — Administrative Wage Garnishment (federal student loan default; 34 CFR 34.19's 15%-of-disposable-pay / 30x-minimum-wage-floor rule)",
+      "url": "https://www.ecfr.gov/current/title-34/subtitle-A/part-34",
+      "verifiedOn": "2026-09-03",
+      "verifiedBy": "Cross-source confirmed via search synthesis, not an independently rendered direct fetch this pass."
+    }
+  ],
+  "$scopeNote": "Covers the three garnishment types a per-paycheck engine can actually compute from a single check in isolation: ordinary (consumer/creditor) judgment garnishment, child support/alimony income-withholding orders, and federal student loan default administrative wage garnishment. A federal TAX LEVY is deliberately NOT modelled here — its exempt amount depends on IRS Publication 1494's own table (filing status, number of dependents, standard deduction, updated annually) rather than a fixed CCPA fraction, a genuinely different calculation this file doesn't attempt. See src/garnishment.ts's own module comment for how these interact when more than one order is in effect on the same paycheck.",
+  "federalMinimumHourlyWage": 7.25,
+  "ordinaryGarnishment": {
+    "maxDisposableEarningsFraction": 0.25,
+    "minimumWageWeeklyMultiplier": 30,
+    "$note": "15 U.S.C. 1673(a) / 29 CFR 870.10: the lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30x the federal minimum hourly wage, for a WEEKLY pay period. 29 CFR 870.10 separately names 60/65/130 as the equivalent multipliers for biweekly/semimonthly/monthly; every other pay frequency this engine supports (daily, quarterly, semiannual, annual) is this project's own consistent extension of the same ratio (30 * 52 / periodsPerYear), not independently sourced for those frequencies."
+  },
+  "supportOrder": {
+    "supportingOtherFamilyFraction": 0.50,
+    "notSupportingOtherFamilyFraction": 0.60,
+    "arrearsBonusFraction": 0.05,
+    "$note": "15 U.S.C. 1673(b): up to 50% of disposable earnings if the employee is supporting a spouse or child not covered by the order, up to 60% if not; either figure rises by 5 points (to 55%/65%) if any part of the support obligation is more than 12 weeks in arrears. This engine does NOT assume a default for supportingOtherFamily — the caller states it, same discipline as everywhere else this engine refuses to guess an eligibility fact."
+  },
+  "studentLoanDefault": {
+    "maxDisposableEarningsFraction": 0.15,
+    "minimumWageWeeklyMultiplier": 30,
+    "$note": "34 CFR 34.19: lesser of 15% of disposable pay or the same 30x-minimum-wage floor ordinary garnishment uses. Combined with any OTHER garnishment already in effect on the same paycheck, total withholding still may not exceed the 25% CCPA aggregate ceiling — enforced in src/garnishment.ts by aggregate-room accounting shared across all non-support orders, not by a separate field here."
+  }
+}

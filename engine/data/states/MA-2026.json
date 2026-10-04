@@ -1,0 +1,136 @@
+{
+  "code": "MA",
+  "name": "Massachusetts",
+  "year": 2026,
+  "method": "flat_rate_surtax_credit",
+  "$scopeNote": "STATE income tax (flat 5% + the 2023 Fair Share Amendment 4% surtax on high earners) + Paid Family & Medical Leave (PFML, employee AND employer shares). Massachusetts has NO local income tax anywhere -- CONSTITUTIONALLY confirmed, not just cross-sourced, per a direct fetch of the Massachusetts Constitution itself (malegislature.gov, a different domain from mass.gov and NOT blocked): Article LXXXIX Section 7 states verbatim 'Nothing in this article shall be deemed to grant to any city or town the power to... levy, assess and collect taxes,' and Article XLIV grants the income-tax power exclusively to 'the general court' (the state legislature), 'levied at a uniform rate throughout the commonwealth' -- no municipality COULD levy a differing local income tax even if it wanted to, a stronger claim than 'none currently exists.' NO reciprocity agreement with any state -- still cross-source confirmed only (absence of a bilateral agreement isn't the kind of fact a statute affirmatively states).",
+  "$methodComment": "See flatRateSurtaxCredit()'s own doc comment in src/taxes/state.ts for the full mechanism: a multi-tier exemption (personal/spouse/dependent) subtracted from wages, a 2-row bracket (5% then 9% above the annualized $1,107,750 surtax threshold) computed at the annual scale and divided once, then FLAT DOLLAR CREDITS (not exemptions) for Head of Household ($120/yr) and blindness ($110/yr) subtracted from the computed tax itself -- a genuinely different mechanism from every wage-reducing exemption elsewhere in this project.",
+  "$extractionNote": "Circular M itself (mass.gov) could not be fetched by any method tried: plain WebFetch (403), curl with a browser User-Agent (returned mass.gov's own 'Not allowed' page, an Akamai-class edge block with the same X-Reference-Error signature already documented for New Hampshire), and web.archive.org (blocked at the tool level, not the target -- and separately found to be having a genuine outage of its own that day). Four mass.gov URLs, three access methods, zero successes. Form M-4 itself (the actual employee-facing certificate) WAS fetched directly and read in full, via a municipal government's own hosted mirror (miltonma.gov) rather than mass.gov directly. CORRECTION found on a dedicated verification pass (Scott: 'verify'): the USDA National Finance Center -- a federal payroll shared-service that independently re-derives every state's withholding formula for its own processing, published as a detailed 'System and Processing Bulletin' -- was fetched directly and revealed the EXEMPTION MECHANISM ITSELF had been built wrong. The original model treated personal/spouse/dependent as three independent dollar-amount categories (personal $4,400, spouse $4,400, dependent $1,000 each, each internally 'confirmed' by comparing against a secondary source's own reported totals -- which, in hindsight, was circular: both were measuring the SAME wrong assumption, not independently verifying it). The REAL mechanism, confirmed by re-reading Form M-4's own Line 4 instruction ('Add the number of exemptions which you have claimed above and write the total') against NFC's own coding instructions ('the total number of exemptions claimed on LINE 4'): Line 4 is a literal SUM of the raw codes on Lines 1-3 (1 or 2, plus 0/4/5, plus a dependent count), and the dollar exemption is $1,000 x that sum + $3,400 (or $0 if the sum is 0, i.e. no certificate filed) -- NOT three separately-tallied dollar amounts. This only happens to match the old model at the single-exemption case (Line4=1 gives $4,400 either way); every case involving a spouse, a dependent, or age-65 status was computing the wrong exemption before this fix. NFC's bulletin also independently reproduces the surtax threshold ($1,107,750), rate (9% = 5%+4%), and the HOH/blind credits ($120/$110) exactly, upgrading those from cross-source-only to a second, independent, detailed confirmation -- though still not Circular M itself, disclosed as one tier below a direct DOR fetch.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "INFERRED, not directly confirmed against Circular M's own wage definition (blocked -- see $extractionNote): Massachusetts income tax generally conforms to the Internal Revenue Code with state-specific modifications, and pretax retirement/cafeteria-plan deferrals are standard, well-established practice as excluded from MA withholding wages the same as federal -- the same conformity pattern as Michigan/Ohio/Idaho/Connecticut/Iowa/Vermont in this project. Lower confidence than this project's directly-quoted federal-conformity findings for those states, since the specific Circular M wage-definition sentence could not be fetched and quoted this session.",
+  "sources": [
+    {
+      "title": "Form M-4, Massachusetts Employee's Withholding Exemption Certificate (Rev. 11/19)",
+      "url": "https://www.miltonma.gov/DocumentCenter/View/6586/Massachusetts-Withholding-Form--M-4",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout) via a municipal mirror after mass.gov itself proved unreachable by every method tried (see $extractionNote). ENGINE-CONSUMED: the full Line 1-5 structure (personal exemption code 1 or 2, spouse code 0/4/5, dependents count on Line 3 -- which the form's own Instruction D says to increase by 1, once, if ANY dependent will be under 12 at year end, a specific quirk modeled by trusting the caller's already-adjusted Line 3 total rather than re-deriving it), Box A (Head of Household) and Box B (blind), Box D (full-time student under $8,000/yr -- 'EMPLOYER: DO NOT withhold if Box D is checked,' matching this engine's generic certificate.exempt mechanism), and Instruction C's own verbatim quote: 'Entering \"4\" makes a withholding system adjustment for the $4,400 exemption for a spouse' -- the direct primary confirmation this file's personal/spouse exemption amount rests on (by symmetry, since Line 1's code '1' uses the identical numbering convention)."
+    },
+    {
+      "title": "USDA National Finance Center — Massachusetts State Income Tax Withholding (NFC-26-1769797447)",
+      "url": "https://help.nfc.usda.gov/bulletins/2026/1769797447.htm",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly (HTML, not PDF, so no extraction hazard) on a dedicated verification pass after Circular M itself remained unreachable. Published 2026-06-09, effective Pay Period 10 2026 -- a federal payroll shared-service's own detailed re-derivation of Massachusetts's formula for its own processing, the closest primary-adjacent source reached for this state. ENGINE-CONSUMED and CORRECTIVE: gives the complete numbered formula in full, including the exact Line-4-summation exemption mechanism (see $extractionNote for the correction this produced), the two-bracket surtax structure verbatim ('Over $0 but not over $1,107,750: $0.00 plus 5.00%... Over $1,107,750: $55,387.50 plus 9.00%'), the HOH/blind tax-credit amounts, and confirmation that a no-certificate employee gets zero exemptions ('In the event that the employee does not file a State withholding exemption certificate, then zero exemptions (0) will be used') -- independently reconfirming the fix already made to this file's no-certificate default on the prior verification pass."
+    },
+    {
+      "title": "Massachusetts Personal Income Tax Exemptions — cross-source (LegalClarity, budget.digital.mass.gov synthesis)",
+      "url": "https://legalclarity.org/what-is-the-personal-exemption-in-massachusetts/",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "SUPERSEDED, kept for the paper trail rather than deleted: originally cited to corroborate this file's per-category exemption model ($700 age-65 addition, $1,000 per dependent as independent dollar amounts) via an internal-consistency check that, in hindsight, was circular reasoning -- both figures were built on the same wrong assumption, not independently verified. After the fix, this file's exemption config no longer HAS separate $700/dependent line items at all -- the corrected mechanism only needs the two numbers NFC's bulletin gives directly ($1,000 per Line-4 point, $3,400 base add-on), so this source is no longer load-bearing for anything the engine actually computes."
+    },
+    {
+      "title": "Massachusetts 4% Surtax on Taxable Income — cross-source (multiple tax-guide sources agreeing)",
+      "url": "https://www.mass.gov/info-details/massachusetts-4-surtax-on-taxable-income",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Cross-source confirmed (the mass.gov page itself is unreachable, same block as Circular M), and independently reconfirmed by the NFC bulletin's own verbatim bracket table above: the Fair Share Amendment adds a 4% surtax on annual income over $1,107,750 for 2026, i.e. an effective 9% rate on the excess."
+    },
+    {
+      "title": "Massachusetts Circular M per-period credit table — cross-source (halfpricesoft)",
+      "url": "https://www.halfpricesoft.com/2026/taxrate-massachusetts-2026/",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Cross-source only, but internally self-verified: this source's own published per-period breakdown for the Head of Household credit ($120/yr -- weekly $2.31, biweekly $4.62, semimonthly $5.00, monthly $10.00) and blindness credit ($110/yr -- weekly $2.12, biweekly $4.23, semimonthly $4.58, monthly $9.17) were recomputed independently as annual/periodsPerYear and matched every published figure exactly before this file's continuous-division approach (used for periods this source didn't itself tabulate) was trusted."
+    },
+    {
+      "title": "Patriot Software / NFP — 2026 Massachusetts PFML contribution rates (cross-checked against each other)",
+      "url": "https://www.patriotsoftware.com/blog/payroll/massachusetts-paid-family-leave/",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched two independent secondary sources (Patriot Software and NFP) and cross-checked their numbers against each other rather than trusting either alone: employers with 25+ MA employees pay a total 0.88% (0.70% medical + 0.18% family), of which the EMPLOYEE'S share is a flat 0.46% (0.28% medical + 0.18% family) regardless of employer size -- the employer's 0.42% share is 100% attributable to medical leave; family leave is funded ENTIRELY by the employee, at every employer size, which is genuinely different from Washington's PFML (where employer and employee split BOTH portions proportionally) and confirmed identically by both independent sources before being trusted. Employers under 25 MA employees owe no employer share at all -- employee still pays the full 0.46%. Wage base is the same federal Social Security cap ($184,500) referenced by wage, not restated independently. STRUCTURALLY upgraded to primary confirmation by Chapter 175M Section 6 below -- the exact CURRENT-YEAR percentages (0.70%/0.18%/0.88%) are still administratively set annually (the statute itself defers to 'the department'/'section 7(e)'), so remain secondary-sourced, but the MECHANISM these numbers implement (the 40%/100% split caps, the 25-employee threshold, the SS wage cap) is now directly confirmed by the statute itself."
+    },
+    {
+      "title": "Massachusetts Constitution, Article LXXXIX (Home Rule Amendment), Section 7 — Limitations on Local Powers",
+      "url": "https://malegislature.gov/Laws/Constitution",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly (malegislature.gov -- a different domain from mass.gov, not behind the same Akamai block; found on a dedicated verification pass specifically to close the local-tax gap). Verbatim: 'Nothing in this article shall be deemed to grant to any city or town the power to (1)... (2) to levy, assess and collect taxes...' A genuine constitutional prohibition, not merely an absence of enacted local-tax legislation -- upgrades this file's 'no local income tax' claim from cross-sourced to primary."
+    },
+    {
+      "title": "Massachusetts Constitution, Article XLIV — Income Tax Power",
+      "url": "https://malegislature.gov/Laws/Constitution",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly, same session as Article LXXXIX above. Verbatim: 'Full power and authority are hereby given and granted to the general court to impose and levy a tax on income... levied at a uniform rate throughout the commonwealth.' Confirms the income-tax power belongs exclusively to the state legislature and must be applied uniformly statewide -- structurally forecloses a municipality-specific rate even beyond Article LXXXIX's general local-taxation ban."
+    },
+    {
+      "title": "Massachusetts General Laws Chapter 62B, Section 2 — Duty of employer to withhold",
+      "url": "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleIX/Chapter62B/Section2",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly. Verbatim: 'Every employer making payment to employees... of wages subject to tax under chapter sixty-two shall deduct and withhold a tax upon such wages IN ACCORDANCE WITH TABLES PREPARED BY THE COMMISSIONER which tax so withheld shall be substantially equivalent to the tax imposed by said chapter sixty-two.' Confirms Circular M's own statutory basis (the Commissioner's tables) -- explains why the exact dollar figures live in an administrative publication rather than the statute itself, and why reaching that administrative publication (or a source that independently re-derives it, like NFC's bulletin) is necessary for the actual numbers."
+    },
+    {
+      "title": "Massachusetts General Laws Chapter 175M, Section 6 — PFML Contributions",
+      "url": "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXXII/Chapter175M/Section6",
+      "verifiedOn": "2026-08-18",
+      "verifiedBy": "Fetched directly, on the same pass that closed the local-tax gap. PRIMARY, STATUTORY confirmation of the PFML mechanism this file already modeled from secondary sources: 'an employer shall not deduct more than 40 per cent of the [medical leave] contribution required for an employee' from wages (medical leave), while 'an employer may deduct not more than 100 per cent of the [family leave] contribution required for an employee' (family leave) -- exactly matching Patriot/NFP's reported 0.28%/0.70%=40% medical split and 0.18%/0.18%=100% family split. Also confirms, verbatim: the wage cap is 'the contribution and benefit base limit established annually by the federal Social Security Administration,' and 'an employer employing less than 25 employees in the commonwealth shall not be required to pay the employer portion of premiums.' The exact current-year percentage figures themselves are set administratively per Section 7(e) and remain secondary-sourced (see the Patriot/NFP entry above), but the STRUCTURE those figures implement is now statute-confirmed, not just cross-sourced."
+    }
+  ],
+  "flatRateSurtaxCredit": {
+    "rate": 0.05,
+    "surtaxRate": 0.04,
+    "surtaxThreshold": 1107750,
+    "exemptionTiers": {
+      "perExemptionPoint": 1000,
+      "baseAddOn": 3400,
+      "$comment": "CORRECTED on a verification pass -- see validateMACode()/flatRateSurtaxCredit()'s own doc comments in src/taxes/state.ts. This is NOT a per-category lookup (an earlier version of this file wrongly modeled personal/spouse as two independent $4,400 amounts, each with their own +$700-for-65+ addition). The real mechanism, per the USDA National Finance Center's own Massachusetts withholding bulletin cross-checked against Form M-4's own text: Line 4 = Line1(1 or 2) + Line2(0, 4, or 5) + Line3(dependent count), a literal sum of the form's raw codes: exemption = $1,000 x Line4Total + $3,400, EXCEPT Line4Total=0 (no certificate filed) gives $0, not the formula's own $3,400 floor. Reproduces $4,400 exactly at Line4Total=1 (the single-personal-exemption case), which is why that specific case matched both the old and new models -- every OTHER case (any spouse or dependent claim, or age-65) was wrong under the old model."
+    },
+    "creditsAnnual": {
+      "headOfHousehold": 120,
+      "blind": 110
+    },
+    "ficaDeductionAnnualCap": 2000,
+    "noWithholdingBelowAnnualWithExemptions": 8000,
+    "$ficaComment": "Circular M's retirement deduction: the employee's own Social Security + Medicare (plus any Massachusetts retirement-system contribution) comes off wages before the exemption, until the year's total reaches $2,000. The USDA National Finance Center bulletin (NFC-26-1769797447, steps 5a-5e) spells out the running-total mechanics: prior-YTD FICA = YTD OASDI wages x FICA rate; the current period deducts its own FICA only up to what's left under $2,000. Confirmed against PaycheckCity: all ten Massachusetts comparison cases, previously $3.81-$83.61 over-withheld, match to the cent once the deduction applies. The same bulletin's step 4 note gives the $8,000 rule: an employee claiming one or more exemptions and earning less than $8,000 a year has nothing withheld. Massachusetts-system retirement contributions (public employees) are not tracked by this engine; only FICA counts toward the $2,000."
+  },
+  "statePaidLeaveEmployee": {
+    "rate": 0.0046,
+    "wageBase": "ssWageBase",
+    "$comment": "0.28% medical + 0.18% family = 0.46% flat, REGARDLESS of employer size (unlike Washington, where the employee fraction is defined relative to whatever total rate applies). Shares the federal Social Security wage base by reference. CORRECTED 2026-09-06: this used to be a hand-copied literal 184500, self-flagged with the same disclosed sync-risk note as Washington's and Connecticut's. Now the 'ssWageBase' sentinel, resolved LIVE from data/federal/2026.json's own socialSecurity.wageBase by resolvePaidLeaveWageBase() in src/taxes/state.ts -- this can no longer drift, by construction.",
+    "exemptPretax": []
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.0088,
+    "employeeShareFraction": 0.5227272727272727,
+    "wageBase": "ssWageBase",
+    "$comment": "employeeShareFraction = 0.46 / 0.88 exactly, stored at full precision -- reuses the SAME total-minus-employee-share generic mechanism built for Washington, since the arithmetic shape is identical even though Massachusetts's own split rule (employee always covers 100% of family leave; employer's whole share is medical-only) differs from Washington's proportional-split rule. Gated by certificate.employerLiableForPaidLeaveShare, same as Washington -- for Massachusetts this represents the employer's own determination of having 25+ MA employees (Washington's own threshold is 50), a different number for the SAME kind of caller-supplied aggregate fact.",
+    "exemptPretax": []
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Massachusetts has no reciprocity agreement with any state -- cross-source confirmed, consistent with a 1984 Mass.gov Letter Ruling (84-107) referencing reciprocal-agreement law generally but not establishing any actual MA agreement."
+  },
+  "knownGaps": [
+    "Circular M itself (mass.gov) still could not be fetched directly by any method tried -- this remains a real, disclosed access limitation. However, follow-up verification passes have now closed most of what that gap used to threaten: the exemption FORMULA, surtax threshold/rate, and HOH/blind credits are all directly confirmed by the USDA National Finance Center's own detailed bulletin (a federal payroll shared-service, not Circular M itself but a genuinely independent re-derivation); the no-local-tax claim is now CONSTITUTIONALLY confirmed (malegislature.gov, Articles XLIV and LXXXIX); and the PFML mechanism (40%/100% split caps, 25-employee threshold, SS wage cap) is statute-confirmed (G.L. c.175M sec.6). What's LEFT resting on secondary sources alone: the exact current-year PFML percentage figures (0.70%/0.18%/0.88%), which are administratively set annually and not published in the statute itself.",
+    "certificate.dependents is trusted as the CALLER-SUPPLIED, already-adjusted Form M-4 Line 3 total (including the form's own '+1 if any dependent is under 12' rule) -- this engine does not separately track which dependents are under 12 or re-derive that adjustment.",
+    "exemptPretax rests on an inference (MA's general IRC conformity, standard payroll practice) rather than a directly-quoted Circular M wage definition -- see exemptPretaxComment.",
+    "Supplemental wages paid on a separate cheque from regular wages: this engine models one calculatePaycheck() call at a time and cannot look back at a prior regular cheque -- same disclosed class of gap as every other state without a distinct supplemental method in this project. RE-CHECKED this pass via the USDA NFC bulletin already cited in this file (the same independent federal payroll shared-service source class used elsewhere in this project): it describes a single 5%/9%-surtax formula with no bonus/supplemental section at all, corroborating that no separate mechanism exists to miss."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 15000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0242,
+    "newEmployerRateSource": "Massachusetts's 2026 UI rate release — Schedule E, new employer 2.42%. NOTE a secondary table published 2.13%; the 2026-dated release is preferred here (2.13% is Schedule D's 2025 figure, per a 2026-09-05 re-check below — not a live disagreement about 2026 itself). RE-VERIFIED 2026-09-05: mass.gov remains confirmed HTTP 403 on every attempt (varied headers, Wayback Machine lookup — all unsuccessful). Bloomberg Tax's own payroll-news coverage ('Massachusetts Releases 2026 Unemployment Insurance Tax Rates', a professionally-edited tax-news service, a stronger tier than a generic payroll-software blog) was fetched and independently corroborates this file's Schedule E experience-rated range EXACTLY: '0.94% to 5.24% for positive-rated employers and... 7.03% to 14.37% for negative-rated employers' matches experienceRange {0.0094, 0.1437} below to the decimal. The article's own new-employer-rate sentence was truncated in the fetch and could not be read directly, but the exact match on the harder-to-coincidentally-agree-on experience-rated bounds is strong indirect corroboration that this same Schedule E (and therefore its 2.42% new-employer figure) is the release being described.",
+    "experienceRange": {
+      "min": 0.0094,
+      "max": 0.1437
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed, strengthened 2026-09-05"
+  }
+}

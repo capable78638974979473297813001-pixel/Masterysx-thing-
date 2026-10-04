@@ -1,0 +1,49 @@
+{
+  "jurisdiction": {
+    "level": "territory",
+    "code": "PR",
+    "name": "Puerto Rico"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasOwnMinimumWage": true,
+  "standard": {
+    "hourly": 10.5,
+    "hourlyCents": 1050,
+    "effectiveFrom": "2024-07-01",
+    "coverage": "Employers covered by Puerto Rico's Minimum Wage Act (Act 47-2021); FLSA-covered employers must in any case pay at least the higher of this and the federal $7.25.",
+    "note": "$10.50 is the third and last legislated step of Act 47-2021 ($8.50 from 2022-01-01, $9.50 from 2023-07-01, $10.50 from 2024-07-01). Further increases come from Puerto Rico's Minimum Wage Review Board rather than automatically."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 8.37,
+    "maxTipCreditCents": 837,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "DOL's tipped table carries Puerto Rico at the federal $2.13 cash wage with a tip credit large enough to reach $10.50."
+  },
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": [
+    "Act 47-2021's own sectoral exclusions (agriculture, and the separate treatment of employees covered by a federal wage order) are not modelled."
+  ]
+}

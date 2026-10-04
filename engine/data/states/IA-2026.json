@@ -1,0 +1,75 @@
+{
+  "code": "IA",
+  "name": "Iowa",
+  "year": 2026,
+  "method": "flat_rate_marital_deduction",
+  "$scopeNote": "STATE income tax only. Iowa has no local income tax anywhere. Iowa's ~297 school districts DO levy a school district surtax (up to 20% of state tax owed, average ~0.3%) but it is confirmed a RETURN-level mechanism, not employer-withheld -- the IA W-4's own Line 8 instructions tell an employee who owes surtax to compensate by reducing allowances or adding extra withholding on the SAME state withholding line, rather than the employer computing a separate per-district amount. This mirrors Connecticut's out-of-state credit and every other return-level (not withholding-level) mechanism already disclosed elsewhere in this project. No employee-paid unemployment, disability, or paid-leave program exists in Iowa.",
+  "$methodComment": "Iowa became a true flat-tax state under SF2442: 3.80% flat over wages less a marital-status-dependent deduction, less a dollar allowance amount divided by pay periods (T1=G-D, T2=T1x3.80%, T3=T2-(W/P)). See flatRateMaritalDeduction()'s own doc comment in src/taxes/state.ts for why this engine stores only ANNUAL deduction figures (not a separately-transcribed per-period table) and why that's algebraically proven equivalent to the source's own per-period tables AND its explicit quarterly/semiannual fallback procedure.",
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "Iowa's own 2026 Withholding Formula document states directly: 'Certain payments made by the employer into employee retirement plans or for employee health insurance are not considered taxable wages and are not included in the calculations of withholding tax.' Confirms Iowa conforms to the federal withholding-wages base, the same conformity pattern as Michigan/Ohio/Idaho/Connecticut in this project (and the opposite of Pennsylvania's non-conformity) -- reuses federal.json's incomeTax.exemptPretax list.",
+  "sources": [
+    {
+      "title": "Iowa Individual Income Tax Withholding Formula, Effective January 1, 2026",
+      "url": "https://revenue.iowa.gov/media/53/download?inline=",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout). Extracted CLEANLY with no column-shift hazard this time (a single-column document, unlike NJ/NY/CT's multi-column rate tables) -- ENGINE-CONSUMED: the full 4-step formula, BOTH deduction tables (2024-or-later IA W-4's 3-column marital-status table AND the legacy 2023-or-earlier IA W-4's 2-column table, both given per pay period for daily/weekly/biweekly/semimonthly/monthly/annual), the $40-per-allowance legacy figure, the pretax-conformity statement, and the quarterly/semiannual fallback procedure. Includes 10 fully worked to-the-cent examples covering every marital-status column on both form vintages -- reproduced exactly in tests/engine.test.ts, describe('Iowa')."
+    },
+    {
+      "title": "2026 IA W-4, Employee Withholding Allowance Certificate",
+      "url": "https://revenue.iowa.gov/media/4324/download?inline=",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout) as a follow-up check, the same discipline that caught a real bug in Idaho's build and confirmed Connecticut's clean. Confirmed: Filing Status checkboxes (Other/Single, Head of Household, Married filing jointly/Qualifying Surviving Spouse + a Yes/No spouse-earned-income sub-question for MFJ), an EXEMPT line (already generic via certificate.exempt), Line 7 'Total allowances' (the direct dollar figure this engine reads as certificate.totalAllowanceAmount for 2024+ forms, built from 6 sub-lines the form has the EMPLOYEE compute -- personal/dependent/itemized-deduction/income-adjustment/child-care-credit/personal-exemption allowances -- none of which this engine re-derives, the same 'caller supplies the already-computed number' convention as every other state's additionalWithholding), and Line 8 'Additional amount... deducted each pay period' (matches the existing generic applyAdditionalStateWithholding() exactly, no new mechanism needed). No undisclosed checkbox or field found."
+    },
+    {
+      "title": "Iowa - Illinois Reciprocal Agreement — Iowa Department of Revenue",
+      "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/iowa-illinois-reciprocal-agreement",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly (upgraded from an earlier cross-source-only citation, as a follow-up check after Scott asked whether this file was Symmetry-level). Confirms Iowa's ONLY income-tax reciprocity agreement is with Illinois, that it operates at the WITHHOLDING level (not just a return-level credit) -- 'the employer will be aware it is appropriate to withhold [home state] income tax' -- and covers wages/salaries only; non-wage Iowa-source income (e.g. gambling winnings) paid to an Illinois resident remains Iowa-taxable regardless of the agreement. Forms: an Iowa resident working in Illinois files IL-W-5-NR with their employer (plus an Iowa W-4); an Illinois resident working in Iowa files IA 44-016."
+    },
+    {
+      "title": "House File 2631 (91st General Assembly) — proposed Iowa Family and Medical Leave Act",
+      "url": "https://www.legis.iowa.gov/docs/publications/LGI/91/HF2631.pdf",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout) after a secondary search result described the Department of Workforce Development as already having 'family leave and medical leave insurance' responsibilities under 'chapter 96A,' which would have contradicted this file's 'no PFML/SDI in Iowa' claim. Chased it down rather than either ignoring the discrepancy or assuming the worst: the bill text itself reads 'NEW SECTION. 96A.1' and amends ss.7E.5/84A.1 to ADD this responsibility for the first time -- confirming chapter 96A does not yet exist and HF2631 is only an INTRODUCED bill (not enacted), not currently-operative law. The 'no PFML/SDI' claim holds for 2026 as things stand. Recorded here as a WATCH item, not a correction, so a future recheck knows to look for whether this specific bill (or a successor) has since passed."
+    }
+  ],
+  "iowaWithholding": {
+    "rate": 0.038,
+    "deduction2024Plus": {
+      "$comment": "ANNUAL dollars, from the 2024-or-later IA W-4's own 3-column deduction table. Per-period figures in the source (e.g. semimonthly $541.67) are these annual figures divided by periodsPerYear and rounded to the cent -- verified exactly for all 6 published periods, not assumed.",
+      "other": 13000,
+      "hoh": 19500,
+      "mfj_no_spouse_income": 26000
+    },
+    "deductionLegacy": {
+      "$comment": "ANNUAL dollars, from the LEGACY (2023-or-earlier) IA W-4's 2-column deduction table -- still explicitly supported by Iowa's own 2026 formula document (Steps 1B/3B) because Iowa does not require existing employees to refile after the 2024 form redesign.",
+      "single": 13000,
+      "married": 26000
+    },
+    "legacyAllowanceAmount": 40
+  },
+  "reciprocity": {
+    "reciprocalStates": ["IL"],
+    "note": "Iowa's only reciprocity agreement is with Illinois."
+  },
+  "knownGaps": [
+    "School district surtax (up to 20% of state tax owed, ~297 of Iowa's school districts, average ~0.3%) is confirmed a RETURN-level mechanism, not employer-withheld -- context-only, not engine-consumed, same convention as every other return-level credit/surtax already disclosed in this project (e.g. Connecticut's out-of-state credit).",
+    "certificate.totalAllowanceAmount (2024+ IA W-4 Line 7) is a caller-supplied number built from 6 of the form's own sub-lines (personal/dependent/itemized-deduction/income-adjustment/child-care-credit/personal-exemption allowances) -- this engine does not re-derive that worksheet from a caller's raw dependent count, itemized deductions, etc., the same scope boundary as every other state's caller-supplied additionalWithholding.",
+    "Supplemental wages paid on a SEPARATE cheque from regular wages: this engine models one calculatePaycheck() call at a time and cannot look back at a prior regular cheque -- same disclosed class of gap as Kentucky/Idaho/Connecticut. Iowa's own formula document does not describe a distinct supplemental-wage procedure at all (flat-rate states generally don't need one for wages paid at the same time), so this gap is narrower than states with an aggregation-vs-flat-rate choice.",
+    "Employer-paid unemployment insurance rates/wage base were not researched this pass (context-only, not engine-consumed, matching every other state's employer-only UI treatment in this project) -- no unemploymentInsuranceEmployer block included, unlike some other state files that do carry one at lower confidence tiers.",
+    "WATCH: House File 2631 (91st General Assembly, status 'Introduced' as of this file's verifiedOn date) would create Iowa Code chapter 96A, a NEW employer/employee-funded family-and-medical-leave-insurance program administered by the Department of Workforce Development -- confirmed NOT currently enacted (the bill's own text reads 'NEW SECTION. 96A.1'), so this file's 'no PFML/SDI in Iowa' claim holds for 2026. If this bill or a successor passes, Iowa would need a statePaidLeaveEmployee (or employer-side) config added the same way New York/New Jersey/Connecticut's Paid Leave programs are modeled -- recheck this specifically on any future Iowa update rather than assuming the no-PFML status is still current."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 20400,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "Iowa Workforce Development's 2026 rate announcement — Table D, new non-construction employers at Rank 4 (1.0%), construction at Rank 9 (5.4%).",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "code": "SD",
+  "name": "South Dakota",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$scopeNote": "South Dakota has NO state individual income tax of any kind, and never has -- it is one of the states whose constitution (Art. XI, sec. 2, via the sales-tax-in-lieu-of-income-tax structure adopted last century) has never been amended to permit one, not a phase-out state like New Hampshire. No local income tax anywhere: municipalities may levy local SALES tax (general municipal sales tax + a municipal gross receipts tax on lodging/alcohol/entertainment/restaurant meals) but South Dakota law does not authorize any city or county to levy a tax on wages or earned income. No employee-paid unemployment, disability, or paid-leave program of any kind -- Reemployment Assistance (South Dakota's name for UI) is funded entirely by the employer, and South Dakota has no state Paid Family/Medical Leave program at all (voluntary or mandatory) -- a genuine structural difference from Vermont/New Hampshire, which at least have a voluntary program on the books.",
+  "localIncomeTax": {
+    "rule": "NONE. South Dakota has no constitutional or statutory mechanism for any city, county, or municipality to levy a tax on wages or earned income. Municipalities may levy local SALES tax (general + gross receipts on lodging/alcohol/restaurants/entertainment) -- a genuinely different tax, flagged explicitly so it isn't mistaken for a local income tax the way Wisconsin's county sales-tax table was flagged in that file.",
+    "confidence": "cross_source_confirmed -- consistent across every source checked, no dissent found, but not tied to one specific enabling/prohibiting statute citation the way this project's strongest 'no local tax' claims (e.g. Wisconsin's) are."
+  },
+  "paidLeave": {
+    "rule": "NONE. South Dakota has no state Paid Family/Medical Leave program, mandatory or voluntary -- a genuine structural difference from New Hampshire and Vermont, which each have at least a voluntary program on the books. Nothing to disclose as a knownGap here because there is no program of any kind to model, not an unmodelled one."
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable rather than 'checked, none found' -- South Dakota has no income tax to be reciprocal about. reciprocalStates left structurally empty for consistency with every other state file's shape, same convention as New Hampshire's."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 15000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.012,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate) -- the 1.2% reemployment-assistance rate; the file's 2026 notes on SD's separate investment and administrative fees apply to 2025 too and are not modelled.",
+    "experienceRange": {
+      "min": 0.0,
+      "max": 0.088
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

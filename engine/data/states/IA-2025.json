@@ -1,0 +1,72 @@
+{
+  "code": "IA",
+  "name": "Iowa",
+  "year": 2025,
+  "method": "flat_rate_marital_deduction",
+  "$scopeNote": "STATE income tax only. Iowa has no local income tax anywhere. Iowa's ~297 school districts DO levy a school district surtax (up to 20% of state tax owed, average ~0.3%) but it is confirmed a RETURN-level mechanism, not employer-withheld -- the IA W-4's own Line 8 instructions tell an employee who owes surtax to compensate by reducing allowances or adding extra withholding on the SAME state withholding line, rather than the employer computing a separate per-district amount. This mirrors Connecticut's out-of-state credit and every other return-level (not withholding-level) mechanism already disclosed elsewhere in this project. No employee-paid unemployment, disability, or paid-leave program exists in Iowa.",
+  "$methodComment": "Iowa became a true flat-tax state under SF2442: 3.80% flat over wages less a marital-status-dependent deduction, less a dollar allowance amount divided by pay periods (T1=G-D, T2=T1x3.80%, T3=T2-(W/P)). See flatRateMaritalDeduction()'s own doc comment in src/taxes/state.ts for why this engine stores only ANNUAL deduction figures (not a separately-transcribed per-period table) and why that's algebraically proven equivalent to the source's own per-period tables AND its explicit quarterly/semiannual fallback procedure.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "Iowa's own 2026 Withholding Formula document states directly: 'Certain payments made by the employer into employee retirement plans or for employee health insurance are not considered taxable wages and are not included in the calculations of withholding tax.' Confirms Iowa conforms to the federal withholding-wages base, the same conformity pattern as Michigan/Ohio/Idaho/Connecticut in this project (and the opposite of Pennsylvania's non-conformity) -- reuses federal.json's incomeTax.exemptPretax list.",
+  "sources": [
+    {
+      "title": "Iowa DOR -- Iowa Withholding Formula For Wages Paid Beginning January 1, 2025",
+      "url": "https://revenue.iowa.gov/media/61/download?inline",
+      "verifiedOn": "2026-09-29",
+      "quote": "Annually $12,000.00 $18,050.00 $24,050.00 ... T2 = T1 x 3.80% ... Example 1: Biweekly wages of $2,100.00, with 'Other' marital status ... (Total withholding allowance $40 claimed) ... $60.72"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "iowaWithholding": {
+    "rate": 0.038,
+    "deduction2024Plus": {
+      "$comment": "ANNUAL dollars, from the 2024-or-later IA W-4's own 3-column deduction table. Per-period figures in the source (e.g. semimonthly $541.67) are these annual figures divided by periodsPerYear and rounded to the cent -- verified exactly for all 6 published periods, not assumed.",
+      "other": 12000,
+      "hoh": 18050,
+      "mfj_no_spouse_income": 24050
+    },
+    "deductionLegacy": {
+      "$comment": "ANNUAL dollars, from the LEGACY (2023-or-earlier) IA W-4's 2-column deduction table -- still explicitly supported by Iowa's own 2026 formula document (Steps 1B/3B) because Iowa does not require existing employees to refile after the 2024 form redesign.",
+      "single": 12000,
+      "married": 24050
+    },
+    "legacyAllowanceAmount": 40
+  },
+  "reciprocity": {
+    "reciprocalStates": [
+      "IL"
+    ],
+    "note": "Iowa's only reciprocity agreement is with Illinois."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 39500,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.07
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: the first year of Iowa's 3.8% flat rate (SF 2442). Annual deductions $12,000 (Other / MFJ with earning spouse), $18,050 (head of household), $24,050 (MFJ with non-earning spouse); legacy IA W-4s $12,000 single / $24,050 married and $40 per allowance."
+}

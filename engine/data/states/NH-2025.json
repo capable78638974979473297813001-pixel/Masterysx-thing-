@@ -1,0 +1,41 @@
+{
+  "code": "NH",
+  "name": "New Hampshire",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$scopeNote": "New Hampshire has no tax on wages in 2025 either. New Hampshire has never taxed wages/salaries directly. Its only individual-income tax, the Interest & Dividends (I&D) Tax, was phased down (5% -> 4% for periods ending on/after 2023-12-31 -> 3% for periods ending on/after 2024-12-31) and fully repealed effective 2025-01-01 -- so 2026 is unambiguously a $0 year, not merely 'still phasing out.' No local income tax anywhere (New Hampshire does not permit municipalities to levy one -- towns/cities fund themselves through property tax instead). No employee-paid unemployment, disability, or mandatory paid-leave program: Granite State Paid Family Leave is explicitly VOLUNTARY (the nation's first state-sponsored voluntary plan) for both employers and employees, capped at $5/week for an individual buying coverage directly -- not a payroll tax with a fixed statewide rate the way NJ/NY/CT's mandatory PFML programs are, so not engine-consumed, same convention as Vermont's VT-FMLI.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable rather than 'checked, none found' — New Hampshire has no income tax to be reciprocal about, so no resident-vs-nonresident withholding question can arise here at all. reciprocalStates left structurally empty for consistency with every other state file's shape."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 14000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.017,
+    "newEmployerRateSource": "2.7% new-employer rate less NHES's 1.00% Fund Balance Reduction, which applied in every 2025 quarter (NHES tax rate chart, fetched 2026-09-28).",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.07
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    },
+    {
+      "title": "NHES -- Tax Rate Chart (Fund Balance Reductions and Surcharges by quarter)",
+      "url": "https://www.nhes.nh.gov/employers/employer-claims-taxes/tax-rate-chart",
+      "verifiedOn": "2026-09-28",
+      "quote": "2025-1 ... 2025-4: Fund Balance Reduction 1.00%"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

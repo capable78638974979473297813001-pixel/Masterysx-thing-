@@ -1,0 +1,63 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "MS",
+    "name": "Mississippi"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": false,
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2009-07-24",
+    "coverage": "FLSA-covered employers only. This state has enacted no minimum wage law at all, so an employee NOT covered by the FLSA has no minimum wage floor in this state.",
+    "note": "DOL lists Mississippi among the five states with no state minimum wage law; the $7.25 shown here is the federal rate reaching through, not a state rate."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 5.12,
+    "maxTipCreditCents": 512,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Federal FLSA figures -- there is no state tip-credit law to be more protective."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 4.25,
+      "hourlyCents": 425,
+      "id": "federal_youth_opportunity_wage",
+      "label": "Federal youth opportunity wage",
+      "eligibility": "Employees under 20, first 90 consecutive calendar days -- 29 U.S.C. 206(g). Not a state figure; carried here because it is the only sub-minimum wage available in this state."
+    }
+  ],
+  "indexation": {
+    "indexed": false,
+    "note": "No state rate to index."
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Because coverage is purely federal here, an employee outside FLSA coverage (a small non-enterprise employer with no interstate commerce nexus) is genuinely subject to no minimum wage. This database records the rate, not that coverage determination."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

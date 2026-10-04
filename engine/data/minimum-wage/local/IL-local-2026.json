@@ -1,0 +1,135 @@
+{
+  "state": "IL",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "Both Illinois local rates adjust on July 1, not January 1. Chicago's tipped wage is on its own separate escalator toward abolishing the tip credit in 2028.",
+  "jurisdictions": [
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "level": "city",
+      "hourly": 17.05,
+      "hourlyCents": 1705,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 12.96,
+        "cashWageCents": 1296,
+        "maxTipCredit": 4.09,
+        "maxTipCreditCents": 409,
+        "note": "Chicago's tip-credit phase-out under the 2023 One Fair Wage ordinance was PAUSED at 76% by a May 2026 City Council vote -- the originally-legislated jump to 84% did not happen on 2026-07-01 as planned. $12.96 is 76% of $17.05, unchanged in percentage terms from the prior year's $12.62 (also 76%, of $16.60). The next step is now 2028-07-01 (to 84%), with full parity delayed to 2030-07-01 for most employers -- and to 2033-07-01 for small businesses (21 or fewer employees), a slower carve-out that did not exist in the ordinance's original 2023 version. CORRECTED: an earlier version of this file's note described a straight '8 points a year to 100% by 2028' schedule that stopped being true the moment the pause passed."
+      },
+      "coverage": "Employers with four or more workers, for work performed in Chicago.",
+      "sources": [
+        {
+          "title": "City of Chicago / Cook County July 1, 2026 minimum wage announcements",
+          "url": "https://www.cookcountyil.gov/news/cook-county-issues-notice-minimum-wage-ordinance-5",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session across Cook County's own notice and several independent employment-law summaries: Chicago $17.05 standard / $12.96 tipped and suburban Cook County $15.40 standard / $9.25 tipped, both effective 2026-07-01."
+        },
+        {
+          "title": "Chicago minimum wage, July 1, 2025 step ($16.60 standard)",
+          "url": "https://www.amundsendavislaw.com/labor-employment-law-update/il-minimum-wage-2025-update-july-1-2025-increases-to-chicago-and-cook-county-minimum-wages-january-1-2025-increase-to-the-irs-mileage-rate",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'the minimum wage in Chicago increased from $16.20 per hour to $16.60 per hour' effective 2025-07-01, in effect through 2026-06-30. The 68% tipped figure is computed from Chicago's own published phase-out percentages (60% for 2024, 68% for 2025, 76% for 2026, ...), not independently re-verified as a dollar figure this pass -- flagged cross_source_confirmed rather than primary."
+        },
+        {
+          "title": "Chicago pauses its tip-credit phaseout at 76% (May 2026 City Council vote)",
+          "url": "https://www.cbsnews.com/chicago/news/chicago-minimum-wage-july-1-2026-tipped-workers-delayed/",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session across CBS Chicago, HR Source and Ogletree: the originally-legislated jump to 84% on 2026-07-01 was delayed to 2028-07-01 by a May 2026 City Council vote, holding both the July 2025 and July 2026 tipped figures at 76% of their respective full minimum wage ($12.62 and $12.96). CORRECTS an earlier version of this file, which mislabeled the July 2025 figure as 68% of $16.60 -- the right dollar amount ($12.62) reached via the wrong percentage, an error caught only by re-deriving the arithmetic rather than trusting the prose label."
+        }
+      ],
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "January 1 - June 30, 2026 standard rate",
+          "hourly": 16.6,
+          "hourlyCents": 1660,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 step to $17.05."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "January 1 - June 30, 2026 tipped cash wage",
+          "hourly": 12.62,
+          "hourlyCents": 1262,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "76% of $16.60 under Chicago's One Fair Wage phase-out (the step effective 2025-07-01), not 68% as an earlier draft of this file mislabeled it -- 68% was the PRIOR year's (2024-07-01) step. The dollar figure itself ($12.62) was correct throughout; only the percentage attributed to it was wrong. Confirmed the schedule was later PAUSED at 76% by a May 2026 City Council vote -- the originally-planned jump to 84% ($14.32) on 2026-07-01 did not happen, which is why this file's own CURRENT tipped figure ($12.96) is also 76% of $17.05, not 84%.",
+          "confidence": "cross_source_confirmed"
+        }
+      ],
+      "scheduledChanges": [
+        {
+          "effectiveDate": "2028-07-01",
+          "tippedPercentOfMinimumWage": 0.84,
+          "note": "First step of the delayed schedule after the May 2026 pause. Full parity (100%) follows on 2030-07-01 for most employers; small businesses (21 or fewer employees) follow their own slower schedule, reaching parity only on 2033-07-01."
+        }
+      ]
+    },
+    {
+      "id": "cook_county",
+      "name": "Cook County (excluding Chicago)",
+      "level": "county",
+      "hourly": 15.4,
+      "hourlyCents": 1540,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 9.25,
+        "cashWageCents": 925,
+        "maxTipCredit": 6.15,
+        "maxTipCreditCents": 615
+      },
+      "coverage": "Suburban Cook County. The county ordinance does NOT apply inside the City of Chicago, which has its own. Individual municipalities within Cook County may opt out of the county ordinance by local ordinance -- a real coverage hole this database records but does not enumerate.",
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "January 1 - June 30, 2026 standard rate",
+          "hourly": 15.0,
+          "hourlyCents": 1500,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-01-01",
+          "effectiveTo": "2026-06-30",
+          "note": "Cook County's own rate did NOT increase on 2025-07-01 -- it stayed at $15.00, the same as the Illinois state rate then and since -- before its own step to $15.40 on 2026-07-01."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "January 1 - June 30, 2026 tipped cash wage",
+          "hourly": 9.0,
+          "hourlyCents": 900,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-01-01",
+          "effectiveTo": "2026-06-30",
+          "note": "60% of $15.00, matching the Illinois state tipped percentage, before the step to $9.25."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Cook County minimum wage notice -- July 1, 2025 (no change from $15.00)",
+          "url": "https://content.govdelivery.com/accounts/ILCOOK/bulletins/3e27980",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'Effective July 1, 2025, the Cook County minimum wage remained $15.00 for non-tipped workers and $9.00 for tipped workers' -- confirming the county's rate was unchanged from the Illinois state rate through 2026-06-30."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Which suburban Cook County municipalities have opted OUT of the county ordinance is a moving list maintained by the county; it is not enumerated here, so a Cook County address cannot be resolved from this file alone."
+  ]
+}

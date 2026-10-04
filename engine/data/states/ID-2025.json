@@ -1,0 +1,467 @@
+{
+  "code": "ID",
+  "name": "Idaho",
+  "year": 2025,
+  "method": "bracket_two_status_per_period",
+  "roundFinalToWholeDollar": true,
+  "$roundingComment": "Idaho State Tax Commission, Computing Idaho Withholding (tax.idaho.gov/taxes/income-tax/withholding/computing/, read directly 2026-09-23): 'Percentage Computation method -- ... Round to the nearest whole dollar.' and 'Annualized Wage method -- Round to nearest whole dollar.' Its own worked example ends '$1,060 divided by 52... remember to round $20'. Wired after the PaycheckCity comparison showed the unrounded cents as the only difference in all three Idaho cases.",
+  "$scopeNote": "STATE income tax only. Idaho has no local income tax anywhere (cities/counties are statutorily barred from imposing one), no reciprocity agreements with any state, and no employee-paid unemployment insurance, disability insurance, or paid family leave program -- Idaho UI is employer-funded only, confirmed directly from the Idaho Department of Labor. This makes Idaho the simplest state file in this project: one tax, one flat rate, no locals, no other employee-paid levies.",
+  "$methodComment": "Idaho became a true flat-tax state: EPB00744 (Table for Percentage Computation Method of Withholding, effective 2026-07-23) publishes exactly two brackets per pay period per filing status -- $0 below a threshold, then a flat 5.3% of everything above it. No progressive schedule at all, unlike every bracket state built so far in this project. Tables are published INDEPENDENTLY PER PERIOD (like Montana/NY/NJ), not derived by dividing one annual figure -- confirmed the married threshold is exactly 2x single's in every period (a deliberate design choice by Idaho, not something this engine computes).",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "Idaho conforms to the Internal Revenue Code (as of 2015-01-01, per tax.idaho.gov/governance/statutes/irc/) and computes Idaho taxable income starting from FEDERAL taxable income under Idaho Code 63-3022 — the OPPOSITE of Pennsylvania's non-conformity. Confirmed cross-source (not an independently-fetched primary statute read this session) that 401(k)/403(b)/457/SIMPLE deferrals and section 125 cafeteria-plan elections excluded from federal wages are excluded from Idaho withholding wages too, so this reuses the SAME exemptPretax list as federal.json's incomeTax rather than PA's empty one — the same conformity pattern already established for Michigan and Ohio in this project.",
+  "sources": [
+    {
+      "title": "Idaho State Tax Commission -- Withholding tables updated for 2025 (press release, 2025-05-01)",
+      "url": "https://tax.idaho.gov/pressrelease/withholding-tables-updated-for-2025/",
+      "verifiedOn": "2026-09-29",
+      "quote": "We've updated the income tax withholding tables for 2025 due to a law change that lowered the tax rates. This includes updating the Idaho Child Tax Credit Allowance Table ... You don't need to adjust withholding back to the beginning of the year, but you should use the revised tables going forward."
+    },
+    {
+      "title": "EPB00744 Table for Percentage Computation Method of Withholding, 04-28-2025 (Internet Archive copy of tax.idaho.gov, 2025-05-21)",
+      "url": "https://web.archive.org/web/20250521215647id_/https://tax.idaho.gov/wp-content/uploads/pubs/EPB00744/EPB00744_04-28-2025.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Biweekly ... Single ... $577 5.3% of the amount over $577 ... Married ... $1,154 5.3% of the amount over $1,154"
+    },
+    {
+      "title": "EPB00744 Table for Percentage Computation Method of Withholding, 05-21-2024 -- the table tax.idaho.gov served until May 2025 (Internet Archive copy, 2025-02-02)",
+      "url": "https://web.archive.org/web/20250202152337id_/https://tax.idaho.gov/wp-content/uploads/pubs/EPB00744/EPB00744_05-21-2024.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Biweekly ... Single ... $562 5.695% of the amount over $562 ... Married ... $1,123"
+    },
+    {
+      "title": "Idaho -- Computing Withholding, ICTCAT (Internet Archive copies of 2025-03-19 and 2025-05-20)",
+      "url": "https://web.archive.org/web/20250520175403/https://tax.idaho.gov/taxes/income-tax/withholding/computing/",
+      "verifiedOn": "2026-09-29",
+      "quote": "May 2025: Weekly $74.38, Biweekly $148.77, Semimonthly $161.16, Monthly $322.33, Annual $3,868, Daily $14.88. March 2025 copy: Weekly $69.22, Biweekly $138.45, Semimonthly $149.99, Monthly $299.97, Annual $3,600, Daily $13.84. Example: $1,212 biweekly, 4 allowances ... 5.3% of the amount over $577 ... $2"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "bracketTwoStatus": {
+    "brackets": {
+      "single": {
+        "weekly": [
+          {
+            "from": 0,
+            "to": 281,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 281,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 562,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 562,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 608,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 608,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 1217,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1217,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "daily": [
+          {
+            "from": 0,
+            "to": 56,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 56,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 14600,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 14600,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ]
+      },
+      "married": {
+        "weekly": [
+          {
+            "from": 0,
+            "to": 562,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 562,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 1123,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1123,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 1217,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1217,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 2433,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 2433,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "daily": [
+          {
+            "from": 0,
+            "to": 112,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 112,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 29200,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 29200,
+            "to": null,
+            "base": 0,
+            "rate": 0.05695
+          }
+        ]
+      }
+    },
+    "nonresidentAlienAdjustment": {
+      "weekly": 16,
+      "biweekly": 33,
+      "semimonthly": 36,
+      "monthly": 71
+    },
+    "childTaxCreditAllowance": {
+      "weekly": 69.22,
+      "biweekly": 138.45,
+      "semimonthly": 149.99,
+      "monthly": 299.97,
+      "annual": 3600,
+      "daily": 13.84
+    }
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Idaho has no income-tax reciprocity agreement with any other state (cross-source confirmed) — the reciprocity mechanism is present in the ruleset shape for consistency with other states but reciprocalStates is deliberately empty, not omitted, to make the 'checked, found none' state explicit rather than indistinguishable from 'not yet researched.'"
+  },
+  "knownGaps": [
+    "The nonresident-alien add-on switches with the tables on 2025-05-01 ($16/$33/$36/$71 from the 12-05-2024 ID W-4, then $15/$31/$33/$66 from the 04-28-2025 revision).",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 55300,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.00225,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "EPB00744: aggregate the supplemental payment with regular wages, or withhold a flat 5.3% on a separately-issued supplemental payment. This block covers the first method; the flat alternative is an employer option carried in supplementalWages.",
+    "engineNote": "Wired via aggregateWithPriorRegularPayment(): the caller supplies input.priorRegularPayment (that cheque's taxable wages and the state tax withheld from it), and a bonus paid on its own cheque is taxed on the combined figure less what was already withheld, floored at zero. Nothing changes when the caller omits it."
+  },
+  "effectiveDated": [
+    {
+      "from": "2025-05-01",
+      "note": "Idaho reissued its tables on 2025-05-01 (EPB00744 04-28-2025) after HB 40 cut the rate to 5.3% retroactive to 1 January; employers switch going forward, with no catch-up.",
+      "set": {
+        "bracketTwoStatus.brackets": {
+          "single": {
+            "weekly": [
+              {
+                "from": 0,
+                "to": 288,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 288,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "biweekly": [
+              {
+                "from": 0,
+                "to": 577,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 577,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "semimonthly": [
+              {
+                "from": 0,
+                "to": 625,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 625,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "monthly": [
+              {
+                "from": 0,
+                "to": 1250,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 1250,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "daily": [
+              {
+                "from": 0,
+                "to": 58,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 58,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "annual": [
+              {
+                "from": 0,
+                "to": 15000,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 15000,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ]
+          },
+          "married": {
+            "weekly": [
+              {
+                "from": 0,
+                "to": 577,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 577,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "biweekly": [
+              {
+                "from": 0,
+                "to": 1154,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 1154,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "semimonthly": [
+              {
+                "from": 0,
+                "to": 1250,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 1250,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "monthly": [
+              {
+                "from": 0,
+                "to": 2500,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 2500,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "daily": [
+              {
+                "from": 0,
+                "to": 115,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 115,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ],
+            "annual": [
+              {
+                "from": 0,
+                "to": 30000,
+                "base": 0,
+                "rate": 0
+              },
+              {
+                "from": 30000,
+                "to": null,
+                "base": 0,
+                "rate": 0.053
+              }
+            ]
+          }
+        },
+        "bracketTwoStatus.childTaxCreditAllowance": {
+          "weekly": 74.38,
+          "biweekly": 148.77,
+          "semimonthly": 161.16,
+          "monthly": 322.33,
+          "annual": 3868,
+          "daily": 14.88
+        },
+        "bracketTwoStatus.nonresidentAlienAdjustment": {
+          "weekly": 15,
+          "biweekly": 31,
+          "semimonthly": 33,
+          "monthly": 66
+        }
+      }
+    }
+  ],
+  "$yearNote": "2025 ruleset in two parts. Checks before 2025-05-01 use the table then in force (EPB00744 05-21-2024: 5.695% above $14,600 single / $29,200 married a year) and a $3,600 child tax credit allowance per ID W-4 allowance. From 2025-05-01 (effectiveDated) they use the 04-28-2025 table (5.3% above $15,000 / $30,000) and a $3,868 allowance. Idaho said not to adjust back to January."
+}

@@ -1,0 +1,71 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "FL",
+    "name": "Florida"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 14.0,
+    "hourlyCents": 1400,
+    "effectiveFrom": "2025-09-30",
+    "coverage": "All covered employers.",
+    "note": "Fla. Const. art. X sec. 24 as amended by Amendment 2 (2020): +$1.00 every September 30 to $15.00 in 2026, then annual CPI indexing. Florida's step date is 2026-09-30 -- THREE WEEKS after this file's asOf date, so the $14.00 here is correct today and wrong from 2026-09-30."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 10.98,
+    "cashWageCents": 1098,
+    "maxTipCredit": 3.02,
+    "maxTipCreditCents": 302,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Florida's tip credit is fixed at $3.02 by the constitution, so the tipped cash wage steps with the standard rate: $11.98 from 2026-09-30."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W (South region), beginning 2027-09-30",
+    "adjustmentDate": "09-30",
+    "note": "Indexing only resumes after the legislated $15.00 step."
+  },
+  "scheduledChanges": [
+    {
+      "hourly": 15.0,
+      "hourlyCents": 1500,
+      "tippedCashWage": 11.98,
+      "tippedCashWageCents": 1198,
+      "note": "Final legislated step of Amendment 2. VERY NEAR TERM relative to this file's asOf date.",
+      "effectiveDate": "2026-09-30"
+    }
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Florida Restaurant & Lodging Association -- Current Florida Minimum Wage",
+      "url": "https://frla.org/minimum-wage/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the 2026-09-30 step to $15.00 / $11.98 tipped."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

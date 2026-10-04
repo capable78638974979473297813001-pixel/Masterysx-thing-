@@ -1,0 +1,61 @@
+{
+  "code": "TN",
+  "name": "Tennessee",
+  "year": 2026,
+  "method": "no_income_tax",
+  "$scopeNote": "Tennessee has NO state individual wage income tax. The former Hall Tax (a flat tax on interest/dividend investment income only -- never wages) was phased out entirely effective 2021-01-01 (last year taxed: 2020). Confirmed structural, not a temporary gap: no legislative proposal to reinstate any form of wage income tax was found.",
+  "sources": [
+    {
+      "title": "TN Department of Labor and Workforce Development -- UI Tax Rates",
+      "url": "https://www.tn.gov/workforce/employers/tax-and-insurance-redirect/unemployment-insurance-tax/ui-tax-rates.html",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly (raw HTML). Quoted verbatim: taxable wage base table shows '2026 $7,000' (unchanged since 2018). Confirms Tennessee uses a reserve-ratio formula (T.C.A. 50-7-403) with 6 possible Premium Rate Tables selected semiannually by Unemployment Trust Fund balance -- 'Rate Table 6' is in effect for both January 1, 2026 and July 1, 2026 periods. The actual numeric Premium Rate Table 6 (rate-by-reserve-ratio) is a separate downloadable document not fetched this pass -- see knownGaps."
+    },
+    {
+      "title": "Tennessee Paid Family Leave Insurance Act (2023, effective 2024-01-01) -- cross-source",
+      "url": "https://remotelaws.com/paid-leave/tennessee/",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Cross-source confirmed only, not independently fetched from tn.gov this pass. Authorizes VOLUNTARY private paid-family-leave insurance products -- no state-run fund, no mandatory payroll deduction of any kind. State employees separately get 6 weeks parental leave (since 2023) and 6 weeks end-of-life caregiving leave (new for 2026) -- a public-employee-only benefit, out of scope for a private-sector payroll engine, same convention as West Virginia's SB 114."
+    }
+  ],
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Tennessee has no income tax to be reciprocal about, same convention as this project's other no-income-tax states (SD, NH's former structure)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Tennessee city or county levies a tax on wages or earned income.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory for private employers. The 2023 Tennessee Paid Family Leave Insurance Act only authorizes licensed insurers to OFFER voluntary paid-leave policies -- no state fund, no mandatory deduction. Structurally identical to South Carolina's Act 206 in this project.",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "TN Department of Labor and Workforce Development",
+    "wageBase": 7000.0,
+    "wageBaseConfidence": "primary_source_confirmed -- tn.gov's own current wage-base history table, fetched directly, explicitly lists 2026 at $7,000.",
+    "rateMechanism": "Reserve-ratio formula (T.C.A. 50-7-403), 6 possible Premium Rate Tables selected semiannually (Jan 1 / Jul 1) by Unemployment Trust Fund balance on the preceding Jun 30 / Dec 31. Rate Table 6 (the LOWEST of the 6 tables, per the state's own naming convention where higher trust-fund health selects a higher table number) is in effect for all of 2026.",
+    "rateRangeNote": "cross_source_confirmed only (not independently fetched from the actual downloadable Premium Rate Table 6 PDF this pass): roughly 0.01%-2.3% for positive-reserve-ratio employers, 5%-10% for negative-reserve-ratio employers under Table 6. Same lower-priority-given-no-income-tax treatment this project already applied to South Dakota's own experience-rated schedule.",
+    "knownGap": "This state's exact numeric Premium Rate Table 6 was not fetched as a standalone document. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "Premium Rate Table 6's own numeric rate-by-reserve-ratio table was not fetched as a standalone document -- 3 separate attempts this session (WebFetch, curl with a browser User-Agent, curl with an added Referer header and forced HTTP/1.1) all failed against tn.gov/content/dam/... with a connection-level reset (not a proper HTTP error), the same class of access block already documented for New Hampshire/Massachusetts's revenue domains elsewhere in this project -- NOT pursued further given this figure is employer-side-only and not consumed by the engine regardless. The rate RANGE stays cross-source only; the wage base and rate-table-selection mechanism are primary-confirmed (see tn.gov's own UI Tax Rates HTML page, which fetched fine).",
+    "Given no income tax exists, this file is intentionally lighter-weight than income-tax states in this project -- consistent with the South Dakota precedent."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 7000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.0001,
+      "max": 0.1
+    },
+    "experienceRangeSource": "Primary: TN Dept. of Labor's own Premium_Rate_Chart.pdf (tn.gov/content/dam/tn/workforce/documents/employers/Premium_Rate_Chart.pdf), Premium Table 6 (in effect all of 2026, Trust Fund $850M+): rates run 0.01% (reserve ratio 20.0+) to 10.00% (reserve ratio below -20.0). Corrects a stale 2.3% max that only covered positive-reserve-ratio employers and silently dropped every negative-reserve (deficit) row of the same table.",
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  }
+}

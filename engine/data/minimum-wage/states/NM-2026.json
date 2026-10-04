@@ -1,0 +1,55 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "NM",
+    "name": "New Mexico"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 12.0,
+    "hourlyCents": 1200,
+    "effectiveFrom": "2023-01-01",
+    "coverage": "All covered employers.",
+    "note": "Final step of SB 437 (2019). No escalator -- New Mexico has been flat since 2023."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 3.0,
+    "cashWageCents": 300,
+    "maxTipCredit": 9.0,
+    "maxTipCreditCents": 900,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "N.M. Stat. 50-4-22. Santa Fe, Santa Fe County and Las Cruces set their own, different tipped rules -- see local/NM-local-2026.json."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": false
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Santa Fe (city and county) and Las Cruces exceed the state rate; Albuquerque and Bernalillo County have been overtaken by it except for their tipped rules -- see local/NM-local-2026.json."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

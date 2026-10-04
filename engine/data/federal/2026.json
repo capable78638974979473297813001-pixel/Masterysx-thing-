@@ -1,0 +1,568 @@
+{
+  "year": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "sources": [
+    {
+      "id": "pub15t",
+      "title": "IRS Publication 15-T (2026), Federal Income Tax Withholding Methods",
+      "url": "https://www.irs.gov/pub/irs-pdf/p15t.pdf",
+      "verifiedOn": "2026-08-11"
+    },
+    {
+      "id": "ssa-cola",
+      "title": "SSA 2026 COLA / OASDI contribution and benefit base",
+      "url": "https://www.ssa.gov/oact/cola/cbb.html",
+      "verifiedOn": "2026-08-11"
+    },
+    {
+      "id": "pub15",
+      "title": "IRS Publication 15 (2026), Employer's Tax Guide",
+      "url": "https://www.irs.gov/pub/irs-pdf/p15.pdf",
+      "verifiedOn": "2026-08-13",
+      "comment": "General employment-tax reference (depositing, reporting, special employment categories). Added for completeness of the source trail -- the categories it covers beyond ordinary W-2 wages (household/agricultural/railroad/statutory employees, ministers, tips, etc.) are out of scope for this engine; see knownGaps."
+    },
+    {
+      "id": "w4-instructions",
+      "title": "IRS Form W-4 (2026) and Instructions",
+      "url": "https://www.irs.gov/pub/irs-pdf/fw4.pdf",
+      "verifiedOn": "2026-08-13",
+      "comment": "Source for the Step 1-4 mechanics federalIncomeTax() implements. The Step 3/4(a)/4(b)/4(c) VALUES are employee input (types.ts's FederalW4), not data -- this file supplies the RATES those inputs are run through (schedules, step1StandardAdjustment)."
+    },
+    {
+      "id": "obbba-2025",
+      "title": "One Big Beautiful Bill Act, P.L. 119-21 (2025)",
+      "url": "https://www.congress.gov/bill/119th-congress/house-bill/1",
+      "verifiedOn": "2026-08-13",
+      "comment": "Legislative basis for the 2026 brackets/rates: OBBBA permanently extended the 2017 TCJA individual rate structure (10/12/22/24/32/35/37%) rather than letting it sunset, and left the supplemental flat rates (22%/37%) unchanged. Recorded so this file can answer 'why these numbers' rather than just 'what are these numbers'."
+    },
+    {
+      "title": "Form W-4 (2026), Step 4(b)--Deductions Worksheet, lines 1a-1c",
+      "url": "https://www.irs.gov/pub/irs-pdf/fw4.pdf",
+      "verifiedOn": "2026-08-27",
+      "verifiedBy": "Fetched directly to answer a concrete question: does this engine need new code for OBBBA's (P.L. 119-21) \"no tax on tips\" / \"no tax on overtime\" deductions? Quoted verbatim, the 2026 Form W-4's own Step 4(b) worksheet: \"1 Deductions for qualified tips, overtime compensation, and passenger vehicle loan interest. a Qualified tips... enter an estimate of your qualified tips up to $25,000... b Qualified overtime compensation... enter an estimate of your qualified overtime compensation up to $12,500 ($25,000 if married filing jointly)... 2 Add lines 1a, 1b, and 1c. Enter the result here\" -- which then combines with the seniors' deduction, other Schedule 1 adjustments, and itemized deductions through the rest of the SAME worksheet, arriving at ONE final number the employee enters into Step 4(b) of the actual W-4 they hand their employer. Pub 15-T (2026) confirms the employer-side mechanism is nothing more than reading that already-computed number: \"Employers must use an employee's updated Form W-4, if one is submitted... to allow the employee to account for their expected deduction.\" CONCLUSION: no new mechanism is needed. federalW4.deductions (this engine's existing Step 4(b) field, line 1h of the worksheet in federalIncomeTax()) is EXACTLY where a caller-computed tip/overtime/car-loan/seniors worksheet result belongs -- the same \"engine trusts the caller's pre-computed worksheet result, does not re-derive it\" boundary every other state's own complex allowance worksheet already sits behind in this project (e.g. Iowa's certificate.totalAllowanceAmount). Verified with a real test: tests/engine.test.ts, describe('Federal income tax') > the OBBBA deductions-worksheet test."
+    }
+  ],
+  "incomeTax": {
+    "source": "pub15t",
+    "method": "percentage_method_automated_worksheet_1a",
+    "comment": "Worksheet 1A, Percentage Method Tables for Automated Payroll Systems. Column C values were independently re-derived from the prior row's cumulative tax; all rows tie out exactly.",
+    "step1StandardAdjustment": {
+      "comment": "Worksheet 1A line 1g. Subtracted from annualized wages. Zero when the Step 2 checkbox is marked. Note this is NOT the standard deduction on its own: it combines with the 0% bracket to equal it (e.g. 12900 + 19300 = 32200 MFJ for 2026).",
+      "married_joint": 12900.0,
+      "other": 8600.0
+    },
+    "supplementalRate": 0.22,
+    "supplementalMandatoryRate": 0.37,
+    "supplementalMandatoryThreshold": 1000000.0,
+    "supplementalComment": "This is Pub 15's FLAT-RATE method for supplemental wages identified separately from regular wages. Pub 15 also allows an AGGREGATE method (add supplemental to regular wages paid at the same time, withhold on the total via the normal percentage method) -- that method is already reachable in this engine WITHOUT separate code: an earning simply isn't tagged category:'supplemental' (see types.ts EarningCategory), so it flows through federalIncomeTax()'s normal base instead of federalSupplementalTax()'s flat-rate path. The caller's tagging choice IS the method choice; there is no additional decision-tree data to store here.",
+    "backupWithholdingRate": 0.24,
+    "nonresidentAlienAdjustment": {
+      "comment": "Pub 15-T's 'Withholding Adjustment for Nonresident Alien Employees' procedure: add this per-period dollar amount to wages BEFORE annualizing (Step 1/2 of that procedure), then run the ordinary percentage-method worksheet on the inflated figure -- not a separate calculation path, just a bigger base. The amounts added are excluded from Box 1/income-tax-liability -- purely a withholding-calculation adjustment (Pub 15-T's own words: 'don't increase the income tax liability of the employee'). Two tables exist in Pub 15-T: Table 1 is for a nonresident alien whose Form W-4 predates 2020 (or who hasn't filed a 2020+ form); Table 2 is for a 2020-or-later Form W-4. This engine's FederalW4 type models ONLY the 2020+ shape (see its own doc comment) -- there is no legacy-W-4 representation anywhere in this project -- so TABLE 2 is the one that actually matches what this engine's inputs represent, and is what's recorded below. Reconstructed from the source PDF's own column-shifted table by chaining each period's multiple against the next (e.g. weekly 309.60 x 2 = 618.20 =~ biweekly's 619.20; monthly 1,341.70 x 3 = 4,025.10 =~ quarterly's 4,025.00) -- every value ties out to a period-count multiple of an adjacent one, the same internal-consistency check already used elsewhere in this project for column-shifted PDF tables.",
+      "weekly": 309.6,
+      "biweekly": 619.2,
+      "semimonthly": 670.8,
+      "monthly": 1341.7,
+      "quarterly": 4025.0,
+      "semiannual": 8050.0,
+      "annual": 16100.0,
+      "daily": 61.9
+    },
+    "standardSchedules": {
+      "married_joint": [
+        {
+          "from": 0.0,
+          "to": 19300.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 19300.0,
+          "to": 44100.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 44100.0,
+          "to": 120100.0,
+          "base": 2480.0,
+          "rate": 0.12
+        },
+        {
+          "from": 120100.0,
+          "to": 230700.0,
+          "base": 11600.0,
+          "rate": 0.22
+        },
+        {
+          "from": 230700.0,
+          "to": 422850.0,
+          "base": 35932.0,
+          "rate": 0.24
+        },
+        {
+          "from": 422850.0,
+          "to": 531750.0,
+          "base": 82048.0,
+          "rate": 0.32
+        },
+        {
+          "from": 531750.0,
+          "to": 788000.0,
+          "base": 116896.0,
+          "rate": 0.35
+        },
+        {
+          "from": 788000.0,
+          "to": null,
+          "base": 206583.5,
+          "rate": 0.37
+        }
+      ],
+      "single": [
+        {
+          "from": 0.0,
+          "to": 7500.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 7500.0,
+          "to": 19900.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 19900.0,
+          "to": 57900.0,
+          "base": 1240.0,
+          "rate": 0.12
+        },
+        {
+          "from": 57900.0,
+          "to": 113200.0,
+          "base": 5800.0,
+          "rate": 0.22
+        },
+        {
+          "from": 113200.0,
+          "to": 209275.0,
+          "base": 17966.0,
+          "rate": 0.24
+        },
+        {
+          "from": 209275.0,
+          "to": 263725.0,
+          "base": 41024.0,
+          "rate": 0.32
+        },
+        {
+          "from": 263725.0,
+          "to": 648100.0,
+          "base": 58448.0,
+          "rate": 0.35
+        },
+        {
+          "from": 648100.0,
+          "to": null,
+          "base": 192979.25,
+          "rate": 0.37
+        }
+      ],
+      "head_of_household": [
+        {
+          "from": 0.0,
+          "to": 15550.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 15550.0,
+          "to": 33250.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 33250.0,
+          "to": 83000.0,
+          "base": 1770.0,
+          "rate": 0.12
+        },
+        {
+          "from": 83000.0,
+          "to": 121250.0,
+          "base": 7740.0,
+          "rate": 0.22
+        },
+        {
+          "from": 121250.0,
+          "to": 217300.0,
+          "base": 16155.0,
+          "rate": 0.24
+        },
+        {
+          "from": 217300.0,
+          "to": 271750.0,
+          "base": 39207.0,
+          "rate": 0.32
+        },
+        {
+          "from": 271750.0,
+          "to": 656150.0,
+          "base": 56631.0,
+          "rate": 0.35
+        },
+        {
+          "from": 656150.0,
+          "to": null,
+          "base": 191171.0,
+          "rate": 0.37
+        }
+      ]
+    },
+    "multipleJobsSchedules": {
+      "comment": "Used when the Form W-4 Step 2 checkbox is marked.",
+      "married_joint": [
+        {
+          "from": 0.0,
+          "to": 16100.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 16100.0,
+          "to": 28500.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 28500.0,
+          "to": 66500.0,
+          "base": 1240.0,
+          "rate": 0.12
+        },
+        {
+          "from": 66500.0,
+          "to": 121800.0,
+          "base": 5800.0,
+          "rate": 0.22
+        },
+        {
+          "from": 121800.0,
+          "to": 217875.0,
+          "base": 17966.0,
+          "rate": 0.24
+        },
+        {
+          "from": 217875.0,
+          "to": 272325.0,
+          "base": 41024.0,
+          "rate": 0.32
+        },
+        {
+          "from": 272325.0,
+          "to": 400450.0,
+          "base": 58448.0,
+          "rate": 0.35
+        },
+        {
+          "from": 400450.0,
+          "to": null,
+          "base": 103291.75,
+          "rate": 0.37
+        }
+      ],
+      "single": [
+        {
+          "from": 0.0,
+          "to": 8050.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 8050.0,
+          "to": 14250.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 14250.0,
+          "to": 33250.0,
+          "base": 620.0,
+          "rate": 0.12
+        },
+        {
+          "from": 33250.0,
+          "to": 60900.0,
+          "base": 2900.0,
+          "rate": 0.22
+        },
+        {
+          "from": 60900.0,
+          "to": 108937.5,
+          "base": 8983.0,
+          "rate": 0.24
+        },
+        {
+          "from": 108937.5,
+          "to": 136162.5,
+          "base": 20512.0,
+          "rate": 0.32
+        },
+        {
+          "from": 136162.5,
+          "to": 328350.0,
+          "base": 29224.0,
+          "rate": 0.35
+        },
+        {
+          "from": 328350.0,
+          "to": null,
+          "base": 96489.63,
+          "rate": 0.37
+        }
+      ],
+      "head_of_household": [
+        {
+          "from": 0.0,
+          "to": 12075.0,
+          "base": 0.0,
+          "rate": 0.0
+        },
+        {
+          "from": 12075.0,
+          "to": 20925.0,
+          "base": 0.0,
+          "rate": 0.1
+        },
+        {
+          "from": 20925.0,
+          "to": 45800.0,
+          "base": 885.0,
+          "rate": 0.12
+        },
+        {
+          "from": 45800.0,
+          "to": 64925.0,
+          "base": 3870.0,
+          "rate": 0.22
+        },
+        {
+          "from": 64925.0,
+          "to": 112950.0,
+          "base": 8077.5,
+          "rate": 0.24
+        },
+        {
+          "from": 112950.0,
+          "to": 140175.0,
+          "base": 19603.5,
+          "rate": 0.32
+        },
+        {
+          "from": 140175.0,
+          "to": 332375.0,
+          "base": 28315.5,
+          "rate": 0.35
+        },
+        {
+          "from": 332375.0,
+          "to": null,
+          "base": 95585.5,
+          "rate": 0.37
+        }
+      ]
+    },
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "deferral_401k",
+      "deferral_403b",
+      "deferral_457",
+      "deferral_simple",
+      "commuter"
+    ]
+  },
+  "socialSecurity": {
+    "source": "ssa-cola",
+    "employeeRate": 0.062,
+    "employerRate": 0.062,
+    "wageBase": 184500.0,
+    "comment": "2026 OASDI contribution and benefit base, up from 176100 in 2025.",
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ],
+    "exemptComment": "Elective deferrals (401k/403b/457/SIMPLE) are FICA-taxable. This asymmetry against federal income tax is deliberate and is the most-missed rule in hand-rolled payroll code."
+  },
+  "medicare": {
+    "source": "pub15t",
+    "employeeRate": 0.0145,
+    "employerRate": 0.0145,
+    "wageBase": null,
+    "additional": {
+      "rate": 0.009,
+      "threshold": 200000.0,
+      "employeeOnly": true,
+      "comment": "Employer withholds on wages above 200000 paid to an individual regardless of filing status; the employee reconciles on Form 8959."
+    },
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ]
+  },
+  "futa": {
+    "creditReduction": {
+      "states": {},
+      "determinationDate": "2026-11-10",
+      "$comment": "An employer in a state that has not repaid its federal unemployment loans loses part of the 5.4% credit, so its FUTA rate exceeds 0.6% — retroactively, for the whole year, on wages already paid. The determination is made after November 10 of the wage year, so this map is EMPTY for 2026 by fact rather than by omission: the 2026 list did not exist when this ruleset was written. When DOL publishes it, add entries keyed by state code carrying the ADDITIONAL rate, not the total.",
+      "priorYear": {
+        "year": 2025,
+        "states": {
+          "CA": 0.012,
+          "VI": 0.045
+        },
+        "note": "FINAL 2025 figures, reference only — never applied to another year. California failed to repay by the November 10, 2025 deadline (extra 1.2%, so 1.8% net) and the US Virgin Islands likewise (extra 4.5%, so 5.1% net). Connecticut and New York appeared on the JANUARY 2025 potential list and then repaid before the deadline, which is precisely why a state carrying debt mid-year cannot be assumed into a reduction.",
+        "source": {
+          "title": "US Department of Labor, FUTA Credit Reductions; and the Federal Register notice of FUTA credit reductions applicable for 2025",
+          "url": "https://oui.doleta.gov/unemploy/futa_credit.asp",
+          "verifiedOn": "2026-08-25"
+        }
+      }
+    },
+    "source": "pub15t",
+    "grossRate": 0.06,
+    "standardCredit": 0.054,
+    "netRate": 0.006,
+    "wageBase": 7000.0,
+    "employerOnly": true,
+    "comment": "Net rate assumes the full state credit. Credit-reduction states pay more, and that IS now modelled — see creditReduction below: futa() adds the state's additional rate when the map carries one, and says the determination is pending when it does not.",
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ]
+  },
+  "electiveDeferralLimits": {
+    "section402gAggregate": 24500.0,
+    "deferral457": 24500.0,
+    "simple": 17000.0,
+    "$comment": "IRS Newsroom, '401(k) limit increases to $24,500 for 2026' (irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500), read directly: the 402(g) elective-deferral limit for 401(k)/403(b)/governmental-457(b) plans rises to $24,500 for 2026 (up from $23,500 for 2025), and the SIMPLE plan limit rises to $17,000. section402gAggregate is 401(k)+403(b) COMBINED (one shared IRC 402(g) limit — an employee contributing to both still only gets $24,500 total between them); deferral457 is a governmental/tax-exempt 457(b) plan's own SEPARATE limit (IRC 457(e)(15)) at the same dollar figure but NOT aggregated with 401(k)/403(b) — an employee with both a 401(k) and a 457(b) can legally defer up to BOTH limits in the same year, not a double-count error; simple is SIMPLE IRA/401(k) plans' own separate, lower limit (IRC 408(p)) under yet another section, also not aggregated with the other two. STANDARD limits only — catch-up contributions for age 50+ ($8,000 for 2026, bringing the total to $32,500) and the SECURE 2.0 age-60-63 enhanced catch-up ($11,250) are deliberately NOT modelled here: this engine has no age/birthdate input anywhere, and guessing catch-up eligibility would risk UNDER-capping (treating money as taxable that the law actually still exempts) — the wrong direction for a tax engine to guess in, so every employee is capped at the standard figure regardless of actual age. See capElectiveDeferrals() in src/wages.ts and this file's own knownGaps entry."
+  },
+  "knownGaps": [
+    "Nonresident alien (NRA) withholding is not modelled: no NRA status field, no NRA wage addback, no restricted-W-4 handling. NRA employees would be silently run through the resident percentage method, which understates their correct withholding -- treat any NRA employee as unsupported, not zero-adjustment. STALE, NOW FALSE: NRA withholding IS modelled — federalW4.nonresidentAlien drives the Pub 15-T Table 2 per-period addback in taxes/federal.ts (verified: a biweekly cheque adds $619.20 to wages before annualizing, and the added amount is deliberately excluded from the line's own taxableWages because it isn't reportable wages). What remains unmodelled is only the Table 1 (pre-2020 Form W-4) variant, which this engine's FederalW4 type has no shape for. STALE, corrected: NRA withholding IS modelled and has been for some time — federalW4.nonresidentAlien triggers Pub 15-T's Table 2 per-period addback before annualizing (verified: a biweekly $3,000 cheque withholds $320.38 as a resident and $456.61 as an NRA, the difference being the $619.20 addback). What remains unmodelled is the pre-2020 Form W-4 variant (Table 1), since this engine models only the 2020-or-later W-4 shape.",
+    "Pension/annuity withholding (Pub 15-T's separate periodic-payment tables, Form W-4P) is not modelled -- this engine assumes ordinary W-2 wage/salary payroll only.",
+    "Nonpayroll withholding (Form 945 categories: IRA distributions, gambling winnings, certain government/Indian gaming payments) is out of scope -- these aren't wage payroll at all.",
+    "Special employment-tax categories are not modelled: household employees, agricultural (incl. H-2A) workers, statutory employees, ministers/clergy, election workers, railroad employees, tipped employees' allocated-tips rules. A standard W-2 wage/salary employee is the only supported case; using this engine for any of these categories will produce wrong numbers, not an explicit error. PARTLY CLOSED: clergy and statutory employees are now modelled via input.employmentCategory — see the employmentCategories block above for each one's rule and source. Household employees, agricultural workers, election workers, ministers' housing allowances and railroad (RRTA) employment remain unmodelled. FURTHER CLOSED: household and agricultural workers are now modelled too (input.employmentCategory, with the coverage thresholds in employmentCategories.coverageThresholds). Election workers, railroad (RRTA) employment and ministers housing allowances remain unmodelled. Railroad (RRTA) employment is now modelled as well — see the railroadRetirement block: Tier I relabelled from the identical FICA computation, Tier II computed at 4.9%/13.1% to its own 37,100 base, and FUTA zeroed because rail employers contribute under the RUIA. Election workers and ministers housing allowances remain unmodelled. Election workers are now modelled too ($2,500 coverage threshold, outside FUTA as government employment), and railroad unemployment contributions are computed under the RUIA rather than merely disclosed. What remains unmodelled: ministers housing allowances and the supplemental annuity work-hour tax.",
+    "FUTA credit-reduction states (the DOL's annual list of which states' net FUTA rate exceeds 0.6%) are modelled: futa() (src/taxes/federal.ts) adds the state's additional rate from futa.creditReduction.states, and where that map is empty the line says the determination is pending rather than implying 0.6% is final. The 2026 map IS empty as shipped, because DOL makes the determination after November 10, 2026 — 2025's finals (CA 1.2%, VI 4.5%) ride along as priorYear reference only. STILL OPEN, structurally: this map needs a human edit once DOL actually publishes the 2026 list — nothing automates that step.",
+    "Backup withholding (backupWithholdingRate, 24%) is recorded as data but has no compute path -- no rule detects a missing/invalid TIN and applies it.",
+    "The percentage_method_automated_worksheet_1a method is the ONLY Pub 15-T method implemented. Pub 15-T also publishes wage-bracket tables and non-automated percentage-method tables for manual systems; this engine intentionally supports only the automated-system method, which is exact rather than table-rounded.",
+    "WIRED: IRC 402(g)/457/SIMPLE elective-deferral annual limits (electiveDeferralLimits above) are now enforced by capElectiveDeferrals() in src/wages.ts, called once in calculate.ts before any tax reads the deduction list — any 401(k)/403(b)/457/SIMPLE deduction that would push this employee's YTD cumulative deferrals (input.ytd.electiveDeferrals) past the applicable limit has its excess reclassified from pretax to post-tax (net pay is unaffected either way; only which taxes see the money as taxable changes). Found as a genuine, previously-undisclosed gap during a manual verification pass (2026-09-06): before this, a caller could supply a deduction of any size at all and every dollar of it was excluded from federal/state/local taxable wages with no limit, silently understating tax on any contribution over the real IRC ceiling. STILL NOT modelled, disclosed rather than guessed: catch-up contributions for age 50+ and the SECURE 2.0 age-60-63 enhanced catch-up (no age/birthdate input exists anywhere in this engine, and guessing eligibility risks UNDER-capping, the wrong direction) — every employee is capped at the STANDARD limit regardless of true age, which is conservative (never wrongly exempts money the law wouldn't) but will over-cap a genuinely catch-up-eligible employee's later-year contributions; and cumulative deferrals at a DIFFERENT employer earlier in the same calendar year, since input.ytd only reflects what THIS employer has paid — the same single-employer-visibility limitation this project already discloses for Social Security/FUTA wage-base tracking."
+  ],
+  "employmentCategories": {
+    "coverageThresholds": {
+      "electionWorker": {
+        "annualCashWages": 2500,
+        "futa": "excluded",
+        "federalIncomeTaxWithholding": "not_required",
+        "source": {
+          "title": "IRS Publication 15 (2026) and SSA, Election Workers — State and Local Government Employers",
+          "url": "https://www.ssa.gov/slge/election_workers.htm",
+          "verifiedOn": "2026-08-25",
+          "quote": "Social security and Medicare taxes apply to election workers paid $2,500 or more in cash or its equivalent in 2026, up from $2,300. Below that figure the worker is outside social security and Medicare entirely. Election work is service for a state or political subdivision, which is excluded from FUTA employment, and the pay is not subject to federal income tax withholding — though it remains taxable income to the worker."
+        }
+      },
+      "$comment": "Household and agricultural workers are not taxed at different RATES — ordinary FICA and FUTA apply. The question these thresholds answer is whether the worker is inside the system at all for the year.",
+      "household": {
+        "annualCashWages": 3000,
+        "futaQuarterlyCashWages": 1000,
+        "source": {
+          "title": "IRS Publication 926 (2026), Household Employer's Tax Guide",
+          "url": "https://www.irs.gov/pub/irs-pdf/p926.pdf",
+          "verifiedOn": "2026-08-25",
+          "quote": "Social security and Medicare taxes apply to the wages of household workers paid $3,000 or more in cash wages in 2026 (up from $2,800 in 2025). FUTA applies if $1,000 or more in total cash wages is paid to all household employees during any single calendar quarter — a figure unchanged for 2026. Federal income tax withholding is not required from a household employee at all, though employer and employee may agree to it."
+        }
+      },
+      "agricultural": {
+        "annualCashWagesPerWorker": 150,
+        "annualWagesAllFarmworkers": 2500,
+        "source": {
+          "title": "IRS Publication 15 (Circular E) for use in 2026 — agricultural employers (Publication 51 was discontinued and folded into Publication 15)",
+          "url": "https://www.irs.gov/pub/irs-pdf/p15.pdf",
+          "verifiedOn": "2026-08-25",
+          "quote": "The long-standing pair of statutory tests: cash wages of $150 or more paid to one farmworker in the year, OR total wages (cash and noncash) of $2,500 or more paid to all farmworkers. Either test on its own makes the wages subject to social security and Medicare, and income tax withholding follows the same coverage."
+        }
+      },
+      "catchUpNotModelled": "Crossing a threshold mid-year makes that year's EARLIER wages taxable as well. This engine computes one cheque at a time: it starts withholding from the cheque that crosses the line and does not reach back to collect on wages already paid. That catch-up is the employer's to make, and is stated here rather than left for a caller to discover.",
+      "agriculturalFutaTest": "Agricultural FUTA has its own test — $20,000 of farm wages in a calendar quarter, or 10 or more farmworkers on 20 days in 20 different weeks. Both halves are employer-wide facts spanning a year, so the caller asserts the conclusion via input.employer.agriculturalFutaLiable rather than the engine inferring it from one paycheck."
+    },
+    "$comment": "Employment categories the Code taxes differently from an ordinary common-law employee, wired via input.employmentCategory. Only the two below are modelled; the rest of the special categories this file's knownGaps names (household, agricultural, election workers, railroad) remain unmodelled and are still disclosed there.",
+    "clergy": {
+      "federalIncomeTaxWithholding": "not_required",
+      "socialSecurityMedicare": "excluded",
+      "futa": "excluded",
+      "voluntaryAgreementPermitted": true,
+      "source": {
+        "title": "IRS — Members of the clergy / Publication 15-A, Special Rules for Ministers",
+        "url": "https://www.irs.gov/businesses/small-businesses-self-employed/members-of-the-clergy",
+        "verifiedOn": "2026-08-25",
+        "quote": "A minister's earnings for services in the exercise of the ministry are not subject to income, social security, and Medicare tax withholding; those services are covered by SECA, so the minister pays self-employment tax instead. An employer and minister MAY agree to withhold income tax voluntarily, reported in box 2 of Form W-2. Services performed by a duly ordained, commissioned or licensed minister in the exercise of the ministry are also excluded from FUTA employment (IRC 3306(c)(8) and the ministerial exclusion)."
+      },
+      "notModelled": "The housing/parsonage allowance is now modelled as its own earning category (EarningCategory 'housing_allowance'): paid in cash, excluded from the income tax base, and excluded ONLY when the worker is employmentCategory 'clergy' — the same allowance paid to anyone else stays ordinary taxable pay. STILL NOT MODELLED: the minister's own SECA liability, which is a self-employment tax rather than payroll withholding, and an approved Form 4361 exemption."
+    },
+    "statutoryEmployee": {
+      "federalIncomeTaxWithholding": "not_required",
+      "socialSecurityMedicare": "withheld",
+      "futa": "per_ordinary_rules",
+      "source": {
+        "title": "IRS Publication 15 (Circular E), Employer's Tax Guide, for use in 2026",
+        "url": "https://www.irs.gov/pub/irs-pdf/p15.pdf",
+        "verifiedOn": "2026-08-25",
+        "quote": "If someone who works for you isn't an employee under the common-law rules, don't withhold federal income tax from their pay, unless backup withholding applies. Although such persons may not be common-law employees, they're considered employees by statute for social security and Medicare tax purposes if certain conditions are met, and social security and Medicare taxes must be withheld."
+      },
+      "notModelled": "Which workers QUALIFY (certain drivers, full-time life insurance sales agents, home workers, travelling salespeople, each with its own conditions) is a worker-classification determination, not a calculation — the caller makes it and sets input.employmentCategory."
+    },
+    "stateTreatmentNotModelled": "This flag answers the FEDERAL question only. States mostly follow the federal treatment of ministers and statutory employees, but not universally and not always for the same taxes, and no state file in this project has been researched on the point. State income tax, state unemployment and paid-leave lines are therefore left computing as normal for both categories — a deliberate, disclosed limit rather than an assumed conformity."
+  },
+  "railroadRetirement": {
+    "ruia": {
+      "newEmployerRate": 0.0558,
+      "monthlyCompensationBase": 2150,
+      "experienceRange": {
+        "min": 0.0065,
+        "max": 0.12
+      },
+      "source": {
+        "title": "US Railroad Retirement Board — Railroad Retirement and Unemployment Insurance Taxes in 2026, and the 2026 Railroad Experience Rating Proclamations",
+        "url": "https://www.rrb.gov/Newsroom/NewsReleases/RetirementUnemploymentInsuranceTaxes",
+        "verifiedOn": "2026-08-25",
+        "quote": "In 2026 the minimum RUIA rate of 0.65 percent applies to 91 percent of covered employers, while 3 percent pay the maximum 12.0 percent. New employers pay 5.58 percent, the average rate paid by all employers in 2022-2024. The monthly compensation base for 2026 is $2,150, and no surcharge applies."
+      },
+      "note": "Contributions are capped MONTHLY, not annually — unlike every state unemployment tax in this project — so the caller keeps the running figure in ytd.railroadMonthlyCompensation and it resets each calendar month."
+    },
+    "$comment": "The Railroad Retirement Tax Act, which replaces FICA for covered rail employment. Tier I is arithmetically identical to social security and Medicare — same rates, same wage base, same additional-Medicare threshold — so the engine relabels those lines rather than recomputing them; only the tax and the return differ (Form CT-1, not 941). Tier II below has no FICA equivalent at all.",
+    "tier2": {
+      "employeeRate": 0.049,
+      "employerRate": 0.131,
+      "wageBase": 137100
+    },
+    "tierOneNote": "Tier I for 2026: 6.20% on compensation up to $184,500 plus 1.45% uncapped, with the same 0.9% additional Medicare above $200,000 — identical to this file's socialSecurity and medicare blocks, which is why they are reused.",
+    "source": {
+      "title": "US Railroad Retirement Board — Railroad Retirement and Unemployment Insurance Taxes in 2026",
+      "url": "https://www.rrb.gov/Newsroom/NewsReleases/RetirementUnemploymentInsuranceTaxes",
+      "verifiedOn": "2026-08-25",
+      "quote": "Tier II tax rates in 2026 remain at 4.9 percent for employees and 13.1 percent for employers; the maximum amount of earnings subject to tier II taxes increases from $130,800 to $137,100. The tier I payroll tax rate remains 7.65 percent, divided into 6.20 percent for retirement (on earnings up to $184,500 in 2026, up from $176,100) and 1.45 percent for Medicare hospital insurance with no maximum."
+    },
+    "notModelled": "WIRED: RUIA contributions are now computed — see the ruia block above (employer rate from input.employer.railroadUnemploymentRate, otherwise the published new-employer rate, capped at the monthly compensation base). STILL NOT MODELLED: the supplemental annuity work-hour tax, which is levied per work-hour rather than per dollar and has no wage base for this engine to work from."
+  }
+}

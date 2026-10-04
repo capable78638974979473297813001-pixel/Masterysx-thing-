@@ -1,0 +1,86 @@
+{
+  "code": "TX",
+  "name": "Texas",
+  "year": 2026,
+  "method": "no_income_tax",
+  "$scopeNote": "Texas has NO state individual wage income tax -- a constitutional prohibition (Tex. Const. Art. VIII, sec. 24, added by voter referendum in 2019) requiring a statewide voter referendum before one could ever be enacted, not a mere policy choice. Never has had one.",
+  "sources": [
+    {
+      "title": "Texas Workforce Commission -- Your 2026 Tax Rates",
+      "url": "https://www.twc.texas.gov/programs/unemployment-tax/your-tax-rates",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Fetched directly. Quoted verbatim: taxable wage base '$9,000 per employee per year' (fixed by statute, does not change year to year), minimum tax rate for 2026 '0.32 percent', maximum tax rate for 2026 '6.32 percent'. TWC frames the total rate as several stacked components (General Tax Rate + Replenishment Tax Rate + Obligation Assessment + Employment and Training Investment Assessment), not a single flat number for new employers on this page alone."
+    },
+    {
+      "title": "Texas Workforce Commission -- Discussion Paper on Unemployment Insurance Tax Rates for 2026 (item 9b, Commission meeting 2025-11-17)",
+      "url": "https://www.twc.texas.gov/sites/default/files/ogc/mtg25/commission-meeting-material-111725-item9b-dp-2026-tax-rates-twc.pdf",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "PDF downloaded and read directly ('verify' pass -- an earlier version of this file only had this cross-source-confirmed via search synthesis; fetching the actual PDF surfaced a real, worth-resolving discrepancy). This is TWC staff's own CALCULATED, pre-decision rate breakdown for the Commission's 2025-11-17 meeting, not the final published rate: 5 stacked components -- General Tax Rate (GTR, 0.00%-6.00%), Replenishment Tax Rate (RTR, flat 0.21% for all employers), Obligation Assessment (OA, flat 0.01%), Deficit Tax Rate (DTR, 0.04% at the minimum end / 1.54% at the maximum end -- since the UI Trust Fund sat $434.4M below its statutory floor on 2025-09-30), and Employment & Training Investment Assessment (ETIA, flat 0.10%). Summed, these calculated components give a min/max range of 0.36%/7.86% -- NOT the 0.32%/6.32% figures TWC's own live 'Your 2026 Tax Rates' page (above) actually publishes. Resolved by direct subtraction: 0.36%-0.32%=0.04% and 7.86%-6.32%=1.54%, EXACTLY matching the calculated DTR component at both ends -- strong evidence the Commission exercised its Sec. 204.067 statutory authority to zero out the Deficit Tax Rate entirely for the final 2026 rates, rather than accept the trust-fund-deficit-driven increase the raw calculation would have produced. The published 0.32%/6.32% range (already this file's primary UI figure) is the one that actually governs 2026 withholding; the components below are disclosed for completeness and because RTR/OA/ETIA do carry through unchanged."
+    },
+    {
+      "title": "Tex. Const. Art. VIII, sec. 24 -- prohibition on a state income tax",
+      "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Cross-source confirmed only (search synthesis), not independently fetched from the Texas Constitution text this pass. Added by Proposition 4 (2019), a voter-approved constitutional amendment requiring any future state income tax to itself be approved by statewide referendum -- a structurally stronger bar than most other no-income-tax states in this project, which rely on the legislature simply never having enacted one."
+    },
+    {
+      "title": "Texas Regulatory Consistency Act (H.B. 2127, 2023, 'the Death Star bill')",
+      "url": "https://www.littler.com/news-analysis/asap/texas-governor-signs-preemption-bill-crown-act-and-other-legislation-law",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Cross-source confirmed (multiple independent legal-analysis sources agree), not independently fetched from the bill text itself this pass. Signed 2023-06-13, effective 2023-09-01. Occupies the regulatory field of 'employment leave, hiring practices, breaks, employment benefits, scheduling practices, and any other terms of employment' for non-municipal/county employers, preempting local labor ordinances outright -- confirmed to have ALREADY nullified actual paid-sick-leave ordinances in Austin, Dallas, and San Antonio (all struck down in court under HB 2127 plus the Texas Minimum Wage Act). A structurally stronger, litigation-tested preemption than most other states' bare 'no local ordinance found' finding in this project."
+    }
+  ],
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Texas has no income tax to be reciprocal about, same convention as this project's other no-income-tax states (SD, TN, FL)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Texas city or county levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory. Texas has no state-run paid family/medical leave program and no state paid-sick-leave mandate. Texas Insurance Code Chapter 1255 (enacted 2023) authorizes licensed private carriers to offer VOLUNTARY group paid-family-leave insurance to employers on an opt-in basis -- no state fund, no mandatory deduction, same voluntary-insurance-only shape as several other states in this project. Additionally, and more forcefully than most other 'no local mandate' states here: the Texas Regulatory Consistency Act (H.B. 2127) affirmatively PREEMPTS cities/counties from creating their own paid-leave or paid-sick-leave ordinances at all, and this preemption has already been enforced in court against real municipal ordinances (Austin, Dallas, San Antonio).",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Texas Unemployment Compensation Act (TUCA), administered by the Texas Workforce Commission.",
+    "administeredBy": "Texas Workforce Commission (TWC)",
+    "wageBase": 9000.0,
+    "wageBaseNote": "Fixed by statute at $9,000 -- unlike most other states in this project, TWC's own page states this figure 'does not change from year to year' rather than being reset annually.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateNote": "The greater of 2.70% or the employer's own NAICS industry average -- cross-source confirmed, not a bare TWC quote on the primary rate page itself.",
+    "experiencedEmployerRateRange": [0.0032, 0.0632],
+    "rateComponents": {
+      "$comment": "PRIMARY-SOURCED directly from TWC's own 2025-11-17 Discussion Paper (see sources above) -- these are the CALCULATED components; the Commission zeroed out the Deficit Tax Rate when finalizing the published 0.32%/6.32% range (see that source's own verifiedBy note for the resolution). generalTaxRate/replenishmentTaxRate/obligationAssessment/employmentTrainingInvestmentAssessment are the 4 components that DO carry through into the final published rate; deficitTaxRate is the calculated component that was zeroed out, kept here for completeness and because Sec. 204.067 gives the Commission year-by-year discretion to reinstate it.",
+      "generalTaxRateRange2026": [0.0, 0.06],
+      "replenishmentTaxRate2026": 0.0021,
+      "obligationAssessment2026": 0.0001,
+      "deficitTaxRateRangeAsCalculated2026": [0.0004, 0.0154],
+      "deficitTaxRateAsFinalized2026": 0.0,
+      "employmentTrainingInvestmentAssessment2026": 0.001
+    },
+    "confidence": "primary_source_confirmed for the wage base, the published min/max rate range, and every stacked-component figure (TWC's own live rate page plus its own 2025-11-17 Discussion Paper, both fetched directly); cross_source_confirmed only for the new-employer rate's exact 'greater of 2.70% or NAICS average' mechanism.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual rate depends on employer-specific history a static jurisdiction file can't hold, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "Given no income tax exists, this file is intentionally lighter-weight than income-tax states in this project -- consistent with the South Dakota/Tennessee/Florida precedent.",
+    "The Texas Constitution's own Art. VIII sec. 24 text and H.B. 2127's own bill text were not independently fetched this pass -- both rest on cross-source confirmation from multiple independent legal/analysis sources rather than a direct primary-text read.",
+    "RESOLVED ('verify' pass, 2026-08-22): the stacked-component UI rate figures are now primary-sourced directly from TWC's own Discussion Paper, including the real finding that the Commission zeroed out the calculated Deficit Tax Rate for 2026 -- see unemploymentInsurance.rateComponents and its source note. The new-employer rate's exact mechanism (greater of 2.70% or NAICS average) remains cross-source only.",
+    "The Deficit Tax Rate's zeroing is inferred by exact arithmetic match (0.36%-0.32%=0.04%, 7.86%-6.32%=1.54%), not a direct TWC statement that DTR specifically was the component adjusted -- Sec. 204.067 gives the Commission authority over RTR/OA/DTR jointly, so in principle a different combination could produce the same net figure, though DTR alone accounting for the entire gap at both ends is the simplest and best-supported explanation."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 9000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.0032,
+      "max": 0.0632
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

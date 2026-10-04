@@ -1,0 +1,44 @@
+{
+  "jurisdiction": {
+    "level": "territory",
+    "code": "GU",
+    "name": "Guam"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasOwnMinimumWage": true,
+  "standard": {
+    "hourly": 9.25,
+    "hourlyCents": 925,
+    "effectiveFrom": "2021-03-01",
+    "coverage": "All covered employers.",
+    "note": "Guam Public Law 35-52's final step."
+  },
+  "tipped": {
+    "tipCreditAllowed": false,
+    "cashWage": 9.25,
+    "cashWageCents": 925,
+    "maxTipCredit": 0.0,
+    "maxTipCreditCents": 0,
+    "tippedEmployeeThreshold": null,
+    "note": "Guam allows NO tip credit -- DOL's tipped table lists it among the jurisdictions requiring the full minimum wage as a cash wage before tips."
+  },
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

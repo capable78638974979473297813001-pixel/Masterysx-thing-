@@ -1,0 +1,45 @@
+{
+  "code": "FL",
+  "name": "Florida",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$scopeNote": "Florida has NO state individual wage income tax -- a constitutional prohibition (Fla. Const. Art. VII, sec. 5), not a mere policy choice. Never has had one.",
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Florida has no income tax to be reciprocal about, same convention as this project's other no-income-tax states (SD, TN)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE, and constitutionally barred. No Florida city or county levies, or may levy, a tax on wages or earned income.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory, and none permitted locally either. The Florida Paid Family Leave Insurance Act authorizes licensed insurers to OFFER voluntary paid-leave policies -- no state fund, no mandatory deduction (same voluntary-insurance-only shape as South Carolina's Act 206 and Tennessee's 2023 Act). Florida additionally preempts local governments from creating their own paid-leave mandates -- CONFIRMED directly via Fla. Stat. sec. 218.077's own text (see sources above), not just cross-sourced: 'a political subdivision may not... require an employer to... provide employment benefits not otherwise required by state or federal law.'",
+    "confidence": "cross_source_confirmed."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 7000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.054
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

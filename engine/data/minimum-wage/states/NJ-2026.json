@@ -1,0 +1,105 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "NJ",
+    "name": "New Jersey"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 15.92,
+    "hourlyCents": 1592,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "Most employers (6 or more employees, non-seasonal).",
+    "note": "N.J.S.A. 34:11-56a4 -- the post-$15 phase of the 2019 Raise the Wage Act, now on annual CPI indexing.",
+    "appliesWhen": {
+      "employeeCountMin": 6
+    }
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 6.05,
+    "cashWageCents": 605,
+    "maxTipCredit": 9.87,
+    "maxTipCreditCents": 987,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "New Jersey's tipped cash wage steps with the standard rate."
+  },
+  "variants": [
+    {
+      "hourly": 15.23,
+      "hourlyCents": 1523,
+      "id": "small_or_seasonal_employer",
+      "label": "Seasonal employers and employers with fewer than 6 employees",
+      "test": "N.J.S.A. 34:11-56a4. This tier is still CATCHING UP to the main rate and converges later in the schedule.",
+      "appliesWhen": {
+        "employeeCountMax": 5
+      }
+    },
+    {
+      "hourly": 14.2,
+      "hourlyCents": 1420,
+      "id": "agricultural",
+      "label": "Agricultural employees",
+      "test": "A separate, slower schedule for farm workers."
+    },
+    {
+      "hourly": 18.92,
+      "hourlyCents": 1892,
+      "id": "long_term_care_direct_care",
+      "label": "Direct care staff at long-term care facilities",
+      "test": "The state minimum wage plus $3.00/hr.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "id": "dol-consolidated",
+      "title": "U.S. DOL Wage and Hour Division -- Consolidated Minimum Wage Table",
+      "url": "https://www.dol.gov/agencies/whd/mw-consolidated",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched this session as a THIRD cross-check on the two tables above (which state is above / at / below the federal floor, plus the Montana, New Jersey, New York, Ohio and Oregon sub-rates)."
+    },
+    {
+      "title": "New Jersey Department of Labor and Workforce Development -- minimum wage increase announcement for January 1, 2026",
+      "url": "https://www.nj.gov/labor/lwdhome/press/2025/20251001_Minimum_Wage.shtml",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for $15.92 general, $15.23 seasonal/small, $14.20 agricultural and the $6.05 tipped cash wage. DOL's own tables independently carry $15.92 / $15.23 / $6.05."
+    },
+    {
+      "title": "New Jersey Office of Administrative Law -- Notice of Administrative Changes, Minimum Wage (N.J.A.C. 12:56-3.1/3.2/3.3), filed 2025-09-26",
+      "url": "https://www.nj.gov/labor/assets/PDFs/Legal%20Notices/Other/Public%20Notice%20Minimum%20Wage%202026_FINAL.pdf",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "PDF downloaded and its text extracted directly this session. Confirms the CPI-W (U.S. City Average) methodology verbatim and the exact underlying index values: 'the CPI-W, U.S. City Average, in August 2024 was 308.640, and in August 2025 it was 317.306 ... an increase of 2.81 percent.' 2.81% applied to 2025's $15.49 general rate computes to $15.92 (matches this file's own figure); the document's later pages, where the per-category dollar figures for 2026 presumably appear, did not extract as readable text this pass -- those figures rest on the NJDOL press-release citation already carried above."
+    }
+  ],
+  "knownGaps": [
+    "The long-term-care direct-care premium ($3.00 over the state rate) is cross-sourced rather than read off NJDOL's own page this pass."
+  ],
+  "confidence": "primary_source_confirmed"
+}

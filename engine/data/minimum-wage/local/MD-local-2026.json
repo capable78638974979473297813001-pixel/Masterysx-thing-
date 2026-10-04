@@ -1,0 +1,181 @@
+{
+  "state": "MD",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "Maryland's two county minimum wages both step on July 1 -- the opposite cycle from the state rate, which has been flat at $15.00 since 2024. Prince George's County's ordinance was overtaken by the state rate and is not carried.",
+  "jurisdictions": [
+    {
+      "id": "montgomery_county",
+      "name": "Montgomery County",
+      "level": "county",
+      "hourly": 18.0,
+      "hourlyCents": 1800,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "coverage": "Large employers: 51 or more employees.",
+      "variants": [
+        {
+          "id": "large_h1",
+          "label": "Employers with 51 or more employees, January 1 - June 30, 2026",
+          "hourly": 17.65,
+          "hourlyCents": 1765,
+          "appliesWhen": {
+            "employeeCountMin": 51
+          },
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": "2026-06-30",
+          "test": "In effect before the 2026-07-01 step to $18.00."
+        },
+        {
+          "id": "midsize_h1",
+          "label": "Employers with 11-50 employees, January 1 - June 30, 2026",
+          "hourly": 16.0,
+          "hourlyCents": 1600,
+          "appliesWhen": {
+            "employeeCountMin": 11,
+            "employeeCountMax": 50
+          },
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": "2026-06-30",
+          "test": "In effect before the 2026-07-01 step to $16.50."
+        },
+        {
+          "id": "small_h1",
+          "label": "Employers with 10 or fewer employees, January 1 - June 30, 2026",
+          "hourly": 15.5,
+          "hourlyCents": 1550,
+          "appliesWhen": {
+            "employeeCountMax": 10
+          },
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": "2026-06-30",
+          "test": "In effect before the 2026-07-01 step to $15.95."
+        },
+        {
+          "id": "midsize_h2",
+          "label": "Employers with 11-50 employees",
+          "hourly": 16.5,
+          "hourlyCents": 1650,
+          "appliesWhen": {
+            "employeeCountMin": 11,
+            "employeeCountMax": 50
+          },
+          "effectiveFrom": "2026-07-01"
+        },
+        {
+          "id": "small_h2",
+          "label": "Employers with 10 or fewer employees",
+          "hourly": 15.95,
+          "hourlyCents": 1595,
+          "appliesWhen": {
+            "employeeCountMax": 10
+          },
+          "effectiveFrom": "2026-07-01"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Montgomery County, MD Office of Human Rights -- Minimum Wage Increase (July 1, 2026)",
+          "url": "https://www.montgomerycountymd.gov/office-human-rights/minimum-wage-increase",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session across the county's own press release and Office of Human Rights page: $18.00 large / $16.50 mid-size / $15.95 small, effective 2026-07-01 under the county's annual regional-inflation adjustment."
+        },
+        {
+          "title": "Montgomery County, MD tipped-employee cash wage ($4.00/hr, Montgomery County Code Sec. 27-69)",
+          "url": "https://www.montgomerycountymd.gov/humanrights/min-wage.html",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session across multiple independent summaries citing the county's own code section; found only after this project's ORIGINAL research pass had left Montgomery County's tipped rate unspecified and let it silently fall back to the state's $3.63 -- which understates every Montgomery County tipped worker's true cash floor by $0.37/hr. The county's own page did not render this specific figure on a direct fetch."
+        },
+        {
+          "title": "Montgomery County, MD minimum wage rates in effect before the 2026-07-01 step",
+          "url": "https://content.govdelivery.com/accounts/MDMONTGOMERY/bulletins/40be635",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: large $17.65, mid-size $16.00, small $15.50 -- each increasing on 2026-07-01 (large +$0.35 to $18.00, mid-size +$0.50 to $16.50, small +$0.45 to $15.95)."
+        }
+      ],
+      "appliesWhen": {
+        "employeeCountMin": 51
+      },
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 4.0,
+        "cashWageCents": 400,
+        "maxTipCredit": 14.0,
+        "maxTipCreditCents": 1400,
+        "tippedEmployeeThreshold": {
+          "amount": 30.0,
+          "period": "month"
+        },
+        "note": "Montgomery County Code Chapter 27 (Human Rights and Civil Liberties), Sec. 27-69 sets its OWN cash wage of $4.00/hr -- higher than the state's $3.63 -- applied against whichever of the county's three employer-size tiers covers this employer. maxTipCredit shown against the LARGE-employer $18.00 tier (the widest gap); the mid-size and small tiers have smaller credits against the same $4.00 cash floor."
+      }
+    },
+    {
+      "id": "howard_county",
+      "name": "Howard County",
+      "level": "county",
+      "hourly": 16.0,
+      "hourlyCents": 1600,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "coverage": "All employers. Howard County's small-employer tier (fewer than 15 employees) rose from $15.50 to $16.00 on 2026-07-01, UNIFYING the county on a single rate for the first time -- a table still carrying two Howard County rates is out of date.",
+      "sources": [
+        {
+          "title": "Howard County, MD -- Minimum Wage schedule (Finance Department)",
+          "url": "https://www.howardcountymd.gov/finance/minimum-wage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "Fetched and read directly this session at the county's own Finance Department page. Its own wage schedule table shows the small-employer tier reaching $16.00 on 2026-07-01, unifying with the county's single rate, and confirms that from 2027-01-01 onward increases are set by CPI-U rather than by council action."
+        },
+        {
+          "title": "Howard County, MD tipped-employee minimum wage (permits the state's $3.63 cash wage)",
+          "url": "https://www.howardcountymd.gov/finance/minimum-wage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'Howard County permits the same tip credit as Maryland state law -- employers must pay tipped employees at least $3.63 per hour, and the combination of cash wages and tips must equal or exceed the Howard County minimum wage rate.'"
+        },
+        {
+          "title": "Howard County, MD -- two-tier minimum wage structure before the 2026-07-01 unification",
+          "url": "https://www.howardcountymd.gov/finance/minimum-wage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'Small employers (fewer than 15 employees) began 2026 at $15.50 per hour, and large employers (15 or more employees) had to pay $16.00 per hour,' unifying to a single $16.00 rate for all employers on 2026-07-01."
+        }
+      ],
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 3.63,
+        "cashWageCents": 363,
+        "maxTipCredit": 12.37,
+        "maxTipCreditCents": 1237,
+        "tippedEmployeeThreshold": {
+          "amount": 30.0,
+          "period": "month"
+        },
+        "note": "Howard County permits the SAME cash wage as Maryland state law ($3.63/hr) -- unlike Montgomery County, which sets its own higher figure -- applied against the county's own (higher) standard rate."
+      },
+      "variants": [
+        {
+          "id": "small_h1",
+          "label": "Employers with fewer than 15 employees, January 1 - June 30, 2026",
+          "hourly": 15.5,
+          "hourlyCents": 1550,
+          "appliesWhen": {
+            "employeeCountMax": 14
+          },
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": "2026-06-30",
+          "test": "Howard County had TWO tiers through 2026-06-30 -- this one, and $16.00 for everyone else. They unified into a single $16.00 rate on 2026-07-01, which is why this file's own base entry carries no appliesWhen at all."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Maryland tipped cash wages are set at the STATE level ($3.63); neither county publishes a separate tipped figure, so none is asserted here."
+  ]
+}

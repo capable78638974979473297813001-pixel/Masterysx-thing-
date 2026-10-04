@@ -1,0 +1,53 @@
+{
+  "code": "NV",
+  "name": "Nevada",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$methodComment": "Structural fact, not a modelling choice: Nevada's constitution (Art. 10, and the state's own franchise on personal income tax) has never levied a personal income tax, and no legislative proposal is pending. Data-only pass — this state has no employee-side withholding tax at all, so the interesting content here is entirely EMPLOYER-paid: the Modified Business Tax (MBT, a payroll excise) and SUTA. Not wired into calc code beyond the existing no_income_tax dispatch, which already returns zero lines.",
+  "wageIncomeTax": false,
+  "wageIncomeTaxNote": "Nevada has never had a personal income tax. No employee-side income tax withholding exists or is proposed. This is a structural fact, the same tier as South Dakota/Texas/Washington/Wyoming/Florida/Alaska/Tennessee/New Hampshire's wage-tax-free status already recorded in us-registry.json.",
+  "reciprocity": {
+    "rule": "N/A — no state income tax to reciprocate on."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. Nevada's constitution reserves taxing authority narrowly; no county or municipality (including Las Vegas/Clark County) levies a local income or payroll tax on wages."
+  },
+  "modifiedBusinessTax": {
+    "$comment": "Employer-paid EXCISE on total gross wages paid (after health-insurance-premium deductions), NOT an employee withholding tax — the employee's paycheck is never touched by this. Genuinely different tax base from every payroll tax modelled elsewhere in this project so far (it's Nevada's substitute for not having a corporate or personal income tax).",
+    "generalBusiness": {
+      "rate": 0.0117,
+      "quarterlyExemption": 50000,
+      "note": "Rate effective 2023-07-01, current through 2026. First $50,000 of a quarter's gross wages is non-taxable; only the excess over $50,000 is taxed at 1.17%. Every registered employer must file a return each quarter regardless of tax due."
+    },
+    "financialInstitutionsAndMining": {
+      "rate": 0.01554,
+      "quarterlyExemption": 0,
+      "note": "Rate effective 2023-07-01. NO $50,000 exemption for this category — the full wage base (after health-benefit deductions) is taxed. SB 483 (78th Legislative Session) expanded 'financial institution' to include Net Proceeds of Minerals taxpayers (NRS 362.100-362.240), who file on a separate MBT-Mining return but pay the same 1.554% rate."
+    },
+    "statutoryAuthority": "NRS 363B (General Business), NRS 363A (Financial Institutions)."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 41800,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.0295,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.0025,
+      "max": 0.054
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

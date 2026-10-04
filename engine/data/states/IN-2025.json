@@ -1,0 +1,127 @@
+{
+  "code": "IN",
+  "name": "Indiana",
+  "year": 2025,
+  "method": "flat_rate_multi_exemption",
+  "$methodComment": "UPGRADED 2026-08-12: state.ts now has a dedicated 'flat_rate_multi_exemption' method (separate from PA/MI's flatRate()) that (1) reduces the base by all FOUR of WH-4's exemption tiers, each rounded per-period independently the way Departmental Notice #1's own Table A/B/C are, and (2) in the SAME pass, resolves workState.certificate.county against data/local/IN-counties-2026.json and emits a second, jurisdiction:'local' tax line stacked on the identical reduced base — matching Departmental Notice #1's own worked example, which computes state and county tax off one shared 'Taxable Income' figure. Proven against that exact worked example (see tests/engine.test.ts, describe('Indiana')): $800/week, 5 personal + 3 dependent + 1 first-time-dependent + 2 adopted-child exemptions reduces to $473.08 taxable, and $473.08 x 2.95% / x 1% reproduce the document's own $13.96 and $4.73 to the cent.",
+  "sources": [
+    {
+      "title": "Indiana DOR -- Departmental Notice #1 effective Jan. 1, 2025 (R45 / 12-24), Internet Archive copy",
+      "url": "https://web.archive.org/web/20250313123314id_/https://www.in.gov/dor/files/dn01.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "For 2025, the state adjusted gross income tax rate for individuals is 3.00%. ... Example: An employee is paid a weekly salary of $800 ... Taxable Income $473.08 ... State Tax to Withhold $473.08 x .03 = $14.19 County Tax to Withhold $473.08 x .01 = $4.73"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "flatRate": {
+    "rate": 0.03,
+    "comment": "2.95% for 2026 (down from 3.23% in recent years — Indiana has been on a multi-year phased rate reduction; the lower current figure was confirmed directly against the CURRENT Departmental Notice #1, not carried over from an older/stale secondary source)."
+  },
+  "exemptionTiers": {
+    "personal": 1000.0,
+    "dependent": 1500.0,
+    "firstTimeDependent": 1500.0,
+    "adoptedChild": 3000.0,
+    "comment": "WH-4 lines 5-8 / Departmental Notice #1 Tables A/B/C, all four now modelled by state.ts's flatRateMultiExemption(). Each is an ANNUAL dollar amount per exemption claimed; the engine divides by periodsPerYear and rounds per-period BEFORE summing the four tiers, reproducing Departmental Notice #1's own published per-period Table values exactly rather than approximating them via a single annualize/de-annualize round trip.",
+    "certificateFields": "input.workState.certificate.{personalExemptions, dependentExemptions, firstTimeDependentExemptions, adoptedChildExemptions} — all optional, default 0, same convention as Michigan's certificate.allowances."
+  },
+  "supplementalRate": 0.03,
+  "supplementalComment": "CONFIRMED 2026-08-12, no longer an inference: PayrollOrg's PayState Update states directly, 'the state withholding tax rate decreases to 2.95% from 3%. This means that the state supplemental wage tax rate will decrease to 2.95% from 3%.' Indiana's supplemental rate tracks the regular flat rate exactly (unlike Ohio's separately-set 2.75%). Departmental Notice #1 itself still does not use the word 'supplemental' anywhere in its own text — this confirmation comes from the professional payroll trade body's reporting on the same DN1 revision, not from DN1 directly — but it is now a quoted statement, not a structural guess.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "UPGRADED 2026-08-12: previously inferred from secondary citations of IC 6-3-1-3.5's opening clause; now confirmed by reading the statute's FULL text directly (~35 numbered addition/subtraction items). Indiana adjusted gross income starts from federal AGI (IC 6-3-1-3.5(a)) and the complete modifications list does not add back, exclude, or otherwise touch 401(k)/403(b)/457/SIMPLE deferrals, Section 125 cafeteria benefits, HSA/FSA, dependent care, or commuter benefits anywhere — so these remain excluded from the Indiana base exactly as they are from federal AGI, with no Indiana-specific override. Still one tier below Michigan's RAB-1988-27 (which explicitly NAMES cafeteria plans as its own enumerated item) — Indiana's statute doesn't name these categories, it simply never modifies them — but this is now a completed-read confirmation of that absence, not a guess about it.",
+  "withholdingCertificate": {
+    "$comment": "WH-4's name — 'Employee's Withholding Exemption AND COUNTY STATUS Certificate' — signals that Indiana bakes the county-residency determination into the SAME form as the exemption count, unlike every other state modelled in this project so far, which have separate mechanisms (or none) for local-jurisdiction determination.",
+    "source": {
+      "title": "WH-4, State Form 48845",
+      "url": "https://www.in.gov/dor/tax-forms/withholding-tax-forms/",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "Form's existence, name, and state-form number confirmed via search snippets of the official in.gov forms index and secondary reproductions (school district / county government copies); the form itself was not downloaded and read directly this session. Line numbers and dollar amounts below come from Departmental Notice #1's own description of what WH-4 lines 5-8 feed into, which IS a direct primary read."
+    },
+    "fields": {
+      "personalExemptions": "Line 5 — $1,000/exemption (Table A). Includes additional exemptions for the employee and/or spouse being 65+ or blind.",
+      "dependentExemptions": "Line 6 — $1,500/qualifying dependent (Table B).",
+      "firstTimeAdditionalDependentExemption": "Line 7 — $1,500, a ONE-TIME supplemental exemption for a NEWLY qualifying dependent (Table B is reused for this). Not present in any other state modelled in this project — a genuine Indiana-specific wrinkle, not a copy-paste of a federal or MI/OH/PA concept.",
+      "adoptedChildExemption": "Line 8 — $3,000/qualifying adopted child (Table C).",
+      "countyStatus": "The form's other half — captures county of residence (and, implicitly, county of principal work for out-of-state residents) as of Jan 1, which data/local/IN-counties-2026.json's rateBasis.rule depends on. This is the ONLY mechanism by which an employer learns which of the 92 county rates to apply."
+    },
+    "knownGap": "All four exemption dollar amounts are now modelled (see exemptionTiers above and state.ts's flatRateMultiExemption()) and county resolution is now modelled (see countyIncomeTax below) — CLOSED 2026-08-12. Two things remain genuinely unmodelled: (1) WH-4's 65-or-older/blind ADDITIONAL exemptions are folded into 'personalExemptions' as a single count by convention (matching how the personal-exemption count is described on the form itself, which does not separately break these out on Table A), not tracked as their own field; (2) the county-STATUS *determination* itself (residence-vs-work, Jan-1 snapshot) is not modelled — the engine takes workState.certificate.county as a given, already-resolved value rather than deriving it."
+  },
+  "nonresidentThirtyDayRule": {
+    "$comment": "New since 2024 — effectively an Indiana-specific de minimis nonresident exemption, structurally similar in SPIRIT to Ohio's reciprocity mechanism but a completely different legal basis (a withholding-relief rule tied to days worked, not a state-to-state agreement).",
+    "rule": "An employer is not required to withhold Indiana state OR county tax on an employee reasonably expected to work in Indiana 30 days or less in the calendar year, PROVIDED the employer has a time-and-attendance system that contemporaneously records out-of-state work location and uses it to allocate compensation between states. If the employee actually exceeds 30 days, the employer must withhold for the days already worked (catch-up) plus everything after. A properly completed Form WH-4AFF relieves the employer from withholding until the 30-day threshold is actually crossed.",
+    "exclusions": "NOT available for professional athletes, professional sports team members, race team members, professional entertainers, public figures, or anyone who is or becomes an Indiana resident for any part of the calendar year. Prior-employer days in Indiana count toward the same employee's 30-day count.",
+    "quotedFromSource": "If you have a time and attendance system where employees are required to record the employee's out-of-state work location on a contemporaneous basis and that system is used to allocate compensation between states, you are not required to withhold state and local taxes if the employee is reasonably expected to work in Indiana for 30 days or less during the calendar year.",
+    "knownGap": "Modelled via nonresidentDayCountReason() (src/taxes/state.ts), reading certificate.daysWorkedInStateThisYear against reciprocity.exemptWhenDaysWorkedAtMost, checked independently of plain reciprocity so it also reaches IN_COUNTY (which reciprocity alone does not) — fixed 2026-09-06 after testing found it silently unreachable for a resident of this state's own reciprocalStates (KY/MI/OH/PA/WI); see tests/engine.test.ts's 'STACKS with reciprocity' test. Form WH-4AFF itself was not fetched/read directly; this rests on the same secondary description used to build the rule."
+  },
+  "specialPopulations": {
+    "professionalAthletesAndRaceTeams": {
+      "$comment": "Flagged as a genuinely disclosed unknown, not researched further this session — Departmental Notice #1 references 'Income Tax Information Bulletins #88 and #88B' for the specific rules governing professional team members and race team members, who are also carved OUT of the 30-day nonresident relief above. Bulletins not fetched."
+    }
+  },
+  "reciprocity": {
+    "exemptWhenDaysWorkedAtMost": 30,
+    "dayCountRequiresCallerEligibility": true,
+    "dayCountAlsoExempts": [
+      "IN_COUNTY"
+    ],
+    "$dayCountComment": "Departmental Notice #1: an employer need not withhold Indiana state OR county tax on an employee reasonably expected to work in Indiana 30 days or fewer in the calendar year, PROVIDED the employer runs a time-and-attendance system that contemporaneously records out-of-state work location. The proviso is an employer fact, so the caller asserts it; dayCountAlsoExempts carries the rule's reach into the county line, which every other exemption in this engine deliberately leaves alone.",
+    "source": {
+      "title": "Form WH-47 — Certificate of Residence",
+      "url": "https://forms.in.gov/download.aspx?id=2419",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF fetched and read directly this session, full text quoted above in sources."
+    },
+    "reciprocalStates": [
+      "KY",
+      "MI",
+      "OH",
+      "PA",
+      "WI"
+    ],
+    "rule": "A resident of KY/MI/OH/PA/WI working in Indiana may certify (via WH-47) exemption from Indiana STATE withholding. CRITICAL AND EASY TO GET WRONG: this exemption does NOT extend to Indiana COUNTY tax — WH-47's own text states the employer 'remains responsible for withholding any applicable Indiana County taxes' regardless of the reciprocity certification. This is structurally different from every other reciprocity relationship modelled in this project (MI's and OH's reciprocity exempt the whole of Indiana-equivalent local+state withholding for the analogous cases) and is the single most important gotcha in Indiana's local-tax design.",
+    "mechanism": "Employee self-certifies via Form WH-47, filed with and held by the employer (not sent to DOR). Employee must notify the employer of any change in legal residence.",
+    "symmetryCheck": "Both Michigan's (MI-2026.json) and Ohio's (OH-2026.json) own reciprocity lists already include Indiana, confirming this is a mutually consistent 5/6-way reciprocity network from three independent primary sources now on file (MI's Treasury reciprocity page, OH's IT 4NR form, IN's WH-47) — no contradiction found across any of the three.",
+    "knownGap": "RESOLVED, including the state-vs-county split this note used to flag as needing its own branch: state.ts's zeroStateIncomeTaxLines() zeroes only lines whose id starts with `IN_SIT`, leaving IN_COUNTY (a separate id, emitted by the same flatRateMultiExemption() call) untouched — proven in tests/engine.test.ts, describe('Indiana'), \"reciprocity exempts STATE tax only — county tax still applies (WH-47's own critical gotcha)\", which asserts IN_SIT drops to $0 while IN_COUNTY stays at its full $16.16. This was the actual motivating case for building the mechanism this way rather than a simpler whole-array replacement."
+  },
+  "countyIncomeTax": {
+    "$comment": "Full 92-county rate table, sourcing, and the residence-vs-work determination rule now live in data/local/IN-counties-2026.json — this is a MANDATORY layer, not an optional local add-on the way MI's 24-city or OH's municipal tax are. Every Indiana address has a nonzero-or-explicitly-listed county rate; there is no 'default zero' case the way Michigan's closed-list-of-24 has for the rest of the state.",
+    "pointer": "data/local/IN-counties-2026.json",
+    "knownGap": "CLOSED 2026-08-12 for the calculation itself — state.ts's flatRateMultiExemption() now resolves workState.certificate.county via registry.ts's new countyRuleset() and emits a jurisdiction:'local' IN_COUNTY line stacked on the same reduced base as the state line, proven against Departmental Notice #1's own worked example (see $methodComment). What remains open: the RESIDENCE-VS-WORK determination that decides WHICH county name should be passed in is still the caller's responsibility, not the engine's (see withholdingCertificate.knownGap and reciprocity.knownGap) — this models 'apply county X's rate' correctly, not 'figure out that county X is the right one.' An unrecognised or missing county name produces an explicit NOT MODELLED line (id IN_COUNTY, amount 0), never a silent zero, same safety convention as an unmodelled state."
+  },
+  "verification": {
+    "regularWagesAndCountyCalculation": "PROVEN, not just plausible, as of 2026-08-12: 5 hand-derived fixtures (Departmental Notice #1's own worked example reproduced to the cent; zero-exemptions; 401(k) deferral reducing the shared base via the federal-AGI anchor; a missing-county safety line; an unrecognised-county-name safety line) run through the actual calculatePaycheck() engine — see tests/engine.test.ts, describe('Indiana'). This confirms the state AND county lines both genuinely dispatch through flatRateMultiExemption(), not just that the JSON looks compatible. Expected values were computed by hand from Departmental Notice #1 before the code was run, same discipline as Michigan's fixtures.",
+    "notCoveredByAnyFixtures": "Supplemental (bonus) wages, the 30-day nonresident rule, reciprocity's state-exempt-but-county-taxable split, and SUTA are NOT exercised by any test — see knownGaps below."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 9500,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.025,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.005,
+      "max": 0.074
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: 3.00% state rate (2026: 2.95%); exemption amounts unchanged ($1,000 personal, $1,500 dependent and first-time dependent, $3,000 adopted child). County rates are in data/local/IN-counties-2025.json."
+}

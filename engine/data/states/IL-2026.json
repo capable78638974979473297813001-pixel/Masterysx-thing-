@@ -1,0 +1,166 @@
+{
+  "code": "IL",
+  "name": "Illinois",
+  "year": 2026,
+  "method": "flat_rate_two_tier_exemption",
+  "$methodComment": "STATE-ONLY, no local income tax anywhere in Illinois — see localTaxScope below. The rate itself is flat (same shape as PA/MI), but IL-W-4's allowance structure has TWO tiers (Line 1 basic @ $2,925/allowance, Line 2 additional @ $1,000/allowance), which flatRate()'s single-tier model can't express — same class of gap Indiana's WH-4 had, minus the county add-on. state.ts's new flatRateTwoTierExemption() handles both tiers, each rounded per-period independently (matching the state's own published per-period exemption figures, confirmed two ways: IL-700-T's own bi-weekly/monthly display AND the Illinois Comptroller's 2026 payroll bulletin both show $112.50/pay-period biweekly and $243.75/pay-period monthly for a SINGLE Line-1 allowance, both of which are exactly $2,925 divided by 26 and 12 respectively).",
+  "sources": [
+    {
+      "title": "2026 IL-700-T Illinois Withholding Tax Tables",
+      "url": "https://tax.illinois.gov/forms/withholding/currentyear/il-700-t-withholding-guide-tables.html",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "fetched directly via browser. Quoted: 'Effective January 1, 2026, Tax Rate 4.95%' and 'the exemption allowance is $2,925.' Also the source for the two-tier formula: 'Tax withheld = 0.0495 x (Wages - (((Line 1 allowances x $2,925) + (Line 2 allowances x $1,000)) / Number of pay periods in a year))'. NOTE: this same page's own narrative worked example ('Mary', $300/week, 2 Line-1 + 1 Line-2 allowances) states the withholding as $8.38 — independently recomputed from the page's own formula and confirmed dollar figures, this yields $8.33, not $8.38. See knownGaps: treated as a likely-stale narrative left over from a prior year's allowance amounts (the Comptroller's bulletin confirms $2,925 replaced $2,850 for 2026), not as authoritative — the formula and per-period figures are cross-confirmed by two independent primary sources and used instead."
+    },
+    {
+      "title": "Illinois State Income Tax Exemptions - 2026 (Illinois Office of Comptroller, Payroll Bulletin 1-26)",
+      "url": "https://illinoiscomptroller.gov/state-agencies/bulletins-forms/payroll-bulletins/illinois-state-income-tax-exemptions-2026",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Quoted: 'the state income tax exemption has increased from $2,850 to $2,925 for the 2026 tax year... Bi-weekly $112.50, Semi-monthly $121.88, Monthly $243.75.' Independently confirms $2,925 (2,925/26=112.50 exactly, 2,925/12=243.75 exactly, 2,925/24=121.875 rounds to 121.88) — this is what resolved the 'Mary' example discrepancy in favor of the formula, not the narrative text."
+    },
+    {
+      "title": "Form IL-W-4 — Employee's and other Payee's Illinois Withholding Allowance Certificate and Instructions (R-07/23)",
+      "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/withholding/documents/currentyear/il-w-4.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Read the full Illinois Withholding Allowance Worksheet: Line 1 = basic allowances (self + spouse-as-dependent + dependents); Line 2 = additional allowances = (count of 65-or-older/blind boxes checked) + (federal Form W-4 Deductions Worksheet Line 4 amount, divided by 1,000 and rounded). Also the source for the reciprocity pointer to Form W-5-NR and the quarterly-effective-date rule for certificate changes."
+    },
+    {
+      "title": "35 ILCS 5/203 — Base income defined (Illinois Income Tax Act)",
+      "url": "https://law.justia.com/codes/illinois/chapter-35/act-35-ilcs-5/article-2/",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "Fetched and read the FULL statute text directly (via Justia's verbatim code reproduction). Quoted: '(1) In general. In the case of an individual, base income means an amount equal to the taxpayer's adjusted gross income for the taxable year as modified by paragraph (2).' The full modifications list was searched for pretax-deferral terms: the only IRC 402/403(b)/408 references found are about RETIREMENT DISTRIBUTIONS being added back to income (consistent with Illinois's well-known non-taxation of most retirement income on the back end), not about elective pretax CONTRIBUTIONS. No mention anywhere of Section 125 cafeteria plans, HSA/FSA, dependent care, commuter benefits, or SIMPLE plans. This is the basis for exemptPretax below — a direct full-statute read, same tier and method as Indiana's IC-6-3-1-3.5 upgrade."
+    },
+    {
+      "title": "IL-W-5-NR — Employee's Statement of Nonresidence in Illinois (R-12/10)",
+      "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/withholding/documents/2025/il-w-5-nr.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "UPGRADED 2026-08-12: PDF downloaded and text-extracted directly (previously only confirmed via search snippets and Iowa's corroborating page). Quoted in full: 'You must complete Part 1 of this form if you are a resident of Iowa, Kentucky, Michigan, or Wisconsin, or your spouse is in the military... and your wages are exempt from withholding of Illinois Income Tax under the reciprocal withholding agreements... You must file your completed Form IL-W-5-NR with your Illinois employer. If you change your state of residence, you must notify your employer within ten days.' Confirms the 4-state reciprocal list and the 10-day notice duty directly from the form itself, not a secondary description."
+    },
+    {
+      "title": "Pub-130, Withholding Illinois Income Tax for My Employees",
+      "url": "https://tax.illinois.gov/research/publications/pubs/who-is-required-to-withhold-illinois-income-tax/withholding-illinois-income-tax-for-my-employees.html",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "NEW 2026-08-12: fetched directly via browser, read in full. This is where the nonresidentThirtyDayRule below and Form IL-W-6 were found — quoted: 'compensation paid to a non-resident employee who has performed less than 31 days of service in Illinois and whose compensation is not localized in Illinois... [is exempt from Illinois withholding].' Also confirms Form IL-W-5-NR's trigger conditions verbatim (reciprocal-state residency OR qualifying military-spouse situations) and that an unfiled/disregarded IL-W-4 means withholding 'with no allowances' — i.e. maximum withholding, the same fail-safe convention as PA/MI/IN. Searched this page specifically for the phrase 'supplemental' — zero matches, consistent with supplementalComment below."
+    },
+    {
+      "title": "2026 State Experience Factor and Employers' UI Contribution Rates (EA-50 Report, Illinois Department of Employment Security)",
+      "url": "https://ides.illinois.gov/content/dam/soi/en/web/ides/ides_forms_and_publications/EA-50_2026.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Went straight to this primary source after three different secondary blogs gave three different, mutually contradictory 2026 wage-base figures ($13,271 / $13,590 / $14,250) — the primary document confirms $14,250 is correct and the other two were stale/wrong. Full formula read directly: Benefit Ratio x 102% (2026 State Experience Factor) + 0.550% Fund Building Rate, min 0.750%, max 7.050%, new-employer 3.350% (3.450% for NAICS sector 56)."
+    }
+  ],
+  "flatRate": {
+    "rate": 0.0495,
+    "comment": "4.95% for 2026, confirmed directly against the current IL-700-T guide. Illinois's rate has been flat at 4.95% for a number of years — unlike Indiana's annually-decreasing rate, no year-over-year rate change to track here, only the exemption dollar amounts move."
+  },
+  "exemptionTiers": {
+    "basic": 2925.0,
+    "additional": 1000.0,
+    "comment": "IL-W-4 Line 1 (basic, $2,925 for 2026, up from $2,850 in 2025 per the Comptroller's bulletin) and Line 2 (additional, $1,000, unconfirmed whether this specific figure changed year-over-year — only the basic amount's change was explicitly documented in the sources found this session). Both now modelled by state.ts's flatRateTwoTierExemption(), each tier's per-period constant rounded independently before summing, same discipline as Indiana's four-tier method.",
+    "certificateFields": "input.workState.certificate.{basicAllowances, additionalAllowances} — both optional, default 0, same convention as Michigan's certificate.allowances and Indiana's four exemption fields."
+  },
+  "supplementalRate": 0.0495,
+  "supplementalComment": "UPGRADED 2026-08-12, though still short of an explicit quote: searched Illinois's own tax.illinois.gov site directly for the phrases 'supplemental wages' and 'supplemental withholding' — ZERO indexed results for either. Also read Pub-130 (the document that would be expected to define this if it existed) in full: no mention of a supplemental category anywhere. This is now a confirmed ABSENCE, not just an inference from structure — Illinois's own guidance apparatus does not appear to define a 'supplemental wages' concept at all, consistent with a single uniform flat rate applying to all compensation types without a special bonus rate. Still one tier below Indiana's supplementalRate (which has a direct quoted statement); this is 'searched and found nothing' rather than 'found an explicit yes.'",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "CONFIRMED via a direct full read of 35 ILCS 5/203's base-income modifications list (see sources above), not a secondary paraphrase. Illinois base income starts from federal adjusted gross income and the complete numbered modifications list does not add back, exclude, or otherwise touch 401(k)/403(b)/457/SIMPLE elective deferrals, Section 125 cafeteria benefits, HSA/FSA, dependent care, or commuter benefits — so these remain excluded from the Illinois base exactly as they are from federal AGI. Same confidence tier and method as Indiana's exemptPretax confirmation.",
+  "withholdingCertificate": {
+    "$comment": "IL-W-4's Line 2 ('additional allowances') is the most structurally unusual mechanic found in this project so far: part of its own worksheet total is the employee's federal Form W-4 Deductions Worksheet Line 4 amount, divided by $1,000 and rounded — meaning an Illinois employee's state withholding allowance count is PARTLY DERIVED from a number computed for a completely different (federal) form. No other state modelled in this project has this cross-form dependency.",
+    "source": {
+      "title": "Form IL-W-4 (R-07/23) and its Illinois Withholding Allowance Worksheet",
+      "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/withholding/documents/currentyear/il-w-4.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "PDF downloaded and text-extracted directly this session, full worksheet read line-by-line."
+    },
+    "fields": {
+      "basicAllowances": "Line 1 — Worksheet Step 1: 1 for self (unless claimed as a dependent on someone else's return), +1 if claiming a spouse as a dependent, + count of other dependents. $2,925/allowance.",
+      "additionalAllowances": "Line 2 — Worksheet Step 2: count of (self 65+, self blind, spouse 65+, spouse blind) boxes checked, PLUS (federal W-4 Deductions Worksheet Line 4 amount + any additional IL subtractions) divided by 1,000 and rounded to the nearest whole number. $1,000/allowance.",
+      "additionalWithholdingPerPay": "Line 3 — RESOLVED generically: state.ts's applyAdditionalStateWithholding() reads certificate.additionalWithholding (cents, matching federalW4.extraWithholding's convention) and adds it to IL_SIT, wrapping flatRateTwoTierExemption() the same way it wraps every other method by the shared `${code}_SIT` id prefix. Built for Minnesota, applies here with zero IL-specific code. NOTE the runtime field name is additionalWithholding (the engine's uniform convention across every state), not additionalWithholdingPerPay (this doc block's own descriptive label) — a caller must use the former."
+    },
+    "administrativeNote": "A new or changed Form IL-W-4 does not necessarily take effect immediately — if filed on file already, the employer is only required to apply it starting the first payment after the next calendar quarter (Jan 1/Apr 1/Jul 1/Oct 1) that begins at least 30 days after filing, UNLESS the employer voluntarily applies it sooner. Not modelled — the engine assumes whatever certificate values are passed in are already the ones in effect for the check date.",
+    "knownGap": "The two exemption-count fields AND Line 3's extra per-pay withholding (see additionalWithholdingPerPay above) are now modelled. The Line 2 worksheet's own DERIVATION (from a federal W-4 Deductions Worksheet amount) is still entirely the caller's responsibility — the engine takes additionalAllowances as an already-computed count, the same simplification Indiana's engine method makes for its own certificate fields. Illinois also has no generic certificate.exempt-equivalent claim documented on IL-W-4 itself (unlike Minnesota's Section 2) to test that mechanism against."
+  },
+  "localTaxScope": {
+    "rule": "NO LOCAL INCOME TAX ANYWHERE IN ILLINOIS. Confirmed structurally, not just by absence of evidence: the Illinois Constitution permits larger home-rule municipalities to levy an income tax, but multiple independent sources (Civic Federation, Illinois Policy Institute, and the City of Chicago's own tax FAQ pages) confirm none currently do — Chicago included. This is the simplest local-tax picture of any state in this project: no county layer (unlike Indiana's mandatory 92), no city layer (unlike Michigan's 24), no municipal/school-district/JEDD sprawl (unlike Ohio's ~1,000+ jurisdictions).",
+    "engineImplication": "flatRateTwoTierExemption() correctly emits ONLY a state-jurisdiction TaxLine, never a local one — there is no 'NOT MODELLED, do not treat as zero' local line the way Indiana's missing-county case works, because for Illinois zero local tax IS the correct answer, not an unresolved unknown."
+  },
+  "nonresidentThirtyDayRule": {
+    "$comment": "NEW 2026-08-12: found while reading Pub-130 for the supplemental-rate search — Illinois has its OWN nonresident de minimis threshold, the mirror image of Indiana's 30-day rule, which this file did not previously document at all. Mechanism and form differ from Indiana's WH-4AFF but the underlying shape (a days-worked threshold, a certificate to claim it, a time-and-attendance-system alternative) is structurally similar.",
+    "rule": "An employer is not required to withhold Illinois Income Tax from a nonresident employee who has performed fewer than 31 days of service in Illinois during the tax year, provided the compensation is not otherwise 'localized' in Illinois under Pub-130's sourcing rules.",
+    "quotedFromSource": "compensation paid to a non-resident employee who has performed less than 31 days of service in Illinois and whose compensation is not localized in Illinois under paragraphs one and two in the section 'When is compensation paid in Illinois?'",
+    "mechanism": "Form IL-W-6, 'Certificate of Days Worked in Illinois for Non-Residents' — required on file for each nonresident employee expected to work more than 30 days in Illinois UNLESS the employer maintains a time-and-attendance system that contemporaneously records work location by state and allocates wages accordingly (the same alternative-compliance path Indiana's rule offers). Not required to be submitted to IDOR, but must be retained and produced on request.",
+    "proRationOverThreshold": "If the employee's compensation is not localized to any single state AND they perform more than 30 nonincidental working days in Illinois, only a FRACTION of compensation is subject to Illinois withholding: total compensation x (Illinois working days / total working days for the year) — a proration mechanism Indiana's rule does not have (Indiana's is all-or-nothing after the 30-day threshold is crossed, with catch-up withholding; Illinois prorates continuously).",
+    "knownGap": "The under-30-day EXEMPTION is modelled — nonresidentDayCountReason() (src/taxes/state.ts) reads certificate.daysWorkedInStateThisYear against reciprocity.exemptWhenDaysWorkedAtMost and requires certificate.nonresidentDeMinimisEligible too, per dayCountRequiresCallerEligibility below. The CONTINUOUS PRORATION above 30 days is NOT modelled: that function is a binary exempt-or-not check (days at or under the limit -> $0; otherwise no exemption at all), with no code path for Illinois's own fractional formula (compensation x Illinois days / total working days) once the threshold is crossed — a nonresident who works 60 of 200 days in Illinois is taxed on the full amount here, not the 30% Pub-130 actually calls for. Same gap as Indiana's version of this rule (all-or-nothing there too, but Indiana's own rule has no proration to miss). Form IL-W-6 itself was not separately fetched, only Pub-130's description of it."
+  },
+  "reciprocity": {
+
+    "exemptWhenDaysWorkedAtMost": 30,
+
+    "dayCountRequiresCallerEligibility": true,
+
+    "$dayCountComment": "Illinois's own words, quoted in this file's nonresidentThirtyDayRule: compensation paid to a nonresident who 'has performed less than 31 days of service in Illinois and whose compensation is not localized in Illinois' is exempt from withholding — so 30 days is the last exempt day. The localization test is not something a paycheck can evidence, hence the caller-eligibility requirement.",
+    "source": {
+      "title": "Form IL-W-4 instructions, pointing to Form IL-W-5-NR",
+      "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/withholding/documents/currentyear/il-w-4.pdf",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "Quoted directly from IL-W-4's own instructions: 'If you are a resident of a Iowa, Kentucky, Michigan, or Wisconsin, or a military spouse, see Form W-5-NR, Employee's Statement of Nonresidence in Illinois, to determine if you are exempt.' Independently cross-confirmed by Iowa's own Department of Revenue reciprocity page describing the identical relationship and form from the Iowa side."
+    },
+    "reciprocalStates": ["IA", "KY", "MI", "WI"],
+    "rule": "A resident of IA/KY/MI/WI working in Illinois may certify (via IL-W-5-NR) exemption from Illinois withholding entirely. UNLIKE Indiana, this is a CLEAN full exemption — Illinois has no local income tax to carve out of the exemption the way Indiana's WH-47 explicitly preserves county tax. Illinois's reciprocity is structurally simple for exactly the same reason its local-tax picture is simple.",
+    "mechanism": "Employee self-certifies via Form IL-W-5-NR, filed with the employer. Must notify the employer within 10 days of any change in state of residence.",
+    "symmetryCheck": "Michigan's own reciprocity list (MI-2026.json) already includes IL, confirming this relationship from both sides with two independent primary sources (MI's Treasury reciprocity page, IL's own W-4 instructions) — no contradiction found. Ohio and Indiana are NOT in Illinois's 4-state list (both are in MI's and each other's lists) — Illinois's reciprocity network is smaller than and does not fully overlap with the MI/OH/IN/PA/WV/KY network already documented, a real structural fact worth having gotten right rather than assumed by pattern-matching.",
+    "knownGap": "RESOLVED: state.ts's reciprocityExemptionReason() zeroes IL_SIT generically when input.residenceState is IA/KY/MI/WI, proven directly in tests/engine.test.ts, describe('Illinois'), 'reciprocity: a Wisconsin resident working in Illinois owes $0 IL income tax'. Illinois's version of this gap really was simpler than Indiana's, as this note originally predicted — no state-vs-local split to get right, since Illinois has no local income tax at all (see localTaxScope above)."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUI, Illinois's own term) — no employee contribution, same as every other state modelled so far.",
+    "administeredBy": "Illinois Department of Employment Security (IDES)",
+    "wageBase": 14250.0,
+    "rates": {
+      "newEmployer": 0.0335,
+      "newEmployerNAICS56": 0.0345,
+      "minimum": 0.0075,
+      "maximum": 0.0705,
+      "fundBuildingRate": 0.0055,
+      "stateExperienceFactor2026": 1.02,
+      "benefitConversionFactor2026": 1.384
+    },
+    "rateFormula": "For experience-rated employers (liable 3+ years): Benefit Ratio (Converted Benefit Charges over the applicable lookback period, divided by Taxable Wages for that period) x State Experience Factor (102% for 2026), rounded to the nearest 0.1%, PLUS the 0.550% Fund Building Rate. Min 0.750% (0.2% floor x 102% + 0.550%), max 7.050% (6.400% ceiling x 102% + 0.550%).",
+    "smallEmployerRelief": "An experience-rated employer whose computed contribution rate exceeds 5.400% pays only 5.400% for any calendar quarter in which their total wages are under $50,000 — a real, disclosed provision not found in any of MI/OH/IN's SUTA structures so far.",
+    "newEmployerStructure": "Standard new-employer rate is 3.350% (includes the 0.550% Fund Building Rate). One industry exception found and confirmed: NAICS sector 56 (Administrative Support & Waste Management) pays 3.450% instead. Employers who became liable Jan-Jun 2024 get the GREATER of the standard new-employer rate or an early experience-based rate.",
+    "confidence": "primary_source_confirmed for every figure above — all read directly from IDES's own EA-50 2026 report, not a secondary aggregator. This resolved a real conflict: three different payroll-blog secondary sources gave three different wage-base figures ($13,271/$13,590/$14,250) before the primary document confirmed $14,250.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual Benefit Ratio depends on their own claims/payroll history, not a static jurisdiction constant, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN, not just plausible: 5 hand-derived fixtures (a bi-weekly single-allowance case independently cross-checked against the Comptroller bulletin's own per-period figure; zero allowances; 401(k) reducing the base via the federal-AGI anchor; the IL-700-T page's own 'Mary' scenario, pinned to the formula-correct $8.33 rather than the page's stale $8.38; and an explicit check that no local-jurisdiction line is ever produced) run through the actual calculatePaycheck() engine — see tests/engine.test.ts, describe('Illinois'). Expected values were computed by hand from IL-700-T's formula and the Comptroller's bulletin before the code was run, same discipline as PA/MI/Indiana.",
+    "notCoveredByAnyFixtures": "Supplemental (bonus) wages, the nonresident 30-day/proration rule, and SUI are NOT exercised by any test — see knownGaps below."
+  },
+  "knownGaps": [
+    "The 'Mary' worked example on the IL-700-T page itself states $8.38 for a scenario this file's formula (and the two independently-confirmed exemption dollar amounts) computes as $8.33 — treated as a stale narrative example not updated in sync with the current $2,925/$1,000 figures, disclosed rather than silently resolved, and pinned explicitly in a test fixture rather than hidden. Multiple further attempts this session (Comptroller bulletin, Pub-130, an attempted PDF booklet fetch) did not surface the exact cause; if a future check finds it, update this note.",
+    "supplementalRate is now confirmed-by-absence (Illinois's own site has zero results for 'supplemental wages'/'supplemental withholding' as phrases) rather than a bare structural inference, but still short of an explicit quoted primary statement the way Indiana's is.",
+    "Line 2's own worksheet derivation (from a federal W-4 Deductions Worksheet amount) is not modelled — the engine takes additionalAllowances as an already-computed input.",
+    "The quarterly effective-date rule for certificate changes remains unmodelled — this engine takes the certificate as given for the cheque in front of it. Line 3's additional per-pay withholding IS modelled, generically as certificate.additionalWithholding (verified: $148.50 becomes $173.50 with $25 requested).",
+    "See nonresidentThirtyDayRule.knownGap above: the under-30-day exemption is modelled via nonresidentDayCountReason(); the continuous proration above 30 days (Illinois's own fractional formula once the threshold is crossed) is not.",
+    "SUI is experience-rated per employer (same structural note as every other state modelled) — the formula is fully documented, but an individual employer's Benefit Ratio requires employer-specific claims/payroll history no static jurisdiction constant can supply."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14250,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0335,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.0075,
+      "max": 0.0705
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

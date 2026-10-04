@@ -14,16 +14,18 @@ FUTA: deposit when the cumulative undeposited amount exceeds $500.
 
 from __future__ import annotations
 
+import calendar as _cal
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from decimal import Decimal
 
+from . import taxengine
 from .bizcal import add_business_days, next_business_day, quarter_of, quarter_return_due
 from .engine import period_total
 from .models import Company, Liability
 from .money import ZERO, D, r2
-from .rules import RuleBook
+from .remittance import Remittance
 
 NEXT_DAY_THRESHOLD = D("100000")
 DE_MINIMIS = D("2500")
@@ -42,6 +44,7 @@ class Obligation:
     reason: str
     optional: bool = False
     first_liability: date | None = None
+    penalty_rule: str | None = None
 
 
 @dataclass
@@ -97,27 +100,71 @@ def _daily(liabs: list[Liability]) -> list[tuple[date, Decimal]]:
     return sorted(days.items())
 
 
-def build_obligations(liabilities: list[Liability], companies: dict[str, Company], rules: RuleBook) -> list[Obligation]:
+def build_obligations(liabilities: list[Liability], companies: dict[str, Company],
+                      remittance: Remittance) -> list[Obligation]:
     grouped: dict[tuple, list[Liability]] = defaultdict(list)
     for l in liabilities:
         grouped[(l.company_id, l.deposit_group, l.pay_date.year)].append(l)
     out: list[Obligation] = []
     for (cid, gcode, year), liabs in sorted(grouped.items()):
-        group = rules.groups[gcode]
         company = companies[cid]
+        group = remittance.group(gcode, company)
         if group.schedule == "federal_941":
-            out += _federal_941(company, gcode, _daily(liabs), federal_schedule(company))
+            obs = _federal_941(company, gcode, _daily(liabs), federal_schedule(company))
         elif group.schedule == "follows_federal":
-            out += _periodic(cid, gcode, _daily(liabs), federal_schedule(company))
+            obs = _periodic(cid, gcode, _daily(liabs), federal_schedule(company))
         elif group.schedule == "futa":
-            out += _futa(cid, gcode, year, liabs, rules, group.threshold)
+            obs = _futa(cid, gcode, year, liabs, group.threshold)
         elif group.schedule == "quarterly":
-            out += _quarterly(cid, gcode, year, liabs)
+            obs = _quarterly(cid, gcode, year, liabs)
         elif group.schedule == "accumulated_threshold":
-            out += _accumulated(cid, gcode, _daily(liabs), group.threshold, group.business_days)
+            obs = _accumulated(cid, gcode, _daily(liabs), group.threshold, group.business_days)
+        elif group.schedule == "monthly":
+            obs = _monthly(cid, gcode, liabs, group.due_day or 15)
+        elif group.schedule == "semimonthly":
+            obs = _semimonthly(cid, gcode, _daily(liabs), group.business_days or 3)
+        elif group.schedule == "annual":
+            obs = _annual(cid, gcode, year, liabs)
         else:
-            raise ValueError(f"unknown deposit schedule {group.schedule!r}")
+            raise ValueError(f"unknown deposit schedule {group.schedule!r} for {gcode}")
+        for o in obs:
+            o.penalty_rule = group.penalty
+        out += obs
     return sorted(out, key=lambda o: (o.company_id, o.due, o.group))
+
+
+def _monthly(cid, gcode, liabs, due_day: int) -> list[Obligation]:
+    by_month: dict[tuple[int, int], list[Liability]] = defaultdict(list)
+    for l in liabs:
+        by_month[(l.pay_date.year, l.pay_date.month)].append(l)
+    out = []
+    for (y, m), ls in sorted(by_month.items()):
+        ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+        due = next_business_day(date(ny, nm, min(due_day, _cal.monthrange(ny, nm)[1])))
+        amount = period_total(ls)
+        if amount:
+            out.append(Obligation(cid, gcode, y, (m - 1) // 3 + 1, f"{y}-{m:02d} (monthly)", due, amount,
+                                  f"monthly, due day {due_day} of the following month"))
+    return out
+
+
+def _semimonthly(cid, gcode, daily, business_days: int) -> list[Obligation]:
+    periods: dict[tuple, Obligation] = {}
+    for day, amt in daily:
+        half = 1 if day.day <= 15 else 2
+        end = date(day.year, day.month, 15 if half == 1 else _cal.monthrange(day.year, day.month)[1])
+        ob = periods.setdefault((day.year, day.month, half), Obligation(
+            cid, gcode, day.year, quarter_of(day), f"{day:%Y-%m} {'1st' if half == 1 else '2nd'} half",
+            add_business_days(end, business_days), ZERO, f"semimonthly, {business_days} business days after period end",
+            first_liability=day))
+        ob.amount += amt
+    return [o for o in periods.values() if o.amount != 0]
+
+
+def _annual(cid, gcode, year, liabs) -> list[Obligation]:
+    amount = period_total(liabs)
+    return [Obligation(cid, gcode, year, 4, f"{year} (annual)", next_business_day(date(year + 1, 1, 31)), amount,
+                       "annual return")] if amount else []
 
 
 def _federal_941(company: Company, gcode: str, daily, schedule: str) -> list[Obligation]:
@@ -199,22 +246,24 @@ def _accumulated(cid, gcode, daily, threshold, business_days) -> list[Obligation
     return out
 
 
-def futa_credit_reduction(liabs: list[Liability], rules: RuleBook, year: int) -> tuple[Decimal, dict[str, Decimal]]:
+def futa_credit_reduction(liabs: list[Liability], year: int) -> tuple[Decimal, dict[str, Decimal]]:
+    """Schedule A: FUTA taxable wages in each credit-reduction state x that state's reduction."""
     by_state: dict[str, Decimal] = defaultdict(lambda: ZERO)
     for l in liabs:
-        if l.tax_code == "FED_FUTA" and l.pay_date.year == year:
+        if l.tax_code == "US_FUTA" and l.pay_date.year == year:
             by_state[l.line.work_state] += l.taxable_wages
-    detail = {st: r2(w * rules.futa_credit_reduction(year, st)) for st, w in by_state.items()}
+    reductions = taxengine.futa_rates(year)["credit_reductions"]
+    detail = {st: r2(w * reductions.get(st, ZERO)) for st, w in by_state.items()}
     detail = {st: amt for st, amt in detail.items() if amt}
     return sum(detail.values(), ZERO), detail
 
 
-def _futa(cid, gcode, year, liabs, rules, threshold) -> list[Obligation]:
+def _futa(cid, gcode, year, liabs, threshold) -> list[Obligation]:
     by_q: dict[int, list[Liability]] = defaultdict(list)
     for l in liabs:
         by_q[quarter_of(l.pay_date)].append(l)
     quarters: dict[int, Decimal] = defaultdict(lambda: ZERO, {q: period_total(ls) for q, ls in by_q.items()})
-    cr, _ = futa_credit_reduction(liabs, rules, year)
+    cr, _ = futa_credit_reduction(liabs, year)
     quarters[4] += cr
     out, carry = [], ZERO
     for q in (1, 2, 3, 4):
@@ -242,7 +291,7 @@ def penalty_rate(days_late: int) -> Decimal:
     return D("0.10")
 
 
-def apply_deposits(obligations: list[Obligation], deposits: list[dict], rules: RuleBook, as_of: date):
+def apply_deposits(obligations: list[Obligation], deposits: list[dict], as_of: date):
     """FIFO-apply deposits to obligations (as designated under Rev. Proc. 2001-58).
 
     Returns (statuses, unapplied deposit credits).
@@ -262,7 +311,6 @@ def apply_deposits(obligations: list[Obligation], deposits: list[dict], rules: R
             st = ObligationStatus(ob)
             need = ob.amount
             penalty = ZERO
-            group = rules.groups[ob.group]
             while need > 0 and pool:
                 dep = pool[0]
                 take = min(need, dep[1])
@@ -281,7 +329,7 @@ def apply_deposits(obligations: list[Obligation], deposits: list[dict], rules: R
                 penalty += r2(st.outstanding * penalty_rate(late))
             if ob.optional:
                 penalty = ZERO
-            st.penalty = penalty if group.penalty == "irc6656" else None
+            st.penalty = penalty if ob.penalty_rule == "irc6656" else None
             statuses.append(st)
         for dep in pool:
             if dep[1] > 0:

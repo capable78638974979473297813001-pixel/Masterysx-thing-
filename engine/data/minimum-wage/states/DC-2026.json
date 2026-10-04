@@ -1,0 +1,93 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "DC",
+    "name": "District of Columbia"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 18.4,
+    "hourlyCents": 1840,
+    "effectiveFrom": "2026-07-01",
+    "coverage": "All covered employers. The highest general minimum wage of any US state-level jurisdiction.",
+    "note": "D.C. Code 32-1003 annual CPI-W adjustment every July 1. A January-only refresh cycle carries a stale DC rate for half the year."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 10.3,
+    "cashWageCents": 1030,
+    "maxTipCredit": 8.1,
+    "maxTipCreditCents": 810,
+    "tippedEmployeeThreshold": null,
+    "note": "Initiative 82's tip-credit phase-out was RE-CUT by the Council in 2025: instead of eliminating the tip credit outright, the tipped wage is now a PERCENTAGE of the full minimum wage -- frozen at $10.00 through 2026-06-30, then 56% of the minimum wage from 2026-07-01 (56% of $18.40 = $10.304, published as $10.30), 60% from 2028-07-01, and +5 points every two years thereafter to a 75% cap on 2034-07-01."
+  },
+  "youthAndTraining": [],
+  "variants": [
+    {
+      "id": "pre_2026_06_30",
+      "label": "July 2025 - June 2026 rate",
+      "hourly": 17.95,
+      "hourlyCents": 1795,
+      "historicalPredecessorOf": "standard",
+      "effectiveFrom": "2025-07-01",
+      "effectiveTo": "2026-06-30",
+      "note": "In effect before the 2026-07-01 CPI-W step to $18.40. Quoted directly from DOES's own notice: 'from $17.95 per hour to $18.40 per hour.'"
+    },
+    {
+      "id": "pre_2026_06_30_tipped",
+      "label": "July 2025 - June 2026 tipped base wage",
+      "hourly": 10.0,
+      "hourlyCents": 1000,
+      "historicalPredecessorOf": "tipped",
+      "effectiveFrom": "2025-07-01",
+      "effectiveTo": "2026-06-30",
+      "note": "The tipped base wage was frozen at $10.00 (the amended Initiative 82 schedule's own freeze) before stepping to $10.30 on 2026-07-01."
+    }
+  ],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W (Washington-Arlington-Alexandria)",
+    "adjustmentDate": "07-01"
+  },
+  "scheduledChanges": [
+    {
+      "tippedPercentOfMinimumWage": 0.6,
+      "note": "Next step of the amended Initiative 82 schedule; the standard rate continues to index each July 1.",
+      "effectiveDate": "2028-07-01"
+    }
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "DC Department of Employment Services -- Office of Wage-Hour Compliance",
+      "url": "https://does.dc.gov/service/office-wage-hour-compliance-0",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session (the $18.40 rate and the $10.00 -> $10.30 tipped step on 2026-07-01, plus the amended Initiative 82 percentage schedule) across DOL's own tipped table and multiple independent employment-law summaries of the Council's 2025 amendment. DOES's own minimum wage page 404'd this pass."
+    },
+    {
+      "title": "DC Department of Employment Services, Office of Wage and Hour -- District of Columbia Minimum Wage Increase (public notice)",
+      "url": "https://does.dc.gov/sites/default/files/dc/sites/does/publication/attachments/2026%20Minimum%20Wage%20Increase%20Notice_0.pdf",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "PDF downloaded and its text extracted directly this session (WebFetch's own conversion returned only binary noise; decompressing the PDF's content streams and pulling the text-showing operators worked). Quoted: 'Beginning July 1, 2026, the minimum wage in the District of Columbia will increase ... from $17.95 per hour to $18.40 per hour for all workers, regardless of size of employer' and 'As of July 1, 2026, the base minimum wage for tipped employees will increase from $10.00 per hour to $10.30.' Also confirms the pre-2026-07-01 figures ($17.95 standard, $10.00 tipped), now carried as historicalPredecessorOf entries."
+    }
+  ],
+  "knownGaps": [
+    "DC's own 'living wage' for government contractors and recipients of city assistance is a separate, higher figure not carried here."
+  ],
+  "confidence": "primary_source_confirmed"
+}

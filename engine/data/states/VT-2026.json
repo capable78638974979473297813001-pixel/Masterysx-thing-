@@ -1,0 +1,182 @@
+{
+  "code": "VT",
+  "name": "Vermont",
+  "year": 2026,
+  "method": "bracket_per_period_allowance",
+  "$scopeNote": "STATE income tax only. Vermont has no local income tax anywhere and no reciprocity agreements with any state (residents working elsewhere claim a return-level credit for taxes paid, 32 V.S.A. sec.5825 -- the same disclosed out-of-scope mechanism as every other state's own credit-for-taxes-paid convention in this project). Vermont's Child Care Contribution (CCC, 0.44% of wages subject to VT withholding) is EMPLOYER-paid only, confirmed directly from GB-1210-2026's own text ('Employers must pay a 0.44% payroll tax') -- context-only, not engine-consumed. Vermont Family and Medical Leave Insurance (VT-FMLI) is confirmed VOLUNTARY for both employers and employees (an insurance marketplace program, not a mandatory payroll tax) -- deliberately NOT modeled as a statePaidLeaveEmployee-style universal rate, since doing so would incorrectly deduct it from every Vermont paycheck when in fact most have no VT-FMLI deduction at all; see knownGaps.",
+  "$methodComment": "GB-1210-2026's own Percentage Method Withholding Tables (fetched and read directly): subtract a flat per-allowance dollar amount (Form W-4VT Line 5 count x the period's own allowance value) from PER-PERIOD gross wages, then look up the result in one of two published per-period bracket tables (Single or Married) -- the same overall shape as New Jersey's Rate Table method, just 2 schedules instead of 5. Brackets published independently per period (weekly/biweekly/semimonthly/monthly/quarterly/annual/daily), not derived by dividing an annual table -- transcribed verbatim rather than algebraically derived, unlike Iowa's simpler flat-rate shape.",
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "GB-1210-2026 states cafeteria-plan pretax treatment 'as though the employee's partner is a spouse' for civil-union purposes, applying 'the federal rules for the payment' -- confirming Vermont generally follows FEDERAL rules for pretax/cafeteria-plan treatment (the civil-union passage's only point of divergence is WHO counts as a spouse, not WHETHER federal pretax rules apply at all). Same conformity pattern as Michigan/Ohio/Idaho/Connecticut/Iowa in this project, opposite of Pennsylvania's non-conformity.",
+  "sources": [
+    {
+      "title": "GB-1210-2026, 2026 Income Tax Withholding Instructions, Tables, and Charts",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2026.pdf",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout). NOTE: tax.vermont.gov returns HTTP 403 to a plain WebFetch request (and even to a direct-PDF-URL WebFetch) -- worked around by fetching via curl with a standard browser User-Agent header instead, which returned HTTP 200 normally; not a login/paywall block, just basic bot-fingerprint filtering. Extracted CLEANLY with zero column-shift hazard (single-column tables, one bracket schedule per block). ENGINE-CONSUMED: all 7 published pay-period bracket tables (weekly/biweekly/semimonthly/monthly/quarterly/annual/daily -- Vermont does not publish a semiannual table) for both Single and Married, the matching allowance-per-period table, the Child Care Contribution being employer-only, and the document's own fully worked example (weekly $1,800, married, 2 allowances -> $45.77), reproduced exactly in tests/engine.test.ts."
+    },
+    {
+      "title": "Form W-4VT, Employee's Withholding Allowance Certificate (Rev. 12/18)",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/W-4VT.pdf",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout, same curl-with-User-Agent workaround) as a follow-up check, the same discipline that caught a real bug in Idaho's build. This one DID surface a real gap in the withholding-tables document alone: the form has FOUR filing-status checkboxes (Single, Married/Civil Union Filing Jointly, Married/Civil Union Filing Separately, and 'Married, but withhold at higher Single rate'), not the two the bracket-table headers alone would suggest. Confirmed via the form's own general information text plus a cross-source check that MFS and the explicit higher-single-rate box BOTH resolve to the single schedule, and that Head of Household has NO checkbox at all -- HOH filers check Single and add one extra allowance via the worksheet's own Line 4 instead. Also confirms Line 5 (total allowances, additive per this project's caller-supplies-the-count convention), Line 6 (additional withholding, matches the existing generic applyAdditionalStateWithholding()), and an EXEMPT line (matches the existing generic certificate.exempt)."
+    },
+    {
+      "title": "32 V.S.A. § 5825, Credit for taxes paid to other states and provinces",
+      "url": "https://law.justia.com/codes/vermont/title-32/chapter-151/section-5825/",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly (upgraded from an earlier cross-source-only citation, as a follow-up check after Scott asked whether this file was Symmetry-level) via curl with a browser User-Agent (law.justia.com also 403s a plain WebFetch). Confirms this is purely a RETURN-level mechanism, not withholding-level reciprocity: 'A taxpayer of this State who was a resident individual... shall receive credit against the tax imposed... for income taxes imposed by, and paid to, another state.' Capped at 'the portion of Vermont income tax... attributable to the adjusted gross income earned or received from sources within such other state.' Same out-of-scope convention as Connecticut's and every other state's own credit-for-taxes-paid mechanism in this project."
+    },
+    {
+      "title": "Governor Phil Scott Launches Voluntary Paid Family and Medical Leave Program — Office of Governor Phil Scott",
+      "url": "https://governor.vermont.gov/vtfmli",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly (upgraded from an earlier cross-source-only claim, as a follow-up check after Scott asked whether this file was Symmetry-level) via curl with a browser User-Agent (this site also 403s a plain WebFetch). Confirms VT-FMLI's voluntary status with a direct quote from Governor Scott himself: 'Providing all Vermonters with access to affordable paid family and medical leave, without imposing a new mandatory tax, is truly a win-win.' Also confirms contributions 'can be fully paid by the employer, split between the employer and employees, or fully paid for by the employees as a voluntary benefit' — i.e. even the EMPLOYEE/employer split is plan-specific, not a single statewide rate, reinforcing why this file does not model a statePaidLeaveEmployee config for it."
+    }
+  ],
+  "bracketPerPeriodAllowance": {
+    "$keyRenamedNote": "Renamed from 'vermontWithholding' this session, when Nebraska became a second real user of the exact same bracketPerPeriodAllowance() function — the config now lives under the method-named key both states share, matching this project's convention of naming shared config after the shape, not the state that happened to build it first.",
+    "allowanceAmount": {
+      "daily": 20.77,
+      "weekly": 103.85,
+      "biweekly": 207.69,
+      "semimonthly": 225.00,
+      "monthly": 450.00,
+      "quarterly": 1350.00,
+      "annual": 5400.00
+    },
+    "brackets": {
+      "single": {
+        "daily": [
+          { "from": 0, "to": 15.10, "base": 0, "rate": 0 },
+          { "from": 15.10, "to": 210.30, "base": 0, "rate": 0.0335 },
+          { "from": 210.30, "to": 487.60, "base": 6.54, "rate": 0.066 },
+          { "from": 487.60, "to": 1000.90, "base": 24.84, "rate": 0.076 },
+          { "from": 1000.90, "to": null, "base": 63.85, "rate": 0.0875 }
+        ],
+        "weekly": [
+          { "from": 0, "to": 75, "base": 0, "rate": 0 },
+          { "from": 75, "to": 1051, "base": 0, "rate": 0.0335 },
+          { "from": 1051, "to": 2438, "base": 32.70, "rate": 0.066 },
+          { "from": 2438, "to": 5004, "base": 124.24, "rate": 0.076 },
+          { "from": 5004, "to": null, "base": 319.25, "rate": 0.0875 }
+        ],
+        "biweekly": [
+          { "from": 0, "to": 151, "base": 0, "rate": 0 },
+          { "from": 151, "to": 2103, "base": 0, "rate": 0.0335 },
+          { "from": 2103, "to": 4876, "base": 65.39, "rate": 0.066 },
+          { "from": 4876, "to": 10009, "base": 248.41, "rate": 0.076 },
+          { "from": 10009, "to": null, "base": 638.52, "rate": 0.0875 }
+        ],
+        "semimonthly": [
+          { "from": 0, "to": 164, "base": 0, "rate": 0 },
+          { "from": 164, "to": 2278, "base": 0, "rate": 0.0335 },
+          { "from": 2278, "to": 5282, "base": 70.82, "rate": 0.066 },
+          { "from": 5282, "to": 10843, "base": 269.08, "rate": 0.076 },
+          { "from": 10843, "to": null, "base": 691.72, "rate": 0.0875 }
+        ],
+        "monthly": [
+          { "from": 0, "to": 327, "base": 0, "rate": 0 },
+          { "from": 327, "to": 4556, "base": 0, "rate": 0.0335 },
+          { "from": 4556, "to": 10565, "base": 141.67, "rate": 0.066 },
+          { "from": 10565, "to": 21685, "base": 538.27, "rate": 0.076 },
+          { "from": 21685, "to": null, "base": 1383.39, "rate": 0.0875 }
+        ],
+        "quarterly": [
+          { "from": 0, "to": 981, "base": 0, "rate": 0 },
+          { "from": 981, "to": 13669, "base": 0, "rate": 0.0335 },
+          { "from": 13669, "to": 31694, "base": 425.05, "rate": 0.066 },
+          { "from": 31694, "to": 65056, "base": 1614.70, "rate": 0.076 },
+          { "from": 65056, "to": null, "base": 4150.21, "rate": 0.0875 }
+        ],
+        "annual": [
+          { "from": 0, "to": 3925, "base": 0, "rate": 0 },
+          { "from": 3925, "to": 54675, "base": 0, "rate": 0.0335 },
+          { "from": 54675, "to": 126775, "base": 1700.13, "rate": 0.066 },
+          { "from": 126775, "to": 260225, "base": 6458.73, "rate": 0.076 },
+          { "from": 260225, "to": null, "base": 16600.93, "rate": 0.0875 }
+        ]
+      },
+      "married": {
+        "daily": [
+          { "from": 0, "to": 45.30, "base": 0, "rate": 0 },
+          { "from": 45.30, "to": 371.10, "base": 0, "rate": 0.0335 },
+          { "from": 371.10, "to": 832.80, "base": 10.91, "rate": 0.066 },
+          { "from": 832.80, "to": 1245.50, "base": 41.39, "rate": 0.076 },
+          { "from": 1245.50, "to": null, "base": 72.75, "rate": 0.0875 }
+        ],
+        "weekly": [
+          { "from": 0, "to": 226, "base": 0, "rate": 0 },
+          { "from": 226, "to": 1855, "base": 0, "rate": 0.0335 },
+          { "from": 1855, "to": 4164, "base": 54.57, "rate": 0.066 },
+          { "from": 4164, "to": 6227, "base": 206.96, "rate": 0.076 },
+          { "from": 6227, "to": null, "base": 363.75, "rate": 0.0875 }
+        ],
+        "biweekly": [
+          { "from": 0, "to": 453, "base": 0, "rate": 0 },
+          { "from": 453, "to": 3711, "base": 0, "rate": 0.0335 },
+          { "from": 3711, "to": 8328, "base": 109.14, "rate": 0.066 },
+          { "from": 8328, "to": 12455, "base": 413.87, "rate": 0.076 },
+          { "from": 12455, "to": null, "base": 727.52, "rate": 0.0875 }
+        ],
+        "semimonthly": [
+          { "from": 0, "to": 491, "base": 0, "rate": 0 },
+          { "from": 491, "to": 4020, "base": 0, "rate": 0.0335 },
+          { "from": 4020, "to": 9022, "base": 118.22, "rate": 0.066 },
+          { "from": 9022, "to": 13493, "base": 448.35, "rate": 0.076 },
+          { "from": 13493, "to": null, "base": 788.15, "rate": 0.0875 }
+        ],
+        "monthly": [
+          { "from": 0, "to": 981, "base": 0, "rate": 0 },
+          { "from": 981, "to": 8040, "base": 0, "rate": 0.0335 },
+          { "from": 8040, "to": 18044, "base": 236.48, "rate": 0.066 },
+          { "from": 18044, "to": 26985, "base": 896.74, "rate": 0.076 },
+          { "from": 26985, "to": null, "base": 1576.26, "rate": 0.0875 }
+        ],
+        "quarterly": [
+          { "from": 0, "to": 2944, "base": 0, "rate": 0 },
+          { "from": 2944, "to": 24119, "base": 0, "rate": 0.0335 },
+          { "from": 24119, "to": 54131, "base": 709.36, "rate": 0.066 },
+          { "from": 54131, "to": 80956, "base": 2690.15, "rate": 0.076 },
+          { "from": 80956, "to": null, "base": 4728.85, "rate": 0.0875 }
+        ],
+        "annual": [
+          { "from": 0, "to": 11775, "base": 0, "rate": 0 },
+          { "from": 11775, "to": 96475, "base": 0, "rate": 0.0335 },
+          { "from": 96475, "to": 216525, "base": 2837.45, "rate": 0.066 },
+          { "from": 216525, "to": 323825, "base": 10760.75, "rate": 0.076 },
+          { "from": 323825, "to": null, "base": 18915.55, "rate": 0.0875 }
+        ]
+      }
+    }
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Vermont has no income-tax reciprocity agreement with any state -- reciprocalStates deliberately empty (checked, found none), not omitted."
+  },
+  "knownGaps": [
+    "Semiannual pay frequency is not published by GB-1210-2026 (only daily/weekly/biweekly/semimonthly/monthly/quarterly/annual) -- bracketPerPeriodAllowance() throws a clear error rather than guessing for that one frequency.",
+    "Non-periodic supplemental payments: GB-1210-2026 says these 'can be estimated at 30% of the federal withholding' -- permissive guidance, not a required formula, and doing it faithfully would mean reading federal's own supplemental rate (22%/37% tiers) at calculation time. Not modeled; periodic supplemental wages paid at the same time as regular wages already aggregate correctly through the normal bracket calculation, the same convention as Kentucky/Idaho/Connecticut/Iowa in this project.",
+    "Payments under a non-qualified deferred compensation plan have their OWN flat 6% withholding rate per GB-1210-2026 -- a narrow, real rule this engine does not model since it applies to a payment type (deferred comp distributions) outside this engine's single-regular-paycheck scope.",
+    "Nonresident partial-Vermont-service allocation (hours worked in Vermont vs. total hours in the pay period, per GB-1210-2026's own worked example) is applied via applyNonresidentAllocation() (src/taxes/state.ts), which scales this state's income tax by certificate.nonresidentAllocationFraction. The engine does not compute that fraction itself — the hours-worked ratio is a fact only the caller has.",
+    "Vermont Family and Medical Leave Insurance (VT-FMLI) is confirmed VOLUNTARY (employer-elected insurance marketplace coverage, not a mandatory payroll tax with a single published statewide rate) -- deliberately not modeled as a statePaidLeaveEmployee config, unlike New York/New Jersey/Connecticut's mandatory programs. An employer that HAS elected VT-FMLI coverage would need its own plan-specific rate supplied by the caller; this file does not attempt to guess one.",
+    "resolveVTMaritalStatus's no-form default (single) is this project's standing convention, not a rule GB-1210-2026 or Form W-4VT itself states explicitly -- GB-1210-2026 only says an employer 'may use' federal Form W-4 information if no W-4VT is submitted, without a strict fallback formula."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 15400,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.004,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  },
+  "nonresidentAllocation": {
+    "basis": "hours_in_state",
+    "form": "GB-1210 nonresident allocation",
+    "$comment": "GB-1210-2026 describes the allocation as hours worked in Vermont over total hours in the pay period, with a worked example. Same arithmetic as Connecticut's, a different definition of the fraction — which is why the basis is recorded rather than the two being treated as one rule."
+  }
+}

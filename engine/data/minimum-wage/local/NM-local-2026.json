@@ -1,0 +1,232 @@
+{
+  "state": "NM",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "New Mexico is the clearest case in this database of why 'surpassed by state law' is not the same as 'delete the entry': Albuquerque's STANDARD rate has been overtaken by the state's $12.00, but its TIPPED rate of $7.20 is still more than double the state's $3.00 and still binds.",
+  "jurisdictions": [
+    {
+      "id": "santa_fe_city",
+      "name": "Santa Fe (city)",
+      "level": "city",
+      "hourly": 15.4,
+      "hourlyCents": 1540,
+      "effectiveFrom": "2026-03-01",
+      "adjustmentDate": "03-01",
+      "coverage": "All employers within the city limits. Santa Fe's 'Living Wage' adjusts on MARCH 1 -- a cycle shared with no other jurisdiction in this database.",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 15.4,
+        "cashWageCents": 1540,
+        "note": "Santa Fe's own official 2025 living-wage notice (Municipal Code Sec. 28-1, fetched and text-extracted directly from the city's PDF this pass) states the tip-counting rule verbatim -- 'workers who customarily receive more than one hundred dollars ($100) per month in tips or commissions: any tips or commissions received and retained by a worker shall be counted as wages and credited towards satisfaction of the Living Wage' -- but publishes NO separate minimum CASH wage figure anywhere in that document. A secondary search result claimed a $3.00 base cash wage for Santa Fe; that figure appears nowhere in the city's own notice and is almost certainly that source conflating New Mexico's STATEWIDE $3.00 tipped cash wage with Santa Fe's own (cash-wage-silent) ordinance. Modelled here as no tip credit and a $15.40 floor, since that is what the primary document actually supports -- not the $3.00 figure, which was checked and rejected rather than incorporated."
+      },
+      "scheduledChanges": [
+        {
+          "hourly": 17.5,
+          "hourlyCents": 1750,
+          "note": "A larger, separately adopted step, reported alongside the 2026 adjustment.",
+          "effectiveDate": "2027-03-01"
+        }
+      ],
+      "sources": [
+        {
+          "title": "City of Santa Fe -- Living Wage Ordinance notice (Municipal Code Sec. 28-1 SFCC 1987)",
+          "url": "https://santafenm.gov/media/news_pdf/2025_Living_Wage_Ordinance.pdf",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "PDF downloaded and its text extracted directly this session (WebFetch's own conversion returned only binary noise; decompressing the PDF's content streams and pulling the text-showing operators worked, same technique used for the American Samoa poster). This specific PDF is the ORDINANCE'S 2025 notice ($15.00/hour effective 2025-03-01); the 2026 $15.40 rate itself rests on the separate cross-sourced citation already carried above. Confirmed directly: the tip-counting rule quoted in the note, and that no minimum cash wage for tipped workers is published anywhere in the ordinance's own text."
+        }
+      ],
+      "variants": [
+        {
+          "id": "pre_2026_02_28",
+          "label": "January - February 2026 rate",
+          "hourly": 15.0,
+          "hourlyCents": 1500,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-03-01",
+          "effectiveTo": "2026-02-28",
+          "note": "In effect before the 2026-03-01 step to $15.40."
+        },
+        {
+          "id": "pre_2026_02_28_tipped",
+          "label": "January - February 2026 tipped floor",
+          "hourly": 15.0,
+          "hourlyCents": 1500,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-03-01",
+          "effectiveTo": "2026-02-28",
+          "note": "Santa Fe's ordinance has no separate cash-wage figure at any point -- tips count toward reaching whichever living wage is then in effect."
+        }
+      ]
+    },
+    {
+      "id": "santa_fe_county",
+      "name": "Santa Fe County",
+      "level": "county",
+      "hourly": 15.4,
+      "hourlyCents": 1540,
+      "effectiveFrom": "2026-03-01",
+      "adjustmentDate": "03-01",
+      "coverage": "Unincorporated Santa Fe County, under the county's own Living Wage Ordinance, which tracks the city's figure.",
+      "sources": [
+        {
+          "title": "Santa Fe County -- Living Wage Ordinance and 2026 living wage adjustment announcement",
+          "url": "https://www.santafecountynm.gov/livingwage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: the county announced its 2026 living wage adjustment to the same $15.40 figure as the city, on the same March 1 cycle."
+        },
+        {
+          "title": "Santa Fe County, NM -- 2026 living wage adjustment (tipped base wage)",
+          "url": "https://www.santafecountynm.gov/livingwage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'the hourly living wage in Santa Fe County ... will increase to $15.40 for non-tipped employees and $4.62 for tipped employees, effective March 1, 2026.' Found only after this project's ORIGINAL research pass had left Santa Fe County's tipped rate unspecified, which would have silently fallen back to the state's $3.00 -- understating the true cash floor by $1.62/hr."
+        }
+      ],
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 4.62,
+        "cashWageCents": 462,
+        "maxTipCredit": 10.78,
+        "maxTipCreditCents": 1078,
+        "tippedEmployeeThreshold": {
+          "amount": 30.0,
+          "period": "month"
+        },
+        "note": "Santa Fe County's OWN tipped base wage, distinct from Santa Fe city's ordinance (which publishes no cash-wage figure at all -- see santa_fe_city's own tipped.note) and from the state's $3.00. Rises with the county's own living-wage schedule."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_02_28",
+          "label": "January - February 2026 rate",
+          "hourly": 15.0,
+          "hourlyCents": 1500,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-03-01",
+          "effectiveTo": "2026-02-28",
+          "note": "In effect before the 2026-03-01 step to $15.40."
+        },
+        {
+          "id": "pre_2026_02_28_tipped",
+          "label": "January - February 2026 tipped base wage",
+          "hourly": 4.5,
+          "hourlyCents": 450,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-03-01",
+          "effectiveTo": "2026-02-28",
+          "note": "In effect before the 2026-03-01 step to $4.62."
+        }
+      ]
+    },
+    {
+      "id": "las_cruces",
+      "name": "Las Cruces",
+      "level": "city",
+      "hourly": 13.01,
+      "hourlyCents": 1301,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "coverage": "All employers regardless of size operating within the city limits (Ordinance 2726).",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 5.2,
+        "cashWageCents": 520,
+        "maxTipCredit": 7.81,
+        "maxTipCreditCents": 781,
+        "note": "Las Cruces sets its own tipped base wage of $5.20 -- higher than New Mexico's statewide $3.00."
+      },
+      "sources": [
+        {
+          "title": "City of Las Cruces -- Official Notice, Minimum Wage Ordinance (2026)",
+          "url": "https://lascruces.gov/wp-content/uploads/2025/09/MinimumWageEng26.pdf",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session from the city's own posted 2026 notice and announcement: '$13.01 per hour and $5.20 per hour for tipped employees' effective 2026-01-01, up from $12.65, adjusted annually by CPI."
+        }
+      ]
+    },
+    {
+      "id": "albuquerque",
+      "name": "Albuquerque",
+      "level": "city",
+      "hourly": 12.0,
+      "hourlyCents": 1200,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "coverage": "The city's OWN ordinance rate is $11.85 ($10.85 where the employer provides at least $2,500/yr in healthcare or childcare benefits), but New Mexico's $12.00 state rate supersedes both -- so $12.00 is the prevailing standard wage in Albuquerque.",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 7.2,
+        "cashWageCents": 720,
+        "maxTipCredit": 4.8,
+        "maxTipCreditCents": 480,
+        "note": "THE REASON THIS ENTRY EXISTS. Albuquerque's tipped minimum of $7.20 is far ABOVE New Mexico's statewide $3.00 tipped wage, so the city ordinance still binds for tipped employees even though the state rate has overtaken it for everyone else. Dropping Albuquerque as 'surpassed by state law' would underpay every tipped worker in the state's largest city by $4.20 an hour."
+      },
+      "localOrdinanceRate": {
+        "hourly": 11.85,
+        "hourlyCents": 1185,
+        "withQualifyingBenefits": {
+          "hourly": 10.85,
+          "hourlyCents": 1085
+        },
+        "note": "Carried so the record shows what the ordinance itself says, distinct from the prevailing figure."
+      },
+      "sources": [
+        {
+          "title": "City of Albuquerque -- Albuquerque Minimum Wage Information",
+          "url": "https://www.cabq.gov/legal/albuquerque-minimum-wage-information",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "Fetched and read directly this session. Quoted: 'the State of New Mexico's $12.00 per hour minimum wage supersedes the City's minimum wage and is the prevailing wage. This prevailing wage is $12.00 per hour' and 'Starting January 1, 2026, the minimum wage for tipped employees will be $7.20.'"
+        }
+      ]
+    },
+    {
+      "id": "bernalillo_county_unincorporated",
+      "name": "Bernalillo County (unincorporated areas only)",
+      "level": "county",
+      "hourly": 12.0,
+      "hourlyCents": 1200,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "coverage": "Unincorporated Bernalillo County. The county's own ordinance rate has been overtaken by New Mexico's $12.00 state rate, which is therefore the prevailing figure.",
+      "confidence": "cross_source_confirmed",
+      "note": "Carried because the ordinance still exists and its TIPPED provision may, like Albuquerque's, remain above the state's $3.00 -- but no county tipped figure was verified this session, so none is asserted. See knownGaps.",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 3.0,
+        "cashWageCents": 300,
+        "maxTipCredit": 9.0,
+        "maxTipCreditCents": 900,
+        "tippedEmployeeThreshold": {
+          "amount": 30.0,
+          "period": "month"
+        },
+        "note": "Bernalillo County's own ordinance sets no different tipped figure of its own -- the state's $3.00 cash wage applies unchanged, confirmed explicitly here rather than left as a silent gap."
+      },
+      "sources": [
+        {
+          "title": "Bernalillo County, NM minimum wage ordinance and prevailing state tipped rate",
+          "url": "https://www.legalconsumer.com/wage-and-hour-law/minimum-wage.php?FIPS=35001",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: 'employers can pay tipped employees $3.00 per hour' in unincorporated Bernalillo County, matching the state figure exactly -- unlike Santa Fe County, which sets its own higher tipped figure."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    },
+    {
+      "title": "Santa Fe city and county living wage figures in effect through February 2026",
+      "url": "https://www.santafecountynm.gov/news/detail/santa-fe-county-announces-living-wage-increase-effective-march-1-2025",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session: both the city and county living wage were $15.00 through 2026-02-28 (both stepped to $15.40 on 2026-03-01), and the county's own tipped base wage was $4.50 through the same date (stepping to $4.62). The city's ordinance carries no separate cash wage at any point, per its own tip-counting rule already cited above."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Unincorporated Bernalillo County's own tipped rate was not verified this session; only its standard rate (overtaken by the state's $12.00) is recorded.",
+    "Santa Fe city and county adjust on March 1, so a rate read from this file between January 1 and March 1 of a future year will be the prior year's."
+  ]
+}

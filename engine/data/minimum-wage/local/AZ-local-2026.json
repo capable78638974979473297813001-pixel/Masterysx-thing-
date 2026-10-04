@@ -1,0 +1,70 @@
+{
+  "state": "AZ",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "Arizona's two local ordinances diverge on exactly the point a payroll system is most likely to get wrong: Flagstaff abolished the tip credit for 2026 while Tucson kept the state's $3.00.",
+  "jurisdictions": [
+    {
+      "id": "flagstaff",
+      "name": "Flagstaff",
+      "level": "city",
+      "hourly": 18.35,
+      "hourlyCents": 1835,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "coverage": "All employers, for work performed in Flagstaff.",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.35,
+        "cashWageCents": 1835,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "FLAGSTAFF ELIMINATED ITS TIP CREDIT effective 2026-01-01: tipped employees must now receive the same $18.35 base wage as everyone else. Arizona's statewide $3.00 tip credit does NOT apply in Flagstaff -- a payroll system inheriting the state rule here underpays by $3.00 an hour."
+      },
+      "sources": [
+        {
+          "title": "City of Flagstaff -- City of Flagstaff announces minimum wage for 2026",
+          "url": "https://www.flagstaff.az.gov/CivicAlerts.aspx?AID=2165",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session from the city's own announcement: $18.35 effective 2026-01-01, and no lower minimum wage for tipped employees from 2026 onward."
+        }
+      ]
+    },
+    {
+      "id": "tucson",
+      "name": "Tucson",
+      "level": "city",
+      "hourly": 15.45,
+      "hourlyCents": 1545,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "coverage": "All employers, for work performed in Tucson.",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 12.45,
+        "cashWageCents": 1245,
+        "maxTipCredit": 3.0,
+        "maxTipCreditCents": 300,
+        "note": "Tucson keeps a $3.00 tip credit, the same figure Arizona allows statewide, applied against the higher city rate."
+      },
+      "sources": [
+        {
+          "title": "City of Tucson -- Tucson Minimum Wage Act (Proposition 206, November 2021)",
+          "url": "https://www.tucsonaz.gov/Departments/Business-Services-Department/Tucson-Minimum-Wage-Act",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session: $15.45 standard and $12.45 tipped (a $3.00 maximum tip credit) effective 2026-01-01, with annual CPI adjustment under Proposition 206. The city's own page was located but not rendered directly this pass."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": []
+}

@@ -1,0 +1,61 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "IL",
+    "name": "Illinois"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 15.0,
+    "hourlyCents": 1500,
+    "effectiveFrom": "2025-01-01",
+    "coverage": "Employers with FOUR OR MORE employees, excluding family members (820 ILCS 105/3(d)).",
+    "note": "Final step of SB 1 (2019). No escalator -- Illinois is flat at $15.00 until the legislature acts."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 9.0,
+    "cashWageCents": 900,
+    "maxTipCredit": 6.0,
+    "maxTipCreditCents": 600,
+    "tippedEmployeeThreshold": null,
+    "note": "820 ILCS 105/4(c) caps the tip credit at 40% of the minimum wage, so the cash wage is 60% -- $9.00. Chicago is separately phasing its tip credit out entirely; see local/IL-local-2026.json."
+  },
+  "variants": [
+    {
+      "hourly": 13.0,
+      "hourlyCents": 1300,
+      "id": "youth_under_650_hours",
+      "label": "Employees under 18 working fewer than 650 hours in a calendar year",
+      "test": "Under 18 AND fewer than 650 hours worked for the employer in the calendar year. Crossing 650 hours moves the employee to the full $15.00 for the rest of the year.",
+      "note": "820 ILCS 105/4(a)(2). A genuine hours-tracking obligation, not just an age test."
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": false
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Chicago and suburban Cook County set higher local rates on a July 1 cycle -- see local/IL-local-2026.json."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

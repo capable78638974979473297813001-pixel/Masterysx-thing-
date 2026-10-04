@@ -1,0 +1,847 @@
+{
+  "year": 2026,
+  "$scopeNote": "Only ORDINARY (consumer/creditor judgment) wage garnishment is state-overridable here. Federal law — support orders, federal tax levies, federal student loan default — preempts a state's own wage-exemption statute entirely, so nothing in this file ever changes those two calculations in src/garnishment.ts; only 'consumer_creditor' orders consult it. ALL 51 jurisdictions (50 states + DC) are now present in this file as of 2026-09-11 — every one has been actively researched, not left as an unconfirmed absence. A state present with sources but NO formula/prohibition/knownGap block at all (Georgia, Alabama, Louisiana, Michigan, Montana, Ohio, Oklahoma, Rhode Island, Utah, Wyoming) means it was actively researched and CONFIRMED to have no departure from the plain federal CCPA default — a stronger claim than simple absence would have been. A state present with only a `knownGap` note (no `ordinaryGarnishmentProhibited`/`ordinaryGarnishment`/`headOfFamilyOrdinaryGarnishment`/`fullExemption` block) means a real departure or structural nuance IS known to exist but isn't fully modelled (Arkansas's narrow occupational carve-out; Mississippi's 30-day timing rule; New Hampshire's trustee-process mismatch with this engine's standing-order model) — computed against the federal default in the meantime, but disclosed rather than silent. Seven distinct formula SHAPES exist in `GarnishmentFormula` (src/registry.ts): capFractions (+ an optional minimum-wage floor, a state-legislated flat-dollar floor, a per-dependent reduction, or an excess-fraction scale-down), cliff-bracket tiers keyed on minimum-wage multiples or a fixed gross-weekly dollar line, marginal monthly brackets, a poverty-guideline income tier, and Iowa's own cumulative-annual-dollar-cap layer (`annualCapTiers`) — the only shape that caps across MULTIPLE paychecks rather than one at a time.",
+  "states": {
+    "TX": {
+      "ordinaryGarnishmentProhibited": true,
+      "sources": [
+        {
+          "title": "Tex. Prop. Code Ann. § 42.001(b)(1) — current wages for personal services exempt from garnishment, attachment, execution or other seizure, except for court-ordered child support",
+          "url": "https://statutes.capitol.texas.gov/Docs/PR/htm/PR.42.htm",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own text, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "PA": {
+      "ordinaryGarnishmentProhibited": true,
+      "sources": [
+        {
+          "title": "42 Pa. Cons. Stat. § 8127 — wages/salaries/commissions exempt from attachment, execution or other process except for support orders, restitution/costs/fines/bail in a criminal proceeding, board owed for 4 weeks or less, and PHEAA (student loan) obligations",
+          "url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.081.027.000..HTM",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own text, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "NC": {
+      "ordinaryGarnishmentProhibited": true,
+      "sources": [
+        {
+          "title": "N.C. Gen. Stat. § 1-362 — wages/personal earnings exempt from attachment/garnishment for ordinary judgment debt (North Carolina provides no attachment remedy against a resident debtor's wages outside taxes, support, and a short named list of exceptions)",
+          "url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_1/GS_1-362.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "knownGap": "Some secondary sources frame this as North Carolina simply not providing attachment as a creditor remedy against a resident's wages at all (rather than a bare percentage exemption); this file only asserts the practical outcome relevant to this engine — an ordinary consumer_creditor garnishment computes to $0 in NC — not the precise doctrinal mechanism."
+    },
+    "SC": {
+      "ordinaryGarnishmentProhibited": true,
+      "sources": [
+        {
+          "title": "S.C. Code Ann. § 15-39-410 — earnings of the debtor for personal services excluded from property reachable to satisfy a judgment",
+          "url": "https://www.scstatehouse.gov/code/t15c039.php",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own text, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "IL": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 45,
+        "stateMinimumHourlyWage": 15.00,
+        "capFractions": [{ "basis": "gross", "fraction": 0.15 }]
+      },
+      "sources": [
+        {
+          "title": "735 ILCS 5/12-803 — maximum wage deduction: lesser of 15% of GROSS weekly wages, or the amount by which disposable earnings exceed 45x the greater of the state or federal minimum hourly wage",
+          "url": "https://www.ilga.gov/legislation/ilcs/ilcs4.asp?DocName=073500050K12-803",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own mechanism, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Illinois Department of Labor — Minimum Wage Law (current state minimum hourly wage)",
+          "url": "https://labor.illinois.gov/laws-rules/fls/minimum-wage-law.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed: Illinois's minimum wage reached its final legislated step of $15.00/hr effective 2025-01-01 with no further scheduled statutory increase; not independently re-fetched from IDOL's own page this pass."
+        }
+      ],
+      "$note": "735 ILCS 5/12-803 takes the GREATER of Illinois's own minimum wage or the federal $7.25 figure; Illinois's has been higher since 2022, so only Illinois's figure is ever used here. Re-verify stateMinimumHourlyWage every year this file rolls forward — it is not sourced from anywhere else this engine already tracks."
+    },
+    "CT": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 16.94,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }]
+      },
+      "sources": [
+        {
+          "title": "Conn. Gen. Stat. § 52-361a — lesser of 25% of weekly disposable earnings, or the amount by which disposable earnings exceed 40x the greater of the federal minimum wage or the Connecticut minimum fair wage",
+          "url": "https://law.justia.com/codes/connecticut/title-52/chapter-906/section-52-361a/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own mechanism (the 40x multiplier, the 25% fraction, and the 'greater of' minimum-wage rule), not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Connecticut minimum wage increase to $16.94/hr effective 2026-01-01 (Employment Cost Index indexed)",
+          "url": "https://ogletree.com/insights-resources/blog-posts/connecticut-minimum-wage-set-to-increase-to-16-94-on-january-1-2026/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis of the announced rate, not independently fetched from the Connecticut Department of Labor's own page this pass."
+        }
+      ],
+      "$note": "Connecticut's own $16.94/hr already exceeds the federal $7.25 figure, so 'greater of' always resolves to Connecticut's rate. Connecticut's minimum wage is now indexed annually to the federal Employment Cost Index rather than fixed by a one-time statute — re-verify every year this file rolls forward; it is already scheduled to rise again to $17.48 on 2027-01-01."
+    },
+    "MN": {
+      "ordinaryGarnishment": {
+        "stateMinimumHourlyWage": 11.41,
+        "tiers": [
+          { "minMultiplier": 40, "maxMultiplier": 60, "fraction": 0.10 },
+          { "minMultiplier": 60, "maxMultiplier": 80, "fraction": 0.15 },
+          { "minMultiplier": 80, "maxMultiplier": null, "fraction": 0.25 }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Minn. Stat. § 571.922 — non-support garnishment: fully exempt at or below 40x the applicable minimum wage; 10% between 40x-60x; 15% between 60x-80x; 25% above 80x (a cliff schedule — crossing a threshold puts the WHOLE disposable-earnings figure in that bracket, not just the excess, unlike the federal formula)",
+          "url": "https://www.revisor.mn.gov/statutes/cite/571.922",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Directly fetched. Confirmed the threshold-cliff (not marginal) structure explicitly, the 3 percentage tiers and their multiplier boundaries, and that the statute uses the greater of Minnesota's own minimum wage (Minn. Stat. 177.24) or the federal FLSA minimum wage."
+        },
+        {
+          "title": "Minnesota Department of Labor and Industry — 2026 statewide minimum wage ($11.41/hr, single rate for all employer sizes as of 2026-01-01)",
+          "url": "https://dli.mn.gov/news/minimum-wage-rate-adjusted-inflation-jan-1-2026",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis; not independently re-fetched from DLI's own page this pass. Minnesota retired its large-employer/small-employer split for 2026 in favor of one statewide figure, which simplifies this file versus a prior year."
+        }
+      ],
+      "$note": "Minnesota's own $11.41/hr exceeds the federal $7.25, so 'greater of' always resolves to Minnesota's rate here. Minneapolis and St. Paul both set higher LOCAL minimum wages ($16.37/hr for 2026) that are NOT modelled — 571.922 itself only names the state/federal figures, and this file doesn't attempt a city-level override on top of it; treat this as a conservative-but-not-verified simplification for employees working inside those two cities specifically."
+    },
+    "NY": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 16.00,
+        "hourlyWageFromMinimumWageRuleset": true,
+        "capFractions": [
+          { "basis": "gross", "fraction": 0.10 },
+          { "basis": "disposable", "fraction": 0.25 }
+        ]
+      },
+      "sources": [
+        {
+          "title": "N.Y. CPLR § 5231 — income execution limited to the lesser of 10% of gross income or 25% of disposable earnings, and only to the extent disposable earnings exceed 30x the greater of the federal or New York minimum wage",
+          "url": "https://newyork.public.law/laws/n.y._civil_practice_law_%26_rules_section_5231",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own dual 10%-gross/25%-disposable structure and the 30x floor, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "New York State 2026 minimum wage: $17.00/hr (NYC, Long Island, Westchester) vs. $16.00/hr (remainder of the state), both effective 2026-01-01",
+          "url": "https://ogletree.com/insights-resources/blog-posts/2026-minimum-wage-increases-in-new-york-key-details-for-employers/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis of the announced regional rates, not independently fetched from NY DOL's own page this pass."
+        }
+      ],
+      "$note": "New York sets a REGIONAL minimum wage — $17.00/hr for NYC, Long Island and Westchester vs. $16.00/hr for the rest of the state. hourlyWageFromMinimumWageRuleset tells calculateGarnishments() to read that figure from the minimum-wage ruleset for the check date. Pass GarnishmentInput.workRegion 'downstate' for NYC, Long Island, and Westchester. Omit it and the baseline upstate $16.00 applies — the engine will not guess the region from a two-letter state code. The stored stateMinimumHourlyWage is that same baseline, kept so a reader of this file can see the number without opening the minimum-wage ruleset."
+    },
+    "MA": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 50,
+        "stateMinimumHourlyWage": 15.00,
+        "capFractions": [{ "basis": "gross", "fraction": 0.15 }]
+      },
+      "sources": [
+        {
+          "title": "Mass. Gen. Laws ch. 246, § 28 — trustee process wage attachment limited to the lesser of 15% of gross wages, or the amount by which disposable earnings exceed 50x the greater of the federal or Massachusetts minimum wage",
+          "url": "https://www.legalconsumer.com/bankruptcy/bankruptcy-citation.php?CitationID=1078",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 15%/50x mechanism, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Massachusetts minimum wage: $15.00/hr, unchanged since 2023-01-01",
+          "url": "https://www.masslegalhelp.org/employment-unemployment/getting-paid/minimum-wage",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis; not independently re-fetched from Mass. AG's own page this pass. A 2026 bill (S.1349) proposing a phased increase to $20.00/hr by 2029 was pending, not enacted, as of this pass — re-check if it moves."
+        }
+      ],
+      "$note": "Massachusetts's own $15.00/hr exceeds the federal $7.25, so 'greater of' always resolves to Massachusetts's rate here."
+    },
+    "DE": {
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.15 }]
+      },
+      "sources": [
+        {
+          "title": "Del. Code Ann. tit. 10, § 4913 — 85% of disposable earnings exempt from attachment for an ordinary creditor (support/alimony orders and state tax/fine/cost collection are separately excepted and reach up to 65%)",
+          "url": "https://codes.findlaw.com/de/title-10-courts-and-judicial-procedure/de-code-sect-10-4913.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own flat 85%-exempt/15%-reachable structure on a disposable-earnings basis, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "No separate minimum-wage floor is named alongside the flat 15% figure in the sources reviewed — omitted here (minimumWageWeeklyMultiplier/stateMinimumHourlyWage both absent) rather than guessed. A flat 15% of disposable earnings is already more protective than the federal 25%-or-floor rule at every income level actually reachable by the 30x floor, so the omission doesn't understate the debtor's protection."
+    },
+    "FL": {
+      "fullExemption": {
+        "qualifyingFlag": "headOfFamily",
+        "waivableInWriting": true
+      },
+      "sources": [
+        {
+          "title": "Fla. Stat. § 222.11 — ALL disposable earnings of a 'head of family' (providing more than half the support for a child or other dependent) are exempt from garnishment regardless of amount, unless affirmatively waived in a written agreement",
+          "url": "https://www.flsenate.gov/Laws/Statutes/2010/222.11",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own head-of-family exemption and its written-waiver escape hatch, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "A head-of-family debtor who has NOT waived the exemption in writing owes $0 on an ordinary garnishment at ANY income level in Florida — this is not a threshold test. A non-head-of-family debtor in Florida gets no departure from the plain federal default beyond this, so this state has no `ordinaryGarnishment` block: only the exemption itself is modelled."
+    },
+    "CO": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 15.16,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }]
+      },
+      "sources": [
+        {
+          "title": "Colo. Rev. Stat. § 13-54-104, as amended by HB19-1189 (effective for writs issued on or after 2020-01-01) — general ordinary garnishment reduced from 25%/30x to the lesser of 20% of disposable earnings or the amount by which disposable earnings exceed 40x the greater of the state or federal minimum wage",
+          "url": "https://law.justia.com/codes/colorado/2020/title-13/article-54/section-13-54-104/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the amended statute's own 20%/40x mechanism and its 2020-01-01 effective date, not an independently rendered direct fetch this pass (direct fetch attempts to law.justia.com returned HTTP 403 this pass)."
+        },
+        {
+          "title": "Colorado Department of Labor and Employment — 2026 statewide minimum wage ($15.16/hr effective 2026-01-01)",
+          "url": "https://www.govdocs.com/colorados-new-minimum-wage-rates/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis; not independently re-fetched from CDLE's own page this pass."
+        }
+      ],
+      "$note": "Search synthesis surfaced a second, more protective '35%... 30x' figure alongside the headline 20%/40x reform in some summaries, without a clear statement of which debts that second figure actually governs — omitted here rather than guessed; this file models only the well-corroborated general-ordinary-garnishment rule. Denver ($19.29/hr), Boulder ($16.82/hr) and Edgewater ($18.17/hr) all set higher LOCAL minimum wages than the $15.16 statewide figure used here — not modelled, same disclosed simplification as this file's Minnesota and New York entries for their own local/regional minimum wage variation. Colorado's own minimum wage already exceeds the federal $7.25, so 'greater of' always resolves to Colorado's rate here; it's CPI-indexed and rises most years, so re-verify when this file rolls forward."
+    },
+    "WA": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 35,
+        "stateMinimumHourlyWage": 17.13,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }]
+      },
+      "sources": [
+        {
+          "title": "Rev. Code Wash. § 6.27.150 — for consumer debt, the exempt amount is the GREATER of 35x the state minimum hourly wage or 80% of disposable earnings, i.e. the garnishable amount is the LESSER of 20% of disposable earnings or the amount by which disposable earnings exceed 35x the state minimum wage",
+          "url": "https://law.justia.com/codes/washington/2005/title6/6.27.150.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 80%-exempt/20%-reachable and 35x-state-minimum-wage mechanism, not an independently rendered direct fetch this pass (direct fetch attempts returned HTTP 403 this pass). The same statute separately sets a DIFFERENT rule for private student loan debt (lesser of 15% or the amount over 50x the highest applicable minimum wage) and for other, non-consumer-debt garnishments (25%/35x) — this file models only the consumer/creditor rule, since that's the only category GarnishmentOrder's `consumer_creditor` type represents here."
+        },
+        {
+          "title": "Washington State Department of Labor & Industries — 2026 minimum wage ($17.13/hr effective 2026-01-01)",
+          "url": "https://ofm.wa.gov/wp-content/uploads/sites/default/files/public/legacy/policy/25.60.pdf",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis; not independently re-fetched from L&I's own page this pass."
+        }
+      ],
+      "$note": "Washington's own minimum wage is keyed by STATE law only for this statute (not 'greater of state or federal') and already far exceeds the federal $7.25, so the federal figure never enters this calculation at all. Washington's statute is unusual among the states in this file for naming a THIRD category (private student loans, 15%/50x) this engine doesn't separately represent — a private (non-federal) student loan default would need its own GarnishmentOrderType to model correctly; only the federal student loan default program (34 CFR 34.19) is modelled anywhere in this project today."
+    },
+    "NV": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 50,
+        "stateMinimumHourlyWage": 7.25,
+        "grossWeeklyTiers": [
+          { "maxGrossWeekly": 770, "fraction": 0.18 },
+          { "maxGrossWeekly": null, "fraction": 0.25 }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Nev. Rev. Stat. § 31.295 — sliding-scale ordinary garnishment: 18% of disposable earnings if gross weekly pay is $770 or less, 25% if it exceeds $770; either way also capped at the amount by which disposable earnings exceed 50x the FEDERAL minimum hourly wage (not a 'greater of state or federal' test — the statute's own floor names the federal figure specifically)",
+          "url": "https://law.justia.com/codes/nevada/2025/chapter-31/statute-31-295/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own $770 gross-weekly breakpoint, the 18%/25% tiers, and the 50x-FEDERAL-minimum-wage floor specifically (not Nevada's own, notably higher, minimum wage), not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "Unlike every OTHER tiered/bracket state in this file, Nevada's own breakpoint ($770) is a FIXED GROSS-WEEKLY DOLLAR FIGURE, not indexed to any minimum wage — and the tier decides the FRACTION while that fraction is then applied to DISPOSABLE earnings, not gross. This is genuinely a different mechanism from Minnesota's minimum-wage-indexed cliff tiers (see GarnishmentGrossWeeklyTier's own doc comment in src/registry.ts), which is why this engine represents it as a separate shape rather than reusing `tiers`. $770 is a nominal dollar figure fixed by the statute's own text, not something that moves with inflation on its own — re-verify it hasn't been amended when this file rolls forward, rather than assuming it scales like the minimum-wage-based floors elsewhere in this file do."
+    },
+    "HI": {
+      "ordinaryGarnishment": {
+        "marginalMonthlyBrackets": [
+          { "upToMonthly": 100, "fraction": 0.05 },
+          { "upToMonthly": 200, "fraction": 0.10 },
+          { "upToMonthly": null, "fraction": 0.20 }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Haw. Rev. Stat. § 652-1 — MARGINAL brackets on monthly disposable earnings: 5% of the first $100/month, 10% of the next $100/month (i.e. the $100-$200 slice), 20% of everything over $200/month, prorated to 'an equivalent portion... per week' for other pay frequencies",
+          "url": "https://www.capitol.hawaii.gov/hrscurrent/Vol13_Ch0601-0676/HRS0652/HRS_0652-0001.htm",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 5%/10%/20% figures and its $100/$200 monthly breakpoints, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "This is the only MARGINAL (income-tax-bracket-style) garnishment formula in this file — every other tiered state here (Minnesota, Nevada) uses a CLIFF where crossing a threshold reclassifies the WHOLE amount, not just the slice above it. The $100/$200 monthly breakpoints are small, fixed nominal-dollar figures with no visible minimum-wage or inflation indexing in the sources reviewed — they read as though they may not have been updated in a long time, but this file models the statute as currently written rather than adjusting it. No separate minimum-wage floor is layered on top; none was found in the sources reviewed."
+    },
+    "MO": {
+      "headOfFamilyOrdinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.10 }]
+      },
+      "sources": [
+        {
+          "title": "Mo. Rev. Stat. § 525.030 — a head-of-family debtor's ordinary (non-support) garnishment is capped at the lesser of 10% of disposable earnings or the amount by which disposable earnings exceed 30x the FEDERAL minimum hourly wage; a non-head-of-family debtor gets the plain federal 25%/30x default",
+          "url": "https://law.justia.com/codes/missouri/2022/title-xxxvi/chapter-525/section-525-030/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own head-of-family 10%/30x variant and confirming the non-head-of-family case matches the plain federal default, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "Distinct from Florida's `fullExemption`: a Missouri head-of-family debtor still owes something (10% of disposable earnings), just at a reduced rate from the ordinary 25% — never a full $0 regardless of income. Missouri's own statute also names a 50%-of-disposable-earnings figure for a head-of-family debtor when the UNDERLYING DEBT ITSELF is for the support of another person — not modelled here, because this engine already routes any support-related withholding through the separate `child_support` order type and its own federal 50/55/60/65% ceilings rather than through `consumer_creditor` at all, so that branch of 525.030 has no code path that would ever reach it."
+    },
+    "WI": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }]
+      },
+      "sources": [
+        {
+          "title": "Wis. Stat. § 812.34 — 80% of disposable earnings exempt from garnishment (i.e. 20% reachable), further limited by the amount by which disposable earnings exceed 30x the FEDERAL minimum hourly wage",
+          "url": "https://docs.legis.wisconsin.gov/document/statutes/812.34",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 80%-exempt/20%-reachable structure and its 30x-FEDERAL-minimum-wage floor, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "812.34 also names two protections this file does NOT model: (1) a poverty-line floor — garnishment is further limited so the debtor's household income after garnishment doesn't fall below the federal poverty line, which needs household-size and household-income data this engine has nowhere to put (same structural gap as New Jersey's own poverty-guideline rule below); (2) a reduced 25%-of-disposable-LESS-any-court-ordered-support-assignment rule when a s.767.75 support assignment is already in place against the same employee — not modelled because it requires cross-referencing a live child_support order's own withheld amount into the consumer_creditor calculation, which this engine's aggregate-ceiling mechanism already does in a DIFFERENT (federal-CCPA-shaped) way; Wisconsin's own specific interaction isn't separately wired."
+    },
+    "ME": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 15.10,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }]
+      },
+      "sources": [
+        {
+          "title": "14 M.R.S. § 3126 — ordinary garnishment limited to the lesser of 25% of disposable earnings or the amount by which disposable earnings exceed 40x the greater of the federal minimum wage or Maine's own minimum wage (26 M.R.S. § 664)",
+          "url": "https://legislature.maine.gov/statutes/14/title14sec3126-A.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/40x-greater-of mechanism, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Maine Department of Labor — 2026 minimum wage ($15.10/hr, effective 2026-01-01, cost-of-living indexed annually since a 2016 referendum)",
+          "url": "https://www.maine.gov/labor/news_events/article.shtml?id=13338762",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis; not independently re-fetched from Maine DOL's own page this pass."
+        }
+      ],
+      "$note": "Maine's own $15.10/hr exceeds the federal $7.25, so 'greater of' always resolves to Maine's rate here. Portland sets its own higher LOCAL minimum wage ($16.00/hr for 2026) not modelled — same disclosed simplification as this file's other local-minimum-wage gaps (Denver/Boulder in CO, Minneapolis/St. Paul in MN, NYC/Long Island/Westchester in NY). Maine's own minimum wage is cost-of-living indexed annually — re-verify every year this file rolls forward."
+    },
+    "VT": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 7.25,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.15 }]
+      },
+      "sources": [
+        {
+          "title": "12 V.S.A. § 3170 — TWO separate rules: general debts get the plain federal 25%/30x-federal-minimum-wage default (no departure), but a CONSUMER CREDIT TRANSACTION debt specifically is limited to the lesser of 15% of disposable earnings or the amount by which disposable earnings exceed 40x the federal minimum wage",
+          "url": "https://www.nationallist.com/image/cache/Vermont_Debt_Collection_Law.pdf",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting both of the statute's own rules and the 15%/40x consumer-credit-transaction figures specifically, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "This file models ONLY Vermont's consumer-credit-transaction rule (15%/40x-FEDERAL, not 'greater of' — the statute's own text names the federal figure specifically), because that is what an ordinary credit-card-or-personal-loan judgment actually is in practice, and is what this engine's `consumer_creditor` order type is meant to represent. A judgment for some other kind of 'general debt' not arising from a consumer credit transaction would actually get Vermont's LESS protective plain-federal-default rule instead — a real distinction this engine doesn't have a way to ask the caller about (GarnishmentOrder has no 'is this a consumer credit transaction' flag), so it always applies the MORE protective of Vermont's two rules. Also uncounted: a Vermont court may order a still-larger exemption on a case-by-case finding that the debtor's reasonable weekly expenses exceed these amounts (12 V.S.A. 3170(b)(3)) — inherently un-modellable without that court's own finding."
+    },
+    "ND": {
+      "ordinaryGarnishment": {
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 7.25,
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "perDependentWeeklyReduction": 20.00
+      },
+      "sources": [
+        {
+          "title": "N.D. Cent. Code § 32-09.1-06 — ordinary garnishment limited to the lesser of 25% of disposable earnings or the amount by which disposable earnings exceed 40x the FEDERAL minimum hourly wage, further reduced by $20/week for each dependent family member residing with the employee",
+          "url": "http://www.bcsalliance.com/debt1_northdakota.html",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/40x-federal structure and the $20-per-dependent reduction specifically, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "The one state in this file whose formula depends on a per-employee DEPENDENT COUNT rather than (or in addition to) income — see GarnishmentOrder.dependents and GarnishmentFormula.perDependentWeeklyReduction's own doc comments. $20/week is a fixed nominal figure with no visible inflation indexing in the sources reviewed; re-verify it hasn't been amended when this file rolls forward rather than assuming it scales."
+    },
+    "NJ": {
+      "sources": [
+        {
+          "title": "N.J. Stat. Ann. § 2A:17-56(a) — wage execution limited to 10% of wages/earnings/income due and owing when the debtor's income is at or below 250% of the federal poverty level for their household size; above that threshold the statute sets no fixed number and leaves it to the issuing court's own discretion (bounded by the federal CCPA ceiling)",
+          "url": "https://law.justia.com/codes/new-jersey/title-2a/section-2a-17-56/",
+          "verifiedOn": "2026-09-03",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own income-tier mechanism, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Nolo, \"New Jersey Wage Garnishment Laws\" (attorney-authored, dated modified 2026-04-09) — confirms the 10%/250%-FPL mechanism, that the statute leaves the above-threshold case to court discretion bounded by the federal 25%/disposable-earnings ceiling (not a fixed NJ percentage for an ordinary judgment creditor — the 25% figure in the statute is for debts owed TO THE STATE specifically, a different creditor this engine doesn't model), and a SEPARATE flat $48/week exemption under N.J. Stat. 2A:17-50",
+          "url": "https://www.nolo.com/legal-encyclopedia/new-jersey-wage-garnishment-laws.html",
+          "verifiedOn": "2026-09-05",
+          "verifiedBy": "Directly fetched and read (attorney byline, citing 15 U.S.C. 1673, N.J. Stat. 2A:17-50/2A:17-56/2A:17-56.9, and the govinfo/IRS/DOL primary sources it draws from)."
+        },
+        {
+          "title": "HHS/ASPE 2026 Poverty Guidelines for the 48 Contiguous States and DC — household of 1: $15,960; +$5,680 per additional person",
+          "url": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+          "verifiedOn": "2026-09-05",
+          "verifiedBy": "Directly fetched from HHS/ASPE's own published 2026 table (48-contiguous-states-and-DC figures; NJ is not AK/HI so those separate tables don't apply here)."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "povertyGuidelineTier": {
+          "belowThresholdFraction": 0.1,
+          "basis": "gross",
+          "thresholdMultipleOfPoverty": 2.5,
+          "povertyGuidelineBase": 15960,
+          "povertyGuidelinePerAdditionalPerson": 5680,
+          "flatWeeklyExemption": 48
+        }
+      },
+      "$note": "WIRED 2026-09-05, closing the household-size gap this entry previously disclosed: GarnishmentFormula gained a new povertyGuidelineTier shape (src/registry.ts, src/garnishment.ts) and GarnishmentOrder gained householdSize, the same discipline as ND's dependents or FL's headOfFamily — a caller-asserted fact this engine never guesses. Two modelling choices, both disclosed rather than silent: (1) basis is GROSS, not the CCPA's 'disposable earnings' term of art — the statute's own words ('wages, debts, earnings, salary, income from trust funds or profits due and owing') read as gross, unlike the federal 25% rule which explicitly says disposable; (2) above the 250%-of-poverty threshold, this engine falls through to the plain federal default rather than inventing a fixed NJ number, because the statute itself gives the court discretion there ('may order a larger percentage') rather than naming one — the 25% figure that secondary sources often quote alongside this rule is specifically for debts owed TO THE STATE (a different creditor this engine's GarnishmentOrderType doesn't model at all, not the ordinary consumer_creditor case). The poverty-guideline base/increment are HHS's 2026 48-states-and-DC table and must be re-verified every January when HHS republishes it — see this override's own sources. Absent GarnishmentOrder.householdSize, this falls through to the federal default with an explanatory line rather than assuming a household size, same as an unset headOfFamily. The $48/week flat exemption (2A:17-50) is a separate, additional floor layered on top of the percentage test, not a replacement for it."
+    },
+    "MD": {
+      "sources": [
+        {
+          "title": "Md. Code, Com. Law § 15-601.1 (as amended 2020) — a 2020 amendment REPEALED the old county-by-county variation (the separate lower floor that used to apply in Caroline, Kent, Queen Anne's and Worcester counties) and replaced it with a single statewide rule: the greater of 75% of disposable wages or 30 times MARYLAND's own state minimum hourly wage is exempt from garnishment; the reachable amount is the lesser of 25% of disposable wages or the excess over that floor",
+          "url": "https://plainstatute.com/wage-garnishment/maryland",
+          "verifiedOn": "2026-09-05",
+          "verifiedBy": "Cross-source confirmed: this source states it was checked word-for-word against the official statute at mgaleg.maryland.gov (dated 2026-07-17) and explicitly answers 'Does Maryland garnishment differ by county? No.' A second, independent secondary source (md.elaws.us, via search synthesis) agrees on the same 2020-amendment/uniform-statewide conclusion and the same 75%/30x-minimum-wage formula. Not an independently rendered direct fetch of mgaleg.maryland.gov's own statute page this pass — that page serves a JS-rendered shell to a non-browser request, the same block already documented elsewhere in this project (e.g. Municode)."
+        },
+        {
+          "title": "Maryland state minimum hourly wage — $15.00, reached for all employers 2024-01-01 and unchanged for 2026 (no scheduled increase on file)",
+          "url": "https://onpay.com/insights/minimum-wage-by-state-summary/maryland/",
+          "verifiedOn": "2026-09-05",
+          "verifiedBy": "Cross-source confirmed across multiple payroll-industry minimum-wage guides, all agreeing on $15.00/hr statewide for 2026 with no further scheduled increase."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 15.0
+      },
+      "$note": "WIRED 2026-09-05, closing this entry's own previously-disclosed county-geography gap -- but not the way that gap assumed it would close. Re-researching Maryland's statute for this pass surfaced that the county variation this file's own PRIOR note described is itself STALE: a 2020 amendment to Md. Code, Com. Law 15-601.1 repealed the old Caroline/Kent/Queen Anne's/Worcester carve-out and made the exemption uniform statewide, so there is no more sub-state geography to thread into GarnishmentInput after all -- the correct fix was updating the RESEARCH, not building county plumbing. The resulting statewide rule turns out to be EXACTLY this project's existing Shape A (capFractions + a minimum-wage floor, the same mechanism IL/NY/MA/CT/DE/CO/WA already use) with one substitution: Maryland's own $15.00/hr state minimum wage stands in for the federal $7.25 in the 30x floor test, since 15-601.1 says '30 times the State minimum hourly wage,' not the federal one -- the 25% fraction itself is identical to the federal CCPA default. No new GarnishmentFormula shape or code was needed. Re-verify stateMinimumHourlyWage if Maryland's minimum wage changes."
+    },
+    "GA": {
+      "sources": [
+        {
+          "title": "O.C.G.A. § 18-4-5 — Georgia's ordinary garnishment cap is the lesser of 25% of disposable earnings or the amount by which weekly disposable earnings exceed 30 times the federal minimum hourly wage — the plain federal CCPA formula verbatim, not a state departure",
+          "url": "https://www.kaidenlaw.com/post/how-much-can-be-garnished-from-wages-georgia",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis (multiple independent consumer-law and debt-collection guides) all quoting the same 25%/30x-federal figures with no additional state-specific fraction or floor; not an independently rendered direct fetch of the statute text this pass."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-06, first state in this file to be actively confirmed rather than left as an unconfirmed absence: Georgia's own statute simply re-enacts the federal CCPA default (25%/30x federal minimum wage) with no departure at all, unlike most states in this file which exist here specifically because they DO depart. No `ordinaryGarnishment` block is set — there is nothing to override — so this entry changes no computed result; it exists purely to convert Georgia from 'not yet looked at' to 'looked at, confirmed to match federal law.'"
+    },
+    "CA": {
+      "sources": [
+        {
+          "title": "Cal. Civ. Proc. Code § 706.050 — ordinary garnishment limited to the lesser of 20% of disposable earnings, or 40% of the amount by which disposable earnings exceed 48 times the state (or, if higher, local) minimum hourly wage",
+          "url": "https://selfhelp.courts.ca.gov/guide-earnings-withholding-orders-employers",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Directly fetched from the California Courts' own self-help guide for employers, which quotes both figures verbatim and walks through a full worked example ($17/hr min wage x 48 = $816 floor; $900 disposable: 40% of ($900-$816)=$33.60 vs 20% of $900=$180 — the lesser, $33.60, is withheld). Cross-corroborated by the statute text itself (via Justia, 403-blocked from a direct fetch this pass but readable through search synthesis) and multiple independent consumer-law summaries, all agreeing on 20%/40%/48x with no dissent."
+        },
+        {
+          "title": "California Department of Industrial Relations — state minimum wage $16.90/hr effective 2026-01-01",
+          "url": "https://www.dir.ca.gov/dlse/minimum_wage.htm",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Directly fetched from DIR's own page, which states the figure and effective date verbatim."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }],
+        "minimumWageWeeklyMultiplier": 48,
+        "stateMinimumHourlyWage": 16.90,
+        "minimumWageExcessFraction": 0.40
+      },
+      "$note": "WIRED 2026-09-06 — the first state in this file whose floor test reaches only a FRACTION of the excess over the minimum-wage line rather than the full excess (see GarnishmentFormula.minimumWageExcessFraction's own doc comment, added specifically for this entry). Every other state here (IL/NY/MA/CT/CO/WA/WI/ME/VT/ND/MD/NM/SD/VA/WV/DC below) takes 100% of the excess once the floor is crossed; California takes only 40% of it, which is why 40%/48x is NOT simply 'more protective NY-style 25%/30x' — it changes the SHAPE of the marginal test, not just the numbers. Also disclosed, not modelled: the statute's own text directs using a higher LOCAL minimum wage where one applies (many CA cities and counties set their own, e.g. San Francisco, Emeryville) instead of the $16.90 statewide figure used here — same class of geographic simplification already disclosed for CO/MN/NY/ME's own local-minimum-wage gaps, and for the same reason (workState is a bare 2-letter code with no city/county granularity). This entry is also why tests/garnishment.test.ts's own run() helper had to stop defaulting workState to 'CA': every test written before this pass that omitted workState was unknowingly relying on California having NO override, and would have silently started computing California's real formula instead of the plain federal baseline those tests actually intend to exercise. Switched the default to 'AL' — multiple sources checked while researching this batch listed Alabama among the states with no known departure, the same conclusion Georgia's own entry above confirms more deliberately, though Alabama itself was not independently re-searched to that same standard this pass."
+    },
+    "NM": {
+      "sources": [
+        {
+          "title": "N.M. Stat. Ann. § 35-12-7 (as amended 2023, effective 2023-07-01) — exempt from garnishment is the GREATER of 75% of disposable earnings or 40 times the highest applicable (federal, state, or local) minimum hourly wage; i.e. reachable is the LESSER of 25% of disposable earnings or the excess over that 40x floor",
+          "url": "https://law.justia.com/codes/new-mexico/chapter-35/article-12/section-35-12-7/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 75%/40x-highest-applicable-minimum-wage mechanism and its 2023 amendment (which changed the floor from 40x the FEDERAL wage specifically to 40x whichever of federal/state/local is highest), not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "New Mexico minimum wage — $12.00/hr statewide, unchanged since 2023-01-01",
+          "url": "https://onpay.com/insights/minimum-wage-by-state-summary/new-mexico/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed across multiple payroll-industry guides agreeing on $12.00/hr with no further scheduled statutory increase."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 12.00
+      },
+      "$note": "WIRED 2026-09-06. New Mexico's own 2023 amendment changed the floor from '40x the federal minimum wage' to '40x the HIGHEST applicable federal/state/OR LOCAL minimum wage' — this entry uses the $12.00 statewide figure only; several New Mexico cities (Las Cruces $13.01/hr, Santa Fe's own higher living-wage ordinance) set higher LOCAL minimum wages not modelled here, the same disclosed simplification as this file's other local-minimum-wage gaps (CO/MN/NY/ME/CA above). New Mexico's own state minimum wage ($12.00) already exceeds the federal $7.25, so it is the binding figure regardless."
+    },
+    "SD": {
+      "sources": [
+        {
+          "title": "S.D. Codified Laws § 21-18-51 — ordinary garnishment limited to the lesser of 20% of disposable earnings, or the amount by which disposable earnings exceed 40 times the greater of the federal or South Dakota minimum hourly wage, further reduced by $25/week for each dependent family member residing with the employee",
+          "url": "https://law.justia.com/codes/south-dakota/title-21/chapter-18/section-21-18-51/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 20%/40x-greater-of mechanism and the $25-per-dependent reduction specifically, not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "South Dakota Department of Labor and Regulation — 2026 minimum wage poster, $11.85/hr",
+          "url": "https://dlr.sd.gov/employment_laws/publications/min-wage-poster-2026-english.pdf",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis of the department's own published 2026 poster figure; not independently re-fetched as a PDF this pass."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }],
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 11.85,
+        "perDependentWeeklyReduction": 25.00
+      },
+      "$note": "WIRED 2026-09-06. South Dakota's own $11.85/hr exceeds the federal $7.25, so 'greater of' always resolves to South Dakota's rate here. The second state in this file (after North Dakota) whose formula depends on a per-employee dependent count via GarnishmentFormula.perDependentWeeklyReduction — same mechanism, different dollar figure ($25/week here vs. ND's $20/week) and a different base fraction/multiplier (20%/40x here vs. ND's 25%/40x-FEDERAL-specifically)."
+    },
+    "VA": {
+      "sources": [
+        {
+          "title": "Va. Code Ann. § 34-29 — ordinary garnishment limited to the lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 40 times the greater of the federal or Virginia minimum hourly wage; nothing withheld if weekly disposable earnings are at or below that 40x floor",
+          "url": "https://law.lis.virginia.gov/vacode/title34/chapter4/section34-29/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the Virginia Legislative Information System's own statute text (law.lis.virginia.gov) directly, including the 25%/40x-greater-of mechanism and the full-exemption-at-or-below-the-floor rule; not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "Virginia Department of Labor and Industry — 2026 minimum wage $12.77/hr effective 2026-01-01",
+          "url": "https://doli.virginia.gov/2025/07/29/virginia-minimum-wage-rate-increasing-effective-january-1-2026/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis of DOLI's own announced figure and effective date; not independently re-fetched from doli.virginia.gov this pass."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 12.77
+      },
+      "$note": "WIRED 2026-09-06. Virginia's own $12.77/hr exceeds the federal $7.25, so 'greater of' always resolves to Virginia's rate here. Virginia's minimum wage is itself scheduled for a further, larger legislated increase (Gov. Spanberger signed bills raising it further in 2026) — re-verify this figure every year this file rolls forward rather than assuming $12.77 persists. Notably, this is the state whose WV-adjacent reciprocity cluster (data/states/WV-2026.json) already made this project cross-check Virginia's own tax rules once VA gets built — this entry closes the garnishment side of that same neighborhood ahead of a full VA state-tax pass."
+    },
+    "WV": {
+      "sources": [
+        {
+          "title": "W. Va. Code § 38-5A-3 — ordinary (consumer credit sale/consumer loan judgment) garnishment limited to the lesser of 20% of disposable earnings, or the amount by which disposable earnings exceed 50 times the FEDERAL minimum hourly wage specifically (not a 'greater of state or federal' test)",
+          "url": "https://code.wvlegislature.gov/38-5A-3/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own text directly (code.wvlegislature.gov, the same official WV Legislature code site already used as a primary source elsewhere in this project's WV-2026.json), including the 20%/50x-FEDERAL-specifically mechanism; not an independently rendered direct fetch this pass."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.20 }],
+        "minimumWageWeeklyMultiplier": 50,
+        "stateMinimumHourlyWage": 7.25
+      },
+      "$note": "WIRED 2026-09-06 — found while this project's own WV municipal-service-fee research (data/states/WV-2026.json) was already deep in West Virginia statute law; a natural companion gap to close in the same pass. Unlike most 'greater of federal or state minimum wage' floors in this file, W. Va. Code 38-5A-3 names the FEDERAL minimum hourly wage specifically, so West Virginia's own (lower) state minimum wage never enters this calculation at all — stateMinimumHourlyWage is set to the federal $7.25 deliberately, not a placeholder."
+    },
+    "DC": {
+      "sources": [
+        {
+          "title": "D.C. Code § 16-572 (as amended by the Wage Garnishment Fairness Amendment Act of 2018) — ordinary garnishment limited to 25% of the amount by which disposable wages exceed 40 times the DC minimum hourly wage; nothing withheld if disposable wages are at or below that 40x floor",
+          "url": "https://code.dccouncil.gov/us/dc/council/laws/22-296",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the DC Council's own law-library text of the 2018 amendment act directly, including the 25%/40x-DC-minimum-wage-specifically mechanism; not an independently rendered direct fetch this pass."
+        },
+        {
+          "title": "DC Department of Employment Services — DC minimum wage $18.40/hr effective 2026-07-01 (up from a lower H1-2026 figure)",
+          "url": "https://does.dc.gov/sites/default/files/dc/sites/does/publication/attachments/2026%20Minimum%20Wage%20Poster.pdf",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis of DOES's own published 2026 poster and multiple payroll-industry alerts agreeing on the $18.40 figure and its 2026-07-01 effective date; not independently re-fetched as a PDF this pass."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 40,
+        "stateMinimumHourlyWage": 18.40,
+        "hourlyWageFromMinimumWageRuleset": true
+      },
+      "$note": "WIRED 2026-09-06. Unlike every 'greater of federal or state' floor in this file, D.C. Code 16-572 names the DISTRICT'S OWN minimum wage specifically — no federal comparison at all, and DC's own figure is already far above the federal $7.25 regardless. hourlyWageFromMinimumWageRuleset reads the dated figure from the minimum-wage ruleset: $17.95 through 2026-06-30 and $18.40 from 2026-07-01. Using the later $18.40 on a pre-July check would set the floor too high and withhold less than the law allowed. The stored 18.40 is the current headline, which the ruleset also returns on and after 2026-07-01. DC is a district, and workState already treats it as a two-letter jurisdiction code."
+    },
+    "NE": {
+      "sources": [
+        {
+          "title": "Neb. Rev. Stat. § 25-1558 — ordinary garnishment limited to the lesser of 25% of disposable earnings or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage; reduced to 15% of disposable earnings (same 30x-federal floor) for a debtor who is head of a family",
+          "url": "https://law.justia.com/codes/nebraska/2013/chapter-25/statute-25-1558/",
+          "verifiedOn": "2026-09-06",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/15%-head-of-family/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25
+      },
+      "headOfFamilyOrdinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.15 }],
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25
+      },
+      "$note": "WIRED 2026-09-06. Nebraska's base rule is IDENTICAL to the plain federal CCPA default (25%/30x federal minimum wage) — the only real departure is the head-of-family variant, which lowers the fraction to 15% but keeps the same 30x-federal floor. Distinct from Missouri's own head-of-family variant (10%/30x-federal, same shape) and from Florida's all-or-nothing `fullExemption` — a Nebraska head-of-family debtor still owes something above the floor, just at a reduced rate, the same structural pattern as Missouri. Because the base ordinaryGarnishment here is identical to the federal default in every respect, this entry only changes behavior for orders with `headOfFamily: true`; setting it anyway (rather than omitting ordinaryGarnishment the way Florida does) keeps this file's own documentation honest about what was actually researched and confirmed, following Georgia's own confirmed-no-departure convention above for the non-head-of-family case specifically."
+    },
+    "AZ": {
+      "sources": [
+        {
+          "title": "A.R.S. § 33-1131(B) — maximum part of disposable earnings subject to garnishment: the lesser of 10% of disposable earnings, or the amount by which disposable earnings exceed 60 times the applicable minimum hourly wage",
+          "url": "https://www.azleg.gov/ars/33/01131.htm",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly. Quoted verbatim: 'the maximum part of the disposable earnings of a debtor for any workweek that is subject to process may not exceed ten percent of disposable earnings for that week or the amount by which disposable earnings for that week exceed sixty times the applicable minimum hourly wage in effect at the time the earnings are payable, whichever is less.' The statute's own subsection (B) — ordinary garnishment — carries NO financial-hardship reduction clause; that provision (reducible to not less than 15% on proof of extreme hardship) exists only in subsection (C), for SUPPORT orders, which this project's own scope note already treats as federally preempted and out of this file's reach regardless. Several secondary sources (Nolo among them) describe the hardship clause without specifying which subsection it belongs to — resolved by reading the statute text directly rather than assumed to apply here."
+        },
+        {
+          "title": "data/minimum-wage/states/AZ-2026.json — Arizona's own 2026 state minimum wage",
+          "url": "internal",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "This project's own already-researched minimum-wage figure ($15.15/hr, effective 2026-01-01) — A.R.S. 33-1131(B)'s own 'applicable minimum hourly wage' is whichever of the state or federal figure is greater, and Arizona's has been well above the federal $7.25 since its Prop 206 phase-in completed years ago, so only the state figure is ever used here."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.10 }],
+        "minimumWageWeeklyMultiplier": 60,
+        "stateMinimumHourlyWage": 15.15
+      },
+      "$note": "WIRED 2026-09-11. Arizona's Proposition 209 (\"Predatory Debt Collection Protection Act\", effective 2022-12-05) cut ordinary wage garnishment from the federal default (25%/30x) to 10%/60x — one of the most protective ordinary-garnishment regimes in this file, doubling the minimum-wage floor's multiplier while quartering the fraction, not just adjusting one axis. Re-verify stateMinimumHourlyWage every year this file rolls forward, same as every other state-minimum-wage-keyed entry here."
+    },
+    "AK": {
+      "sources": [
+        {
+          "title": "AS 09.38.030(a) and 8 AAC 95.030 — regular earnings exemption: the greater of $473/week or 75% of weekly disposable earnings; raised to $743/week (or 75%, whichever is greater) on the debtor's own affidavit that their earnings alone support their household (AS 09.38.050(b))",
+          "url": "https://public.courts.alaska.gov/web/forms/docs/civ-511.pdf",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly — the Alaska Court System's own Judgment Debtor Booklet (CIV-511, revision 8/26, current as of this pass), which quotes AS 09.38.030(a) and 8 AAC 95.030 verbatim: 'the following part of your earnings is exempt (protected from seizure): $473 per week or 75% of your weekly disposable earnings, whichever is more,' rising to '$743 per week if you give the court an affidavit... stating... that your earnings alone (and not anyone else's) support your household' (AS 09.38.050(b)). A genuinely different SHAPE from every other state in this file: the floor is a flat legislated dollar figure re-set by the Department of Labor's own regulation (8 AAC 95.030), not a multiple of any minimum wage — new flatWeeklyFloor/flatWeeklyFloorSoleSupport fields added to GarnishmentFormula for it (src/registry.ts), computed in src/garnishment.ts's capFractionsResult() the same way the existing minimum-wage floor is."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "flatWeeklyFloor": 473,
+        "flatWeeklyFloorSoleSupport": 743
+      },
+      "$note": "WIRED 2026-09-11. Mathematically the SAME shape as the federal CCPA default (garnishable = lesser of 25% of disposable, or disposable minus a floor) — Alaska's departure is entirely in the FLOOR figure: a flat $473/week (or $743/week once the debtor files the sole-support affidavit, GarnishmentOrder.soleHouseholdSupport) rather than the federal 30x-minimum-wage figure (currently $217.50/week). Both figures are set by 8 AAC 95.030, a Department of Labor regulation, not directly by the statute's own text — re-verify both dollar amounts whenever this file rolls forward, since a regulatory figure can change without a statutory amendment. Never assumes soleHouseholdSupport true — same discipline as headOfFamily elsewhere in this file; the debtor must have actually filed the affidavit."
+    },
+    "AR": {
+      "sources": [
+        {
+          "title": "A.C.A. § 16-66-208 — wage exemptions for 'laborers and mechanics': $25/week of net wages absolutely exempt (no filing required), plus up to 60 days' wages exempt on a sworn affidavit that the claim is smaller than the debtor's Ark. Const. art. 9 § 3 personal-property exemption ($200 single / $500 head of family) and that the debtor's other personal property, combined with the 60 days' wages, doesn't exceed that same constitutional limit",
+          "url": "https://codes.findlaw.com/ar/title-16-practice-procedure-and-courts/ar-code-sect-16-66-208/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly. Quoted verbatim: 'The first twenty-five dollars ($25.00) per week of the net wages of all laborers and mechanics shall be absolutely exempt from garnishment.' The statute itself never defines who counts as a 'laborer or mechanic' beyond that name, and contains no reference to the federal CCPA 25%/30x-minimum-wage test at all — these are additional, narrower protections layered on top of ordinary garnishment law, not a replacement fraction/floor formula of the same shape as every other state in this file."
+        }
+      ],
+      "knownGap": "Confirmed: Arkansas has NO general departure from the federal CCPA default for ordinary wage garnishment — the general population computes against the plain federal 25%/30x-minimum-wage rule, same as an absent state. A.C.A. § 16-66-208 layers two ADDITIONAL protections onto that, but only for the specific, statutorily-undefined occupational category of 'laborers and mechanics': (1) an absolute $25/week exemption, smaller than the federal floor ($217.50/week at the current federal minimum wage) already in place regardless, so it could never bind for anyone this engine already protects via the federal default; and (2) a 60-day-wages exemption gated on a sworn affidavit AND an interaction with Ark. Const. art. 9 § 3's own separate personal-property exemption ($200/$500) — a wholly different kind of exemption (asset-value-based, not payroll-percentage-based) this engine has no mechanism to evaluate regardless of occupation. Not modelled: this engine has no employee-occupation-classification input to know who qualifies as a 'laborer or mechanic' in the first place, and the $25/week figure is strictly smaller than the federal floor in every case it could matter, so building it would add real complexity for a case that never changes the computed result. Disclosed rather than force-fit, same discipline as a fact this engine refuses to guess elsewhere in this project."
+    },
+    "ID": {
+      "sources": [
+        {
+          "title": "Idaho Code § 11-207 — restriction on garnishment, maximum: lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://legislature.idaho.gov/statutesrules/idstat/title11/t11ch2/sect11-207/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "IN": {
+      "sources": [
+        {
+          "title": "IC 24-4.5-5-105 — limitation on garnishment: lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage — Indiana's own codification of the Uniform Consumer Credit Code provision, identical in shape to the federal CCPA test",
+          "url": "https://law.justia.com/codes/indiana/title-24/article-4-5/chapter-5/section-24-4-5-5-105/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "KS": {
+      "sources": [
+        {
+          "title": "K.S.A. § 60-2310 — wage garnishment: maximum part of earnings subject to garnishment is the lesser of 25% of aggregate disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://www.ksrevisor.gov/statutes/chapters/ch60/060_023_0010.html",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ]
+    },
+    "KY": {
+      "sources": [
+        {
+          "title": "KRS 425.506 — a judgment creditor may reach only the lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=18419",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass. KRS 427.010's own phrasing (earnings 'protected to the federal garnishment limit... amount above 30 times the federal minimum wage or 75% of weekly disposable earnings, whichever is greater' is exempt) describes the SAME test from the exempt-amount side rather than the garnishable side — mathematically identical to the federal 25%/30x rule, not a departure."
+        }
+      ]
+    },
+    "IA": {
+      "sources": [
+        {
+          "title": "Iowa Code § 642.21 — disposable earnings exempt to the extent provided by the federal CCPA, PLUS an additional cumulative CALENDAR-YEAR dollar cap per judgment creditor keyed to the debtor's own earnings reasonably expected for the year",
+          "url": "https://www.legis.iowa.gov/docs/code/642.21.pdf",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly (Iowa Code 2026 edition, current as of this pass). Quoted verbatim: 'The disposable earnings of an individual are exempt from garnishment to the extent provided by the federal [CCPA]... The maximum amount of an employee's earnings which may be garnished during any one calendar year is two hundred fifty dollars for each judgment creditor... or when those earnings are reasonably expected to be in excess of twelve thousand dollars for that calendar year... [tier table follows].' The tier selector is a PROJECTION the debtor supplies via the sheriff's/court's own garnishment questionnaire (642.5(1), question 4), not a running actual-earnings total — genuinely different in kind from every other input this file already tracks. Chapter 252D and sections 598.22/598.23/627.12 (support and related orders) are expressly carved OUT of this cap, consistent with this project's own scope note that support orders are federally preempted and never consult this file regardless."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25,
+        "annualCapTiers": [
+          { "belowAnnualEarnings": 12000, "maxAnnualCents": 25000 },
+          { "belowAnnualEarnings": 16000, "maxAnnualCents": 40000 },
+          { "belowAnnualEarnings": 24000, "maxAnnualCents": 80000 },
+          { "belowAnnualEarnings": 35000, "maxAnnualCents": 150000 },
+          { "belowAnnualEarnings": 50000, "maxAnnualCents": 200000 },
+          { "belowAnnualEarnings": null, "maxAnnualFractionOfEarnings": 0.10 }
+        ]
+      },
+      "$note": "WIRED 2026-09-11 — a genuinely new SEVENTH garnishment shape (GarnishmentFormula.annualCapTiers, src/registry.ts): every other state in this file computes a per-paycheck ceiling from that paycheck alone; Iowa additionally caps the CUMULATIVE total across an entire calendar year, per creditor. Modelled as a layer applied AFTER whichever per-paycheck shape already ran (here, the plain federal 25%/30x test — Iowa adds no departure to that part) — see applyAnnualCapTiers() in src/garnishment.ts. Requires two new caller-supplied facts with no other source in a single paycheck: GarnishmentOrder.expectedAnnualEarnings (the tier selector — Iowa's own statute has the debtor supply this at the time of the garnishment questionnaire, not something this engine could derive from one paycheck) and .garnishedThisYearForThisOrder (how much of the annual cap this specific creditor has already used, defaulting to $0 when omitted — the caller's own running total to maintain, same convention as New Mexico's certificate.stateTaxWithheldThisMonth). Absent expectedAnnualEarnings, this engine does not guess a tier and the annual layer simply doesn't apply — the ordinary per-paycheck federal test still does, so a caller who never tracks this gets the SAME (correct, federally-required) floor as before, just without Iowa's own extra protection layered on until they start supplying it."
+    },
+    "AL": {
+      "sources": [
+        {
+          "title": "Ala. Code § 6-10-7 — for consumer debts, wages subject to garnishment are limited to the lesser of 25% of disposable earnings for the week, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage — the plain federal CCPA formula verbatim",
+          "url": "https://law.justia.com/codes/alabama/title-6/chapter-10/article-1/division-1/section-6-10-7/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass. The statute's separate 75%-exempt clause for tort judgments applies the SAME 25% figure, not a different one — no departure hiding in the tort case either."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Alabama's own statute simply re-enacts the federal CCPA default (25%/30x federal minimum wage) with no departure at all — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "LA": {
+      "sources": [
+        {
+          "title": "La. R.S. 13:3881 — 75% of disposable earnings exempt for any week, but never less than 30 times the federal minimum hourly wage — mathematically identical to the federal 25%/30x CCPA formula from the exempt-amount side",
+          "url": "https://law.justia.com/codes/louisiana/2014/code-revisedstatutes/title-13/rs-13-3881/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 75%-exempt/30x-federal-floor mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Louisiana's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "MI": {
+      "sources": [
+        {
+          "title": "MCL 600.4012 and Michigan's own garnishment procedure — tracks the federal CCPA floor (25%/30x-federal) rather than imposing a tighter state-specific cap for ordinary consumer debt",
+          "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-600-4012",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis; Michigan's 2015 Public Act 14 overhaul (continuous periodic writs, six-month balance statements) changed GARNISHMENT PROCEDURE, not the underlying percentage/floor exemption test, which remains the plain federal default."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Michigan tracks the federal CCPA default with no percentage/floor departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "MS": {
+      "sources": [
+        {
+          "title": "Miss. Code § 85-3-4 — after an initial 30-day post-service exemption period, the maximum garnishable is the lesser of 25% of disposable earnings or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage, expressly cross-referencing 15 U.S.C. §§ 1672(b) and 29 U.S.C. § 206(a)(1)",
+          "url": "https://law.justia.com/codes/mississippi/title-85/chapter-3/section-85-3-4/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism and its direct cross-references to the federal statutes themselves, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "knownGap": "The ONGOING per-paycheck percentage/floor test matches the federal CCPA default exactly — no departure there, same confirmed-no-departure class as Georgia. Mississippi does add a genuinely separate TIMING protection this engine's per-paycheck model has no way to represent: wages are entirely exempt from garnishment for the first 30 days after the writ is served, regardless of income. Not modelled — this engine computes one paycheck at a time with no concept of 'days since a writ was served,' the same class of architectural limitation as the cross-period supplemental-wage gaps disclosed elsewhere in this project."
+    },
+    "MT": {
+      "sources": [
+        {
+          "title": "Mont. Code Ann. § 25-13-614 — garnishment limited to the lesser of the amount by which disposable earnings exceed 30 times the federal minimum hourly wage, or 25% of disposable earnings, using 15 U.S.C. § 1672's own definitions",
+          "url": "https://codes.findlaw.com/mt/title-25-civil-procedure/mt-st-25-13-614/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Montana's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "OH": {
+      "sources": [
+        {
+          "title": "R.C. 2716.02 — maximum garnishment is the lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://codes.ohio.gov/ohio-revised-code/section-2716.02",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Ohio's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "OK": {
+      "sources": [
+        {
+          "title": "12 O.S. § 1171.2 — garnishment limited to 25% of disposable earnings or the amount exceeding 30 times the federal minimum wage, whichever is less",
+          "url": "https://law.justia.com/codes/oklahoma/title-12/section-12-1171-1/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Oklahoma's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "RI": {
+      "sources": [
+        {
+          "title": "R.I. Gen. Laws § 10-5-8 — the lesser of 25% of disposable earnings, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://law.justia.com/codes/rhode-island/title-10/chapter-10-5/section-10-5-8/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis. Several secondary summaries describe this via its own 40x-minimum-wage crossover point ('below 40x, only the excess over 30x is reachable; above 40x, the first 75% is exempt') — that 40x figure is simply where 25% of disposable earnings algebraically equals disposable-minus-30x-minimum-wage (D=40x solves 0.25D = D-30x), not a distinct Rhode Island multiplier. Mathematically identical to the plain federal test throughout, not a departure."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Rhode Island's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "UT": {
+      "sources": [
+        {
+          "title": "Utah Code § 70C-7-103 — ordinary garnishment limited to the lesser of 25% of disposable earnings, or the amount above 30 times the federal minimum wage",
+          "url": "https://www.nolo.com/legal-encyclopedia/utah-wage-garnishment-law.html",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly, not an independently rendered direct fetch this pass. A separate provision, Utah Code § 78B-5-505(1)(a)(xvi) (part of Utah's EXEMPTIONS ACT, the schedule used in bankruptcy proceedings), exempts unpaid earnings as of a bankruptcy filing date up to a fraction of state median income — a different legal proceeding (bankruptcy, not ordinary post-judgment wage garnishment) and out of this file's scope, same boundary this project already draws around bankruptcy-specific exemptions elsewhere."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Utah's own ordinary-garnishment statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "WY": {
+      "sources": [
+        {
+          "title": "W.S. § 1-15-408 — the lesser of 25% of disposable earnings for the week, or the amount by which disposable earnings exceed 30 times the federal minimum hourly wage",
+          "url": "https://law.justia.com/codes/wyoming/title-1/chapter-15/article-4/section-1-15-408/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Cross-source confirmed via search synthesis quoting the statute's own 25%/30x-federal mechanism directly. One search summary's own closing claim ('Wyoming uses 30x, federal uses 40x, so Wyoming is more protective') was rejected on inspection — every other source, federal and state, describes the SAME 25%/30x federal test throughout; that summary conflated the test's own 40x break-even crossover point with a distinct multiplier, an error caught by cross-checking against the statute's own quoted text rather than trusted at face value."
+        }
+      ],
+      "$note": "RESEARCHED 2026-09-11: Wyoming's own statute re-enacts the federal CCPA default with no departure — same confirmed-no-departure class as Georgia. No ordinaryGarnishment block is set; this entry changes no computed result."
+    },
+    "OR": {
+      "sources": [
+        {
+          "title": "ORS 18.385 — 75% of disposable earnings exempt from execution, or a flat per-period dollar minimum, whichever protects more: $254/week (scaled for other pay periods)",
+          "url": "https://oregon.public.law/statutes/ors_18.385",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched via a rendering of the statute's own text (oregon.public.law, a direct statute-hosting site, not a law-firm summary). Quoted: '75 percent of the disposable earnings of an individual are exempt from execution,' with a flat-dollar floor 'to the extent that payment under a garnishment would result in net disposable earnings... of less than' $254 (weekly), $509 (biweekly), $545 (semimonthly), or $1,090 (monthly). The biweekly/semimonthly/monthly figures don't scale as a pure multiple of $254 the way this engine's generic weekly-to-period prorating would compute them (e.g. monthly would come out near $1,101, not $1,090) — same independently-rounded-per-period phenomenon already disclosed for Wisconsin's and New Mexico's own tables elsewhere in this project. Only the $254/week base figure is wired here; a caller on a non-weekly frequency gets this engine's own generic pro-rata scaling, not Oregon's own independently-published rounding for that specific period."
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "flatWeeklyFloor": 254
+      },
+      "$note": "WIRED 2026-09-11. Same flat-dollar-floor shape Alaska uses (GarnishmentFormula.flatWeeklyFloor) — Oregon's own $254/week statutory figure substitutes for the federal 30x-minimum-wage floor ($217.50/week at the current federal minimum wage), a real but modest departure. No sole-support-style higher figure exists in Oregon's statute the way Alaska's does."
+    },
+    "TN": {
+      "sources": [
+        {
+          "title": "Tenn. Code Ann. § 26-2-107 — an additional $2.50/week exemption for each dependent child under 16 years of age who is a Tennessee resident, layered on top of the plain federal 25%/30x test (§ 26-2-106), but ONLY once the debtor informs the employer of each qualifying child",
+          "url": "https://law.justia.com/codes/tennessee/title-26/chapter-2/part-1/section-26-2-107/",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly. Quoted verbatim: 'there shall be added as exempt to the judgment debtor the sum of two dollars and fifty cents ($2.50) per week for each dependent child under sixteen (16) years of age and a resident of this state... It is the responsibility of the judgment debtor to inform the employer of each dependent child claimed under this section. This section shall not apply if the debtor fails to so inform the employer.'"
+        }
+      ],
+      "ordinaryGarnishment": {
+        "capFractions": [{ "basis": "disposable", "fraction": 0.25 }],
+        "minimumWageWeeklyMultiplier": 30,
+        "stateMinimumHourlyWage": 7.25,
+        "perDependentWeeklyReduction": 2.50
+      },
+      "$note": "WIRED 2026-09-11. Same per-dependent shape North Dakota already uses (GarnishmentFormula.perDependentWeeklyReduction), just a different figure ($2.50/week here vs. ND's $20/week) layered on the plain federal 25%/30x test rather than ND's own state-specific cap. Tennessee's own condition is narrower than this engine's plain GarnishmentOrder.dependents count captures: the statute requires each dependent be UNDER 16 AND a Tennessee resident, and requires the debtor to have affirmatively informed the employer — the caller supplying `dependents` here is asserting all of that, the same discipline this engine already applies to headOfFamily and every other caller-supplied eligibility fact."
+    },
+    "NH": {
+      "sources": [
+        {
+          "title": "RSA 512:21 — New Hampshire's trustee process: wages earned by the defendant AFTER service of the writ upon the trustee are exempt outright; wages already earned but not yet paid AT THE MOMENT of service are exempt except for an action founded upon a debt on a judgment, in which case up to 50 times the federal minimum hourly wage per week is exempt",
+          "url": "https://gc.nh.gov/rsa/html/LII/512/512-21.htm",
+          "verifiedOn": "2026-09-11",
+          "verifiedBy": "Fetched directly. Quoted verbatim: 'Wages for labor performed by the defendant after the service of the writ upon the trustee' are exempt outright — no exception carved back in for a judgment debt the way the PRE-service wage exemption has one ('wages of the defendant earned before the service of the writ... shall be exempt except in actions founded upon a debt on a judgment,' where instead '50 times the minimum hourly wage... for each week shall be exempt')."
+        }
+      ],
+      "knownGap": "New Hampshire's trustee process is structurally incompatible with the STANDING, RECURRING wage garnishment order this engine (and every other state in this file) models: RSA 512:21 exempts wages earned AFTER the trustee writ is served OUTRIGHT, with no judgment-debt exception the way the pre-service exemption has one. In effect, a creditor enforcing an ordinary judgment can reach only the SPECIFIC amount the employer already owed the debtor at the single moment of service (itself further exempt up to 50x the federal minimum hourly wage/week, MORE protective than the federal 30x floor) — not an ongoing percentage of every future paycheck the way this engine's per-paycheck GarnishmentOrder.amountOrdered model assumes. A NEW trustee writ would need to be served again to reach a later moment's already-accrued-but-unpaid wages, which this engine has no mechanism to represent (it computes one paycheck's own withholding from a standing order, not a sequence of separately-served one-time writs). Not modelled as `ordinaryGarnishmentProhibited` (a court genuinely CAN reach wages already owed at the moment of service, unlike Texas/Pennsylvania/North Carolina/South Carolina's flat bans) and not modelled as a formula either (there is no ongoing per-paycheck percentage to compute) — disclosed as a structural mismatch between this engine's model and New Hampshire's own mechanism, closest in PRACTICAL EFFECT to a prohibition for a standing payroll garnishment order specifically."
+    }
+  }
+}

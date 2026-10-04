@@ -1,0 +1,64 @@
+{
+  "code": "AK",
+  "name": "Alaska",
+  "year": 2026,
+  "method": "no_income_tax",
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of. Added for schema consistency with this project's other no-income-tax states (comprehensive-audit pass).",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Alaska has no income tax to be reciprocal about, same convention as this project's other no-income-tax states. Added for schema consistency (comprehensive-audit pass) -- this field was previously missing entirely from this file, unlike every other no-income-tax state's file."
+  },
+  "sources": [
+    {
+      "title": "Alaska Dept of Labor and Workforce Development, Employment Security Tax -- 2026 Unemployment Insurance Tax Rates",
+      "url": "https://labor.alaska.gov/estax/2026-experience-rates.html",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Fetched directly. Quoted verbatim: 'The 2026 Taxable Wage Base is $54,200.00' and 'The 2026 Employee Rate is 0.50%.' The full 21-class variable-contribution-rate table was also read: the EMPLOYER rate is experience-rated (1.00% to 5.40% across the 21 classes), but the EMPLOYEE rate is a flat 0.50% for every single class with no exceptions -- Alaska's employee-paid UI share is genuinely NOT experience-rated at all, unlike the employer side of the same tax."
+    },
+    {
+      "title": "Alaska Statutes 23.20 -- Alaska Employment Security Act (reciprocity/local tax context)",
+      "url": "https://www.akleg.gov/basis/statutes.asp#23.20",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Search-synthesized (WebSearch, not independently fetched this pass): Alaska has no personal income tax of any kind (never has, since 1980) and no local municipal income/wage tax (municipalities may levy local sales taxes and specific excise taxes, e.g. a 'raw fish tax', but not a payroll/income tax). Alaska has no mandatory paid family/medical leave program -- a 2023-2024 HB 100 proposal was not enacted. The Alaska Family Leave Act (AFLA, 50+ employees) provides only UNPAID job-protected leave, not a payroll deduction."
+    }
+  ],
+  "stateUnemploymentEmployee": {
+    "rate": 0.005,
+    "wageBase": 54200.0,
+    "$comment": "Wired via the existing generic stateUnemploymentEmployeeTax() mechanism (already used for PA/NJ) -- zero new code. Alaska is one of only three states in this project (with PA and NJ) that taxes the EMPLOYEE for unemployment insurance, not just the employer. Flat 0.50% for every employer regardless of the employer's own experience-rated class -- confirmed directly from the full 21-class rate table, not just the headline figure."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Alaska municipality or borough levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed; not independently verified against a specific municipal-authority statute this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory. The Alaska Family Leave Act (50+ employees) provides only unpaid, job-protected leave -- not a payroll deduction. A 2023-2024 legislative proposal (HB 100) to create a paid program was not enacted.",
+    "confidence": "cross_source_confirmed via search synthesis, not independently fetched from a specific enacted statute this pass."
+  },
+  "unemploymentInsuranceEmployer": {
+    "administeredBy": "Alaska Dept of Labor and Workforce Development",
+    "wageBase": 54200.0,
+    "experiencedEmployerRateRange": [0.01, 0.054],
+    "delinquentOrIneligibleRateNote": "Rate class 21 (the top negative-reserve class) carries an employer rate of 5.40%, total (with the flat 0.50% employee share) 5.90% -- the ceiling for any single employer.",
+    "confidence": "primary_source_confirmed -- labor.alaska.gov's own 2026 rate table, quoted directly above.",
+    "knownGap": "The employer side is experience-rated (21 classes by cumulative reportable payroll); stateUnemploymentEmployerTax() (src/taxes/state.ts) uses the caller-supplied rate when given (input.employer.stateUnemploymentRate) since this engine doesn't track an employer's own payroll history, otherwise the new-employer rate below. The EMPLOYEE side (flat 0.50%, no experience-rating) needs no such input. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "Reciprocity, local-tax, and PFML absence are all cross-source confirmed via search synthesis rather than a direct fetch of a specific Alaska statute this pass -- same tier of confidence as several other no-income-tax states already in this project (TN, FL, SD).",
+    "STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 54200,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.015,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.01,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  }
+}

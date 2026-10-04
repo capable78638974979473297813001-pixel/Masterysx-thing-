@@ -1,0 +1,277 @@
+{
+  "code": "MT",
+  "name": "Montana",
+  "year": 2026,
+  "method": "bracket_per_period_gross",
+  "$methodComment": "Genuinely different shape from every other state in this project: Montana's own formula (W = A + B x (G - C)) applies DIRECTLY to the PER-PERIOD GROSS wage, with SEPARATE bracket tables published for each of 6 pay frequencies x 3 filing-status groups -- no annualize-then-bracket-then-deannualize step the way federal/WI/MN/KY all use, and no separate standard-deduction-subtraction step either (the guide's own worked examples plug raw per-period wages straight into the bracket lookup; the standard deduction is baked into each schedule's own 0%-rate first bracket). Verified this is structurally a close cousin of federal's OWN percentage method: MT's zero-band thresholds equal EXACTLY (this project's own federal/2026.json standardSchedules 0%-band ceiling + step1StandardAdjustment) for every filing status -- single $7,500+$8,600=$16,100, HOH $15,550+$8,600=$24,150, MFJ $19,300+$12,900=$32,200, all exact matches -- and the 'both spouses working' schedule reuses the SAME thresholds as single/MFS (not a separately-halved fourth table). Montana's 2026 method (HB337) was explicitly redesigned to mirror the federal Form W-4 percentage method, confirmed directly: 2026 Publication 1 states 'the filing status you use on your federal Form 1040... determine[s] the standard deduction and tax rates used to compute your wage withholding.' Corroboration, not the source of truth -- the bracket tables below were transcribed directly from the primary PDF.",
+  "$orgNote": "ENGINE-CONSUMED config blocks (bracketPerPeriodGross, reciprocity, exemptPretax) MUST live at the top level of this file -- registry.ts's StateRuleset loader and every dispatch function in state.ts read `rules.<blockName>` directly, the same flat convention every other state file already uses (bracketFlatAllowance, bracketPhaseoutDeduction, etc. are all top-level, never nested under a category wrapper). The rich topical grouping (incomeTaxDocs/unemploymentDocs/administrationDocs/localDocs below) is DOCUMENTATION organization layered on top of that flat requirement, not a replacement of it -- a true nested engine-config tree the way a fresh design might prefer would need a registry.ts change (a per-block path resolver instead of a flat property read), which is out of scope for tonight and would touch every existing state file's loader, not just Montana's.",
+  "sources": [
+    {
+      "title": "Montana Employer and Information Agent Guide with Montana Withholding Tax Tables (V4, November 2025)",
+      "url": "https://revenuefiles.mt.gov/files/Forms/Montana_Employer_and_Information_Agent_Guide_with_Tax_Tables.pdf",
+      "verifiedOn": "2026-08-15",
+      "verifiedBy": "Downloaded and text-extracted directly. Every bracket table below (3 filing-status groups x 6 pay frequencies) transcribed verbatim from this document's own per-period tables, not derived from annual figures -- matching this project's established practice (Ohio's periodTables) of using a state's own published per-period numbers directly rather than re-deriving and risking an off-by-a-cent drift some frequencies' period counts don't divide evenly into."
+    },
+    {
+      "title": "2026 Montana Publication 1, A Guide to Montana Tax Withholding and Estimated Payments",
+      "url": "https://revenuefiles.mt.gov/files/Forms/Publication-1/Publication-1-2026.pdf",
+      "verifiedOn": "2026-08-15",
+      "verifiedBy": "Downloaded and text-extracted directly. Source for the federal-standard-deduction linkage, mineral royalty thresholds, and estimated-payment context."
+    },
+    {
+      "title": "2026 Form MW-4, Montana Employee's Withholding and Exemption Certificate",
+      "url": "https://revenuefiles.mt.gov/files/Forms/Montana_Employee_Withholding_Allowance_and_Exemption_Certificate_Form_MW-4.pdf",
+      "verifiedOn": "2026-08-15",
+      "verifiedBy": "Downloaded and text-extracted directly, both pages (form + Multiple Jobs Worksheet)."
+    },
+    {
+      "title": "Montana DLI -- UI Contribution Rate Schedules (all 12 schedules, I-XII)",
+      "url": "https://uid.dli.mt.gov/employers/schedule-of-contribution-rates",
+      "verifiedOn": "2026-08-15",
+      "verifiedBy": "Fetched directly via browser; Schedule I's positive/negative-reserve rate columns transcribed verbatim and cross-checked against a secondary source's claim that Schedule I is the active 2026 schedule."
+    }
+  ],
+  "startingPointDisclosure": "Building for this state started from a detailed specification the user pasted (not a primary source itself). It was NOT trusted directly -- every numeric claim in it was checked against Montana's own primary documents above. Result: the income-tax bracket tables, standard deductions, MW-4 mechanics, UI rate-schedule numbers, mineral royalty thresholds ($166/$2,000), and penalty percentages (1.5%/mo cap 15%, 15%/mo cap 75%) all matched exactly. ONE genuine error was caught and corrected: the pasted spec claimed 11% annual interest on unpaid withholding; Montana's own guide states 10.25% per year, 0.0281% daily -- a real discrepancy, not a rounding difference, now corrected below (withholdingAdministration.interest).",
+
+  "bracketPerPeriodGross": {
+    "$comment": "ENGINE-CONSUMED. Read by bracketPerPeriodGross()/resolveMTSchedule() in state.ts. {from,to,base,rate} in DOLLARS (converted to cents at read time, same WIBracket shape used by WI/MN). Values are PER-PERIOD dollar thresholds applied directly to gross wages -- no annualization.",
+    "brackets": {
+      "single_mfs_bothWorking": {
+        "daily":        [{"from":0,"to":62,"base":0,"rate":0},{"from":62,"to":245,"base":0,"rate":0.047},{"from":245,"to":null,"base":9,"rate":0.0565}],
+        "weekly":       [{"from":0,"to":310,"base":0,"rate":0},{"from":310,"to":1223,"base":0,"rate":0.047},{"from":1223,"to":null,"base":43,"rate":0.0565}],
+        "biweekly":     [{"from":0,"to":619,"base":0,"rate":0},{"from":619,"to":2446,"base":0,"rate":0.047},{"from":2446,"to":null,"base":86,"rate":0.0565}],
+        "semimonthly":  [{"from":0,"to":671,"base":0,"rate":0},{"from":671,"to":2650,"base":0,"rate":0.047},{"from":2650,"to":null,"base":94,"rate":0.0565}],
+        "monthly":      [{"from":0,"to":1342,"base":0,"rate":0},{"from":1342,"to":5300,"base":0,"rate":0.047},{"from":5300,"to":null,"base":187,"rate":0.0565}],
+        "annual":       [{"from":0,"to":16100,"base":0,"rate":0},{"from":16100,"to":63600,"base":0,"rate":0.047},{"from":63600,"to":null,"base":2233,"rate":0.0565}]
+      },
+      "mfj_qss": {
+        "daily":        [{"from":0,"to":124,"base":0,"rate":0},{"from":124,"to":489,"base":0,"rate":0.047},{"from":489,"to":null,"base":18,"rate":0.0565}],
+        "weekly":       [{"from":0,"to":619,"base":0,"rate":0},{"from":619,"to":2446,"base":0,"rate":0.047},{"from":2446,"to":null,"base":86,"rate":0.0565}],
+        "biweekly":     [{"from":0,"to":1238,"base":0,"rate":0},{"from":1238,"to":4892,"base":0,"rate":0.047},{"from":4892,"to":null,"base":172,"rate":0.0565}],
+        "semimonthly":  [{"from":0,"to":1342,"base":0,"rate":0},{"from":1342,"to":5300,"base":0,"rate":0.047},{"from":5300,"to":null,"base":187,"rate":0.0565}],
+        "monthly":      [{"from":0,"to":2683,"base":0,"rate":0},{"from":2683,"to":10600,"base":0,"rate":0.047},{"from":10600,"to":null,"base":372,"rate":0.0565}],
+        "annual":       [{"from":0,"to":32200,"base":0,"rate":0},{"from":32200,"to":127200,"base":0,"rate":0.047},{"from":127200,"to":null,"base":4465,"rate":0.0565}]
+      },
+      "hoh": {
+        "daily":        [{"from":0,"to":93,"base":0,"rate":0},{"from":93,"to":367,"base":0,"rate":0.047},{"from":367,"to":null,"base":13,"rate":0.0565}],
+        "weekly":       [{"from":0,"to":464,"base":0,"rate":0},{"from":464,"to":1835,"base":0,"rate":0.047},{"from":1835,"to":null,"base":65,"rate":0.0565}],
+        "biweekly":     [{"from":0,"to":929,"base":0,"rate":0},{"from":929,"to":3669,"base":0,"rate":0.047},{"from":3669,"to":null,"base":129,"rate":0.0565}],
+        "semimonthly":  [{"from":0,"to":1006,"base":0,"rate":0},{"from":1006,"to":3975,"base":0,"rate":0.047},{"from":3975,"to":null,"base":140,"rate":0.0565}],
+        "monthly":      [{"from":0,"to":2013,"base":0,"rate":0},{"from":2013,"to":7950,"base":0,"rate":0.047},{"from":7950,"to":null,"base":280,"rate":0.0565}],
+        "annual":       [{"from":0,"to":24150,"base":0,"rate":0},{"from":24150,"to":95400,"base":0,"rate":0.047},{"from":95400,"to":null,"base":3349,"rate":0.0565}]
+      }
+    },
+    "unpublishedFrequenciesNote": "quarterly/semiannual PayFrequency values are part of this engine's type but not published by Montana (only daily/weekly/biweekly/semimonthly/monthly/annual). bracketPerPeriodGross() throws for those rather than silently guessing via interpolation -- a disclosed hard boundary, not a gap to derive around."
+  },
+  "reciprocity": {
+
+    "exemptWhenDaysWorkedAtMost": 29,
+
+    "dayCountRequiresCallerEligibility": true,
+
+    "$dayCountComment": "Montana's exemption requires ALL of: nonresident, works in Montana fewer than 30 days (so 29 is the last exempt day), works in more than one state, and has no other Montana-source income — and is unavailable to professional athletes, entertainers, per-event service providers, construction workers and 'key employees'. Only the day count is computable here; the rest is the caller's determination.",
+    "reciprocalStates": ["ND"],
+    "mechanism": "MW-4 line 5c, a checkbox-based self-certification (no separate standalone form) -- structurally the simplest reciprocity mechanism found in this project so far.",
+    "engineNote": "Reuses the EXISTING generic reciprocityExemptionLine() mechanism built for Minnesota -- goes live for Montana with zero new code, same as it already did for IL/IN/KY/MI/OH/PA/WI."
+  },
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "UPGRADED to Wisconsin/Minnesota-tier evidence. Publication 1 confirms Montana's income tax base STARTS from federal taxable income ('additions... to your federal taxable income to determine your Montana tax' / 'subtracted from federal taxable income to determine Montana taxable income'), then Montana's own complete 'Montana Additions' list (5 items: state/municipal bond interest from OTHER states, recoveries of prior-Montana-deducted amounts, expenses used to claim a Montana credit, nonqualified MT Medical Savings Account/First-Time Homebuyer Account distributions, and business-income state-tax addbacks) and 'Montana Subtractions' list (state tax refunds, federal bond interest, non-MT-reducing recoveries, military-survivor-benefit exemption, volunteer-firefighter subtraction) were both fetched and read directly, checked item by item -- NEITHER list touches 401(k)/403(b)/457/SIMPLE deferrals, section 125 cafeteria plans, HSA, FSA, dependent care, or commuter benefits. Same evidentiary shape as Wisconsin's file (federal-conformity statement + a checked statutory additions/subtractions list containing nothing relevant). NOTE: this confirms the INCOME-TAX base only -- Montana's separate UI wage base explicitly does NOT exclude 401(k)/cafeteria-125 amounts (see unemploymentDocs.uiWageBaseVsIncomeTaxWageBase below); the two bases are not the same list and were verified independently.",
+
+  "supplementalWages": {
+    "flatRate": 0.05,
+    "combinedWithRegular": "Combine supplemental + regular wages for the period and run the combined figure through the normal bracket table -- the DEFAULT/mandatory method when paid together (already reachable in this engine without new code, same as every other state: don't tag the earning 'supplemental').",
+    "paidSeparately_employerChoice": [
+      "Method 1: (supplemental + CURRENT period's regular wages) -> bracket table. NOT modelled.",
+      "Method 2: (supplemental + PRECEDING period's regular wages, same calendar year) -> bracket table. NOT modelled -- same class of gap as Kentucky's supplementalTreatment.engineGap: a standalone bonus cheque can't reach into a different period's data.",
+      "Method 3: flat 5.00% of the supplemental wage alone. MODELLED — montanaSupplementalTax()."
+    ]
+  },
+
+  "mw4Documentation": {
+    "certificateFields": "input.workState.certificate.{filingStatus: 'single'|'mfs'|'mfj'|'qss'|'hoh' (matches resolveMTSchedule() exactly), bothSpousesWorking?: boolean (MW-4 line 2), specifiedWithholding?: Cents (MW-4 line 4, a full REPLACEMENT of the calculation, not an addition), additionalWithholding?: Cents (MW-4 line 3 — reuses this project's EXISTING generic mechanism, no MT-specific field), exempt?: boolean (MW-4 line 5 — reuses the EXISTING generic mechanism)}.",
+    "bothSpousesWorkingNote": "Marking line 2 does NOT select a fourth bracket schedule -- MW-4's own tables are headed 'Use these tables if the employee marks the box on line 1a OR line 2,' i.e. both-spouses-working reuses the SAME single/MFS table. resolveMTSchedule() implements this by mapping bothSpousesWorking through to 'single_mfs_bothWorking' rather than a separate schedule key.",
+    "defaultWhenNoMW4": "If no Form MW-4 is on file, use Single withholding status, zero additional/specified withholding, no exemption -- matches this engine's existing default-cert-absence convention used for every other state.",
+    "specifiedWithholding": "MW-4 line 4, quoted verbatim: 'If you are an employee and enter an amount on this line, DO NOT complete lines 1, 2, or 3. The amount on this line will be withheld from your paycheck.' Checked FIRST in bracketPerPeriodGross(), before the bracket lookup, short-circuiting it entirely.",
+    "exemptionCategoriesCorrected": "The pasted starting spec listed 5 exemption reasons including a generic 'OTHER_VALID_MONTANA_EXEMPTION' catch-all. Form MW-4's own line 5 has exactly FOUR checkboxes, no catch-all: (a) enrolled tribal member living/working on their tribe's reservation, (b) National Guard/Reserve member, Title 10 compensation, (c) North Dakota resident (reciprocity -- see top-level reciprocity block), (d) military spouse present in Montana solely due to spouse's MT assignment. All four collapse to the SAME generic certificate.exempt=true for withholding-AMOUNT purposes (the engine doesn't track which reason, mirroring this project's existing Kentucky/Minnesota precedent of a shared exempt flag standing in for several distinct qualifying reasons)."
+  },
+  "rounding": {
+    "rule": "Round to the NEAREST whole dollar, via toWholeDollars().",
+    "sourceAmbiguityResolved": "The guide's own prose says withholding must be 'rounded up to the nearest dollar' in two places, but its own worked examples contradict that: Single/MFS Example 1 ($1,375 semi-monthly) computes $0+(4.7%x($1,375-$671))=$33.088, and the guide states the answer is $33 -- nearest-dollar, not round-up (round-up would give $34). Cross-checked against a second example (biweekly $2,950 -> $114.476 -> stated $114, not $115). Treated the worked examples as authoritative over the prose, the same resolution this project used for Ohio's and Wisconsin's own prose-vs-example conflicts."
+  },
+  "withholdingVsReturnBrackets": "IMPORTANT DISTINCTION, UPGRADED to a direct primary-source citation this pass (previously WebSearch-sourced only): the ANNUAL RETURN brackets, quoted verbatim from 2026 Publication 1 itself -- 'Single, married filing separately, estates, and trusts: $47,500,' 'Married filing jointly and qualifying surviving spouse: $95,000,' 'Head of household: $71,250' (all at 4.7% below / 5.65% above, per 2025 HB337) -- are NOT the same numbers as the WITHHOLDING formula's annual table above (4.70% to $16,100/$24,150/$32,200, then 5.65%). Both are real and primary-sourced, not inconsistent -- the return brackets tax income AFTER the standard deduction is already subtracted, while withholding's 0%-band IS the standard-deduction-sized zero-tax region measured from gross. This engine only implements the WITHHOLDING formula -- the return brackets are recorded for completeness, not computed. Long-term capital gains (3.00%/4.10%) are annual-return-only, no withholding relevance.",
+
+  "otherMontanaWithholdingTypes": {
+    "$comment": "Same rationale as Minnesota's otherMinnesotaWithholdingTypes block: this project's own framing is 'a database of Montana tax code,' not just a wage-withholding calculator. Publication 1's table of contents lists FOUR more distinct withholding/tax mechanisms beyond ordinary wages that weren't captured anywhere before this pass. All fetched and read directly, none wired into calculatePaycheck() -- none are ordinary W-2 wage withholding to begin with.",
+    "lotteryWinnings": {
+      "rate": 0.0556,
+      "threshold": 5000.00,
+      "base": "Montana State Lottery winnings from a ticket purchased in Montana, exceeding $5,000.",
+      "sourcingNote": "Montana-source income regardless of the winner's own state of residency -- confirmed directly.",
+      "quote": "Publication 1, verbatim: 'The Montana State Lottery must withhold 5.56 percent on any winnings that exceed $5,000.'",
+      "payer": "The Montana State Lottery itself withholds -- not an employer, not modelled in this engine."
+    },
+    "passThroughEntityTax": {
+      "rate": 0.0565,
+      "base": "An affected owner's distributive share of Montana-source income from a pass-through entity that elects to pay PTET on the owner's behalf.",
+      "quote": "Publication 1, verbatim: 'The tax is calculated at the rate of 5.65 percent of the affected owner's distributive share of Montana source income.'",
+      "note": "Same 5.65% figure as mineral royalty withholding, MEDIA loan-out withholding, and pass-through withholding below -- confirms a consistent Montana design pattern of pegging several distinct non-wage withholding/entity-level taxes to the top marginal individual rate, not four independently-chosen numbers that happen to coincide.",
+      "creditable": "Fully creditable against the affected owner's own income tax liability; excess is refundable.",
+      "moreInfo": "Montana Publication 4, Pass-Through Entity Tax Guide (not fetched this session)."
+    },
+    "passThroughWithholding": {
+      "rate": 0.0565,
+      "base": "Distributive share of Montana-source income attributable to NONRESIDENT owners, foreign C corporations, or second-tier pass-through entities.",
+      "quote": "Publication 1, verbatim: 'Pass-through withholding is 5.65 percent of the distributive share of Montana source income attributable to nonresident owners, foreign C corporations, or second-tier pass-through entities.'",
+      "waiver": "Form PT-AGR -- available to nonresident individuals/estates/trusts and domestic second-tier pass-through entities."
+    },
+    "compositeTax": {
+      "rate": "NOT a single flat rate -- computed using the entity's own applicable rate schedule on behalf of consenting eligible participants (nonresident individuals/estates/trusts, foreign C corps, tax-exempt entities, second-tier pass-throughs) who elect out of filing their own Montana return. Genuinely different shape from the flat-5.65%-rate mechanisms above -- disclosed as such rather than assigning it a number it doesn't have.",
+      "eligibility": "Owner must have no other Montana-source income (except from another pass-through entity also filing composite), and must consent via written power of attorney.",
+      "mechanism": "Reported on the owner's Montana Schedule K-1 (PTE), Part V."
+    },
+    "unemploymentCompensationTaxability": "A distinct, minor fact worth having correct: Montana UI BENEFITS received by an individual are themselves taxable Montana income (Publication 1: 'Unemployment compensation is taxable in Montana. You may need to pay estimated taxes if you receive unemployment compensation.') -- not a withholding mechanism, a taxability note about the UNEMPLOYMENT_UI benefit itself, unrelated to the employer-paid UI/AFT system documented in unemploymentDocs above."
+  },
+
+  "incomeTaxDocs": {
+    "$comment": "Non-engine-consumed context, documented for database completeness — see knownGaps for what's genuinely unmodelled vs. what's just narrative here.",
+    "nonresidentRules": {
+      "sourceDefault": "Montana-source wages (services performed in Montana) are withheld on by default, resident or not.",
+      "thirtyDayExemption": "Nonresident, works in MT fewer than 30 days, works in more than one state, has no other MT-source income. NOT available to professional athletes, entertainers, per-event service providers, construction workers, 'key employees' (prior-year salary > $500,000), or MEDIA-credit qualified production employees. No MW-4 required -- an employer-side determination this engine's certificate-only input model can't compute.",
+      "interstateTransportation": "CORRECTED/EXPANDED this pass, from a direct Publication 1 quote: covers RAILROAD, TRUCKING, AIR, AND WATER interstate carriers -- 'water' was missing from the earlier version, which only listed motor/rail. Only NONRESIDENT employees of these carriers are exempt; a Montana-resident employee of the same carrier is fully taxable and must be withheld upon -- quoted verbatim: 'Nonresident interstate employees of railroad, trucking, air, and water interstate carriers are exempt from Montana tax. Only nonresidents are eligible for this exemption. Residents' wages are subject to Montana tax and must be withheld upon.' Same structural shape as Minnesota's own interstate-carrier rule (withhold based on residence, not work location) -- but now confirmed as FOUR carrier types, not two."
+    },
+    "nonresidentAlien": "Montana withholding generally applies regardless of a federal tax-treaty exclusion (Publication 1) -- distinct from, and NOT reusing, this project's certificate.nonresidentAlien/Pub-15-T-Table-2 mechanism built for Minnesota, which is the opposite kind of fact (an addition, not a non-exemption). Not modelled.",
+    "h2aAndAgriculturalLabor": {
+      "h2a": "H-2A workers: $0 MT wage withholding required, but still may owe on the individual return -- a withholding exemption, not a tax exemption.",
+      "agriculturalLabor": "Farm/ranch cultivation or agricultural/horticultural harvest labor: withholding not required. Cannabis work is explicitly EXCLUDED despite superficially fitting 'cultivation... of commodities.'"
+    },
+    "militaryRules": {
+      "nationalGuardTitle10": "Guard/Reserve active-duty pay under a U.S.C. TITLE 10 order: exempt, MW-4 required, renewed annually.",
+      "nationalGuardTitle32CorrectedThisPass": "A REAL correction, not previously captured: compensation under a U.S.C. TITLE 32 order (the more common day-to-day state-activation authority for the National Guard) is NOT exempt by default -- Publication 1, quoted verbatim: 'Compensation received under a U.S.C. Title 32 order is still subject to withholding in Montana, unless it was paid for being part of a unit engaged in a homeland defense activity or a contingency operation.' The earlier version of this file only documented the Title 10 exemption and implicitly left Title 32 undocumented, which risked being read as 'also exempt' by omission -- it is the opposite default, with a narrower carve-out.",
+      "regularActiveDuty": "Regular armed-forces Title 10 active-duty pay: exempt, MW-4 NOT required — a real asymmetry with the Guard case above. Confirmed to apply 'whether you are a resident or a nonresident' (Publication 1, verbatim) -- not limited to nonresidents the way some of this file's other military-adjacent exemptions are."
+    },
+    "militarySpouseExemption": "Nonresident spouse of a servicemember stationed in MT, present solely for that reason: exempt. MW-4 required, deadline on or before January 31 each year.",
+    "nativeAmericanExemption": "Enrolled tribal member, residing AND working on their own tribe's reservation -- all conditions together. MW-4 required. Exempt only for the portion of a pay period actually resided on the reservation -- a sub-pay-period granularity this engine's whole-cheque certificate.exempt boolean can't represent precisely.",
+    "pensionAndRetirementWithholding": {
+      "generalRule": "Distribution withholding is opt-IN via specifiedWithholding (MW-4 line 4) -- same field as the wage-withholding override, a genuinely different population (retirement recipients) this engine has no distinct PaycheckInput shape for, same as Minnesota's W-4MNP precedent.",
+      "deMinimis": "NEW this pass: the payer is NOT required to withhold if the resulting withholding amount would be less than $10 per distribution period -- quoted verbatim from Publication 1: 'The payer is not required to withhold if the amount of tax withholding is less than $10.'",
+      "quickEstimateMethod": "Publication 1's own suggested shortcut for a recipient sizing their line-4 amount: multiply expected annual taxable pension/annuity distributions by 5.65% (the top marginal rate, the same recurring figure as mineral royalty/PTET/pass-through withholding/MEDIA loan-out), divide by the number of remaining payments in the year. A suggested METHOD for the recipient to pick a number, not a mandated rate -- the actual withholding is still whatever flat dollar amount ends up on line 4.",
+      "railroadRetirementBenefits": "NEW, previously uncaptured exemption: Tier I and II Railroad Retirement Benefits paid by the Railroad Retirement Board are fully exempt from Montana income tax -- quoted verbatim: 'Railroad Retirement Benefits. Tier I and II Railroad Retirement Benefits paid by the Railroad Retirement Board are exempt from Montana income tax.' A subtraction from federal taxable income on the return, not a withholding-stage mechanic -- no distribution-time withholding to model since the income is exempt outright.",
+      "militarySurvivorBenefit50PctExemption": "NEW, more granular than the flat military-retirement-pay exemption already documented elsewhere: beneficiaries of the DoD Survivor Benefit Plan (spouses, eligible children, or an 'insurable interest' as DoD defines it) can exempt up to 50% of military survivor benefits, GATED on specific residency-timing rules -- available to a Montana resident who became one AFTER 2023-06-30, or one who was already a resident before starting to receive the benefits and has remained one since. NOT available to someone who was a nonresident when benefits began and became a resident before 2023-06-30, or who was previously qualified but later became a nonresident. A return-side subtraction, same category as Railroad Retirement Benefits above -- not a withholding-stage mechanic."
+    },
+    "mineralRoyaltyWithholding": {
+      "rate": 0.0565,
+      "rateReason": "Set equal to Montana's own top marginal rate -- confirmed directly, the guide's heading reads 'Mineral royalty withholding rate. Senate Bill 53...'",
+      "currentPeriodThreshold": 166.00,
+      "annualThreshold": 2000.00,
+      "quote": "Publication 1, verbatim: 'must withhold tax if the royalty payment is more than $166 in the current period or more than $2,000 if paid annually.'",
+      "statutoryCitation": "MCA 15-30-2536 through 15-30-2547.",
+      "note": "Not W-2 wage withholding -- paid by the royalty remitter. Database completeness only, same treatment as Minnesota's nonresidentEntertainerTax."
+    },
+    "mediaLoanOutWithholding": {
+      "rate": 0.0565,
+      "appliesWhen": "A MEDIA-Credit-approved production company pays a qualifying loan-out company.",
+      "mechanism": "Register a MEDIA Loan-Out Withholding account; issue Form LOWCERT to the loan-out company; loan-out company gives employee a LOWCERT copy by Feb. 28; employee reports on Form 2. Production company retains (doesn't file) LOWCERT. Reconciliation due January 31."
+    }
+  },
+
+  "unemploymentDocs": {
+    "$comment": "Employer-only, $0 employee UI withholding -- same pattern as every state. Context/audit only: no per-employer experience-rating input exists anywhere in this engine. ALL figures below now confirmed via two direct DLI PDF fetches (Rate-Explanation.pdf, dated/2026-specific; employer-handbook.pdf, January 2025) -- no remaining unverified-this-session flags.",
+    "taxableWageBase2026": 47300.00,
+    "wageBaseMethod": "80% of the 2024 average annual wage in Montana ($59,106.64), rounded to the nearest $100 -- quoted verbatim from DLI's Rate-Explanation.pdf, fetched and read directly.",
+    "activeRateSchedule2026": "Schedule I",
+    "scheduleIStats": { "trustFundBalance": 747441292.78, "coveredWages": 29463565261.00, "ratio": 0.02537, "averageTaxRate": 0.0095, "source": "DLI Rate-Explanation.pdf, 2026-dated, fetched and read directly -- exact figures reproduced, not just cross-checked against the earlier browser-page read." },
+    "positiveReserveRateClasses": { "1": 0.0000, "2": 0.0000, "3": 0.0000, "4": 0.0002, "5": 0.0022, "6": 0.0042, "7": 0.0062, "8": 0.0082, "9": 0.0102, "10": 0.0122, "source": "Confirmed via TWO independent DLI fetches now: the browser-read contribution-rate page and the separate Rate-Explanation.pdf -- exact agreement." },
+    "negativeReserveRateClasses": { "1": 0.0272, "2": 0.0292, "3": 0.0312, "4": 0.0332, "5": 0.0352, "6": 0.0372, "7": 0.0392, "8": 0.0412, "9": 0.0432, "10": 0.0612, "source": "Same double-confirmation as positiveReserveRateClasses." },
+    "reserveRatioBandsToClasses": {
+      "eligible": { "01": "0.144911+", "02": "0.131029-0.144910", "03": "0.126387-0.131028", "04": "0.122856-0.126386", "05": "0.120294-0.122855", "06": "0.110176-0.120293", "07": "0.093004-0.110175", "08": "0.069556-0.093003", "09": "0.044490-0.069555", "10": "0.000000-0.044489" },
+      "deficit": { "01": "-0.000001 to -0.004449", "02": "-0.004450 to -0.008670", "03": "-0.008671 to -0.013140", "04": "-0.013141 to -0.021014", "05": "-0.021015 to -0.029349", "06": "-0.029350 to -0.059270", "07": "-0.059271 to -0.123080", "08": "-0.123081 to -0.294938", "09": "-0.294939 to -0.689888", "10": "-0.689889 and below" },
+      "confidence": "RESOLVED: confirmed via direct DLI Rate-Explanation.pdf fetch, quoted verbatim, matching the pasted starting spec exactly."
+    },
+    "newEmployerRates2026": {
+      "A_agricultureForestryHuntingFishing": 0.0130, "B_mining": 0.0130, "C_construction": 0.0200, "D_manufacturing": 0.0100,
+      "E_utilitiesTransportationWarehousing": 0.0100, "F_wholesaleTrade": 0.0100, "G_retailTrade": 0.0100,
+      "H_financeInsuranceRealEstate": 0.0100, "I_services": 0.0110, "K_unclassified": 0.0200,
+      "confidence": "RESOLVED: confirmed via DLI Rate-Explanation.pdf. The PDF's own industry-letter/rate columns are offset by one row on raw text extraction -- the same PDF-layout hazard already documented elsewhere in this project (Ohio's school districts, PA's PSD codes, Montana's own remittance-schedule table above) -- resolved by checking which alignment produces a plausible pattern (Construction at 2.00%, the HIGHEST non-Unclassified rate, matches real-world UI risk expectations far better than the raw-extraction pairing of Construction at 1.30%) and confirming it reproduces the pasted starting spec exactly.",
+      "AFTForNewEmployers": 0.0018
+    },
+    "administrativeFundTax": {
+      "standard": 0.0018, "eligibleClasses1And2": 0.0013, "reimbursableEmployers": 0.0008, "governmentalEmployers": 0.0009,
+      "source": "CONFIRMED via direct fetch, quoted verbatim from employer-handbook.txt (Jan 2025): 'assessed at 0.18% on taxable wages. Governmental rated employers are assessed at 0.09% and reimbursable employers are assessed at 0.08% on total wages,' and separately for eligible classes: 'Eligible Classes 1-2, then AFT is 0.13%.'"
+    },
+    "penaltyRate": {
+      "rule": "A NEW mechanic found only in this pass, not previously captured: employers who owe tax/penalty/interest, or have not filed all required reports, when rates are calculated in December receive a 'penalty rate' — 50% HIGHER than their otherwise-assigned rate.",
+      "cureDeadline": "2026-01-16",
+      "quote": "DLI Rate-Explanation.pdf, verbatim: 'A penalty rate is 50% higher than your assigned rate. To lower their rate, an employer must file all reports and pay all tax, penalty, and interest on their account by January 16, 2026.'"
+    },
+    "employerTypes": ["NEW_EMPLOYER", "ELIGIBLE_POSITIVE_RESERVE", "DEFICIT_NEGATIVE_RESERVE", "REIMBURSABLE", "GOVERNMENTAL"],
+    "reimbursableNote": "501(c)(3)s, government agencies, tribal units may elect reimbursable status (minimum 2-year commitment): no quarterly contribution tax, instead reimburse the trust fund dollar-for-dollar for benefits actually charged. AFT still applies (0.08% of TOTAL wages).",
+    "governmentalNote": "CONFIRMED via direct fetch, quoted verbatim: 'Governmental and reimbursable accounts do not have a taxable wage base and must pay tax on total wages.' Governmental entities may alternatively elect reimbursable status themselves.",
+    "uiWageBaseVsIncomeTaxWageBase": "A genuinely distinct base from the income-tax exemptPretax list above: the employer handbook's own wage-classification table marks 'Cafeteria plan salary reductions under IRC Section 125' and '401(k) or any other type of retirement plan' contributions as TAXABLE for UI purposes -- i.e. Montana's UI wage base does NOT exclude these categories the way this engine's exemptPretax mechanism excludes them from MT income-tax withholding. Not an inconsistency: UI and income-tax withholding are simply different bases under different statutes, the same lesson already learned from Pennsylvania (which deviates on income-tax treatment of these same categories in the OTHER direction). Not engine-relevant since UI isn't computed at all, but a real fact worth having correct in the database.",
+    "reportingFrequency": "Quarterly, mandatory electronic filing effective 2024-07-01.",
+    "futaInteraction": "MT UI payment/delinquency status affects the employer's federal FUTA credit -- documented as a cross-jurisdiction fact, not wired into federal.ts's futa(), which has no per-state SUTA-payment-status input for any state."
+  },
+
+  "withholdingAdministration": {
+    "registration": "FEIN, MT employee start date, legal business name, DBA, physical + mailing address, contact name/phone.",
+    "lookbackPeriod": "July 1 of the preceding year through June 30 of the current year. New businesses pay monthly until their first full lookback period completes.",
+    "remittanceSchedule": {
+      "note": "The primary PDF's own table has its dollar-threshold and schedule-label columns SHIFTED relative to each other on raw extraction -- the same PDF-layout row-shift hazard already documented elsewhere in this project (Ohio's school-district table, PA's PSD codes). Reconstructed by internal logic (higher liability -> more frequent remittance), matching the pasted starting spec exactly.",
+      "tiers": [
+        { "amountWithheldDuringLookback": ">= $12,000", "schedule": "Accelerated -- pay per the federal deposit schedule" },
+        { "amountWithheldDuringLookback": "$1,200 - $11,999", "schedule": "Monthly -- due the 15th of the following month" },
+        { "amountWithheldDuringLookback": "<= $1,199", "schedule": "Annual -- due January 31 of the following year" },
+        { "amountWithheldDuringLookback": "$0 / none", "schedule": "Not required" }
+      ]
+    },
+    "annualFiling": "Form MW-3, due January 31, must include every W-2 for an employee with MT wages even if $0 was withheld. Federal Form W-3 is explicitly NOT an accepted substitute. Truncated SSNs/FEINs not accepted.",
+    "penalties": {
+      "latePayment": "1.5% per month on unpaid tax, capped at 15%.",
+      "knowingEvasion": "Additional 15% of tax due per month or fraction, capped at 75%. Cite: 15-1-216, MCA.",
+      "lateW2Filing": "$50 per Form W-2 after a 30-day delinquency-notice grace period, $250 minimum. Waived if filed within 30 days of the first notice. A previously-penalized employer must file within 15 calendar days of the due date in future years."
+    },
+    "interest": {
+      "annualRate": 0.1025,
+      "dailyRate": 0.000281,
+      "correctedFromStartingSpec": "The pasted starting spec claimed 11% annual / ~0.0301% daily. Montana's own guide, verbatim: 'assessed at the rate of 10.25 percent per year and accrues at 0.0281 percent daily.' A real, confirmed discrepancy -- not a rounding difference -- corrected here rather than propagated."
+    },
+    "recordkeeping": "5 years from date wages paid. Required fields: pay period start/end, total wages, payment method, employee name/SSN, wages per period, federal W-4, MW-4, MW-3, W-2, 1099."
+  },
+
+  "local": {
+    "rule": "NONE. No Montana county, city, or municipal employee income/wage tax of any kind -- confirmed structurally by the complete absence of any local-withholding section across all three primary documents fetched this session, each thorough enough that a local layer would appear if one existed (contrast Pennsylvania/Ohio's guides, which devote entire sections to their local layers)."
+  },
+
+  "knownGaps": [
+    "RESOLVED: UI reserve-ratio bands, new-employer industry rates, and all four AFT rates (0.18%/0.13%/0.09%/0.08%) are now confirmed via two direct DLI PDF fetches (Rate-Explanation.pdf, 2026-dated; employer-handbook.pdf) -- see unemploymentDocs above. Also surfaced a real, previously-uncaptured mechanic: a 50%-higher 'penalty rate' for delinquent employers, cure deadline 2026-01-16.",
+    "RESOLVED: exemptPretax is now backed by Publication 1's complete 'Montana Additions' (5 items) and 'Montana Subtractions' lists, both fetched and checked item by item -- neither touches any pretax deferral/cafeteria category, the same evidentiary tier as Wisconsin/Minnesota's files. Also surfaced that Montana's SEPARATE UI wage base explicitly does NOT exclude 401(k)/section-125 amounts, unlike the income-tax base -- a real, disclosed distinction between the two bases, not a contradiction.",
+    "RESOLVED (data-only): the annual RETURN brackets ($47,500/$71,250/$95,000) are now cited directly from Publication 1 itself rather than a secondary WebSearch summary. Also newly captured, previously entirely missing from this file: lottery winnings withholding (5.56%, >$5,000), pass-through entity tax (5.65%), pass-through withholding (5.65% -- confirms a consistent Montana pattern of pegging non-wage withholding types to the top marginal rate, shared with mineral royalty and MEDIA loan-out), composite tax (not a flat rate, disclosed as such), and the taxability of UI benefits themselves -- see otherMontanaWithholdingTypes above.",
+    "RESOLVED (data-only, final read-through pass): a genuine correction to the National Guard exemption -- Title 32 orders are NOT exempt by default (only Title 10, plus a narrow homeland-defense/contingency-operation carve-out for Title 32), where the earlier version of this file risked being read as exempting Guard pay generally. Interstate-carrier exemption expanded from 2 to the correct 4 carrier types (added water carriers). Also newly captured: a $10 pension/annuity withholding de minimis, Railroad Retirement Tier I/II benefits' full exemption, and the DoD Survivor Benefit Plan's residency-gated 50% exemption -- see militaryRules/interstateTransportation/pensionAndRetirementWithholding above.",
+    "NOT MODELLED IN THE ENGINE (data-only, matching this project's established treatment of similarly-shaped non-wage withholding elsewhere): mineral royalty withholding, MEDIA loan-out withholding, lottery/pass-through/composite tax withholding, and pension/annuity distribution withholding for non-W-2 recipients. The 30-day nonresident exemption IS modelled — nonresidentDayCountReason() (src/taxes/state.ts) applies it, reading certificate.daysWorkedInStateThisYear against reciprocity.exemptWhenDaysWorkedAtMost; a missing day count still withholds, and the caller must also assert certificate.nonresidentDeMinimisEligible where the statute attaches conditions a paycheck alone can't evidence.",
+    "The Native American exemption's sub-pay-period granularity cannot be represented by this engine's single whole-cheque certificate.exempt boolean.",
+    "Supplemental wages Methods 1 and 2 (combining with a prior period's regular wages) are computed through aggregateWithPriorRegularPayment(), which takes the prior regular payment as input.priorRegularPayment, taxes the combined amount through Montana's own table, and subtracts the tax already withheld from that payment; Method 3's flat line stands down when they run — the methods are alternatives, not partners.",
+    "UI penalty-rate mechanic, governmental/reimbursable no-wage-cap rule, and the UI-vs-income-tax wage-base distinction are documented but, consistent with every other state's employer-paid UI in this project, not computed by this engine at all — no per-employer experience-rating, delinquency-status, or employer-type-classification input exists anywhere in types.ts."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 47300,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "CORRECTED 2026-09-01: fetched Montana DLI's own 'Unemployment Insurance Contribution Taxable Wage Base & Rates for 2026' letter directly (uid.dli.mt.gov/_docs/contributions-bureau/Rate-Explanation.pdf). Quoted verbatim: 'Montana UI rating system... initially assigns each employer's rate according to their industry' -- 'Industry rates are the average UI rate of employers in each industry classification.' No single new-employer figure exists; the prior 1.5% (OnPay, secondary) is removed rather than kept as a wrong default. Modeled the same way Louisiana's identical mechanism already is: null + employerSuppliedRateRequired. The same letter also directly confirms wageBase ($47,300) and experienceRange (0.00%-6.12%, 'Schedule 1' for 2026) exactly as already recorded here.",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.0612
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "primary_source_confirmed"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "$comment": "Montana's Methods 1 and 2 both combine a separately-paid supplemental payment with a DIFFERENT period's regular wages, tax the total, and subtract what was already withheld from that regular payment — the same shape Connecticut, Idaho, Kentucky, Maine, Missouri, Nebraska and New York use, and the same mechanism (input.priorRegularPayment) now serves all eight. Method 3, the flat 5%, stays available and is what fires when no prior payment is supplied.",
+    "source": {
+      "title": "Montana Department of Revenue — Publication 1, Montana Withholding Tax Guide (supplemental wage methods)",
+      "url": "https://mtrevenue.gov/publications/",
+      "verifiedOn": "2026-08-25",
+      "verifiedBy": "The three-method structure was already researched and recorded in this file's own supplementalWages block; this pass wires Methods 1 and 2 rather than re-deriving them."
+    }
+  }
+}

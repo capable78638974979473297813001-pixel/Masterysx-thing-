@@ -1,0 +1,130 @@
+{
+  "state": "CO",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "Colorado is the only state in this database where local governments may widen the TIP OFFSET as well as raise the wage -- Edgewater's $4.67 offset is the first use of that 2025 authority, and it means a Colorado tipped-wage calculation cannot be done from the state's $3.02 figure alone.",
+  "jurisdictions": [
+    {
+      "id": "denver",
+      "name": "Denver",
+      "level": "city_and_county",
+      "hourly": 19.29,
+      "hourlyCents": 1929,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 16.27,
+        "cashWageCents": 1627,
+        "maxTipCredit": 3.02,
+        "maxTipCreditCents": 302,
+        "note": "Denver's tip offset is the same $3.02 the Colorado constitution allows, and -- unlike the state rule -- it may be applied ONLY to food and beverage workers. Every other tipped occupation in Denver is owed the full $19.29."
+      },
+      "coverage": "All work performed within the City and County of Denver.",
+      "sources": [
+        {
+          "title": "City and County of Denver -- Denver Local Minimum Wage Adjusts to $19.29 per Hour for 2026",
+          "url": "https://www.denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Department-of-Finance/News/2025/Denver-Local-Minimum-Wage-Adjusts-to-19.29-per-Hour-for-2026",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "Fetched and read directly this session at Denver Labor's own Citywide Minimum Wage page. Quoted: 'The local minimum wage in 2026 is $19.29 per hour' and 'Denver's minimum wage for qualified tipped workers in the food and beverage industry increased to $16.27 per hour, as long as they receive $3.02 in documented tips,' both effective 2026-01-01. (An earlier attempt this session, at the Department of Finance's press-release URL, 403'd; the Denver Labor page above is the ongoing authoritative page and fetched cleanly.)"
+        }
+      ]
+    },
+    {
+      "id": "boulder",
+      "name": "Boulder",
+      "level": "city",
+      "hourly": 16.82,
+      "hourlyCents": 1682,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 13.8,
+        "cashWageCents": 1380,
+        "maxTipCredit": 3.02,
+        "maxTipCreditCents": 302,
+        "note": "The Colorado constitutional $3.02 tip offset, applied against Boulder's higher local rate."
+      },
+      "sources": [
+        {
+          "title": "City of Boulder -- Local Minimum Wage",
+          "url": "https://bouldercolorado.gov/local-minimum-wage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "Fetched and read directly this session at the City of Boulder's own Local Minimum Wage page. Quoted: 'Beginning January 1, 2026: $16.82 per hour' and 'no more than $3.02 per hour in tip income, or tip credit, may be used to partially offset payment of this wage.' (An earlier attempt this session 404'd; confirmed reachable on retry.)"
+        }
+      ]
+    },
+    {
+      "id": "boulder_county_unincorporated",
+      "name": "Boulder County (unincorporated areas only)",
+      "level": "county",
+      "hourly": 16.82,
+      "hourlyCents": 1682,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 13.8,
+        "cashWageCents": 1380,
+        "maxTipCredit": 3.02,
+        "maxTipCreditCents": 302
+      },
+      "coverage": "UNINCORPORATED Boulder County only, including any employee performing four or more hours of work per week there. Incorporated towns in the county other than the City of Boulder follow the Colorado state rate.",
+      "scheduledChanges": [
+        {
+          "hourly": 17.32,
+          "hourlyCents": 1732,
+          "tippedCashWage": 14.3,
+          "note": "The county adopted a published schedule through 2030 ($17.84 in 2028, $18.38 in 2029, $18.93 in 2030), each step an estimated 3% CPI increase for the Denver-Aurora-Lakewood area.",
+          "effectiveDate": "2027-01-01"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Boulder County -- Local Minimum Wage",
+          "url": "https://bouldercounty.gov/departments/commissioners/local-minimum-wage/",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "Fetched and read directly this session: $16.82 standard and $13.80 tipped effective 2026-01-01, plus the county's own published 2027-2030 schedule. The Board of County Commissioners voted 2025-11-20 to align the county schedule with the City of Boulder's."
+        }
+      ]
+    },
+    {
+      "id": "edgewater",
+      "name": "Edgewater",
+      "level": "city",
+      "hourly": 18.17,
+      "hourlyCents": 1817,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": true,
+        "cashWage": 13.5,
+        "cashWageCents": 1350,
+        "maxTipCredit": 4.67,
+        "maxTipCreditCents": 467,
+        "note": "Edgewater is the ONE Colorado jurisdiction with a tip offset larger than the state's $3.02: Ordinance 2025-23 set a local offset of $4.67, holding the tipped wage at $13.50 while the standard rate rose to $18.17. Colorado's 2025 law letting localities widen the tip offset was written for exactly this, and Edgewater was the first to use it."
+      },
+      "sources": [
+        {
+          "title": "City of Edgewater, Colorado -- Minimum Wage",
+          "url": "https://www.edgewaterco.gov/doing-business/minimum-wage",
+          "verifiedOn": "2026-09-08",
+          "verifiedBy": "cross_source_confirmed this session (Edgewater's own page returned 403 to a direct fetch): the 2026 rate rose from $16.52 to $18.17 while the tipped wage stayed at $13.50 under Ordinance 2025-23's $4.67 tip offset."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Colorado repealed its local-minimum-wage preemption in 2019 (HB19-1210) but caps the number of localities that may adopt one; other Colorado municipalities may join this list in future years."
+  ]
+}

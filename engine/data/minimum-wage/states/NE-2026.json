@@ -1,0 +1,89 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "NE",
+    "name": "Nebraska"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 15.0,
+    "hourlyCents": 1500,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "Employers with 4 or more employees at any one time.",
+    "note": "Third step of 2022 Initiative 433. LB 258, signed 2026-02-09, then rewrote what comes next: the voter-approved CPI escalator due to start in 2027 was replaced with a fixed 1.75% annual increase, and two new sub-minimum wages were created."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 12.87,
+    "maxTipCreditCents": 1287,
+    "tippedEmployeeThreshold": null,
+    "note": "Nebraska pairs a $15.00 standard rate with the FEDERAL $2.13 cash wage -- a $12.87 tip credit, the largest of any US jurisdiction."
+  },
+  "variants": [
+    {
+      "hourly": 13.5,
+      "hourlyCents": 1350,
+      "id": "youth_14_15",
+      "label": "Non-emancipated employees aged 14-15",
+      "test": "LB 258 (2026), effective 2026-07-17. Rises 1.5% every five years beginning 2030-01-01.",
+      "confidence": "cross_source_confirmed"
+    },
+    {
+      "hourly": 13.5,
+      "hourlyCents": 1350,
+      "id": "training_wage_16_19",
+      "label": "Training wage, employees aged 16-19",
+      "test": "LB 258 (2026), effective 2026-07-17, for the first 90 days. Rises 1.5% annually beginning 2027.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "fixed 1.75% per year from 2027 (LB 258 replaced Initiative 433's CPI escalator)",
+    "adjustmentDate": "01-01",
+    "note": "Nebraska's Department of Labor publishes the following year's figure each October 15."
+  },
+  "scheduledChanges": [
+    {
+      "note": "First 1.75% step under LB 258; the exact figure is published by NDOL on 2026-10-15 and is deliberately NOT guessed here.",
+      "effectiveDate": "2027-01-01"
+    }
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Nebraska Department of Labor -- Nebraska's Minimum Wage Increases to $15 Effective January 1, 2026",
+      "url": "https://dol.nebraska.gov/PressRelease/Details/338",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the $15.00 rate."
+    },
+    {
+      "title": "Nebraska Legislative Bill 258 (2026), approved by the Governor February 9, 2026",
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Slip/LB258.pdf",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session across the bill's own slip-law listing and multiple independent legal summaries for the 1.75% cap, the $13.50 youth and training wages, and the 2026-07-17 effective date. The slip text itself was not rendered directly."
+    }
+  ],
+  "knownGaps": [
+    "Omaha and Lincoln have each enacted ordinances restoring a uniform $15.00 for all workers; both are contested and neither is in force as a distinct local rate -- see local/NE-local-2026.json."
+  ],
+  "confidence": "primary_source_confirmed"
+}

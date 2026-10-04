@@ -1,0 +1,410 @@
+{
+  "code": "PA",
+  "name": "Pennsylvania",
+  "year": 2026,
+  "method": "flat_rate",
+  "sources": [
+    {
+      "title": "PA Department of Revenue -- Employer Withholding",
+      "url": "https://www.pa.gov/en/agencies/revenue/resources/tax-types-and-information/employer-withholding.html",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched directly (the old revenue.pa.gov/TaxTypes/EmployerWithholding/ URL now 302-redirects here). Quoted: 'The Pennsylvania personal income tax withholding rate is 3.07 percent of compensation from resident and nonresident employees earning income in Pennsylvania' -- confirms the rate is UNCHANGED for 2026, not a fresh figure. Also names REV-415 (Employer Withholding Information Guide) as the authoritative formula document and confirms the reciprocal-state list; REV-415's own full text was not fetched this session."
+    },
+    {
+      "title": "PA Department of Labor & Industry -- Yearly Tax Highlights (UC)",
+      "url": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/yearly-tax-highlights",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched directly. Quoted: 'Employee contributions (UC withholding) is 0.07 percent (70 cents per $1,000 gross wages)... no wage cap limit.' Also captured employer-side 2026 figures for context (not used by this engine, which only computes employee-facing withholding): new-employer rate 3.8220% (non-construction) / 10.5924% (construction), experienced range 1.4190%-10.3734%, wage base $10,000, 9.2% surcharge + 0.60% additional contributions tax baked into those rates, 0% interest factor."
+    },
+    {
+      "title": "PA Department of Labor & Industry -- Employee Withholding (UC)",
+      "url": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/employee-withholding",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched directly, a second independent DLI page corroborating the same 0.07% rate and no-cap rule. Quoted: 'Employee contributions are based on an individual's total (gross) wages and are not limited to the taxable wage base in effect for employer contributions.' States the rate has applied '2023 and thereafter' -- i.e. not a 2026-specific change, unchanged since 2023."
+    },
+    {
+      "title": "PA Department of Labor & Industry -- UC Computation of Rates",
+      "url": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/computation-of-rates",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly. Explains the Reserve Ratio Factor / Benefit Ratio Factor / State Adjustment Factor formula chain that produces the Basic Rate, and confirms the Basic Rate is then run through the Surcharge Adjustment and Additional Contributions to reach the Total Contribution Rate -- see unemploymentInsurance below for the full chain with 2026 numbers."
+    },
+    {
+      "title": "UC-748 (REV 09-25) -- Contribution Rates Effective January 1, 2026",
+      "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/dli/documents/uc/employer/uc-tax-rates/uc-748%20rev%2009-25.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly via pdftotext (WITHOUT the -layout flag -- the -layout reconstruction visually scrambled the 3-column Reserve Ratio Factor Table into what looked like a Group-3-has-more-rows mismatch; the plain reading-order extraction produced a clean 28-row x 3-group table instead, and a value spot-check against the document's own worked example ('1/3 of group 3 reserve ratio of .004 is .0013, which is rounded to .002 for group 1') confirmed the row pairing is correct, not shifted -- same class of PDF hazard already seen in this project on NJ/CT's rate tables, resolved the same way NY's was: drop -layout, don't trust the reconstructed columns blindly). This is PA's own official annual contribution-rate notice, the authoritative primary source for every employer-side UC figure in this file."
+    },
+    {
+      "title": "REV-415 (SU) 01-23 -- Employer Withholding Information Guide",
+      "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforbusinesses/employerwithholding/documents/rev-415.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly ('is it as good as Symmetry's data' follow-up pass) -- this is PA's own core employer-withholding formula document, named by the webpage source above as authoritative but never itself fetched until this pass. Confirmed the 3.07% flat rate directly (no change from the webpage summary). UPGRADED the 401(k)-taxable claim from a secondary/webpage-summary tier to a direct primary quote: 'Payments by employers into pension plans, 401(k) plans or other retirement plans made pursuant to the employee's election... are taxable to employees and should be included in Pennsylvania gross wages.' REAL NEW FINDING: Section on reciprocal agreements states the outbound-direction mechanism explicitly -- 'If a Pennsylvania resident employee receives compensation for services performed in one of these six states, the employer in that state withholds the Pennsylvania personal income tax from compensation received and remits that tax to Pennsylvania' -- i.e. the reciprocal state's OWN employer is expected to withhold and remit PA tax, not just exempt the employee and leave it to their PA return. This corrected an earlier conclusion in this file's own reciprocity.outboundDirection block (see that field for the full correction and its independent NJ-side confirmation via Form NJ-165)."
+    },
+    {
+      "title": "Indiana WH-47 (State Form 9686, R3/3-21) -- Certificate of Residence",
+      "url": "https://forms.in.gov/download.aspx?id=2419",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly ('fix any and all gaps' pass, checking whether REV-415's swap description generalizes to PA's other reciprocal partners). Quoted in full: a bare exemption ('income from salaries, wages, tips and commissions received from Indiana sources are taxable in their state of residence and not subject to Indiana... Tax') with zero authorization-to-withhold-home-state-tax language. See PA's own reciprocity.outboundDirection.checkedForOtherFiveStates for the conclusion this supports."
+    },
+    {
+      "title": "Maryland Form MW507 (COM/RAD-036, 07/25 revision) -- 2026 Employee's Maryland Withholding Exemption Certificate",
+      "url": "https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2026/mw507.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly. Quoted: plain exemption lines ('I claim exemption from withholding because I am domiciled in... Enter EXEMPT') for DC/PA/VA/WV residents -- no swap language. For the DC/PA/VA statutory-residency edge case (183+ days in Maryland), MD's own instructions point the OPPOSITE direction from a swap: 'You must apply to your domicile state for any tax credit... under the reciprocal provisions of the law' -- a return-side credit claim, not an employer withholding mechanism."
+    }
+  ],
+  "flatRate": {
+    "rate": 0.0307,
+    "allowanceAmount": 0.0,
+    "comment": "Pennsylvania has no personal exemptions, no standard deduction and no withholding allowances. Withholding is a straight percentage of PA-taxable compensation. Confirmed unchanged for 2026 from PA's own current employer-withholding page."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "commuter"
+  ],
+  "exemptComment": "Deliberately omits deferral_401k / 403b / 457 / SIMPLE. Pennsylvania taxes elective retirement deferrals as compensation when earned, unlike federal income tax -- confirmed this session via a dedicated search (not just carried over from the prior version of this file): 'contributions to a 401(K) or contributions to other types of retirement plans are considered part of the employee's taxable compensation under Pennsylvania law, unlike federal income tax law', and nonqualified deferred-comp salary reductions are 'taxable at the time of deduction'. An engine with a single shared 'taxable wages' figure gets Pennsylvania wrong on every cheque where an employee defers. This SAME list is reused for stateUnemploymentEmployee below -- confirmed this session that PA UC's employee-withholding base is also gross/total wages with no 401(k) carve-out (Form UC-2 instructions), so the two PA taxes share one taxable-wages definition, unlike MI/IN where state income tax and local tax disagree on pretax treatment.",
+  "stateUnemploymentEmployee": {
+    "rate": 0.0007,
+    "wageBase": null,
+    "comment": "Pennsylvania is the first state in this project where the EMPLOYEE, not just the employer, pays a UC/SUTA contribution -- most states are employer-only (see futa() in federal.ts). 0.07% of gross wages, NO wage cap, confirmed independently on two separate DLI pages this session. wageBase: null is a deliberate 'uncapped' signal, not an unfilled placeholder -- src/taxes/state.ts's stateUnemploymentEmployeeTax() reads it as 'do not route through underCap()'. Dispatched generically off this config block's presence (see stateIncomeTax() in state.ts), not tied to PA's flat_rate method specifically, so any future state with an employee-paid UC component gets it for free.",
+    "knownGap": "Employer-side UC is now fully documented (see unemploymentInsurance below) but still not modelled in the engine -- same class of gap as every other state's employer-paid SUTA in this project (MI, IN, KY, DE): experience-rating is per-employer, not a jurisdiction constant a static ruleset file can hold."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only contribution on top of the employee-paid 0.07% above. UPGRADED this pass (2026-08-21) from the single-line summary carried in the sources array to a full documented formula chain and the complete 2026 Reserve Ratio Factor Table, sourced directly from PA's own annual rate notice (UC-748) rather than left as a secondary-hand figure. Genuinely more complex than every other state's employer SUTA modelled in this project so far: Kentucky and Delaware both publish a flat reserve-ratio-to-rate LOOKUP table; Pennsylvania instead computes THREE separate ratio-based factors and sums them, then layers a surcharge multiplier, a flat additional-contributions add-on, and (when nonzero) an interest factor on top.",
+    "wageBase": 10000.0,
+    "formula": {
+      "step1_reserveRatioFactor": "Employer Percentage = Lifetime Reserve Account Credit/Debit balance / Average Annual Taxable Payroll (last 3 fiscal years, July-June). That percentage is looked up in the 28-row Reserve Ratio Factor Table below, in the column for the employer's GROUP (1, 2, or 3 -- see groupAssignment). Range: 0.000-0.032 (Group 3's own maximum; Groups 1 and 2 top out lower, 0.011 and 0.022 respectively, since they're described in the source as fractional shares of Group 3's rate).",
+      "step2_benefitRatioFactor": "Benefit Ratio Factor = Average Annual Benefits paid / Average Annual Taxable Payroll (same 3-year window), computed to the nearest 0.1%, capped at 0.050 (values above 5.0% are reduced to 5.0% for rate purposes).",
+      "step3_stateAdjustmentFactor": "A uniform 0.75% (.0075) added for every experience-rated employer, unchanged since 2018 per the source, redetermined annually by DLI 'according to a formula set forth in Law' -- the formula itself was not published in this document.",
+      "basicRate": "Reserve Ratio Factor + Benefit Ratio Factor + State Adjustment Factor. Range for 2026: 0.0075 (minimum, when reserve+benefit factors are both 0) to 0.0895 (maximum, 0.032+0.050+0.0075).",
+      "delinquencyIncrease": "+3.0% (.0300) added to the Basic Rate ONLY if the employer hasn't filed all required registration/quarterly reports through Q2 2025 -- produces the separate 'Delinquency Computed Rate Range' (4.6950%-13.6494%) quoted in reserveAccountTaxRateRange below.",
+      "reserveAccountTaxRate": "(Basic Rate + Delinquency Increase, if applicable) x (1 + 9.2% Surcharge) + 0.60% Additional Contributions. The source's own worked example: '2.15 percent [basic rate] multiplied by the 9.2 percent Surcharge equals .001978, plus the 0.60 percent Additional Contribution equals the total contribution rate of .029478' -- i.e. the surcharge is a MULTIPLIER on the basic-rate-plus-delinquency sum, not a flat add-on, while additional contributions IS a flat add-on. This composite rate is also what's certified for FUTA credit-reduction purposes.",
+      "interestFactor": "0.0% (.0000) for 2026 -- added last, uncapped by the surcharge multiplier, not credited to the employer's own reserve account and not used for FUTA certification. Was nonzero in years PA had an outstanding federal UI loan balance; currently zero.",
+      "totalContributionRate": "Reserve Account Tax Rate + Interest Factor.",
+      "verifiedArithmetic": "Minimum: basic .0075 x 1.092 = .008190, + .006 = .014190 -- matches the source's own quoted minimum EXACTLY. Maximum: basic .0895 x 1.092 = .097714, + .006 = .103714 -- the source's own quoted maximum is .103734, a 0.00002 (two-thousandths of a percent) discrepancy most likely from intermediate per-component rounding to the nearest 0.1% before summing, not a transcription error (checked by recomputing from the document's own numbers, not assumed away)."
+    },
+    "groupAssignment": {
+      "$comment": "Which of the 3 Reserve Ratio Factor Table columns an employer's own reserve-account percentage gets looked up in depends on how long they've been liable for UC contributions, not on the ratio itself.",
+      "group1": "Newest cohort -- liability began in quarters 3/2023 through 2/2024 (roughly 2-3 years of history as of the 2026 rate year). Uses 2 years of payroll/benefit data to compute its ratios.",
+      "group2": "Liability began quarters 3/2022 through 2/2023. Uses 3 years of data.",
+      "group3": "Liability began quarter 3/2021 or earlier ('OR PRIOR'). Uses 3 years of data. This is the base/reference column -- the source describes Group 1 and Group 2 rates as fractional shares of the Group 3 rate for the same reserve-percentage band (verified: for the 18%-21% band, Group 3 = 0.4%; 1/3 of 0.4% = 0.133%, rounded UP to the next 0.1% = 0.2% = Group 1's actual table value for that band -- confirms the fraction relationship and the row alignment together)."
+    },
+    "reserveRatioFactorTable2026": {
+      "$comment": "All 28 bands, all 3 groups, transcribed from UC-748's own table (see sources) after resolving a real pdftotext -layout column-shift artifact -- see the UC-748 source note. Values are Reserve Ratio Factor as a decimal fraction.",
+      "bands": [
+        {
+          "employerPercentMin": 25,
+          "employerPercentMax": null,
+          "group1": 0.0,
+          "group2": 0.0,
+          "group3": 0.0
+        },
+        {
+          "employerPercentMin": 21,
+          "employerPercentMax": 25,
+          "group1": 0.001,
+          "group2": 0.002,
+          "group3": 0.003
+        },
+        {
+          "employerPercentMin": 18,
+          "employerPercentMax": 21,
+          "group1": 0.002,
+          "group2": 0.003,
+          "group3": 0.004
+        },
+        {
+          "employerPercentMin": 15,
+          "employerPercentMax": 18,
+          "group1": 0.002,
+          "group2": 0.004,
+          "group3": 0.005
+        },
+        {
+          "employerPercentMin": 12,
+          "employerPercentMax": 15,
+          "group1": 0.002,
+          "group2": 0.004,
+          "group3": 0.006
+        },
+        {
+          "employerPercentMin": 9,
+          "employerPercentMax": 12,
+          "group1": 0.003,
+          "group2": 0.005,
+          "group3": 0.007
+        },
+        {
+          "employerPercentMin": 7,
+          "employerPercentMax": 9,
+          "group1": 0.003,
+          "group2": 0.006,
+          "group3": 0.008
+        },
+        {
+          "employerPercentMin": 5,
+          "employerPercentMax": 7,
+          "group1": 0.003,
+          "group2": 0.006,
+          "group3": 0.009
+        },
+        {
+          "employerPercentMin": 3,
+          "employerPercentMax": 5,
+          "group1": 0.004,
+          "group2": 0.007,
+          "group3": 0.01
+        },
+        {
+          "employerPercentMin": 1,
+          "employerPercentMax": 3,
+          "group1": 0.004,
+          "group2": 0.008,
+          "group3": 0.011
+        },
+        {
+          "employerPercentMin": 0,
+          "employerPercentMax": 1,
+          "group1": 0.004,
+          "group2": 0.008,
+          "group3": 0.012
+        },
+        {
+          "employerPercentMin": -1,
+          "employerPercentMax": 0,
+          "group1": 0.005,
+          "group2": 0.009,
+          "group3": 0.013
+        },
+        {
+          "employerPercentMin": -2,
+          "employerPercentMax": -1,
+          "group1": 0.005,
+          "group2": 0.01,
+          "group3": 0.014
+        },
+        {
+          "employerPercentMin": -3,
+          "employerPercentMax": -2,
+          "group1": 0.005,
+          "group2": 0.01,
+          "group3": 0.015
+        },
+        {
+          "employerPercentMin": -4,
+          "employerPercentMax": -3,
+          "group1": 0.006,
+          "group2": 0.011,
+          "group3": 0.016
+        },
+        {
+          "employerPercentMin": -5,
+          "employerPercentMax": -4,
+          "group1": 0.006,
+          "group2": 0.012,
+          "group3": 0.017
+        },
+        {
+          "employerPercentMin": -6,
+          "employerPercentMax": -5,
+          "group1": 0.006,
+          "group2": 0.012,
+          "group3": 0.018
+        },
+        {
+          "employerPercentMin": -7,
+          "employerPercentMax": -6,
+          "group1": 0.007,
+          "group2": 0.013,
+          "group3": 0.019
+        },
+        {
+          "employerPercentMin": -8,
+          "employerPercentMax": -7,
+          "group1": 0.007,
+          "group2": 0.014,
+          "group3": 0.02
+        },
+        {
+          "employerPercentMin": -9,
+          "employerPercentMax": -8,
+          "group1": 0.007,
+          "group2": 0.014,
+          "group3": 0.021
+        },
+        {
+          "employerPercentMin": -10,
+          "employerPercentMax": -9,
+          "group1": 0.008,
+          "group2": 0.015,
+          "group3": 0.022
+        },
+        {
+          "employerPercentMin": -11,
+          "employerPercentMax": -10,
+          "group1": 0.008,
+          "group2": 0.016,
+          "group3": 0.023
+        },
+        {
+          "employerPercentMin": -12,
+          "employerPercentMax": -11,
+          "group1": 0.008,
+          "group2": 0.016,
+          "group3": 0.024
+        },
+        {
+          "employerPercentMin": -16,
+          "employerPercentMax": -12,
+          "group1": 0.009,
+          "group2": 0.017,
+          "group3": 0.025
+        },
+        {
+          "employerPercentMin": -20,
+          "employerPercentMax": -16,
+          "group1": 0.009,
+          "group2": 0.018,
+          "group3": 0.026
+        },
+        {
+          "employerPercentMin": -28,
+          "employerPercentMax": -20,
+          "group1": 0.009,
+          "group2": 0.018,
+          "group3": 0.027
+        },
+        {
+          "employerPercentMin": -100,
+          "employerPercentMax": -28,
+          "group1": 0.01,
+          "group2": 0.02,
+          "group3": 0.03
+        },
+        {
+          "employerPercentMin": null,
+          "employerPercentMax": -100,
+          "group1": 0.011,
+          "group2": 0.022,
+          "group3": 0.032
+        }
+      ],
+      "bandDirectionNote": "Each band is expressed exactly as the source phrases it (e.g. 'greater than or equal to 21% but less than 25%' -> min 21, max 25; 'less than or equal to -1% but greater than -2%' -> min -2, max -1) -- min is inclusive-or-greater at the LOWER end of each band per the source's own wording, not independently re-derived."
+    },
+    "rates": {
+      "newlyLiableNonConstruction": 0.03822,
+      "newlyLiableConstruction": 0.105924,
+      "experiencedMin": 0.01419,
+      "experiencedMax": 0.103734,
+      "delinquentMin": 0.04695,
+      "delinquentMax": 0.136494,
+      "surcharge": 0.092,
+      "additionalContributions": 0.006,
+      "interestFactor": 0.0,
+      "delinquencyIncrease": 0.03,
+      "stateAdjustmentFactor": 0.0075
+    },
+    "confidence": "primary_source_confirmed for every figure in this block -- the full formula chain, all 28 reserve-ratio bands across all 3 groups, and every rate were read directly from PA's own UC-748 2026 contribution-rate notice and cross-checked internally (the min/max total-rate arithmetic verification above, plus the 1/3-fraction worked example in the source's own reserve-ratio-factor explanation). Upgrades this data from the prior session's secondary-hand summary (embedded in a sources-array note, not a structured section) to the same tier as Kentucky's/Delaware's/Michigan's employer SUTA documentation.",
+    "knownGap": "This state's UI rate depends on that employer's own multi-year reserve-account and benefit history, which is not a static jurisdiction constant a rules file can hold, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. Two secondary items also remain open: (1) the State Adjustment Factor's own underlying statutory formula (the source states DLI determines it 'according to a formula set forth in Law' but does not publish that formula, only the resulting 0.75% figure); (2) which employers currently fall into the 'newly liable' category using the flat non-construction/construction rates vs. graduating into experience-rating (the source implies a multi-year on-ramp via the Group 1/2/3 tenure classification but doesn't state the exact year an employer first becomes experience-rated). STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "paidFamilyMedicalLeave": {
+    "$comment": "CHECKED, not assumed (2026-08-21) -- Pennsylvania has NO mandatory state-run paid family/medical leave program as of this date, unlike NY/NJ/CT/MA/WA/OR/MD/RI/CO/DE in this project. A bill (up to 20 weeks birth/adoption, 12 weeks caregiving, employee-funded via a payroll deduction capped at 1% of wages) passed the state Senate's Labor & Industry Committee in mid-2026 but has NOT been enacted -- correctly modelled as absent, not a gap, but worth re-checking in a future pull since this is live-legislation territory.",
+    "status": "no_program_as_of_2026-08-21"
+  },
+  "reciprocity": {
+    "source": {
+      "title": "PA Department of Revenue -- Employer Withholding (reciprocal agreements)",
+      "url": "https://www.pa.gov/en/agencies/revenue/resources/tax-types-and-information/employer-withholding.html",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched directly. Quoted verbatim: 'If you agree not to withhold Pennsylvania tax because your employee is a resident of a reciprocal state, you must withhold that state's tax.'"
+    },
+    "formSource": {
+      "title": "REV-419 (EX) 09-20, instructions REV-419 IN (EX) 03-24 -- Employee's Nonwithholding Application Certificate",
+      "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforbusinesses/employerwithholding/documents/rev-419.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly in full (the originally-cited revenue.pa.gov URL had gone stale and now redirects to a dead search page -- found the live URL via search rather than assuming the form no longer exists). This is the actual form + instructions, the same K-4-equivalent confidence tier Kentucky's reciprocity reached."
+    },
+    "reciprocalStates": [
+      "IN",
+      "MD",
+      "NJ",
+      "OH",
+      "VA",
+      "WV"
+    ],
+    "swapWithholdsResidenceState": true,
+    "swapMechanismBuilt": "BUILT this pass (2026-08-21): src/taxes/state.ts's new reciprocitySwapWithholdingLine() reads this exact flag. When a reciprocal-state resident's PA_SIT is zeroed by reciprocity, the engine now ALSO computes that employee's residence-state tax on the same wages (via the same virtual-input pattern Kansas's residentWorkingElsewhereCreditLine() already established) and emits it as a new '${residence}_SIT_RECIPROCITY_SWAP' line -- the actual withholding-amount swap REV-419 describes, not just a zeroed PA line with nothing to replace it. Gated generically (any future state with this same shape gets it for free), opt-in via this flag so every other reciprocalStates-using state (IL/IN/KY/MI/MN/OH/WI) is completely unaffected. Only fires for a residence state that ALSO has engine dispatch code (NJ/MD/OH/IN/VA/WV all do as of this pass) -- a residence state without calc-code yet would produce no swap line at all (silently, via hasStateRuleset()'s existing guard), same as every other cross-state mechanism in this project.",
+    "mandateVsAgreement": "RESOLVED this pass by reading REV-419's own instructions directly, not inferred. It's genuinely BOTH, in sequence, not a single either/or answer: (1) the DECISION to stop withholding PA tax is employer-elective -- REV-419's 'WHO IS ELIGIBLE' section states nonwithholding applies '...as a resident of the reciprocal state of [the 6 states] and YOUR EMPLOYER AGREES to withhold the income tax from that state' (emphasis on agrees -- an employer can decline and just keep withholding PA tax instead, per the certificate/exemption structure). (2) But ONCE the employer has agreed, the swap becomes mandatory, not optional -- the instructions' 'RESPONSIBILITIES OF EMPLOYER' section states verbatim: 'If you agree not to withhold PA tax because your employee is a resident of a reciprocal state, you must withhold the other state's tax.' This is the identical sentence already quoted from PA's separate withholding webpage, now independently corroborated by the form's own instructions -- two different PA DOR documents, same wording, not just one source repeated. So: opting in is elective, but there is no partial opt-in -- an employer cannot agree to stop PA withholding and then simply withhold nothing.",
+    "mechanism": "Form REV-419, Section II box (b): the employee checks one of the 6 reciprocal states and the certificate text itself reads 'I claim an exemption from withholding of PA personal income tax and AUTHORIZE my employer to withhold income tax for my resident state on compensation paid to me in the Commonwealth of Pennsylvania' -- filed with and retained by the employer (not routinely sent to DOR; DOR only requires a copy when the employer disagrees with the claim, the employee's exempted PA gross comp exceeds $1,625/quarter under the SEPARATE Tax Forgiveness box (a), the employee claims reciprocal-state exemption (box b) at all, or claims the SCRA military-spouse exemption (box c) -- read directly, not inferred, so DOR's own oversight trigger conditions are now precisely known rather than assumed).",
+    "noAnnualRefilingForReciprocalBox": "New fact from the direct form read: 'Unless the state of residence changes, residents of the reciprocal states... do not need to refile this application every year' -- REV-419's box (a) (Tax Forgiveness) DOES require annual refiling, but box (b) (reciprocal state) does not. A genuinely different renewal cadence within the SAME form depending on which box was checked -- not previously documented.",
+    "outboundDirection": {
+      "$comment": "RESOLVED, then CORRECTED one level deeper (2026-08-21, 'is it as good as Symmetry's' follow-up pass that fetched REV-415 directly, PA's own core withholding guide, for the first time in this project). The tax OUTCOME conclusion below was right; the MECHANISM description was incomplete and has been fixed, not just re-asserted.",
+      "rule": "A PA resident working in one of the 6 reciprocal states does NOT owe that state's income tax on W-2 wages (mirror-image of the inbound exemption) -- but DOES still owe ordinary PA resident tax on that income, since Pennsylvania taxes its own residents on all income regardless of source. CORRECTED: this is NOT merely baseline residency taxation with 'nothing for PA to credit against,' as this file previously concluded. REV-415 itself states directly: 'If a Pennsylvania resident employee receives compensation for services performed in one of these six states, the employer in THAT STATE withholds the Pennsylvania personal income tax from compensation received and remits that tax to Pennsylvania' -- i.e. the OTHER state's employer is supposed to actively withhold and remit PA tax, a real swap mechanism mirroring PA's own REV-419/reciprocitySwapWithholdingLine(), not a passive 'the employee just owes it on their return' outcome. Independently confirmed from the OTHER side for the NJ leg specifically: Form NJ-165's own text has a PA resident 'authorize my employer to withhold Pennsylvania personal income taxes on my behalf' -- two different states' own primary-source certificates describing the identical mechanism, not just PA's own aspirational description of what it wants from other states. Engine: NJ-2026.json now sets reciprocity.swapWithholdsResidenceState (the same generic flag/mechanism PA's own file uses), proven in tests/engine.test.ts -- a PA resident working in NJ gets NJ_SIT=$0 AND a real PA_SIT_RECIPROCITY_SWAP line.",
+      "checkedForOtherFiveStates": "RESOLVED (2026-08-21, 'fix any and all gaps' follow-up pass): re-checked all 5 remaining reciprocal states' own certificates directly for NJ-165-style 'authorize withholding of PA tax' language. NONE of them have it -- New Jersey is the OUTLIER, not the norm. Indiana's WH-47 (fetched and read directly): a bare exemption ('income... taxable in their state of residence and not subject to Indiana... tax'), no authorization language at all. Maryland's MW507 (fetched and read directly, 2026 revision): also a bare exemption ('I claim exemption... Enter EXEMPT'), and its own instructions point the OPPOSITE direction from a swap for the DC/PA/VA statutory-residency edge case -- 'You must apply to your domicile state for any tax credit... under the reciprocal provisions,' i.e. a return-side CREDIT application, not an employer withholding swap. Ohio's IT 4NR (fetched in an earlier pass this project): plain exemption, treats all 5 of ITS reciprocal states identically. Virginia's VA-4 and West Virginia's IT-104NR (both fetched in earlier passes this project): both bare exemption checkboxes, no authorization language. CONCLUSION: REV-415's own description ('the employer in that state withholds the Pennsylvania personal income tax... and remits that tax to Pennsylvania') does NOT reflect a uniform 6-state mechanism -- it appears to describe PA's own aspiration or, more likely, the specific NJ/PA relationship (PA's oldest and most prominent reciprocal agreement) rather than a general rule. Engine behavior is correct as built: reciprocity.swapWithholdsResidenceState is set ONLY on NJ-2026.json, not the other 5 -- this was already the right scope, now confirmed rather than merely assumed.",
+      "primarySourceForNJLeg": {
+        "title": "NJ Division of Taxation -- Reciprocal Personal Income Tax Agreement (PA/NJ)",
+        "url": "https://www.nj.gov/treasury/taxation/njit25.shtml",
+        "verifiedOn": "2026-08-21",
+        "verifiedBy": "Fetched directly. Quoted verbatim, confirming BOTH directions from NJ's own (independent, non-PA) source: 'Compensation paid to Pennsylvania residents employed in New Jersey is not subject to New Jersey Income Tax under the terms of the Reciprocal Personal Income Tax Agreement between the states' and 'Similarly, New Jersey residents are not subject to Pennsylvania income tax either.' A PA resident who has NJ tax incorrectly withheld files Form NJ-165 with their NJ employer to stop it, or files an NJ nonresident return for a refund."
+      },
+      "structuralConfirmationForAll6": "Checked, not assumed: ALL 6 of PA's reciprocalStates (IN, MD, NJ, OH, VA, WV) already list PA in THEIR OWN reciprocalStates array in this project's data files, independently built in separate sessions for each state's own primary sources (IN's WH-47, MD's cross-source confirmation, NJ's njit25.shtml, OH's IT 4NR, VA's VA-4, WV's IT-104NR). A mutually-consistent 6-state network from 6 independently-sourced files, not a one-sided PA claim.",
+      "engineVerification": "PROVEN through the real engine for ALL 6 of 6 partner states as of this pass, not just structurally inferred. NJ and MD already had dedicated tests from their own build sessions ('a Pennsylvania resident working in NJ owes $0 NJ income tax', 'a Pennsylvania resident working in Maryland owes $0 MD tax'). Ohio's own 'all 5 reciprocal states... zero Ohio tax the same way' test already includes PA in its loop. Indiana had no PA-specific case before this pass (only a Kentucky one) -- added a test proving IN_SIT zeroes to $0 while IN_COUNTY stays at its full amount, same WH-47 state-only-not-county gotcha KY already proved. VA and WV were still method:'NOT_MODELLED_dataOnly' (no calc-code at all) at the start of this pass -- both were built out to real calc-code specifically to close this gap (virginiaWithholding()/westVirginiaWithholding() in state.ts, full worked-example verification against each state's own primary source), and each now has a dedicated 'a Pennsylvania resident working in [VA/WV] owes $0' test passing. 379/379 tests pass, zero regressions."
+    },
+    "ohioOutlierClaimReexamined": "DOWNGRADED, not left open (2026-08-21, follow-up pass): OH-2026.json's reciprocity block used to flag an unresolved tension -- secondary sources described PA's reciprocity with Ohio specifically as requiring PROOF taxes were paid to PA (a mailed return + W-2s + statement) rather than a simple certificate. Two more independent checks this pass found no support for that claim: REV-419's own Section II box (b), read directly, treats all 6 reciprocal states identically with no PA-side differentiation by which state the employee works in; and a fresh targeted search (after an earlier garbled attempt was discarded) returned only sources describing an ordinary symmetric IT-4NR/REV-419 certificate exchange, no proof-of-payment requirement mentioned anywhere. OH-2026.json's own note has been rewritten from 'reported outlier, unresolved' to 'likely stale/inaccurate, not corroborated' -- a reasoned downgrade from converging evidence, still short of finding the original claim's own source to know definitively what it described (plausibly a refund process, not this withholding-certificate process).",
+    "custhelpUnreachable": "PA Revenue's own consumer FAQ site (revenue-pa.custhelp.com), which independently discusses this exact outbound question in PA's own words, returned an Oracle 'Technical Difficulties' page on every attempt this pass (both direct fetch and live browser navigation) -- a genuine third-party platform outage (Oracle's own incident-number page), not a bot-block like the Akamai pattern seen on NH/MA's revenue domains, and not worth continued retries this session.",
+    "knownGap": "RESOLVED, all of it, as of this follow-up pass (2026-08-21): the mandate-vs-agreement question and REV-419's own text were resolved in the first reciprocity pass. This pass closed the three items that were still open afterward: (1) VA and WV were built out to real calc-code (virginiaWithholding()/westVirginiaWithholding() in state.ts, each verified against its own primary source's worked example or a hand-derivation), so the outbound direction is now proven through calculatePaycheck() for all 6 of 6 partner states, not 4. (2) The Ohio 'proof required' tension was re-examined with 2 more independent checks and downgraded from 'reported outlier, unresolved' to 'likely stale/inaccurate, not corroborated' in both OH-2026.json and here. (3) The actual withholding SWAP is now modelled, not just the exemption half — reciprocitySwapWithholdingLine() (new, generic, gated by reciprocity.swapWithholdsResidenceState) computes the employee's residence-state tax on the same wages and emits it as a '${residence}_SIT_RECIPROCITY_SWAP' line whenever PA's reciprocity exemption fires, proven end-to-end against NJ's own already-verified $120.74 figure. 381/381 tests pass. Genuinely residual, disclosed rather than hidden: the swap line only fires for a residence state that itself has engine dispatch code (all 6 partner states do now) — a 7th reciprocal state added in some future year without calc-code would silently produce no swap line, the same 'missing dispatch = no line' behavior every other cross-state mechanism in this project already has."
+  },
+  "localTax": {
+    "$comment": "Pennsylvania's Act 32 local Earned Income Tax (EIT) + Local Services Tax (LST). DATA GAP CLOSED (2026-08-21): all 2,627 PSD-code jurisdictions now have real primary-sourced rates -- see pointer below. What remains open is CODE, not data: no engine dispatch method exists yet for either tax.",
+    "eit": {
+      "authority": "Act 32 of 2008 (53 P.S. sec. 6924.101 et seq.), administered by PA DCED",
+      "structure": "2,627 municipality x school-district PSD combinations organized into 70 Tax Collection Districts (TCDs, generally one per county), each with a designated third-party tax officer (e.g. Berkheimer, Keystone Collections Group) -- NOT the county government itself, a structural difference from Kentucky where the county fiscal court is usually the collector. Counts confirmed directly from the bulk register itself, not the earlier ballpark figures ('~2,500', '69 TCDs').",
+      "psdCodes": "6-digit Political Subdivision codes identify each municipality+school-district combination. Out-of-state residents get PSD 88000 / 0% resident rate (a convention documented here, not itself a row in DCED's register).",
+      "withholdingRule": "Employers withhold at the HIGHER of the employee's resident EIT rate or the work-location's nonresident EIT rate -- a single number per paycheck, genuinely different from Kentucky's stack-or-credit-depending-on-tier local system.",
+      "pointer": "data/local/PA-EIT-LST-2026.json",
+      "bulkSource": "PA DCED's Municipal Statistics system publishes a live Excel export of this exact register (apps.dced.pa.gov/munstats-public/ReportInformation2.aspx?report=EitWithCollector_Dyn_Excel) -- downloaded directly and parsed in full this session, PA's equivalent of Ohio's Finder bulk CSV / Kentucky's SOS occupational-tax database. No longer just identified; actually pulled."
+    },
+    "lst": {
+      "authority": "Act 32 of 2008, administered by PA DCED",
+      "annualCap": 52.0,
+      "lowIncomeExemption": {
+        "threshold": 12000.0,
+        "rule": "Political subdivisions levying LST over $10/yr MUST exempt taxpayers earning under $12,000 total (all sources) within that subdivision; subdivisions levying $10/yr or less MAY exempt them (permissive, not mandatory)."
+      },
+      "proration": "Combined muni+school LST over $10/yr must be prorated across pay periods, rounded DOWN to the nearest $0.01 (e.g. $52/yr = $1.00/week). $10/yr or less may be withheld entirely from the first paycheck instead.",
+      "situsPriority": "For an employee working multiple PA jurisdictions in one pay period: (1) principal place of employment, (2) place of residence AND employment, (3) employment location closest to residence. A secondary employer need not withhold if shown proof of LST already withheld by the principal employer.",
+      "source": {
+        "title": "PA DCED -- Local Services Tax (LST)",
+        "url": "https://dced.pa.gov/local-government/local-income-tax-information/local-services-tax/",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched directly this session, full page text captured including the situs-priority order and the exact proration/rounding rule."
+      },
+      "pointer": "data/local/PA-EIT-LST-2026.json",
+      "crossCheckedAgainstBulkData": "The $52/yr cap and $12,000 LIE threshold above match verbatim across every nonzero LST row in the bulk register pulled 2026-08-21 -- independent confirmation between this policy-text source and the actual per-jurisdiction data, not just an internally-consistent assumption."
+    },
+    "knownGap": "CLOSED, both halves (2026-08-21, follow-up pass -- Scott: 'do last gap'). DATA: all 2,627 jurisdictions, primary-sourced (see pointer). CODE: pennsylvaniaLocalTax()/pennsylvaniaLST() in src/taxes/state.ts now dispatch real PA_EIT and PA_LST lines via registry.ts's new paLocalRuleset() lookup -- the resident-vs-nonresident-rate comparison, the $52/yr cap, per-period proration (rounded DOWN to the cent, the one tax in this engine with that rounding direction -- see money.ts's new roundDownToCent()), and the $12,000 low-income exemption are all implemented and tested (7 tests against real Pittsburgh PSD data, 388/388 total pass). Genuinely still open, disclosed not hidden: (1) this engine does not resolve a physical address to a PSD code -- callers must supply certificate.workPSD/residencePSD already resolved, same convention Indiana's county tax already established; (2) LST's $10-or-less lump-sum-instead-of-prorate employer election is not modelled (always prorates); (3) whether Act 32's own 'earned income' base matches PA_SIT's compensation base (both use rules.exemptPretax) was assumed by structural inference, not independently statute-sourced this pass. CLOSED 2026-09-06 ('go to every state, fix real bugs' pass): the situs-priority rule's own 'a secondary employer need not withhold if shown proof of LST already withheld by the principal employer' text had been left disclosed-but-unfixed, meaning two concurrent PA employers withholding to the SAME PSD would have double-charged LST beyond the annual cap -- the same shape as West Virginia's un-modelled multi-job dedup fixed the same pass. pennsylvaniaLST() now reads a caller-supplied certificate.lstAlreadyWithheldElsewhere (opt-in, defaults to charge, so this is additive). The full situs-PRIORITY ordering itself (principal place of employment > residence-and-employment > closest-to-residence, for choosing WHICH of several simultaneous PA work locations owes it in the first place) remains unmodelled -- this implementation still assumes a single workPSD per paycheck; the new field only handles the 'already paid, don't double-charge' half, not the 'which employer is which priority tier' half."
+  },
+  "knownGaps": [
+    "Reciprocity: fully closed. REV-419 read directly (mandate-vs-agreement resolved: elective opt-in, mandatory swap once opted in); outbound direction proven through the real engine for all 6 of 6 partner states (VA and WV were built out to calc-code specifically to close this); the Ohio 'PA requires extra proof' tension downgraded to 'not corroborated' after 2 more independent checks; and the actual withholding SWAP (not just the exemption) is now modelled via the new reciprocitySwapWithholdingLine() mechanism, proven against NJ's own already-verified figures. FOLLOW-UP (2026-08-21): directly fetched and read IN's WH-47 and MD's MW507 (the 2 of the 5 non-NJ certificates not yet read this session) specifically checking for NJ-165-style swap language -- neither has it, both are bare exemption certificates, and MD's own instructions point toward a return-side CREDIT mechanism instead for the DC/PA/VA edge case. Combined with OH/VA/WV's already-fetched certificates (also bare exemptions), this CONFIRMS New Jersey is the outlier among PA's 6 reciprocal partners, not the norm -- reciprocity.swapWithholdsResidenceState correctly stays NJ-only. See reciprocity.outboundDirection.checkedForOtherFiveStates for the full detail.",
+    "Act 32 local EIT and LST: fully closed, DATA and CODE. All 2,627 PSD jurisdictions primary-sourced; pennsylvaniaLocalTax()/pennsylvaniaLST() in state.ts now compute real PA_EIT/PA_LST lines through calculatePaycheck() (resident-vs-nonresident comparison, $52/yr cap, round-down proration, $12,000 low-income exemption), proven by 7 tests against real Pittsburgh PSD data. See localTax.knownGap for the residual disclosed items (no address-to-PSD resolution, LST situs-priority not modelled, etc.).",
+    "The State Adjustment Factor's underlying statutory formula and the exact year an employer graduates off the newly-liable flat rate remain unsourced beyond the resulting numbers. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "STALE CLAIM CORRECTED (2026-08-21): this line previously claimed stateUnemploymentEmployeeTax() was untested. Checked, not re-asserted -- it already had 2 passing tests in tests/engine.test.ts describe('Pennsylvania') ('employee UC withholding: 0.07% of gross wages, uncapped' and the 401(k)-doesn't-reduce-the-UC-base test), predating this whole session's work. Local EIT/LST (pennsylvaniaLocalTax()/pennsylvaniaLST() in state.ts) is now ALSO wired to calc-code and tested (7 new tests: resident-rate-higher, nonresident-rate-higher, two-different-PSDs, LST proration, LST low-income exemption, missing workPSD, unrecognised PSD -- all against real Pittsburgh PSD data). This closes the CODE half of the local-tax gap flagged earlier in this file's own localTax.knownGap -- calculatePaycheck() can now produce real PA_EIT and PA_LST lines. 388/388 tests pass. Genuinely still open: whether Act 32's own 'earned income' base definition is identical to PA_SIT's compensation base was assumed, not independently sourced this pass (see pennsylvaniaLocalTax()'s own doc comment); LST's proration-vs-lump-sum election for subdivisions levying $10/yr or less is not modelled (always prorates); and this engine still does not resolve an address to a PSD code itself -- callers must supply certificate.workPSD/residencePSD already resolved, the same convention Indiana's county tax already established.",
+    "Supplemental wages: not applicable. Pennsylvania has no personal exemptions, standard deduction, or withholding allowances of any kind (flatRate.comment above) -- a straight 3.07% of taxable compensation regardless of how a payment is categorized or combined, so a standalone bonus and one combined with regular wages compute identically. Confirmed by inspection rather than a separate primary-source fetch, since no deduction mechanism exists for a supplemental treatment to differ against."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 10000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.03822,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.01419,
+      "max": 0.103734
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  }
+}

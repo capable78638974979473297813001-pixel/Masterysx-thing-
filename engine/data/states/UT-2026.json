@@ -1,0 +1,182 @@
+{
+  "code": "UT",
+  "name": "Utah",
+  "year": 2026,
+  "method": "flat_rate_phaseout_allowance",
+  "$methodComment": "A genuinely novel combination in this project: Utah's Publication 14 (effective 2026-06-01, fetched and read directly) computes a flat-rate gross tax (wages x 4.45%, Delaware/Oregon-style: subtracted AFTER, not a pre-tax deduction), but the CREDIT subtracted from that gross tax is itself a PHASING-OUT allowance (Wisconsin-style: a base allowance figure that shrinks as income rises above a threshold, via base minus 1.3% of the excess). No other state in this project combines 'post-tax credit' (DE/OR's shape) with 'the credit itself phases out with income' (WI's shape) into one mechanism. Genuinely simpler in one respect than every phase-out state built so far: there is NO allowance-count/exemption-count field at all — 'Utah uses the federal W-4 for withholding purposes, with the state only requiring the filing status,' so the only certificate input this formula needs is single vs. married. WIRED INTO CALC CODE via utahWithholding() in state.ts, verified against ALL SIX of Publication 14's own worked examples.",
+  "sources": [
+    {
+      "title": "Publication 14, Utah Withholding Tax Guide, effective 2026-06-01",
+      "url": "https://files.tax.utah.gov/tax/forms/pubs/pub-14.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly. The first -layout extraction interleaved the Single/Married columns of each schedule (the same class of column-shift artifact already documented for NJ/CT/OH/Nebraska/California in this project) — fixed by re-extracting the same pages with pdftotext's -raw flag, which laid out both columns' figures on the SAME line with zero ambiguity (a cleaner fix than the -layout-vs-no-layout toggle used for Nebraska/California; -raw specifically resolved a case where -layout's OWN reordering was the problem, not the absence of column awareness). All 8 payroll-period schedules (weekly/biweekly/semimonthly/monthly/quarterly/semiannual/annual/daily) x 2 filing statuses transcribed verbatim and cross-checked internally: each period's threshold and base-allowance figures are consistently the annual figure ($9,348 threshold / $485 base, single) divided by the period count and rounded — e.g. monthly 9348/12=779.0 exact, quarterly 9348/4=2337.0 exact, weekly 9348/52=179.77 rounds to 180 — a genuine, verified derivation pattern, not independently-set numbers. ALL SIX of the document's own worked examples (1-6, covering every one of the 8 schedules except annual/semiannual) were reproduced BY HAND from the transcribed tables before running any code, then matched to calculatePaycheck()'s actual output afterward — every single one confirms this file's own whole-dollar-at-every-step rounding convention (see flatRatePhaseoutAllowance.roundingComment below), the strongest verification depth this project has applied to any state's rounding rule specifically."
+    },
+    {
+      "title": "Utah State Tax Commission UI wage base / tax rate page",
+      "url": "https://jobs.utah.gov/ui/employer/Public/Questions/TaxRates.aspx",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly. CAUGHT A REAL DISCREPANCY between two secondary sources ($50,700 vs. $48,900 for the 2026 wage base) — resolved by going to jobs.utah.gov directly, which states plainly: 'During 2026, the taxable wage base is $50,700.00.' Also confirmed the overall earned-rate range directly: 'the minimum overall tax rate is .1% and the maximum overall tax rate is 7.1%.'"
+    }
+  ],
+  "flatRatePhaseoutAllowance": {
+    "$comment": "Publication 14's own 7-line worksheet, transcribed verbatim: (1) taxable wages this period; (2) line1 x rate, ROUNDED TO WHOLE DOLLAR; (3) base allowance (by period+status); (4) line1 minus a phase-out threshold (by period+status), floored at 0; (5) line4 x phaseOutRate, ROUNDED TO WHOLE DOLLAR; (6) line3 minus line5, floored at 0 (an integer subtraction of two already-whole-dollar figures); (7) line2 minus line6, floored at 0 -- the final withholding amount, itself already a whole dollar by construction since lines 2 and 6 both are. VERIFIED, not assumed: reproducing the document's own worked examples for BOTH tables below REQUIRED whole-dollar rounding at both line 2 AND line 5 independently, not just once at the very end. This is a MULTI-STEP whole-dollar rounding convention, closer to Missouri's own per-bracket-step rounding discovery than to the SINGLE-final-rounding mechanism (roundFinalToWholeDollar) already built for Maine -- reusing that generic mechanism here would NOT reproduce Publication 14's own answers, since it only rounds once, at the very end.",
+    "effectiveDateOfNewTable": "2026-06-01",
+    "beforeJune2026": {
+      "$comment": "RESOLVED (a later 'go to every state' pass): fetched Publication 14 Rev. 4/25 directly via the Wayback Machine (web.archive.org snapshot of tax.utah.gov/forms/pubs/pub-14.pdf dated 2025-06-12, since the live URL had already been overwritten by the June-2026 revision) -- its own header states 'effective for pay periods beginning on or after June 1, 2025,' meaning this table is what actually governed Utah withholding from 2025-06-01 through 2026-05-31, including the first 5 months of the 2026 tax year this file's checkDate range covers. This closes the previously-flagged open question about whether 4.45% had actually been in effect since 2025 (an EY headline had described a same-shaped 4.5%-to-4.45% change dated 2025-06-01, which turned out to be describing THIS 4.55%-to-4.5% change instead -- a different, one-year-earlier cut, confirmed by this document's own plainly-stated 4.5% rate and 2025-06-01 effective date). Reproduced the document's own Example 1 exactly (weekly $400, single: line2=400x4.5%=$18, line3=$9, line4=400-175=225, line5=225x1.3%=$2.925->$3, line6=9-3=$6, line7=18-6=$12).",
+      "rate": 0.045,
+      "phaseOutRate": 0.013,
+      "baseAllowance": {
+        "single": {
+          "weekly": 9,
+          "biweekly": 17,
+          "semimonthly": 19,
+          "monthly": 38,
+          "quarterly": 113,
+          "semiannual": 225,
+          "annual": 450,
+          "daily": 2
+        },
+        "married": {
+          "weekly": 17,
+          "biweekly": 35,
+          "semimonthly": 38,
+          "monthly": 75,
+          "quarterly": 225,
+          "semiannual": 450,
+          "annual": 900,
+          "daily": 3
+        }
+      },
+      "phaseOutThreshold": {
+        "single": {
+          "weekly": 175,
+          "biweekly": 350,
+          "semimonthly": 379,
+          "monthly": 759,
+          "quarterly": 2277,
+          "semiannual": 4554,
+          "annual": 9107,
+          "daily": 35
+        },
+        "married": {
+          "weekly": 350,
+          "biweekly": 701,
+          "semimonthly": 759,
+          "monthly": 1518,
+          "quarterly": 4553,
+          "semiannual": 9107,
+          "annual": 18213,
+          "daily": 70
+        }
+      }
+    },
+    "fromJune2026": {
+      "rate": 0.0445,
+      "phaseOutRate": 0.013,
+      "baseAllowance": {
+        "single": {
+          "weekly": 9,
+          "biweekly": 19,
+          "semimonthly": 20,
+          "monthly": 40,
+          "quarterly": 121,
+          "semiannual": 243,
+          "annual": 485,
+          "daily": 2
+        },
+        "married": {
+          "weekly": 19,
+          "biweekly": 37,
+          "semimonthly": 40,
+          "monthly": 81,
+          "quarterly": 243,
+          "semiannual": 485,
+          "annual": 970,
+          "daily": 4
+        }
+      },
+      "phaseOutThreshold": {
+        "single": {
+          "weekly": 180,
+          "biweekly": 360,
+          "semimonthly": 390,
+          "monthly": 779,
+          "quarterly": 2337,
+          "semiannual": 4674,
+          "annual": 9348,
+          "daily": 36
+        },
+        "married": {
+          "weekly": 360,
+          "biweekly": 719,
+          "semimonthly": 779,
+          "monthly": 1558,
+          "quarterly": 4674,
+          "semiannual": 9348,
+          "annual": 18696,
+          "daily": 72
+        },
+        "verifiedExample": "Example 5, quarterly/single/$9,000: line2=9000x4.45%=$400.50->$401, line3=$121, line4=9000-2337=6663, line5=6663x1.3%=$86.619->$87, line6=121-87=$34, line7=401-34=$367 -- matches Publication 14's own stated $367 exactly."
+      }
+    },
+    "statusNote": "Publication 14's own note: 'Use the Single column for taxpayers who file as head-of-household on their federal return' -- HOH folds into single, a direct quote from the source rather than this project's own usual disclosed simplification. True of both tables (the June 2025 revision uses identical language).",
+    "noCertificateDefault": "Utah relies entirely on the federal W-4's own filing-status Step 1(c) checkbox -- there is no separate Utah certificate and no stated Utah-specific no-form default beyond whatever the federal W-4 default already is (single, per this engine's own standing convention for a missing/default federal W-4)."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "Utah taxable income starts from federal taxable income (Utah Code 59-10-112 conforms to federal AGI with Utah-specific additions/subtractions) -- the same 'starts from a federal figure' inference tier as Colorado/Wisconsin/Ohio, not yet upgraded to a direct Pub 14 quote naming each pretax category.",
+  "midYearRateChange": {
+    "changed": true,
+    "effectiveDate": "2026-06-01",
+    "priorRate": 0.045,
+    "currentRate": 0.0445,
+    "note": "RESOLVED (a later 'go to every state' pass): WIRED into calc code -- utahWithholding() now dispatches on flatRatePhaseoutAllowance.effectiveDateOfNewTable, the same input.checkDate string-compare pattern already used for Ohio's HB96 and Georgia's HB463 mid-year cuts, selecting beforeJune2026 or fromJune2026. The prior open question (whether 4.45% actually took effect a year earlier, in June 2025) is now closed: fetched Publication 14 Rev. 4/25 directly (via a Wayback Machine snapshot, since the live URL had been overwritten) and confirmed it states a PLAIN 4.5% rate effective 2025-06-01 -- a genuinely different, one-year-earlier cut (HB106, 4.55%->4.50%) from the 2026 one modelled here (SB60, 4.50%->4.45%). The EY headline that raised the original doubt was describing the 2025 cut, not the 2026 one."
+  },
+  "reciprocity": {
+    "rule": "NONE. Utah has no reciprocal withholding agreements with any state -- cross-source confirmed by TWO independent search passes on separate sessions, no contradictions found either time."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Utah city or county levies a local income or wage tax -- 'Utah does not permit cities, counties, or municipalities to levy income taxes' per a re-verification pass, consistent with the original finding and not contradicted by anything found on a second, independent check."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUI) -- no employee contribution.",
+    "administeredBy": "Utah Department of Workforce Services",
+    "wageBase": 50700.0,
+    "earnedRateRange": {
+      "min": 0.001,
+      "max": 0.071
+    },
+    "newEmployerRate": null,
+    "newEmployerRateNote": "CORRECTED on a verification pass -- the previously-recorded flat 1.1% figure was a secondary-source oversimplification and has been removed rather than left standing uncorrected. Utah's OWN Employer Handbook (jobs.utah.gov/ui/employer/Public/Handbook/Employer_Handbook.pdf, fetched and read directly) states plainly: 'As a new employer, your rate is based on an industry classification' -- there is no single flat new-employer rate the way Colorado's introductory rate table (also in this project) turned out to have real numbers for. The specific per-industry benefit-ratio table was not found this session; a caller needing a real new-employer figure would need Utah's own current-year industry rate table, not yet obtained.",
+    "delinquentSurcharge": 0.01
+  },
+  "verification": "PROVEN via calculatePaycheck() against ALL SIX of the fromJune2026 table's own worked examples: Example 1 (weekly $400, single -> $12), Example 2 (biweekly $2,600, single -> $116, allowance fully phased to $0), Example 3 (semimonthly $1,200, married -> $18), Example 4 (monthly $7,800, married -> $347, allowance fully phased to $0), Example 5 (quarterly $9,000, single -> $367), Example 6 (daily $175, married -> $5) -- all reproduced to the exact whole dollar. The beforeJune2026 table is additionally proven against its own Example 1 (weekly $400, single -> $12 -- the same final figure as the newer table's Example 1, a genuine coincidence from rounding, not a data-entry collision; verified by hand against the archived document's own arithmetic, not just pattern-matched). See tests/engine.test.ts, describe('Utah').",
+  "knownGaps": [
+    "RESOLVED (a later 'go to every state' pass): the pre-2026-06-01 formula is now modelled (beforeJune2026 above, fetched from an archived Publication 14 Rev. 4/25) and utahWithholding() dispatches on checkDate the same way Ohio's/Georgia's mid-year cuts do -- a checkDate before 2026-06-01 now correctly uses the OLD 4.5% table instead of silently applying the wrong one.",
+    "STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "No paid-family-leave or disability program exists in Utah as far as this session found -- correctly absent, not an oversight.",
+    "Supplemental wages: Publication 14 (Rev. 4/26, effective 2026-06-01) was fetched directly and read in full this pass -- the entire document contains ZERO mentions of \"bonus\" or \"supplemental\" anywhere. Some third-party payroll guides claim a separate Utah flat supplemental rate (a commonly cited figure is 4.65%) -- checked directly against the primary source and found NO SUCH RATE or mechanism in the current guide. A standalone bonus therefore runs through the same flat-rate-with-phaseout-allowance formula as any other wages, which is what this engine already does by default -- the same conclusion already reached for South Carolina and Louisiana/Oklahoma/Vermont in this project, each checked directly rather than assumed."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 50700,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "No single new-employer figure exists for this state: the rate is industry-assigned or schedule-driven. The engine therefore requires the employer's own assigned rate here and computes nothing without it.",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.071
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "no_single_rate"
+  }
+}

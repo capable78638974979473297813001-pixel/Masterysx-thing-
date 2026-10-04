@@ -1,0 +1,1449 @@
+{
+  "$comment": "JEDDs (Joint Economic Development Districts) and JEDZs (Zones) -- contractual arrangements letting a municipality tax income earned in adjoining UNINCORPORATED township land, without annexation. This is the exact mechanism flagged last session as breaking Michigan-style 'closed list, default zero' certainty for rural Ohio -- now enumerated by name and rate instead of left as an abstract caveat.",
+  "year": 2026,
+  "asOf": "2026-09-01",
+  "source": {
+    "title": "Ohio JEDD/JEDZ Income Tax Rate Database Table (The Finder, bulk CSV download)",
+    "url": "https://thefinder.tax.ohio.gov/api/file-downloads/content?target=https%3A%2F%2Fapi.thefinder.tax.ohio.gov%2Ffinder%2Fapi%2Fv1%2Ftax-rates%2Fdownloads%2FJEDTaxRates.csv",
+    "downloadedOn": "2026-09-01",
+    "downloadedBy": "Re-fetched directly via curl (through the site's own same-origin proxy route -- the direct api.thefinder.tax.ohio.gov URL now 401s, see harvester/sources.json's oh-jedd-rates note) during a full re-check of all 176 rows. Same feed as the municipal rate table. Found and fixed two real gaps against the 2026-08-11 version: Miami Township-Dayton JEDD (id 9080) was still carrying its pre-2026 rate (1.75%, expired 2025-12-31) instead of the 2.25% rate effective 2026-01-01; and three new JEDDs effective 2026-05-01 (Jersey-New Albany JEDD 1/2/3, ids 9158-9160, all 2%) were entirely missing.",
+    "rateFormat": "Source CSV stores rate as a raw percentage number (e.g. 1.8 meaning 1.8%), NOT a fraction -- unlike the municipal CSV's .02500-style fraction. Converted here by dividing by 100 to a fraction (0.018) for consistency with OH-municipalities-2026.json; rateSourceRaw preserves the original value so the conversion is checkable, not just asserted."
+  },
+  "taxableWages": {
+    "basis": "Same base as Ohio municipal income tax. A JEDD income tax 'is subject to Chapter 718. of the Revised Code' (ORC 715.72) and so is a JEDZ income tax (ORC 715.691), so ORC 718.01(R) 'qualifying wages' applies: Medicare wages less Section 125 amounts, with 401(k)/403(b)/457 employee deferrals added back.",
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ],
+    "exemptPretaxComment": "Mirrors the federal Medicare list (data/federal/2026.json medicare.exemptPretax): section125/hsa/fsa/dependent_care are cafeteria-plan amounts ORC 718.01(R)(1)(a) deducts, and qualified transportation fringes (commuter) are excluded from 3121(a) wages by 3121(a)(20) with no ORC add-back. deferral_401k/403b/457/simple are deliberately absent: 3121(a) already includes them and (R)(2)(c) adds back any 401(k)/403(b)/457 amount not included.",
+    "sources": [
+      {
+        "title": "Ohio Revised Code 718.01(R), definition of \"qualifying wages\"",
+        "url": "https://codes.ohio.gov/ohio-revised-code/section-718.01",
+        "verifiedOn": "2026-09-25",
+        "quote": "\"Qualifying wages\" means wages, as defined in section 3121(a) of the Internal Revenue Code, without regard to any wage limitations, adjusted as follows: (1) Deduct ... (a) Any amount included in wages if the amount constitutes compensation attributable to a plan or program described in section 125 ... (2) Add ... (c) Any amount not included in wages if the amount is an amount described in section 401(k), 403(b), or 457 of the Internal Revenue Code. Division (R)(2)(c) of this section applies only to employee contributions and employee deferrals."
+      },
+      {
+        "title": "Ohio Revised Code 715.72 (joint economic development districts)",
+        "url": "https://codes.ohio.gov/ohio-revised-code/section-715.72",
+        "verifiedOn": "2026-09-25",
+        "quote": "Except as provided in this section, the income tax levied within the district is subject to Chapter 718. of the Revised Code, except that no vote shall be required."
+      },
+      {
+        "title": "Ohio Revised Code 715.691 (joint economic development zones)",
+        "url": "https://codes.ohio.gov/ohio-revised-code/section-715.691",
+        "verifiedOn": "2026-09-25",
+        "quote": "The income tax may be levied in the zone based on income earned by persons working within the zone and on the net profits of businesses located in the zone. The income tax is subject to Chapter 718. of the Revised Code"
+      }
+    ]
+  },
+  "confidence": "primary_source_confirmed -- same tier as the municipalities file, bulk-downloaded directly from Ohio's own database.",
+  "zoneCount": 156,
+  "zones": [
+    {
+      "name": "Amherst Township-City Of Loriain Jedd",
+      "jeddId": "9156",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2005-02-22"
+    },
+    {
+      "name": "Apple Creek-East Union Twp Jedd Ii",
+      "jeddId": "9143",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2020-01-01",
+      "source": {
+        "title": "RITA member page (the JEDD's administering agency) -- Recent Tax and Credit History",
+        "url": "https://www.ritaohio.com/Municipalities/Home/MemberPage?id=047",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "RITA shows 1.000% from 01/01/2020 (7-year history window). Ohio's layer: 'APPLE CREEK EAST UNION TWP JEDD 2'."
+    },
+    {
+      "name": "Ashtabula Township Jedd",
+      "jeddId": "9001",
+      "rate": 0.018,
+      "rateSourceRaw": "1.8",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Austin Center Jedd",
+      "jeddId": "9002",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Bainbridge Twp Aurora Jedd",
+      "jeddId": "9145",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2025-01-01"
+    },
+    {
+      "name": "Bainbridge-Solon Jedd",
+      "jeddId": "9003",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2007-01-01"
+    },
+    {
+      "name": "Barnesville Jedd 1",
+      "jeddId": "9078",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2008-12-01"
+    },
+    {
+      "name": "Barnesville Jedd 2",
+      "jeddId": "9079",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2012-06-18"
+    },
+    {
+      "name": "Bath-Akron-Fairlawn Jedd",
+      "jeddId": "9004",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Beachwood East Jedz",
+      "jeddId": "9005",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Beachwood West Jedz",
+      "jeddId": "9006",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Berkshire Jedd Ii",
+      "jeddId": "9139",
+      "rate": 0.0185,
+      "rateSourceRaw": "1.85",
+      "effectiveFrom": "2021-10-01"
+    },
+    {
+      "name": "Berkshire Township Jedd",
+      "jeddId": "9007",
+      "rate": 0.0185,
+      "rateSourceRaw": "1.85",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Blendon Township Jedz",
+      "jeddId": "9045",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2006-01-01"
+    },
+    {
+      "name": "Boston Township / Peninsula Jedd",
+      "jeddId": "9008",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2012-01-01"
+    },
+    {
+      "name": "Brimfield-Kent Jedd",
+      "jeddId": "9009",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2025-01-01"
+    },
+    {
+      "name": "Brimfield-Tallmadge Jedd",
+      "jeddId": "9010",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2025-01-01"
+    },
+    {
+      "name": "Butler County Annex",
+      "jeddId": "9070",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2016-01-01"
+    },
+    {
+      "name": "Butler Township Jedz",
+      "jeddId": "9046",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2012-01-01"
+    },
+    {
+      "name": "Butler Township-Dayton Jedd",
+      "jeddId": "9081",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2007-01-01"
+    },
+    {
+      "name": "Butler Township-Vandalia Jedd",
+      "jeddId": "9011",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2006-01-01"
+    },
+    {
+      "name": "Circleville Pickaway Township Jedd",
+      "jeddId": "9012",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2020-01-01"
+    },
+    {
+      "name": "Clay Township-City Of Clayton Jedd",
+      "jeddId": "9013",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2004-01-01"
+    },
+    {
+      "name": "Clinton Grandview Heights Jedz",
+      "jeddId": "9047",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2014-04-01"
+    },
+    {
+      "name": "Colerain Township Liberty Nursing Hc Jedd",
+      "jeddId": "9103",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-01-01",
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      },
+      "capNote": "Cheviot: NO CAP for 2026."
+    },
+    {
+      "name": "Columbia Township Jedz",
+      "jeddId": "9048",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2014-04-01"
+    },
+    {
+      "name": "Concord Township-Painesville Jedd",
+      "jeddId": "9033",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2012-01-01"
+    },
+    {
+      "name": "Copley-Akron Jedd",
+      "jeddId": "9014",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Coshocton-Franklin Jedd",
+      "jeddId": "9087",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2015-07-01"
+    },
+    {
+      "name": "Coshocton-Tuscarawas Jedd",
+      "jeddId": "9088",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2015-07-01"
+    },
+    {
+      "name": "Coventry-Akron Jedd",
+      "jeddId": "9015",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Cuyahoga Falls-Boston Township Jedd",
+      "jeddId": "9086",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2006-01-01"
+    },
+    {
+      "name": "Dayton Mall Jedd",
+      "jeddId": "9026",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Deer Park Sycamore Jedd",
+      "jeddId": "9138",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2020-05-11"
+    },
+    {
+      "name": "Dorr St Jedd",
+      "jeddId": "9121",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2020-01-01"
+    },
+    {
+      "name": "East Union Twp-Apple Creek Jedd",
+      "jeddId": "9142",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2020-01-01",
+      "source": {
+        "title": "RITA member page (the JEDD's administering agency) -- Recent Tax and Credit History",
+        "url": "https://www.ritaohio.com/Municipalities/Home/MemberPage?id=247",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "RITA shows 1.000% from 01/01/2020 (its history covers 7 years, so the true start may be earlier). Ohio's layer: 'APPLE CREEK EAST UNION TWP JEDD 1'."
+    },
+    {
+      "name": "Eaton Nw Professional Business Jedd",
+      "jeddId": "9016",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2016-07-01"
+    },
+    {
+      "name": "Elyria Township-City Of Elyria Jedd",
+      "jeddId": "9017",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2016-07-01"
+    },
+    {
+      "name": "Emerald Park",
+      "jeddId": "9071",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2017-01-01"
+    },
+    {
+      "name": "Etna Jedz1 - North",
+      "jeddId": "9049",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Etna Jedz2 - South",
+      "jeddId": "9050",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2009-01-01"
+    },
+    {
+      "name": "Etna-Reynoldsburg Jedd 1",
+      "jeddId": "9115",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-09-25"
+    },
+    {
+      "name": "Etna-Reynoldsburg Jedd 2",
+      "jeddId": "9116",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-09-25"
+    },
+    {
+      "name": "Etna-Reynoldsburg Jedd 3",
+      "jeddId": "9117",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-08-21"
+    },
+    {
+      "name": "Etna-Reynoldsburg Jedd 4",
+      "jeddId": "9118",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-09-30"
+    },
+    {
+      "name": "Etna-Reynoldsburg Jedd 7",
+      "jeddId": "9127",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2021-08-31"
+    },
+    {
+      "name": "Evans Farm Jedd",
+      "jeddId": "9125",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2020-07-27"
+    },
+    {
+      "name": "Fairfield Jedd",
+      "jeddId": "9137",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2022-12-15"
+    },
+    {
+      "name": "Gateway",
+      "jeddId": "9072",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2017-01-01"
+    },
+    {
+      "name": "Green Township-Christ Childrens Jedd",
+      "jeddId": "9101",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2017-01-01",
+      "annualWageCap": 140488,
+      "annualWageCapYear": 2026,
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      }
+    },
+    {
+      "name": "Green Township-Coopers Hawk Jedd",
+      "jeddId": "9153",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2026-01-01",
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      },
+      "capNote": "Cheviot: NO CAP for 2026.",
+      "$correctionNote": "CORRECTED 2026-09-30: effectiveFrom was 2025-01-01. City of Cheviot: 'Coopers Hawk JEDD ... tax rate is 2%. Effective date January 1, 2026.'",
+      "source": {
+        "title": "City of Cheviot Tax Department -- Contracts with Green Township",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-30"
+      }
+    },
+    {
+      "name": "Green Township-Hampton Inn Jedd",
+      "jeddId": "9135",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2020-12-28",
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      },
+      "capNote": "Cheviot: NO CAP for 2026."
+    },
+    {
+      "name": "Green Township-Harrison Greene Jedd",
+      "jeddId": "9089",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2014-12-04",
+      "annualWageCap": 136501,
+      "annualWageCapYear": 2026,
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      }
+    },
+    {
+      "name": "Green Township-Mcalisters Jedd",
+      "jeddId": "9113",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2019-04-01",
+      "annualWageCap": 128631,
+      "annualWageCapYear": 2026,
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      }
+    },
+    {
+      "name": "Green Township-Mercy West Jedd Iii",
+      "jeddId": "9098",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2023-10-01",
+      "rateEndsOn": "2028-09-30",
+      "annualWageCap": 109375,
+      "annualWageCapYear": 2026,
+      "source": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "Cheviot: 'MERCY WEST JEDD III ... Tax Rate: January 1st, 2023- September 30th, 2023- 2%. October 1st, 2023- September 30th, 2028- 1.5%.' Earnings cap CPI-adjusted each year: $106,189 (2025), $109,375 (2026). Ohio's layer names this 'GREEN TOWNSHIP-CITY OF CHEVIOT JEDD 3'."
+    },
+    {
+      "name": "Green Township-Udf Jedd",
+      "jeddId": "9090",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2017-12-15",
+      "annualWageCap": 131590,
+      "annualWageCapYear": 2026,
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      }
+    },
+    {
+      "name": "Green Township-Western Ridge Jedd",
+      "jeddId": "9091",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2010-08-27",
+      "annualWageCap": 148311,
+      "annualWageCapYear": 2026,
+      "capSource": {
+        "title": "City of Cheviot Tax Department -- JEDD INFORMATION (Contracts with Green Township)",
+        "url": "https://cheviot.org/departments/tax/",
+        "fetchedOn": "2026-09-28"
+      }
+    },
+    {
+      "name": "Hamilton Fairfield Township Jedd Ii",
+      "jeddId": "9019",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Hamilton Fairfield Township Jedd Iii",
+      "jeddId": "9082",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2017-01-01"
+    },
+    {
+      "name": "Hamilton Indian Springs Jedd I",
+      "jeddId": "9018",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Harpersfield-Geneva Jedd I",
+      "jeddId": "9083",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Harpersfield-Geneva Jedd Ii",
+      "jeddId": "9084",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Harpersfield-Geneva Jedd Iii",
+      "jeddId": "9092",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Harrison Township Jedd",
+      "jeddId": "9020",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2000-01-01"
+    },
+    {
+      "name": "Highland Hills Jedz",
+      "jeddId": "9051",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Holland Springfield Township Jedz",
+      "jeddId": "9052",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Ix Center",
+      "jeddId": "9073",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2017-01-01"
+    },
+    {
+      "name": "Jackson Twp-Canton Cd Jedd",
+      "jeddId": "9109",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-11-09"
+    },
+    {
+      "name": "Jackson Twp-Canton Fp Jedd",
+      "jeddId": "9105",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-07-01"
+    },
+    {
+      "name": "Jackson Twp-Canton Sm Jedd",
+      "jeddId": "9106",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-07-01"
+    },
+    {
+      "name": "Jackson Twp-Canton Tgab Jedd",
+      "jeddId": "9120",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2020-03-10"
+    },
+    {
+      "name": "Jackson Twp-Canton Tsg Jedd",
+      "jeddId": "9119",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2019-11-21"
+    },
+    {
+      "name": "Jackson Twp-Canton Twr Jedd",
+      "jeddId": "9107",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-07-01"
+    },
+    {
+      "name": "Jefferson Township-Washington Court House Jedd",
+      "jeddId": "9129",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2026-01-01"
+    },
+    {
+      "name": "Jefferson Township-Whitehall Jedd",
+      "jeddId": "9123",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2020-01-01",
+      "terminatedOn": "2024-11-19",
+      "source": {
+        "title": "Jefferson Township -- Jefferson Township-Whitehall JEDD: 'On November 19th, 2024 ... mutually agreed to the termination of the ... JEDD Contract. Collections of the 2.5% income tax ceased as of November 19th, 2024.'",
+        "url": "https://www.jeffersontownship.org/departments___services/economic_development___planning/jefferson_township-whitehall_jedd.php",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "TERMINATED 2024-11-19; no tax after that date. effectiveFrom approximate (contract approved Dec 2019). Ohio's boundary layer still carries the polygon."
+    },
+    {
+      "name": "Jersey-New Albany Jedd 1",
+      "jeddId": "9158",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2026-05-01"
+    },
+    {
+      "name": "Jersey-New Albany Jedd 2",
+      "jeddId": "9159",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2026-05-01"
+    },
+    {
+      "name": "Jersey-New Albany Jedd 3",
+      "jeddId": "9160",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2026-05-01"
+    },
+    {
+      "name": "Kent-Franklin Jedd",
+      "jeddId": "9021",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2014-01-01"
+    },
+    {
+      "name": "Kimberly Clark Jedd",
+      "jeddId": "9154",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2025-08-25"
+    },
+    {
+      "name": "Lake Township-Toledo Jedd",
+      "jeddId": "9064",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2009-08-01"
+    },
+    {
+      "name": "Lebanon-Turtlecreek Jedd",
+      "jeddId": "9093",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2024-01-01"
+    },
+    {
+      "name": "Liberty Township Jedd I",
+      "jeddId": "9023",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2008-01-01"
+    },
+    {
+      "name": "Liberty Township-Liberty Center Jedd",
+      "jeddId": "9022",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2016-01-01",
+      "terminatedOn": "2023-01-01",
+      "source": {
+        "title": "RITA Annual Financial Report 2025 (as of 2026-06-12), member collections table: 'Liberty Center JEDD D' where (D) = 'Municipality dissolved and no longer considered a member of the Regional Council of Governments'",
+        "url": "https://cdn.ritaohio.com/Media/703216/Regional%20Income%20Tax%20Agency%20Annual%20Financial%20%20Report%202025%20as%20of%2006.12.2026.pdf",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "DISSOLVED. RITA's 2022 report shows a 1.00% rate; its 2025 report codes the JEDD 'D' (dissolved) with collections falling to $17. The exact dissolution date is not published; terminatedOn is set to 2023-01-01 because collections effectively ended by then and a payroll vendor recorded the 1% rate as eliminated in April 2023. effectiveFrom is not the real start date (unknown) and is irrelevant after termination. Ohio's boundary layer still carries the polygon."
+    },
+    {
+      "name": "Lytle Five Points Jedd",
+      "jeddId": "9094",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2006-01-15"
+    },
+    {
+      "name": "Macedonia Northfield Center Township Jedd",
+      "jeddId": "9024",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2019-01-01"
+    },
+    {
+      "name": "Madison Township Jedd",
+      "jeddId": "9077",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2010-06-30"
+    },
+    {
+      "name": "Marengo Bennington Twp Jedd",
+      "jeddId": "9148",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2024-01-01"
+    },
+    {
+      "name": "Marysville Jerome Twp Jedd",
+      "jeddId": "9144",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2023-03-15"
+    },
+    {
+      "name": "Medina Montville Jedd",
+      "jeddId": "9025",
+      "rate": 0.0125,
+      "rateSourceRaw": "1.25",
+      "effectiveFrom": "2004-01-01"
+    },
+    {
+      "name": "Miami Township-Dayton Jedd",
+      "jeddId": "9080",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2026-01-01",
+      "$note": "Rate rose from 1.75% (in force 2005-07-01 through 2025-12-31) to 2.25% effective 2026-01-01 -- previous entry in this file still carried the expired 1.75% rate."
+    },
+    {
+      "name": "Monclova-Maumee-Toledo Jedz",
+      "jeddId": "9053",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2014-01-01"
+    },
+    {
+      "name": "Monclova-Swanton-Toledo Airport Jedd",
+      "jeddId": "9065",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2016-01-01"
+    },
+    {
+      "name": "Monclova-Whitehouse Jedd",
+      "jeddId": "9075",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2016-01-01"
+    },
+    {
+      "name": "North Baltimore Henry Township Jedd",
+      "jeddId": "9134",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2020-07-24"
+    },
+    {
+      "name": "North Pickaway County Jedd",
+      "jeddId": "9031",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2008-11-14"
+    },
+    {
+      "name": "Norton-Barberton Jedz",
+      "jeddId": "9126",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2016-01-01"
+    },
+    {
+      "name": "Orange Chagrin Highlands Jedd",
+      "jeddId": "9032",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "1999-01-01"
+    },
+    {
+      "name": "Orange Twp Jedd",
+      "jeddId": "9146",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2024-10-01"
+    },
+    {
+      "name": "Pataskala Corporate Park Jedd",
+      "jeddId": "9034",
+      "rate": 0.0175,
+      "rateSourceRaw": "1.75",
+      "effectiveFrom": "2000-04-01"
+    },
+    {
+      "name": "Perry Jedd",
+      "jeddId": "9035",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2012-01-01"
+    },
+    {
+      "name": "Perry Township-Navarre Jedd",
+      "jeddId": "9157",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "1996-11-06"
+    },
+    {
+      "name": "Perry-Canton Jedd Faircrest",
+      "jeddId": "9131",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2023-03-09"
+    },
+    {
+      "name": "Perrysburg Township Toledo Jedz",
+      "jeddId": "9054",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "1993-01-01"
+    },
+    {
+      "name": "Prairie Obetz Jedz",
+      "jeddId": "9055",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2009-10-01"
+    },
+    {
+      "name": "Prairie Township Jedd",
+      "jeddId": "9036",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2012-10-01"
+    },
+    {
+      "name": "Ravenna Rootstown Twp Jedd",
+      "jeddId": "9149",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2024-01-01"
+    },
+    {
+      "name": "Reminderville Twinsburg Township Jedd",
+      "jeddId": "9037",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Richfield Jedd",
+      "jeddId": "9095",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2005-10-24"
+    },
+    {
+      "name": "Rush Township Uhrichsville Jedd",
+      "jeddId": "9038",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2017-07-01"
+    },
+    {
+      "name": "Saybrook Township-Depot Rd Jedd",
+      "jeddId": "9039",
+      "rate": 0.018,
+      "rateSourceRaw": "1.8",
+      "effectiveFrom": "2013-04-01"
+    },
+    {
+      "name": "Saybrook Township-Route 20 Jedd",
+      "jeddId": "9085",
+      "rate": 0.018,
+      "rateSourceRaw": "1.8",
+      "effectiveFrom": "2015-05-01"
+    },
+    {
+      "name": "Scioto Township Jedd",
+      "jeddId": "9040",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2015-01-01"
+    },
+    {
+      "name": "Shaker Square",
+      "jeddId": "9074",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2017-01-01"
+    },
+    {
+      "name": "Shalersville Twp Jedd",
+      "jeddId": "9133",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2022-12-01"
+    },
+    {
+      "name": "Sharon Twp Jedd",
+      "jeddId": "9128",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2021-10-01"
+    },
+    {
+      "name": "Spencer-Whitehouse Jedz",
+      "jeddId": "9076",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2016-01-01"
+    },
+    {
+      "name": "Springfield Beckley Muni Airpark Jedd",
+      "jeddId": "9041",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2004-01-01"
+    },
+    {
+      "name": "Springfield Township Jedd 1",
+      "jeddId": "9100",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Springfield Township Jedz I",
+      "jeddId": "9056",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2014-08-01"
+    },
+    {
+      "name": "Springfield-Akron Jedd",
+      "jeddId": "9042",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Sycamore Township Kenwood-Central Jedz",
+      "jeddId": "9057",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2013-10-01"
+    },
+    {
+      "name": "Sycamore Township Kenwood-East Jedz",
+      "jeddId": "9058",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2013-10-01"
+    },
+    {
+      "name": "Sycamore Township Kenwood-Northwest Jedz",
+      "jeddId": "9059",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2013-10-01"
+    },
+    {
+      "name": "Sycamore Township Kenwood-Southwest Jedz",
+      "jeddId": "9060",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2013-10-01"
+    },
+    {
+      "name": "Sycamore Township-City Of Montgomery Jedd",
+      "jeddId": "9152",
+      "rate": 0.0075,
+      "rateSourceRaw": "0.75",
+      "effectiveFrom": "2025-11-01"
+    },
+    {
+      "name": "Sylvania Township-Sylvania Jedd I",
+      "jeddId": "9124",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2021-01-01"
+    },
+    {
+      "name": "Sylvania-Toledo Jedz",
+      "jeddId": "9069",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2008-07-01",
+      "source": {
+        "title": "City of Toledo 2022 ACFR (filed with the Ohio Auditor of State), note on tax-sharing agreements: 'City of Toledo-City of Sylvania ... In July 2008 ... an income tax that shall be imposed based on the City of Sylvania's Municipal Code at a rate of 1.5%'",
+        "url": "https://ohioauditor.gov/AuditSearch/Reports/2023/City_of_Toledo_2022_Lucas_FINAL.pdf",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "effectiveFrom is the contract month (July 2008); the audit gives no day."
+    },
+    {
+      "name": "Troy Township-Toledo Jedd",
+      "jeddId": "9067",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2013-08-01"
+    },
+    {
+      "name": "Turtlecreek Monroe 2022 Jedd",
+      "jeddId": "9136",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Turtlecreek-Monroe Raceway Jedd",
+      "jeddId": "9096",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2020-01-01"
+    },
+    {
+      "name": "Union Township - City Of Heath Jedd",
+      "jeddId": "9151",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2023-03-25"
+    },
+    {
+      "name": "Union Township Village Of Batavia Jedd 9",
+      "jeddId": "9150",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2025-06-01",
+      "$correctionNote": "CORRECTED 2026-09-30: effectiveFrom was 2025-01-01. RITA's Tax Rates Table (2025, New Municipalities and Tax Rate Changes): 'Union Twp Village of Batavia JEDD 9 -- New Tax as of 06/01/2025'.",
+      "source": {
+        "title": "RITA -- Tax Rates Table, 2025 new municipalities and tax rate changes",
+        "url": "https://www.ritaohio.com/TaxRatesTable",
+        "fetchedOn": "2026-09-30"
+      }
+    },
+    {
+      "name": "Union Township-Milford Jedd 1",
+      "jeddId": "9027",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2007-07-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 2",
+      "jeddId": "9028",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2012-05-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 3",
+      "jeddId": "9029",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2013-06-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 4",
+      "jeddId": "9030",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2013-10-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 5",
+      "jeddId": "9104",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2018-01-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 6",
+      "jeddId": "9114",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2019-08-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 7",
+      "jeddId": "9122",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2021-02-01"
+    },
+    {
+      "name": "Union Township-Milford Jedd 8",
+      "jeddId": "9147",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2025-04-01",
+      "$correctionNote": "CORRECTED 2026-09-30: effectiveFrom was 2025-01-01. RITA's Milford JEDD VIII page: 04/01/2025 current 1.000%; 01/01/2020-03/31/2025 0.000%.",
+      "source": {
+        "title": "RITA member page -- Milford JEDD VIII",
+        "url": "https://www.ritaohio.com/municipalities/Home/MemberPage?id=869",
+        "fetchedOn": "2026-09-30"
+      }
+    },
+    {
+      "name": "Valley View Jedd",
+      "jeddId": "9130",
+      "rate": 0.015,
+      "rateSourceRaw": "1.5",
+      "effectiveFrom": "2022-08-01"
+    },
+    {
+      "name": "Village Of Burton-Burton Twp Jedd",
+      "jeddId": "9132",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2022-07-21"
+    },
+    {
+      "name": "Village Of Highland Hills Muni Utility District",
+      "jeddId": "9102",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2016-05-06"
+    },
+    {
+      "name": "Violet Twp Canal Winchester Jedd",
+      "jeddId": "9140",
+      "rate": 0.02,
+      "rateSourceRaw": "2",
+      "effectiveFrom": "2023-10-23"
+    },
+    {
+      "name": "Violet Twp Lancaster Jedd",
+      "jeddId": "9141",
+      "rate": 0.023,
+      "rateSourceRaw": "2.3",
+      "effectiveFrom": "2023-12-04"
+    },
+    {
+      "name": "Walton Hills-Sagamore Hills Township Jedd",
+      "jeddId": "9043",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2015-09-01"
+    },
+    {
+      "name": "Warren-Champion Jedd",
+      "jeddId": "9155",
+      "rate": 0.025,
+      "rateSourceRaw": "2.5",
+      "effectiveFrom": "2026-01-01",
+      "source": {
+        "title": "City of Warren Income Tax Department -- Joint Economic Development Districts: 'The Warren-Champion Joint Economic Development District (JEDD) - 2.5% tax rate'",
+        "url": "https://www.warren.org/income_tax_department/joint_economic_development_districts_(jedd).php",
+        "fetchedOn": "2026-09-28"
+      },
+      "note": "Effective date from the Tribune Chronicle (2026-03-06): the board approved the 2.5% tax 'effective for the first quarter of 2026'."
+    },
+    {
+      "name": "Warrensville Heights Jedz",
+      "jeddId": "9061",
+      "rate": 0.026,
+      "rateSourceRaw": "2.6",
+      "effectiveFrom": "2009-07-01"
+    },
+    {
+      "name": "West Chester Jedd 1",
+      "jeddId": "9044",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2009-01-01"
+    },
+    {
+      "name": "Williamsburg Jedd",
+      "jeddId": "9108",
+      "rate": 0.01,
+      "rateSourceRaw": "1",
+      "effectiveFrom": "2018-07-01"
+    },
+    {
+      "name": "Xenia Township-City Of Xenia Jedd 1",
+      "jeddId": "9097",
+      "rate": 0.0225,
+      "rateSourceRaw": "2.25",
+      "effectiveFrom": "2011-01-01"
+    },
+    {
+      "name": "Youngstown Girard Jedz",
+      "jeddId": "9062",
+      "rate": 0.0275,
+      "rateSourceRaw": "2.75",
+      "effectiveFrom": "2003-01-01"
+    },
+    {
+      "name": "Zanesville-Newton Jedd",
+      "jeddId": "9110",
+      "rate": 0.019,
+      "rateSourceRaw": "1.9",
+      "effectiveFrom": "2007-01-01"
+    },
+    {
+      "name": "Zanesville-South Zanesville-Springfield Jedd",
+      "jeddId": "9111",
+      "rate": 0.019,
+      "rateSourceRaw": "1.9",
+      "effectiveFrom": "2007-01-01"
+    },
+    {
+      "name": "Zanesville-Washington Jedd",
+      "jeddId": "9112",
+      "rate": 0.019,
+      "rateSourceRaw": "1.9",
+      "effectiveFrom": "2007-01-01"
+    }
+  ],
+  "boundaryGaps": {
+    "$comment": "Rate rows with NO polygon in Ohio's live boundary layer (re-diffed 2026-09-28 against all 141 live features; see knownGaps). An address inside one of these cannot be detected by coordinate, so geocode/index.ts raises a manual-review warning -- never a tax -- for an Ohio WORK address that found no JEDD, sits in one of the hinted counties, and is either unincorporated or in one of the hinted places. The county/place hints are INFERRED FROM EACH ZONE'S NAME (not from a surveyed boundary) and exist only to scope that warning; they must never be used to apply a rate.",
+    "zones": [
+      {
+        "jeddId": "9156",
+        "name": "Amherst Township-City Of Loriain Jedd",
+        "countyHints": [
+          "Lorain"
+        ],
+        "placeHints": [
+          "Lorain",
+          "Amherst"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9070",
+        "name": "Butler County Annex",
+        "countyHints": [
+          "Butler"
+        ],
+        "placeHints": [],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9071",
+        "name": "Emerald Park",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Cleveland"
+        ],
+        "kind": "cleveland_revenue_sharing_area"
+      },
+      {
+        "jeddId": "9072",
+        "name": "Gateway",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Cleveland"
+        ],
+        "kind": "cleveland_revenue_sharing_area"
+      },
+      {
+        "jeddId": "9082",
+        "name": "Hamilton Fairfield Township Jedd Iii",
+        "countyHints": [
+          "Butler"
+        ],
+        "placeHints": [
+          "Hamilton",
+          "Fairfield"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9032",
+        "name": "Orange Chagrin Highlands Jedd",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Orange",
+          "Beachwood",
+          "Warrensville Heights"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9157",
+        "name": "Perry Township-Navarre Jedd",
+        "countyHints": [
+          "Stark"
+        ],
+        "placeHints": [
+          "Navarre"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9074",
+        "name": "Shaker Square",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Cleveland"
+        ],
+        "kind": "cleveland_revenue_sharing_area"
+      },
+      {
+        "jeddId": "9136",
+        "name": "Turtlecreek Monroe 2022 Jedd",
+        "countyHints": [
+          "Warren",
+          "Butler"
+        ],
+        "placeHints": [
+          "Monroe"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9102",
+        "name": "Village Of Highland Hills Muni Utility District",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Highland Hills"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9061",
+        "name": "Warrensville Heights Jedz",
+        "countyHints": [
+          "Cuyahoga"
+        ],
+        "placeHints": [
+          "Warrensville Heights"
+        ],
+        "kind": "jedz"
+      },
+      {
+        "jeddId": "9062",
+        "name": "Youngstown Girard Jedz",
+        "countyHints": [
+          "Mahoning",
+          "Trumbull"
+        ],
+        "placeHints": [
+          "Youngstown",
+          "Girard"
+        ],
+        "kind": "jedz"
+      },
+      {
+        "jeddId": "9158",
+        "name": "Jersey-New Albany Jedd 1",
+        "countyHints": [
+          "Licking",
+          "Franklin"
+        ],
+        "placeHints": [
+          "New Albany"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9159",
+        "name": "Jersey-New Albany Jedd 2",
+        "countyHints": [
+          "Licking",
+          "Franklin"
+        ],
+        "placeHints": [
+          "New Albany"
+        ],
+        "kind": "jedd"
+      },
+      {
+        "jeddId": "9160",
+        "name": "Jersey-New Albany Jedd 3",
+        "countyHints": [
+          "Licking",
+          "Franklin"
+        ],
+        "placeHints": [
+          "New Albany"
+        ],
+        "kind": "jedd"
+      }
+    ],
+    "recheck2026_09_30": "Re-queried Ohio's live layer (maps.ohio.gov Tax/JEDDJEDZ/MapServer/0, where=1=1) on 2026-09-30: 141 features, none of them any of these 15 ids. Also searched for other published boundaries: Jersey Township's JEDD-2 resolution is a scanned PDF with no text layer, RITA's pages for the Jersey-New Albany JEDDs publish no map, and Cleveland's revenue-sharing areas (Emerald Park, Gateway, Shaker Square) have no public boundary. These zones still cannot be found by coordinate. The tax itself is computed whenever the employer supplies certificate.workJEDDId; the geocoder's manual-review warning covers an address that may fall inside one."
+  },
+  "ruralCoverageImplication": "A resident of unincorporated Ohio township land should be checked against BOTH this file and OH-municipalities-2026.json before concluding /usr/bin/bash local tax -- the municipalities file alone is not sufficient, which is the correction to last session's abstract JEDD/JEDZ caveat.",
+  "knownGaps": [
+    "Zone boundaries are resolved live rather than shipped in this file: geocode/districts.ts queries Ohio's own statewide JEDD/JEDZ boundary layer (maps.ohio.gov/arcgis/rest/services/Tax/JEDDJEDZ) at the resolved coordinate and joins to this file on jeddId. So an address inside a zone IS resolvable now, but only while that service is reachable — a failed lookup reports itself as unknown rather than as 'no JEDD here'.",
+    "CORRECTED 2026-08-31 (this note previously undercounted the mismatch): live-queried Ohio's own ArcGIS layer directly (maps.ohio.gov/arcgis/rest/services/Tax/JEDDJEDZ/MapServer/0/query, all 142 features, all active=Y) and diffed by jeddId against this file's rate rows (149 distinct jeddIds as of this writing; the note originally said 146). 12 rate rows have no matching boundary id, not 4: jeddId 9156 (Amherst Township-City Of Loriain JEDD), 9070 (Butler County Annex), 9071 (Emerald Park), 9072 (Gateway), 9082 (Hamilton Fairfield Township JEDD III), 9032 (Orange Chagrin Highlands JEDD), 9157 (Perry Township-Navarre JEDD), 9074 (Shaker Square), 9136 (Turtlecreek Monroe 2022 JEDD), 9102 (Village Of Highland Hills Muni Utility District), 9061 (Warrensville Heights JEDZ), 9062 (Youngstown Girard JEDZ). Fuzzy name matching turned up plausible-but-unconfirmed near misses for a few of these (e.g. our 'Hamilton Fairfield Township JEDD III' vs. the layer's 'HAMILTON FAIRFIELD TOWNSHIP JEDD II', different id 9019) — deliberately NOT auto-merged into the join, since guessing a jeddId correspondence from a fuzzy name match is exactly the kind of unverified guess this project's data is supposed to never contain. An address inside any of these 12 zones cannot be detected by coordinate; nothing here silently guesses which.",
+    "2026-09-28: the gap runs both ways. 149 rate rows vs 142 live polygons, with 12 rate rows unmatched, means some polygons carry a jedd_id with NO rate row here. geocode/index.ts now reports that case as low-confidence ('JEDD found at this point but no rate on file') instead of setting workJEDDId and silently computing no tax; see boundaryGaps above for the rate-rows-without-polygons side. Re-run the diff when maps.ohio.gov is reachable to name those polygons.",
+    "RE-DIFFED 2026-09-28 against Ohio's live layer (maps.ohio.gov .../Tax/JEDDJEDZ/MapServer/0/query, where=1=1, fetched via a remote fetcher because this repo's CI/sandbox egress blocks maps.ohio.gov): 141 features, all active=Y. Rate rows with no polygon: 15 -- the 12 listed above PLUS Jersey-New Albany JEDD 1/2/3 (9158-9160, added to the rate table 2026-09-01, effective 2026-05-01, not yet drawn in the state layer). All 15 are in boundaryGaps. Polygons with no rate row: 7 -- 9022 LIBERTY TOWNSHIP-LIBERTY CENTER JEDD, 9069 SYLVANIA-TOLEDO JEDZ, 9098 GREEN TOWNSHIP-CITY OF CHEVIOT JEDD 3, 9123 Jefferson Township Whitehall JEDD, 9142/9143 APPLE CREEK EAST UNION TWP JEDD 1/2, 9155 WARREN - CHAMPION JEDD. An address inside one of these resolves to that zone id but has no rate here; geocode/index.ts reports it as low-confidence ('no rate on file') and sets no workJEDDId, rather than silently computing no tax. RESOLVED 2026-09-28: all 7 now have rate rows sourced from each district's administrator (RITA for 9142/9143; Warren for 9155; Cheviot for 9098; Toledo's audited ACFR for 9069) or a termination record (Jefferson Township for 9123; RITA's 2025 annual report for 9022, dissolved). The Finder CSV itself stays unreachable from this environment, so these rows cite their own sources.",
+    "FOUND 2026-09-28 while sourcing 9098: the City of Cheviot's Green Township JEDDs carry ANNUAL EARNINGS CAPS (Western Ridge $148,311; Christ-Childrens II $140,488; Mercy West III $109,375; Harrison-Greene $136,501; UDF $131,590; McAlisters $128,631 for 2026; Hampton Inn, Coopers Hawk and Liberty Nursing have none). The Finder CSV has no cap column, so every one of these rows previously over-withheld above the cap. Now carried as annualWageCap and applied by ohioJEDDTax().",
+    "FOLLOW-UP SEARCH 2026-09-03, real finding but NOT a boundary fix: chased each of the 12 across ArcGIS Online's own global item-search API (arcgis.com/sharing/rest/search — a genuine catalog search, not a guessed county-server URL), Cuyahoga County's on-prem ArcGIS server folder listing (gis.cuyahogacounty.us — CCPC/CCGIS/CCDPW/etc. all empty of anything JEDD-related), and targeted web searches per zone. No usable boundary polygon surfaced for any of the 12. But three of them -- Emerald Park (9071), Gateway (9072), and Shaker Square (9074) -- turned out to share a real, specific explanation for their absence, not just bad luck: all three are CITY OF CLEVELAND 'revenue sharing areas,' a Cleveland-specific municipal economic-development mechanism (confirmed via Symmetry's own professional payroll-tax reference, which independently corroborates Ohio Finder's own naming and groups these three with a fourth, 'IX Center,' as Cleveland-administered, not township-JEDD-administered) -- categorically different from the ORC 715.70-72 JEDD/JEDZ contracts the state's own boundary layer tracks, which is the actual reason they were never going to be in that layer no matter how thoroughly it's searched. Their real boundary, if published anywhere, would be held by the City of Cleveland's own economic development office, not by Cuyahoga County or the state -- not chased further this pass. Also newly confirmed: Warrensville Heights (9061) and Highland Hills (9102, despite its rate-table name reading 'Muni Utility District') are NOT simple city-limits proxies -- both cities already appear as their own regular taxing municipalities in OH-municipalities-2026.json, so their JEDD/JEDZ entries here must be a narrower zone covering adjoining unincorporated land, the same JEDD structure as everywhere else -- confirming there's no shortcut through Census place-matching for either. Net effect: the 12-zone gap stands, now with a real explanation for a quarter of it rather than just an unexplained absence.",
+    "The zone rate is applied to WORK-location wages only (see ohioJEDDTax()). A JEDD levies on income earned inside the district; there is no residence half, since the zones cover commercial development on township land rather than housing.",
+    "OPEN QUESTION RESOLVED 2026-09-02 (the underlying legal shape is now known; the computed default is unchanged, for a reason explained below): does a resident of a taxing Ohio municipality who WORKS inside a JEDD/JEDZ get a credit against their home city's tax, the same way they would working in another municipality? Confirmed via WebSearch surfacing three INDEPENDENT Ohio municipalities' own codified ordinances (American Legal Publishing's amlegal.com code library; codes.ohio.gov itself remains client-side-rendered and unfetchable by a plain request, so this rests on the municipal code host rather than the state's own site): Urbana OH Sec. 171.083 'Credit For Person Working In JEDZ Or JEDD,' Mansfield OH Sec. 193.083, and Wauseon OH Sec. 191.083, all near-identically titled and worded (a shared model-ordinance pattern, not independent drafting) -- Urbana's own text (WebSearch snippet, not independently re-fetched in full: amlegal.com returned HTTP 403 to a direct WebFetch) grants a credit 'to any resident of the City who works in a joint economic development zone (JEDZ) or a joint economic development district (JEDD)... to the same extent that it grants a credit against its tax on income to its residents who are employed in another municipal corporation,' citing ORC 715.691/715.70/715.71/715.72 by number; Mansfield's own wording uses 'shall grant' rather than Urbana's 'may,' a real difference in whether the city's own adoption is itself framed as discretionary. This settles the structural question ORC 718.121's text alone couldn't: THIS IS A CITY-BY-CITY MUNICIPAL ORDINANCE CHOICE, not a statewide ORC mandate the way the regular inter-municipal credit is -- ORC 715.70-715.72 authorizes JEDDs but does not itself require this credit; each contracting municipality separately chooses (and evidently many do, via what looks like a shared model-ordinance template, though 'many' is not 'all 679'). Given that, the engine's CURRENT no-credit-applied default is the correct SAFE FLOOR under this project's own established convention (see OH-2026.json's interMunicipalCredit.practicalImplication: 'not confirmed... whether any of the 679 municipalities actually do grant more than the ORC 718.121 floor; treat the floor as the safe-default assumption') -- applying a credit unconditionally would risk UNDER-charging a resident of the unknown number of JEDD-hosting cities that have NOT adopted this optional ordinance, which is worse than the current, disclosed, occasionally-too-high default. NOT wired as an engine feature this pass: doing so correctly would need a per-municipality flag (which of the ~150 JEDD-adjacent cities actually adopted this ordinance), the same 'not individually verified per city' shape as the base credit's own unresolved practicalImplication, not a blanket switch."
+  ],
+  "wageCapComment": "annualWageCap: some JEDDs (the City of Cheviot / Green Township ones) tax only the first N dollars an employee earns in the district each year, CPI-adjusted annually. The engine stops the tax once year-to-date district wages (ytd.localIncomeTax['OH_JEDD_<jeddId>']) reach the cap. annualWageCapYear says which year the figure is for. terminatedOn: the district was dissolved or its contract ended; no tax on checks dated on or after it. rateEndsOn: the scheduled end of the current rate."
+}

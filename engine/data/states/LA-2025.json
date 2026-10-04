@@ -1,0 +1,87 @@
+{
+  "code": "LA",
+  "name": "Louisiana",
+  "year": 2025,
+  "method": "louisiana_blockA_deduction",
+  "sources": [
+    {
+      "title": "Louisiana DOR -- R-1306 (1/25) Louisiana Withholding Tables and Formulas, effective on or after January 1, 2025",
+      "url": "https://dam.ldr.la.gov/taxforms/1306-1-25.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Formulas - Based on a 3.09% Withholding Rate ... 2. Single Individual and Married-Separate W = (S - (12,500/N))*.0309 3. Married-Joint Return, Qualified Surviving Spouse, or Head of Household W = (S - (25,000/N))*.0309 ... Example 1: ... $700 weekly ... =14.20"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "flatRateBlockADeduction": {
+    "$comment": "R-1306's own Computer Formula Method, verbatim: W = (S - (deduction/N)) * .0309. The deduction is selected ENTIRELY by the employee's own Form L-4 Block A claim (0/1/2) -- genuinely different from every other status-deduction state in this project, where the deduction tier is inferred from filingStatus. Louisiana's own form explicitly allows a married employee to choose claim 0 or 1 for reasons unrelated to actual marital status (avoiding under-withholding with multiple jobs/working spouse) -- so this engine reads certificate.louisianaBlockA (0|1|2) directly rather than certificate.filingStatus.",
+    "rate": 0.0309,
+    "standardDeductionAnnual": {
+      "claim1_single_marriedSeparate": 12500.0,
+      "claim2_marriedJoint_hoh_qss": 25000.0
+    },
+    "verifiedExample1": "Claim 1, weekly $700 (52 periods, $36,400 annual): (700 - (12,875/52)) x .0309 = (700 - 247.60) x .0309 = 452.40 x .0309 = $13.98/wk. Matches R-1306's own Example 1 exactly.",
+    "verifiedExample2": "Claim 2, bi-weekly $4,600 (26 periods, $119,600 annual): (4,600 - (25,750/26)) x .0309 = (4,600 - 990.38) x .0309 = 3,609.62 x .0309 = $111.54/pay period. Matches R-1306's own Example 2 exactly.",
+    "noStandardDeductionNote": "R-1306's own Formula 1 ('No Standard Deduction: W = S * .0309') is Block A claim 0 -- the default for an employee who files no certificate at all, per Form L-4's own explicit instruction.",
+    "annualizeMultiplier": {
+      "daily": 365,
+      "weekly": 52,
+      "biweekly": 26,
+      "semimonthly": 24,
+      "monthly": 12,
+      "annual": 1
+    },
+    "annualizeMultiplierComment": "REAL BUG CAUGHT during a 'verify' pass (2026-08-22), fixed before this ever shipped as a silent wrong-money gap: R-1306's own 'Number of Pay Periods in a year' table states 'Daily payroll: 365' -- this engine's generic PERIODS_PER_YEAR uses 260 (standard workdays) for 'daily' everywhere else, the same mismatch NJ's and Delaware's own daily tables required a dedicated override for. louisianaWithholding() now reads this map directly instead of ctx.periodsPerYear, and throws for quarterly/semiannual (not published by R-1306) rather than guessing a divisor."
+  },
+  "roundFinalToWholeDollar": false,
+  "roundingComment": "R-1306's own worked examples are cent-precision ($13.98, $111.54) -- no whole-dollar rounding step anywhere in the document. roundHalfUp (cent-level) only.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "Confirmed via LA R.S. 47:293's own text: Louisiana 'tax table income' for residents starts from federal adjusted gross income. Since 401(k)/125/HSA/FSA elective deferrals are excluded from federal AGI before it's ever computed, this is the same one-inferential-step-removed conformity tier as Virginia's/West Virginia's FAGI-conformity citations elsewhere in this project -- not an itemized IRC-section list the way Kentucky's/Arkansas's citations are.",
+  "additionalOrReducedWithholding": {
+    "rule": "Form L-4's own Line 7 is a SINGLE SIGNED adjustment field (positive to increase, negative to decrease, floored at $0 total withheld) -- the mirror of Connecticut's separate Line 2 (additional) / Line 3 (reduced) mechanic, combined into one line here. Already covered generically: a positive Line 7 value maps to certificate.additionalWithholding, a negative Line 7 value (as a positive magnitude) maps to certificate.reducedWithholding -- both are applied automatically by every state's shared pipeline (applyAdditionalStateWithholding()/applyReducedStateWithholding() in state.ts), zero new code needed.",
+    "confidence": "primary_source_confirmed -- read directly off Form L-4 itself."
+  },
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: R-1306's full text was searched for 'reciprocal'/'reciprocity' and returned zero matches; cross-confirmed via search synthesis (multiple independent sources agree Louisiana has no reciprocal withholding agreement with any state). A Louisiana resident working in another state must file a nonresident return there and claim a Louisiana return-level credit for tax paid -- the ordinary non-reciprocal baseline every other no-reciprocity state in this project follows.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Louisiana parish or municipality levies a local income/wage tax requiring payroll withholding -- confirmed across R-1306 (zero mentions) and cross-source search synthesis.",
+    "confidence": "cross_source_confirmed; not independently verified against a parish-authority statute this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE. No Louisiana state-run mandatory paid family/medical leave program exists as of 2026.",
+    "confidence": "cross_source_confirmed via search synthesis, not independently fetched from a Louisiana statute this pass."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 7700,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "No single new-employer figure exists for this state: the rate is industry-assigned or schedule-driven. The engine therefore requires the employer's own assigned rate here and computes nothing without it.",
+    "experienceRange": {
+      "min": 0.0009,
+      "max": 0.06
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "no_single_rate",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: the first year of Louisiana's flat tax (Act 11 of the 2024 3rd Extraordinary Session). 3.09% withholding rate after $12,500 (Block A '1') or $25,000 (Block A '2'); 2026 indexes these to $12,875 / $25,750."
+}

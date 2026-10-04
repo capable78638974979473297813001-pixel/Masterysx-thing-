@@ -35,20 +35,27 @@ ADP also sells **SmartCompliance**, a managed service in which ADP files for you
 
 ## What "better" means for MasteryTax
 
-We can't match 11,000 jurisdictions or ADP's agency relationships in one build. MasteryTax instead attacks
-the structural weaknesses above:
+MasteryTax computes taxes with the `payroll-tax-engine` (vendored in `engine/`). That engine covers
+federal, all 50 states + DC and the major local systems (Pennsylvania EIT/LST, Ohio municipal, school district
+and JEDD, Michigan cities, Kentucky occupational, Alabama, Indiana counties, NYC/Yonkers, Portland, Seattle)
+for 2025 and 2026, and every value carries its source. On top of that, MasteryTax attacks the structural
+weaknesses above:
 
 1. **Every number explains itself.** Each liability carries a trace: rate, taxable wages, wage-base position,
    the rule version and its source.
 2. **Rules are data.** Rates and wage bases live in effective-dated JSON with sources and are reviewable in a pull request.
    Anyone can diff a rate change.
-3. **It checks payroll instead of trusting it.** Statutory taxes are recomputed and every withholding variance is flagged
-   before filing (for example, forgotten Additional Medicare tax, or Social Security withheld past the annual maximum).
+3. **It checks payroll instead of trusting it.** Statutory taxes are recomputed. Income-tax withholding is
+   re-derived from each employee's W-4 and state certificates. Every variance is flagged before filing (for
+   example, forgotten Additional Medicare tax, an ignored W-4 extra withholding, or Social Security withheld
+   past the annual maximum).
 4. **Penalty exposure up front.** Deposits are matched to obligations, and the failure-to-deposit penalty
    (IRC §6656 tiers) is estimated before the IRS sends a notice.
 5. **Amendments by recomputation.** 941-X and W-2c are produced by diffing the original and corrected payroll,
    including wage-base side effects that hand-keyed adjustments miss.
-6. **No lock-in, no outage dependency.** Plain CSV/JSON in and out, runs offline, open source, scriptable
+6. **Tax locator.** Work and home addresses resolve to the local-tax codes the engine needs (PA PSD, Ohio
+   city and school district, JEDDs, NYC/Yonkers, transit districts), using Census and agency boundary data.
+7. **No lock-in, no outage dependency.** Plain CSV/JSON in and out, runs offline, open source, scriptable
    CLI, JSON output, and a self-contained HTML report.
 
 ## Sources

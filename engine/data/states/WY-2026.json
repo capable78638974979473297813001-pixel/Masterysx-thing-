@@ -1,0 +1,65 @@
+{
+  "code": "WY",
+  "name": "Wyoming",
+  "year": 2026,
+  "method": "no_income_tax",
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of. Added for schema consistency with this project's other no-income-tax states (comprehensive-audit pass).",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Wyoming has no income tax to be reciprocal about, same convention as this project's other no-income-tax states. Added for schema consistency (comprehensive-audit pass) -- this field was previously missing entirely from this file, unlike every other no-income-tax state's file."
+  },
+  "sources": [
+    {
+      "title": "Wyoming Constitution -- no personal income tax; Wyoming Dept of Workforce Services -- Unemployment Taxable Wage Base",
+      "url": "https://dws.wyo.gov/dws-division/unemployment-insurance/wyui/unemployment-taxable-wage-base/",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Fetched directly. Wyoming has never had a personal income tax (one of 9 no-wage-tax states in this project). Quoted the DWS's own historical wage-base table: 2026 $33,800 (up from $32,400 in 2025, adjusted annually)."
+    },
+    {
+      "title": "Wyoming Dept of Workforce Services -- Unemployment Tax Rates",
+      "url": "https://dws.wyo.gov/dws-division/unemployment-insurance/wyui/unemployment-tax-rates/",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Fetched directly. Quoted: rates are 'assigned per W.S. 27-3 Article 5' -- a base rate (industry-average for new employers with under 3 years of experience, benefit-ratio-based for experienced employers) PLUS four additional rate factors summed together, mailed via an annual rate notice. No single flat headline figure exists in the primary source, the same NAICS/experience-driven shape already documented for Louisiana's new-employer rate elsewhere in this project. Cross-sourced range for new employers by industry: 2.28%-9.78% (secondary only, not independently confirmed against the actual per-industry base-rate table this pass)."
+    },
+    {
+      "title": "Wyoming paid family leave and local tax status",
+      "url": "https://www.workforcehub.com/hr-laws-and-regulations/wyoming/wyoming-paid-family-leave-laws/",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Search-synthesized (WebSearch, not independently fetched from a specific Wyoming statute this pass): no Wyoming city or county levies a local income/wage tax; no state-mandated or voluntary state-run paid family/medical leave program exists as of 2026. Workers rely on federal FMLA (unpaid) only."
+    }
+  ],
+  "localIncomeTax": {
+    "rule": "NONE. No Wyoming city or county levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed; not independently verified against a specific municipal-authority statute this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE. No mandatory or voluntary state-run paid family/medical leave program of any kind found for Wyoming.",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "Wyoming Dept of Workforce Services (DWS)",
+    "wageBase": 33800.0,
+    "newEmployerRateNote": "NOT a single flat figure -- W.S. 27-3 Article 5 assigns a base rate by industry (new employers) or benefit ratio (3+ years experience) PLUS four additional rate factors summed together. Cross-sourced practical new-employer range 2.28%-9.78% by industry; disclosed as cross-source only, since no primary single number exists to quote (same shape as Louisiana's own new-employer rate elsewhere in this project).",
+    "confidence": "primary_source_confirmed for the wage base; new-employer rate mechanism confirmed primary, exact range cross-source only.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual rate depends on employer-specific history a static jurisdiction file can't hold, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. Unlike Alaska/PA/NJ, Wyoming has NO employee-paid UI component -- confirmed via DWS's own rate-mechanism description, which only ever refers to 'employer' contributions. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "Local-tax absence: CLOSED 2026-09-02, primary-source confirmed -- fetched the Wyoming Secretary of State's own compiled constitution (sos.wyo.gov/Forms/Publications/WYConstitution.pdf) directly and confirmed Article 15, Section 18's exact text: 'Full tax credit allowed against any liability arising from a tax on income. No tax shall be imposed upon income without allowing full credit against such tax liability for all sales, use, and ad valorem taxes paid in the taxable year by the same taxpayer to any TAXING AUTHORITY IN WYOMING' (emphasis added -- the credit requirement applies to any WY taxing authority, state or local, not just the state). This is not a literal ban the way Louisiana's or Oklahoma's provisions are framed -- it's a mandatory dollar-for-dollar credit mechanism -- but its practical effect is the same: any city or county that tried to levy a local income tax would have to credit that liability with the taxpayer's sales/use/property taxes already paid to any Wyoming taxing authority, which for most taxpayers would zero out the income tax owed, making a meaningful local income tax constitutionally self-defeating. PFML absence: cross-source confirmed only (Paylocity, WorkforceHub, OnPay all agree as of 2026 Wyoming has no state-mandated PFML program and no funding mechanism for one; employees rely on unpaid federal FMLA only) -- a true negative with no single WY statute to cite, the standard evidentiary ceiling for this kind of gap.",
+    "This state's UI wage base and rate mechanism are both primary-sourced. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "The exact 2.28%-9.78% new-employer range by industry is cross-source only -- W.S. 27-3 Article 5's own per-industry base-rate table was not independently fetched this pass."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 33800,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "No single new-employer figure exists for this state: the rate is industry-assigned or schedule-driven. The engine therefore requires the employer's own assigned rate here and computes nothing without it.",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.085
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "no_single_rate"
+  }
+}

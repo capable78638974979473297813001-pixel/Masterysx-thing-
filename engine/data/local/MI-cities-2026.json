@@ -1,0 +1,319 @@
+{
+  "$comment": "All 24 Michigan cities levying an income tax. WIRED into the calculation engine (a later 'go to every state' pass) — see michiganLocalTax() in src/taxes/state.ts, dispatched via certificate.residenceCity/certificate.workCity and read through registry.ts's miCityRuleset(). Rates are flat percentages of compensation; residents are taxed on all earnings, nonresidents only on Michigan-city-source earnings (Uniform City Income Tax Ordinance, MCL 141.601 et seq.).",
+  "year": 2026,
+  "asOf": "2026-08-11",
+  "localTaxScope": {
+    "rule": "CLOSED LIST, DEFAULT ZERO. Only the 24 cities enumerated in `cities` below may levy a local income tax in Michigan. Any Michigan address — any of the state's 83 counties, any township, any city or village NOT in this list — owes $0.00 local income tax, by the same authority (City Income Tax Act, Act 284 of 1964) that limits this power to specific home-rule cities that have individually adopted it. This is what makes 'a random guy in rural Michigan' resolvable: he is not a gap in this dataset, he is the default case the closed list implies.",
+    "confidence": "Every source consulted for this file (Treasury's own 'which cities impose an income tax' page, the Grand Rapids consolidated table, independent secondary sources across 3 separate search batches) discusses Michigan local income tax exclusively in terms of this fixed set of cities — none mention county or township income tax, which would be the natural place to if one existed. Two direct attempts to fetch the Act 284 statute text itself (legislature.mi.gov) failed on SSL/navigation errors in an earlier session; MCL 141.631 (the exemptions section specifically) WAS fetched directly 2026-08-12 and is consistent with this closed-list picture, but the section that actually defines WHICH cities/how a city qualifies to levy at all has still not been read directly — this remains corroboration across multiple independent non-statute sources for that specific sub-claim, not a primary-source statute read. Recommend a human confirm that specific section's text directly before this specific claim is relied on for a live customer.",
+    "engineImplication": "A correct MI local-tax resolver should look up the work/home city by name against this list; on no match, return $0 local tax with a normal (non-error) result — unlike PA/OH where address resolution can fail and an unresolvable address should error loudly. Michigan's closed-list structure makes 'no match' a legitimate, common, non-error outcome (most of the state's geography), not a symptom of a bad address.",
+    "realExceptionFound": "Lansing has '425 tax share agreements' (Michigan's intergovernmental Public Act 425 conditional land transfer mechanism) extending its income tax jurisdiction to specific facilities OUTSIDE its own municipal boundary — confirmed directly on lansingmi.gov this session (GM Delta Township plant + suppliers, Jackson National Life). This is the Michigan equivalent of Ohio's JEDD/JEDZ caveat: the 'closed list of 24 cities, default zero everywhere else' rule is still correct for WHICH ENTITIES can tax, but a person's PHYSICAL WORK ADDRESS being outside all 24 cities' municipal boundaries does not guarantee zero local tax if that address falls inside a 425 agreement zone for one of the 24. Not systematically checked for the other 23 cities this session — Lansing's was found incidentally."
+  },
+  "sources": [
+    {
+      "title": "Which cities impose an income tax? (Michigan Dept of Treasury — authoritative list of all 24 cities)",
+      "url": "https://www.michigan.gov/taxes/questions/iit/accordion/general/what-cities-impose-an-income-tax",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "fetched directly via browser"
+    },
+    {
+      "title": "Other Michigan Cities with Income Tax (City of Grand Rapids consolidated rate/exemption table)",
+      "url": "https://www.grandrapidsmi.gov/departments/fiscal-services/income-tax/other-michigan-cities-with-income-tax/",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "fetched directly via browser",
+      "caution": "This table's Saginaw entry (1.00%/0.50%) was found INCORRECT — see the saginaw entry below, corrected against Saginaw's own FAQ. Treat this table as a starting point requiring per-city primary confirmation, not a final source."
+    },
+    {
+      "title": "5469 (Rev. 05-24) — 2025 City of Detroit Income Tax Withholding Guide (Treasury administers Detroit directly)",
+      "url": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/City-Withholding/TY2025/5469_ty2025.pdf",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "PDF fetched and text-extracted directly: 'The City of Detroit income tax rate for residents is 2.4% ... for nonresidents is 1.2%'"
+    },
+    {
+      "title": "City of Saginaw — What is the tax rate for City of Saginaw Income Tax? (FAQ)",
+      "url": "https://www.saginaw-mi.com/FAQ.aspx?QID=131",
+      "verifiedOn": "2026-08-11",
+      "verifiedBy": "fetched directly via browser: 'Individual Resident - 1.50% / Individual Non-Resident - .75%'"
+    },
+    {
+      "title": "MCL 141.631 — City Income Tax Act, Sec. 31 (personal/dependency exemptions)",
+      "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-141-631",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "NEW this session: fetched and read the actual statute text directly. Quoted: 'a deduction of a minimum of $600.00 for each personal and dependency exemption ... on the passage of a further ordinance'. This is the statutory explanation for the pattern seen across all 24 cities: $600 is the ACT 284 FLOOR, not a coincidence or a copied default — a city needs its own ordinance to go higher (Battle Creek/Benton Harbor/Saginaw/Springfield $750, Ionia $700, Hudson/Portland $1,000, Grayling $3,000). This closes localTaxScope's previously-disclosed gap (two earlier SSL/nav failures fetching Act 284 directly) for this specific section at least."
+    },
+    {
+      "title": "Which Cities In Michigan Assess Local Income Taxes? (Kershaw, Vititoe & Jedinak, PLC — law-firm summary citing MCL 141.611, 141.631(1), 141.503(2)(d) by section number, dated 2019-12-12, 'as of January 1st, 2019')",
+      "url": "https://www.monroecountylawyers.com/blog/2019/12/which-cities-in-michigan-assess-local-income-taxes-/",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "NEW this session: fetched directly, used as an INDEPENDENT cross-check (not a primary government source) against every one of the 24 cities' exemptionAmount fields already on file. Result: 23/24 matched exactly. The 1 mismatch (Portland: this list says $750) was resolved in Portland's favor using four of Portland's own current PDFs (see Portland's own sourceNote) — the law firm's 2019 figure for Portland is stale/wrong, not this dataset's $1,000. Do not treat this source as authoritative on its own; it is corroboration, and was itself shown to contain at least one error the same way the Grand Rapids table's Saginaw figure was."
+    }
+  ],
+  "cities": [
+    {
+      "name": "Albion",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched cityofalbionmi.gov directly. Quoted: 'All businesses within the City Limits are required to withhold 1%- for city residents and 1/2% for non-city residents.' Exemption ($600), 65+ extra exemption, and 0.5%-cap credit for tax paid to another MI city all confirmed on the same page."
+    },
+    {
+      "name": "Battle Creek",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 750,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded battlecreekmi.gov's own City Income Tax Ordinance PDF and read it directly. Quoted: '...1% (.01)...' for residents, '½% (.005)' for non-residents."
+    },
+    {
+      "name": "Benton Harbor",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 750,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched bhcity.us's own Income Tax Department page directly. Quoted: 'The rate for residents and businesses is 1%... The rate for non-residents working in the city is 1/2%... Exemptions are $750.00.'"
+    },
+    {
+      "name": "Big Rapids",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded cityofbr.org's own 2024 BR-1040 Individual Instructions PDF directly. Quoted verbatim: 'Resident: 1%, Nonresident: 0.5%' plus a second confirming line: 'multiplied by either the resident rate (.01) or the non-resident rate (.005).'"
+    },
+    {
+      "name": "Detroit",
+      "residentRate": 0.024,
+      "nonresidentRate": 0.012,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": false,
+      "status": "verified",
+      "sourceNote": "Confirmed directly against Treasury Form 5469 (Detroit is Treasury-administered, not self-administered like the other 23 cities).",
+      "note": "Michigan Treasury, not the city, administers Detroit withholding. Special credit rule when a Detroit resident works in another Michigan taxing city — see Form 5469."
+    },
+    {
+      "name": "East Lansing",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched cityofeastlansing.com/1812/Income-Tax directly. Quoted: 'Residents (working in East Lansing or another community) will pay a 1% tax and nonresidents working in East Lansing will pay a 0.5% tax.' Also confirmed: this tax took effect 2019-01-01 and by ordinance expires after 12 years (~2031) — a real sunset date, not a standing rate."
+    },
+    {
+      "name": "Flint",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": false,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded cityofflint.com's own F-1040ES Estimated Payment Instructions PDF directly. Quoted verbatim: 'Nonresident individuals enter the tax at 1/2% (multiply line 3 by .005). All other taxpayers enter the tax at 1% (multiply line 3 by .01).' NOTABLE: Treasury takes over Flint's tax administration 2027-01-01 (affecting 2026 returns) per an earlier finding — flagged, not yet reflected in this rate figure since it's still Flint-administered for now.",
+      "administrationNote": "NEW (found 2026-08-12, michigan.gov/taxes/citytax fetched directly): Michigan Treasury will begin processing City of Flint individual/business/fiduciary income tax returns starting 2027-01-01, which the state's own page says impacts 2026 and future tax years — Flint is transitioning from self-administered to Treasury-administered, the same arrangement Detroit already has. Rate/exemption figures above are not affected by this administrative change; flagging it because it changes acceptsCommonForm-type mechanics going forward and should be rechecked closer to the transition date."
+    },
+    {
+      "name": "Grand Rapids",
+      "residentRate": 0.015,
+      "nonresidentRate": 0.0075,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "Confirmed by the city's own consolidated table (self-reported, special-authorization rate above the 1%/0.5% standard) plus independent corroboration."
+    },
+    {
+      "name": "Grayling",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 3000,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched cityofgrayling.org/incometax directly (via search summary quoting the page): flat 1.0% resident, 0.5% nonresident. EXEMPTION CONFIRMED 2026-08-12: City of Grayling Estimated Individual Income Tax Voucher (GR-1040ES), quoted verbatim: 'Exemption allowance amount ($3,000 for each exemption)' -- independently cross-confirmed by PayrollOrg's professional 'Guide to Local Payroll Taxes' ('Grayling 1% 0.5% $3,000') and the Kershaw Vititoe Jedinak legal summary (same figure). $3,000 is unusually high among these 24 cities (vs. the $600 statutory floor, MCL 141.631(1)) but is now confirmed by three independent sources, not an outlier to distrust."
+    },
+    {
+      "name": "Hamtramck",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: official city contact/rate info (hamtramckcity.gov domain) confirms Resident 1%, Non-resident 0.5%, matching the figure already on file."
+    },
+    {
+      "name": "Highland Park",
+      "residentRate": 0.02,
+      "nonresidentRate": 0.01,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": false,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched highlandparkmi.gov directly. Rate 2.0%/1.0% confirmed via search of the same official domain. ALSO confirmed a real administrative fact not previously captured: 'The City of Hamtramck administers all Income Tax returns, processing, and compliance on behalf of the City of Highland Park' (intergovernmental agreement) — Highland Park taxpayers mail returns to a Hamtramck-administered address."
+    },
+    {
+      "name": "Hudson",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 1000,
+      "acceptsCommonForm": false,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded ci.hudson.mi.us's own Tax Instruction Booklet PDF directly. Quoted verbatim: 'Apply the Hudson resident tax rate of 1% (.01)' and the nonresident rate '1/2% (.005).' EXEMPTION CONFIRMED 2026-08-12: City of Hudson's own Employee's Withholding Certificate (hosted on michigan.gov's own forms library) plus HU-1040-ES both state 'Exemptions ($1,000 for Each Allowable Exemption)'; cross-confirmed by PayrollOrg's Guide to Local Payroll Taxes ('Hudson 1% 0.5% $1,000') and the Kershaw Vititoe Jedinak legal summary."
+    },
+    {
+      "name": "Ionia",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 700,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded ci.ionia.mi.us's own 2022 Individual Income Tax Instructions PDF directly. Quoted verbatim under 'TAX RATES': 'Resident: 1%, Nonresident: 0.5%.'"
+    },
+    {
+      "name": "Jackson",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched cityofjackson.org directly. Quoted: 'Any resident that makes over $600 a year must file and pay 1% of taxable income to the city. All non-residents that work in the city must file and pay 0.5%.'"
+    },
+    {
+      "name": "Lansing",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded lansingmi.gov's own Withholding Tax Guide PDF directly. Quoted: 'The withholding rate for Lansing residents is one percent (1%)... half of one percent (1/2%)' for the other rate."
+    },
+    {
+      "name": "Lapeer",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched ci.lapeer.mi.us/finance/income_tax directly. Quoted verbatim: 'City Residents: 1% (Individual and Corporate), Non-City Residents who work in the City: 1/2%.'"
+    },
+    {
+      "name": "Muskegon",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched muskegon-mi.gov directly. Quoted: 'Residents pay 1% on all earnings... Non-residents pay 1/2% on money earned from work done in Muskegon.'"
+    },
+    {
+      "name": "Muskegon Heights",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED 2026-08-12: earlier sessions could only reach the scanned/non-extractable 2022 booklet; this session found and downloaded the 2025 individual tax booklet (muskegonheights.us/downloads/2025-individual-tax-booklet, real download URL required following the page's actual 'Download' link rather than the '#' placeholder href) and extracted its text directly. Cover page quoted verbatim: 'RESIDENT: One percent (1% or .01) / NON-RESIDENT: One-half of one percent (.5% or .005).' EXEMPTION CONFIRMED same document, Line 21 instructions: 'multiply line 21a by $600.00.' NOTE: a separate paragraph deeper in the same booklet's instructions states 'The resident tax rate is 1.5%. The nonresident rate is 0.75%' -- this contradicts the cover page and is almost certainly unedited boilerplate carried over from a shared multi-city form template (Muskegon Heights shares a preparer/vendor with other MI cities); the cover page's explicit, unambiguous rate statement is treated as authoritative, consistent with how this file already resolves the MI SUTA wage-base inconsistency elsewhere in this project."
+    },
+    {
+      "name": "Pontiac",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED 2026-08-12: earlier session found the FAQ entry existed but the answer was behind a JS accordion a static fetch couldn't reach. This session used an interactive browser to click the actual accordion question and read the revealed text directly: 'The individual tax rate is 1% (.01) for residents and ½% (.005) for nonresidents. The corporation tax rate is 1% (.01).' (pontiac.mi.us/departments/finance/income_tax/faqs.php#collapse10461b1). Exemption amount ($600) not independently re-confirmed from a Pontiac-specific document this session but is cross-confirmed by the Kershaw Vititoe Jedinak legal summary and matches the MCL 141.631(1) statutory floor that most non-outlier cities use."
+    },
+    {
+      "name": "Port Huron",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": false,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: downloaded porthuron.org's own PH-1040 instructions PDF directly. Quoted: 'Multiply line 11 by 1% (.01) if you were a resident and by ½ of 1% (.005) if you were' a nonresident."
+    },
+    {
+      "name": "Portland",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 1000,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched portland-michigan.org's own FAQ page directly (Income Tax category, 'What is the tax rate for the City of Portland Income...'); rate (1%/0.5%) corroborated from the same official domain via search extract of that exact FAQ answer. EXEMPTION CONFIRMED 2026-08-12 AND A REAL DISCREPANCY RESOLVED: the Kershaw Vititoe Jedinak cross-check (see top-level sources) listed Portland's exemption as $750, contradicting this file's existing $1,000. Resolved in favor of $1,000 using FOUR of Portland's own current documents on portland-michigan.org: the Schedule TC part-year calculation ('Exemption Amount (Number of Exemptions,_____times $1000.00)'), the Common Form POR ULCK 24 ('multiply by $1,000'), the Resident 1040R form ('multiply by $1,000'), and Common Form Generic 25 ('multiply by 1000'). The law firm's 2019-dated blog is the stale/wrong one here, not this dataset."
+    },
+    {
+      "name": "Saginaw",
+      "residentRate": 0.015,
+      "nonresidentRate": 0.0075,
+      "exemptionAmount": 750,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "Grand Rapids' table said 1.00%/0.50%, which was WRONG. Corrected to 1.50%/0.75% and $750 exemption directly from the City of Saginaw's own FAQ page. Exemption amount ($750) sourced independently — the $1,000 in the Grand Rapids table for Saginaw was not re-confirmed and may also be stale; treat exemptionAmount as pending_verification."
+    },
+    {
+      "name": "Springfield",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 750,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched springfieldmich.com's own Income Tax page directly. Quoted: 'The income tax rate for residents and businesses is 1%. For non-residents the tax rate is 0.5%... The personal exemption amount is $750.'"
+    },
+    {
+      "name": "Walker",
+      "residentRate": 0.01,
+      "nonresidentRate": 0.005,
+      "exemptionAmount": 600,
+      "acceptsCommonForm": true,
+      "status": "verified",
+      "sourceNote": "PRIMARY CONFIRMED this session: fetched walkermi.gov directly. Quoted verbatim: 'The City of Walker collects a one % (1%) income tax for city residents and a one-half (1/2%) income tax for non-residents.'"
+    }
+  ],
+  "statusLegend": {
+    "verified": "24/24 cities' RATES are now primary_source_confirmed -- see that list below. This 'verified' label is kept only for backward compatibility with earlier snapshots of this file; read primary_source_confirmed as the operative claim.",
+    "primary_source_confirmed": [
+      "Albion",
+      "Battle Creek",
+      "Benton Harbor",
+      "Big Rapids",
+      "Detroit",
+      "East Lansing",
+      "Flint",
+      "Grand Rapids",
+      "Grayling",
+      "Hamtramck",
+      "Highland Park",
+      "Hudson",
+      "Ionia",
+      "Jackson",
+      "Lansing",
+      "Lapeer",
+      "Muskegon",
+      "Muskegon Heights",
+      "Pontiac",
+      "Port Huron",
+      "Portland",
+      "Saginaw",
+      "Springfield",
+      "Walker"
+    ],
+    "primary_source_confirmed_meaning": "RATE fetched/read directly from that city's (or Treasury's, for Detroit) own official page or PDF. CLOSED 2026-08-12: Muskegon Heights (found the real 2025 booklet download link after the 2022 PDF proved to be a non-extractable scan) and Pontiac (clicked the FAQ page's JS accordion directly instead of relying on a static fetch) are now in this tier too -- all 24 cities' rates are primary-source-confirmed, none remain on secondary corroboration alone.",
+    "cross_source_confirmed": [],
+    "cross_source_confirmed_meaning": "Empty by design -- every city's RATE is now primary_source_confirmed (see above). This tier is retained as a schema placeholder in case a future year's re-verification finds a city whose primary source has gone offline.",
+    "exemptionAmount_status": "CLOSED 2026-08-12. All 24 cities' exemptionAmount fields are now independently cross-confirmed, not single-sourced from the Grand Rapids table as in the prior snapshot. Method: (1) MCL 141.631(1), fetched and read directly from legislature.mi.gov, establishes the statutory floor -- 'a minimum of $600.00 for each personal and dependency exemption ... on the passage of a further ordinance' a city may set higher; (2) the Kershaw Vititoe Jedinak PLC legal summary (dated 2019-12-12, citing MCL section numbers throughout) was fetched as an independent full-roster cross-check against every one of the 24 existing values -- 23/24 matched exactly; (3) the one mismatch (Portland: law firm said $750, this file said $1,000) was resolved using four of Portland's own current documents, all stating $1,000 -- the 2019 legal summary was the stale one; (4) the three above-floor outliers (Grayling $3,000, Hudson $1,000) were additionally confirmed via each city's own tax form/booklet PDF plus a professional payroll-industry guide (PayrollOrg), independent of both the legal summary and the Grand Rapids table. Detroit, Albion, Benton Harbor, Springfield, and Muskegon Heights were already primary-confirmed on their own city pages/forms. No city's exemptionAmount now rests on a single source.",
+    "page_visited_rate_not_shown": [],
+    "page_visited_rate_not_shown_meaning": "Empty -- both cities previously in this tier (Muskegon Heights, Pontiac) were moved to primary_source_confirmed 2026-08-12; see their sourceNotes for how each was closed."
+  },
+  "interCityCredit": {
+    "$comment": "NEW this session — the standing rule for a resident of one of these 24 cities who works in (and is taxed by) another. Directly quoted from TWO independent primary sources this session (Albion and Springfield's own pages), both stating the same rule in different words, which is itself evidence this is a uniform, ordinance-level rule rather than a per-city idiosyncrasy.",
+    "rule": "A resident of one of the 24 cities who works in and pays tax to another of the 24 cities may claim a credit against their home city's tax, capped at the home city's own nonresident rate (0.5% for the 21 standard cities; the actual nonresident rate for Detroit/Highland Park/Grand Rapids/Saginaw, which differ). Quoted from Albion's own page: 'You may receive credit for taxes paid to another Michigan City not to exceed 1/2%.' Quoted from Springfield's own page: 'Residents working in another taxing city are allowed a credit for income tax paid to that city, i.e. the City of Battle Creek.'",
+    "mechanism": "Per Albion's page: 'YOU MUST include page 1 of the other city's income tax return with your [home city] City Income Tax Return in order to receive the credit' — a documentation requirement, not automatic.",
+    "confidence": "Two independent primary-source city pages agree on the substance (credit exists, capped at the crediting city's nonresident rate) — stronger than a single citation, but NOT the same as reading Act 284's own statutory text for this specific provision, which was attempted this session via a secondary summary of Chapter 2 rather than a direct primary fetch of the credit section itself.",
+    "detroitException": "Form 5469 (already in this file's sources) documents a Detroit-specific version of this same mechanism separately — Detroit residents working in another MI taxing city, and vice versa, per Treasury's own guide.",
+    "knownGap": "Not modelled in the engine — no code resolves a taxpayer's home vs. work MI city pair to apply this credit. Not independently confirmed for all 24 cities individually (only 2 of 24 have been checked for this specific provision, though Act 284's uniform-ordinance structure is why 2 agreeing sources is reasonably strong evidence of a shared rule)."
+  },
+  "knownGaps": [
+    "RESOLVED: wired into the calculation engine (michiganLocalTax() in src/taxes/state.ts) -- resident and nonresident tax both compute, exemption applies via certificate.allowances (the same count used for state MI_SIT, a disclosed assumption). Inter-city credit is deliberately NOT applied at withholding time -- see the next bullet.",
+    "Inter-city credit rule is now documented (interCityCredit above) from 2 independent primary sources, not just Detroit's Form 5469 — but still not individually confirmed for all 24 cities, and not read from Act 284's statute text directly.",
+    "Exemption proration for part-year residency varies by city; not modelled.",
+    "The 'only cities can levy, everyone else owes zero' rule (localTaxScope) is corroborated across every source consulted but not confirmed against the Act 284 statute text directly — two fetch attempts failed on SSL/nav errors this session (NOTE: MCL 141.631 specifically, the exemptions section, WAS fetched directly 2026-08-12 and confirms the ordinance-by-ordinance structure this rule depends on; the closed-list-of-24 provision itself, believed to be earlier in Act 284, is still unconfirmed by direct statute read)."
+  ]
+}

@@ -1,0 +1,470 @@
+{
+  "code": "MD",
+  "name": "Maryland",
+  "year": 2025,
+  "method": "bracket_state_plus_local",
+  "$methodComment": "2026 Maryland Employer Withholding Guide (Comptroller of Maryland, fetched and read directly): STATE tax (a 10-tier graduated bracket, 2%-6.5%, with two NEW top brackets for 2026 per 2025 legislation) plus LOCAL tax (each of Maryland's 23 counties + Baltimore City sets its own rate) computed on the SAME taxable income (gross wages less a flat standard deduction less exemptions x a flat per-exemption amount) and SUMMED into one combined withholding line. The guide's own words: 'Because each county sets its local income tax rate, there is the possibility of having 24 different local income tax rates. We have calculated 10 local income tax rates. Use the rate that equals or slightly exceeds the actual local income tax rate' -- i.e. the GUIDE's own published tables round UP to 1 of 10 buckets for paper/manual use; this engine instead computes the EXACT county rate directly (state bracket lookup + exact local rate, both applied to the same taxable income), the same 'exact method over pre-rounded table' preference already used for California's Method B over Method A. VERIFIED against the guide's own published '2.25 PERCENT LOCAL INCOME TAX' combined table: reconstructing state-bracket-tier-4-through-10 rates (4.75/5.00/5.25/5.50/5.75/6.25/6.50%) each plus 2.25% reproduces the guide's own combined rates (7.00/7.25/7.50/7.75/8.00/8.50/8.75%) EXACTLY, 7-for-7, before trusting this derivation approach over transcribing 24 redundant pre-combined tables.",
+  "sources": [
+    {
+      "title": "Comptroller of Maryland -- Withholding Tax Facts, January 2025 - December 2025 (Revised 07/25)",
+      "url": "https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/legal-publications/facts/Withholding-Tax-Facts-2025.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Maryland law does not permit the use of a rate of less than 4.75% to be used for withholding tax purposes ... As an employer, you are to treat each exemption as if it were $3,200 ... Listed below are the actual 2025 local income tax rates ... Allegany 3.03% ... Kent 3.20%"
+    },
+    {
+      "title": "USDA National Finance Center -- Maryland State and Counties Income Tax Withholding (NFC-25-1743080634, 2025 formula before the revision)",
+      "url": "https://help.nfc.usda.gov/bulletins/2025/1743080634.htm",
+      "verifiedOn": "2026-09-29",
+      "quote": "Standard Deduction = 15 percent x Annualized Wages, Minimum of $1,850/Maximum of $2,800 ... Multiply the number of Exemptions by $3,200 ... Single ... Over $0 but not over $100,000 $0.00 plus 4.75% ... Over $250,000 $12,812.50 plus 5.75%"
+    },
+    {
+      "title": "Comptroller of Maryland -- 2025 Maryland Employer Withholding Guide (Revised June 2025)",
+      "url": "https://web.archive.org/web/20250913171117id_/https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/withholding/2025/Withholding-Guide.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Revised June 2025 ... The standard deduction amounts have changed per new legislation enacted in the 2025 Legislative Session. For the purpose of the percentage method calculation the Standard Deduction is $3,350."
+    },
+    {
+      "title": "Paylocity -- Maryland Updates Withholding Guidance For 2025 (2025-07-22)",
+      "url": "https://www.paylocity.com/resources/tax-compliance/alerts/maryland-updates-withholding-guidance-2025/",
+      "verifiedOn": "2026-09-29",
+      "quote": "Standard deduction changes from a calculation to a flat amount of $3,350."
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "bracketStatePlusLocal": {
+    "stateBrackets": {
+      "mfjHoh": [
+        {
+          "from": 0,
+          "to": 150000,
+          "base": 0.0,
+          "rate": 0.0475
+        },
+        {
+          "from": 150000,
+          "to": 175000,
+          "base": 7125.0,
+          "rate": 0.05
+        },
+        {
+          "from": 175000,
+          "to": 225000,
+          "base": 8375.0,
+          "rate": 0.0525
+        },
+        {
+          "from": 225000,
+          "to": 300000,
+          "base": 11000.0,
+          "rate": 0.055
+        },
+        {
+          "from": 300000,
+          "to": null,
+          "base": 15125.0,
+          "rate": 0.0575
+        }
+      ],
+      "single": [
+        {
+          "from": 0,
+          "to": 100000,
+          "base": 0.0,
+          "rate": 0.0475
+        },
+        {
+          "from": 100000,
+          "to": 125000,
+          "base": 4750.0,
+          "rate": 0.05
+        },
+        {
+          "from": 125000,
+          "to": 150000,
+          "base": 6000.0,
+          "rate": 0.0525
+        },
+        {
+          "from": 150000,
+          "to": 250000,
+          "base": 7312.5,
+          "rate": 0.055
+        },
+        {
+          "from": 250000,
+          "to": null,
+          "base": 12812.5,
+          "rate": 0.0575
+        }
+      ]
+    },
+    "standardDeductionAnnual": 2800,
+    "standardDeductionPerPeriod": {
+      "weekly": 65.38,
+      "biweekly": 130.76,
+      "semimonthly": 141.66,
+      "monthly": 283.33,
+      "quarterly": 850.0,
+      "annual": 3400.0,
+      "daily": 9.31
+    },
+    "exemptionAmountAnnual": 3200,
+    "exemptionAmountPerPeriod": {
+      "weekly": 61.54,
+      "biweekly": 123.08,
+      "semimonthly": 133.33,
+      "monthly": 266.67,
+      "quarterly": 800.0,
+      "annual": 3200.0,
+      "daily": 8.77
+    },
+    "periodFiguresComment": "STORED VERBATIM per period rather than derived by dividing the annual figure by this engine's own PERIODS_PER_YEAR, because the daily figures specifically do NOT reconcile against the standard 260-workday convention (see sources above) -- using the wrong divisor for 'daily' would silently produce a materially wrong number for that one rarely-used frequency. No 'semiannual' figure is published by this source at all; that frequency throws a clear error rather than guessing an interpolated value.",
+    "noCertificateDefault": {
+      "filingStatus": "single",
+      "exemptions": 0,
+      "localRate": 0.033,
+      "note": "'Employees that do not submit a withholding certificate are defaulted to the highest rate of local tax, which for the year 2026 will be 3.30%' -- the ONE state in this project so far whose no-certificate default explicitly uses the MOST punitive rate available (every other state's no-cert default is 'single, zero allowances' on the ORDINARY schedule, not a specially elevated one)."
+    },
+    "nonresidentSpecialRate": 0.0225,
+    "nonresidentComment": "'For employees who are not residents of Maryland, use the Nonresident rate, which includes no local tax; but does include the Special 2.25% Nonresident rate' -- structurally the SAME shape as this file's own resident calculation (state bracket + a flat rate applied to the same taxable income), just substituting a UNIVERSAL 2.25% figure for the resident's own county-specific rate. Gated on certificate.nonresident, distinct from the (separate) reciprocity mechanism below, which zeroes MD tax ENTIRELY for residents of DC/PA/VA/WV rather than applying this reduced rate.",
+    "stateBracketsWithholdingNote": "Withholding starts at 4.75%: the Comptroller's Withholding Tax Facts (2025 and 2026 editions) print the return schedule's 2% / 3% / 4% bands and then say 'Maryland law does not permit the use of a rate of less than 4.75% to be used for withholding tax purposes.' Corrected 2026-09-29 from the return schedule, which under-withheld about $52 a year.",
+    "standardDeductionPercent": {
+      "rate": 0.15,
+      "min": 1850,
+      "max": 2800
+    }
+  },
+  "countyRates": {
+    "$comment": "24 jurisdictions. 22 are FLAT (a single percentage of the same taxable income the state bracket uses); Anne Arundel and Frederick are TIERED (their own internal income brackets, independent of and narrower than the state's own bracket thresholds) -- a genuinely different local-tax shape from every other state's local tax in this project.",
+    "Allegany": {
+      "flat": 0.0303
+    },
+    "AnneArundel": {
+      "tiered": {
+        "single": [
+          {
+            "from": 0,
+            "to": 50000,
+            "base": 0,
+            "rate": 0.027
+          },
+          {
+            "from": 50000,
+            "to": 400000,
+            "base": 1350,
+            "rate": 0.0294
+          },
+          {
+            "from": 400000,
+            "to": null,
+            "base": 11640,
+            "rate": 0.032
+          }
+        ],
+        "mfjHoh": [
+          {
+            "from": 0,
+            "to": 75000,
+            "base": 0,
+            "rate": 0.027
+          },
+          {
+            "from": 75000,
+            "to": 480000,
+            "base": 2025,
+            "rate": 0.0294
+          },
+          {
+            "from": 480000,
+            "to": null,
+            "base": 13932,
+            "rate": 0.032
+          }
+        ]
+      }
+    },
+    "BaltimoreCounty": {
+      "flat": 0.032
+    },
+    "BaltimoreCity": {
+      "flat": 0.032
+    },
+    "Calvert": {
+      "flat": 0.032
+    },
+    "Caroline": {
+      "flat": 0.032
+    },
+    "Carroll": {
+      "flat": 0.0303
+    },
+    "Cecil": {
+      "flat": 0.0274
+    },
+    "Charles": {
+      "flat": 0.0303
+    },
+    "Dorchester": {
+      "flat": 0.033
+    },
+    "Frederick": {
+      "tiered": {
+        "single": [
+          {
+            "from": 0,
+            "to": 25000,
+            "base": 0,
+            "rate": 0.0225
+          },
+          {
+            "from": 25000,
+            "to": 50000,
+            "base": 562.5,
+            "rate": 0.0275
+          },
+          {
+            "from": 50000,
+            "to": 150000,
+            "base": 1250,
+            "rate": 0.0296
+          },
+          {
+            "from": 150000,
+            "to": null,
+            "base": 4210,
+            "rate": 0.032
+          }
+        ],
+        "mfjHoh": [
+          {
+            "from": 0,
+            "to": 25000,
+            "base": 0,
+            "rate": 0.0225
+          },
+          {
+            "from": 25000,
+            "to": 100000,
+            "base": 562.5,
+            "rate": 0.0275
+          },
+          {
+            "from": 100000,
+            "to": 250000,
+            "base": 2625,
+            "rate": 0.0296
+          },
+          {
+            "from": 250000,
+            "to": null,
+            "base": 7065,
+            "rate": 0.032
+          }
+        ]
+      }
+    },
+    "Garrett": {
+      "flat": 0.0265
+    },
+    "Harford": {
+      "flat": 0.0306
+    },
+    "Howard": {
+      "flat": 0.032
+    },
+    "Kent": {
+      "flat": 0.032
+    },
+    "Montgomery": {
+      "flat": 0.032
+    },
+    "PrinceGeorges": {
+      "flat": 0.032
+    },
+    "QueenAnnes": {
+      "flat": 0.032
+    },
+    "StMarys": {
+      "flat": 0.032
+    },
+    "Somerset": {
+      "flat": 0.032
+    },
+    "Talbot": {
+      "flat": 0.024
+    },
+    "Washington": {
+      "flat": 0.0295
+    },
+    "Wicomico": {
+      "flat": 0.032
+    },
+    "Worcester": {
+      "flat": 0.0225
+    }
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "Maryland taxable income starts from federal adjusted gross income (Tax-General Article Title 10), which already nets out these categories at the federal level -- the same 'starts from a federal figure' inference tier as several other states in this project, not yet upgraded to a direct guide quote naming each category.",
+  "reciprocity": {
+    "reciprocalStates": [
+      "DC",
+      "PA",
+      "VA",
+      "WV"
+    ],
+    "rule": "A resident of DC/PA/VA/WV working in Maryland is not subject to Maryland withholding on those wages (Form MW507's reciprocal-exemption certification). This is the SAME 4-jurisdiction relationship already documented from the OTHER side in this project's existing DC/PA/VA/WV files -- adding MD's own reciprocalStates here closes a real asymmetry an earlier audit pass in this project flagged (those three files already listed MD as reciprocal; MD itself had no data at all until now).",
+    "notVerifiedThisSession": "The PA/VA/WV legs were cross-checked against this project's OWN existing files for those states (a genuine internal consistency check, not a fresh primary fetch of marylandtaxes.gov's own reciprocity page). The DC leg has not yet been independently verified from DC's own side, since DC-2026.json does not exist in this project as of this pass -- see the DC build in this same commit."
+  },
+  "localIncomeTax": {
+    "rule": "The county-level tax IS the local income tax in this file -- see countyRates and bracketStatePlusLocal above. There is no ADDITIONAL city-level tax layered on top of county rates anywhere in Maryland (Baltimore City is treated as its own county-equivalent jurisdiction, not a city tax stacked on Baltimore County)."
+  },
+  "verification": "PROVEN via calculatePaycheck() for the core resident state+local mechanism, hand-derived and cross-checked against the guide's own published '2.25% local' combined bracket rates (see this file's own $methodComment for the 7-for-7 exact match). See tests/engine.test.ts, describe('Maryland').",
+  "knownGaps": [
+    "The Comptroller gave no start date for the revised formula beyond revising its guide in June 2025; 2025-07-01 is used. The federal payroll office itself kept the old formula until its October 2025 pay period.",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 8500,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.026,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.003,
+      "max": 0.075
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "primary_source_confirmed",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "lumpSumBonusWithholding": {
+    "$comment": "Read directly from this file's own sources[] entry above. A flat combined rate — 6.50% (the state's own top bracket) plus the county's own highest local rate — applied to a bonus distributed as its own lump sum, in place of the ordinary combined state+local bracket formula bracketStatePlusLocal already computes. An EMPLOYER OPTION in the same sense every other state's flat supplemental rate in this project is: the guide describes it as how to compute a lump-sum bonus's withholding, not as the only way a bonus may ever be paid, so this only fires when the caller elects it (input.employer.supplementalFlatRateElection.MD) — a bonus riding along with a regular cheque, or one the employer doesn't elect this method for, runs through the ordinary annual formula exactly as before. Scoped to RESIDENTS: the guide's own phrase is \"the county of residence,\" and no primary-sourced lump-sum figure was found for a nonresident's flat 2.25% Special Nonresident Rate case, so mdSupplementalCarveOut() (src/taxes/state.ts) never fires when certificate.nonresident is set. The COUNTY'S OWN TOP RATE is derived at calculation time from this file's existing countyRates block (mdCountyTopRate() in src/taxes/state.ts) rather than transcribed a second time as its own ten-entry table — for Anne Arundel and Frederick (the two tiered counties), that means the top bracket of their own tiered schedule, verified to equal 3.20% for both, matching the guide's own combined 9.70% figure for those two rows.",
+    "topStateRate": 0.065,
+    "election": "employer_option",
+    "confidence": "primary_source_confirmed"
+  },
+  "effectiveDated": [
+    {
+      "from": "2025-07-01",
+      "note": "HB 352 (2025 session) added 6.25% and 6.5% brackets and replaced the 15% standard deduction with a flat $3,350, retroactive to 1 January; the Comptroller's guide was revised in June 2025 and payroll providers switched from July. No catch-up is required.",
+      "set": {
+        "bracketStatePlusLocal.stateBrackets": {
+          "mfjHoh": [
+            {
+              "from": 0,
+              "to": 150000,
+              "base": 0.0,
+              "rate": 0.0475
+            },
+            {
+              "from": 150000,
+              "to": 175000,
+              "base": 7125.0,
+              "rate": 0.05
+            },
+            {
+              "from": 175000,
+              "to": 225000,
+              "base": 8375.0,
+              "rate": 0.0525
+            },
+            {
+              "from": 225000,
+              "to": 300000,
+              "base": 11000.0,
+              "rate": 0.055
+            },
+            {
+              "from": 300000,
+              "to": 600000,
+              "base": 15125.0,
+              "rate": 0.0575
+            },
+            {
+              "from": 600000,
+              "to": 1200000,
+              "base": 32375.0,
+              "rate": 0.0625
+            },
+            {
+              "from": 1200000,
+              "to": null,
+              "base": 69875.0,
+              "rate": 0.065
+            }
+          ],
+          "single": [
+            {
+              "from": 0,
+              "to": 100000,
+              "base": 0.0,
+              "rate": 0.0475
+            },
+            {
+              "from": 100000,
+              "to": 125000,
+              "base": 4750.0,
+              "rate": 0.05
+            },
+            {
+              "from": 125000,
+              "to": 150000,
+              "base": 6000.0,
+              "rate": 0.0525
+            },
+            {
+              "from": 150000,
+              "to": 250000,
+              "base": 7312.5,
+              "rate": 0.055
+            },
+            {
+              "from": 250000,
+              "to": 500000,
+              "base": 12812.5,
+              "rate": 0.0575
+            },
+            {
+              "from": 500000,
+              "to": 1000000,
+              "base": 27187.5,
+              "rate": 0.0625
+            },
+            {
+              "from": 1000000,
+              "to": null,
+              "base": 58437.5,
+              "rate": 0.065
+            }
+          ]
+        },
+        "bracketStatePlusLocal.standardDeductionPercent": null,
+        "bracketStatePlusLocal.standardDeductionAnnual": 3350,
+        "bracketStatePlusLocal.standardDeductionPerPeriod": {
+          "weekly": 64.42,
+          "biweekly": 128.25,
+          "semimonthly": 139.58,
+          "monthly": 279.17,
+          "quarterly": 837.5,
+          "annual": 3350.0,
+          "daily": 9.18
+        }
+      }
+    }
+  ],
+  "$yearNote": "2025 ruleset in two parts. Until 2025-06-30: 15% of annual wages as the standard deduction (at least $1,850, at most $2,800), $3,200 per exemption, 4.75% to 5.75%. From 2025-07-01 (effectiveDated): the June 2025 revision after HB 352, a flat $3,350 standard deduction and new 6.25% / 6.5% top brackets. Withholding starts at 4.75% (Maryland law allows no lower withholding rate). County rates are the Comptroller's 2025 list: Allegany 3.03% and Kent 3.20% (both raised for 2026)."
+}

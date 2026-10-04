@@ -1,0 +1,1965 @@
+{
+  "$comment": "All Ohio School District Income Tax (SDIT) districts and their Tax Year 2026 rates. Parsed directly from Ohio Dept of Taxation's own official SDIT_LIST.pdf (5 pages, dated 2025-12-30) via a Python script written and self-validated this session -- NOT hand-transcribed and NOT AI-recalled figures.",
+  "year": 2026,
+  "asOf": "2026-08-11",
+  "source": {
+    "title": "Ohio Dept of Taxation - School District Income Tax rate list, Tax Year 2026",
+    "url": "https://tax.ohio.gov/static/tax_analysis/tax_data_series/school_district_data/SDIT_LIST.pdf",
+    "verifiedOn": "2026-08-12",
+    "verifiedBy": "PDF re-downloaded and re-parsed 2026-08-12 with pdfplumber (word-coordinate row clustering) to fix a 2-row table-merge bug found in the 2026-08-11 pdftotext-based parse; see parseConfidence. The official document itself states 'Total number of districts are 214' and 'Taxes based on earned income only; 68 districts' -- both now matched exactly."
+  },
+  "taxableWages": {
+    "basis": "Ohio school district income tax is levied on Ohio modified adjusted gross income (ORC 5748.01(E)(1), 'traditional' base) or on wages to the extent included in it (5748.01(E)(2), 'earned income' base). Either way the wage figure is the Ohio state income tax base, so an elective 401(k)/403(b)/457 deferral (excluded from federal and Ohio AGI) DOES reduce it. The engine therefore uses the Ohio state exemptPretax list (data/states/OH-2026.json) for both base types; unlike the municipal and JEDD/JEDZ taxes it has no separate list.",
+    "sources": [
+      {
+        "title": "Ohio Revised Code 5748.01(E), definition of \"taxable income\" for school district income tax",
+        "url": "https://codes.ohio.gov/ohio-revised-code/section-5748.01",
+        "verifiedOn": "2026-09-25",
+        "quote": "\"Taxable income\" means one of the following, as specified in the resolution imposing the tax: (1) Modified adjusted gross income for the taxable year, as defined in section 5747.01 of the Revised Code, less the exemptions provided by section 5747.025 ... (2) Wages, salaries, tips, and other employee compensation to the extent included in modified adjusted gross income as defined in section 5747.01 of the Revised Code ..."
+      }
+    ]
+  },
+  "officialTotals": {
+    "districtsPerSource": 214,
+    "earnedIncomeOnlyPerSource": 68
+  },
+  "parsedTotals": {
+    "districtsExtracted": 214,
+    "earnedIncomeOnlyExtracted": 68
+  },
+  "parseConfidence": "EXHAUSTIVELY VERIFIED 2026-08-12: every one of the 214 rows was independently re-extracted from the source PDF (pdfplumber word-coordinate clustering, with explicit handling for the table's two wrap patterns -- rows whose name text splits across two lines with county/SD/IRN trailing on the second line, e.g. West Liberty-Salem LSD -- and rows where county/SD/IRN lead but rate/year trail on a continuation line) and then diffed field-by-field (county, IRN, rate2026, earnedIncomeOnlyBase, firstYearEffective) against the shipped data. Result: 214/214 sdNumbers match, zero field discrepancies. This closes both the original 2-row merge bug (Seneca East/Tiffin CSD, Carlisle/Kings LSD, fixed and now independently reconfirmed correct) and the possibility of any other undetected transcription error elsewhere in the table -- the first pass only checked for merge-shaped anomalies via pattern matching; this pass checked every value against a from-scratch parse. Also cross-checked against the document's own page-0 change summary ('Seneca * 7407 Tiffin CSD 0.75% ... expires 2031', 'Warren * 8303 Kings LSD 1.00% ... CPT'), which independently confirms the two previously-fixed rows. 68/68 earned-income-only count preserved throughout.",
+  "schema": "Each entry: county, sdNumber (4-digit school-district number), irn (5-digit Information Retrieval Number), name (district name, often with an embedded expiration/CPT note exactly as Ohio publishes it), rate2026 (decimal, e.g. 0.0075 = 0.75%), earnedIncomeOnlyBase (true = taxes earned income only; false = traditional MAGI-less-exemptions base), firstYearEffective (the year this district first adopted SDIT, not necessarily when the CURRENT rate took effect if renewed/changed since).",
+  "districts": [
+    {
+      "county": "Allen",
+      "sdNumber": "0203",
+      "irn": "45211",
+      "name": "Bluffton EVSD (expires 2028)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Allen",
+      "sdNumber": "0204",
+      "irn": "43885",
+      "name": "Delphos CSD (expires 2030)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2021
+    },
+    {
+      "county": "Allen",
+      "sdNumber": "0209",
+      "irn": "45807",
+      "name": "Spencerville LSD (expires 2027)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Ashland",
+      "sdNumber": "0302",
+      "irn": "45823",
+      "name": "Hillsdale LSD (expires 2033)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2014
+    },
+    {
+      "county": "Ashland",
+      "sdNumber": "0303",
+      "irn": "45468",
+      "name": "Loudonville-Perrysville EVSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Ashtabula",
+      "sdNumber": "0404",
+      "irn": "44057",
+      "name": "Geneva Area CSD (expires 2028)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Athens",
+      "sdNumber": "0502",
+      "irn": "43521",
+      "name": "Athens CSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Athens",
+      "sdNumber": "0505",
+      "irn": "45922",
+      "name": "Trimble LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0601",
+      "irn": "45948",
+      "name": "Minster LSD (expires 2031)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0602",
+      "irn": "45955",
+      "name": "New Bremen LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0603",
+      "irn": "45963",
+      "name": "New Knoxville LSD (0.25% expires 2029; 1.00% CPT)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0604",
+      "irn": "44727",
+      "name": "St Marys CSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0605",
+      "irn": "44982",
+      "name": "Wapakoneta CSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Auglaize",
+      "sdNumber": "0606",
+      "irn": "45971",
+      "name": "Waynesfield-Goshen LSD (expires 2026)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Butler",
+      "sdNumber": "0905",
+      "irn": "46128",
+      "name": "Madison LSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Butler",
+      "sdNumber": "0907",
+      "irn": "46136",
+      "name": "New Miami LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Butler",
+      "sdNumber": "0908",
+      "irn": "46144",
+      "name": "Ross LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Butler",
+      "sdNumber": "0909",
+      "irn": "46151",
+      "name": "Talawanda CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Champaign",
+      "sdNumber": "1102",
+      "irn": "45484",
+      "name": "Mechanicsburg EVSD (1.00% expires 2041; 0.50% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1997
+    },
+    {
+      "county": "Champaign",
+      "sdNumber": "1103",
+      "irn": "46201",
+      "name": "Triad LSD (0.50% expires 2030; 1.00% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Champaign",
+      "sdNumber": "1105",
+      "irn": "46219",
+      "name": "West Liberty-Salem LSD (1.00% expires 2027; 0.25% expires 2036; 0.50% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1984
+    },
+    {
+      "county": "Clark",
+      "sdNumber": "1203",
+      "irn": "46250",
+      "name": "Northeastern LSD (expires 2035)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2016
+    },
+    {
+      "county": "Clark",
+      "sdNumber": "1204",
+      "irn": "46268",
+      "name": "Northwestern LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Clark",
+      "sdNumber": "1205",
+      "irn": "46276",
+      "name": "Southeastern LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Clermont",
+      "sdNumber": "1303",
+      "irn": "46326",
+      "name": "Clermont-Northeastern LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Clermont",
+      "sdNumber": "1305",
+      "irn": "46342",
+      "name": "Goshen LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Clinton",
+      "sdNumber": "1401",
+      "irn": "46383",
+      "name": "Blanchester LSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2024
+    },
+    {
+      "county": "Clinton",
+      "sdNumber": "1402",
+      "irn": "46391",
+      "name": "Clinton-Massie LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Columbiana",
+      "sdNumber": "1502",
+      "irn": "45328",
+      "name": "Columbiana EVSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2003
+    },
+    {
+      "county": "Columbiana",
+      "sdNumber": "1503",
+      "irn": "46433",
+      "name": "Crestview LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Columbiana",
+      "sdNumber": "1510",
+      "irn": "46458",
+      "name": "United LSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Crawford",
+      "sdNumber": "1701",
+      "irn": "46508",
+      "name": "Buckeye Central LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Crawford",
+      "sdNumber": "1703",
+      "irn": "46516",
+      "name": "Colonel Crawford LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Crawford",
+      "sdNumber": "1704",
+      "irn": "45344",
+      "name": "Crestline EVSD",
+      "rate2026": 0.0025,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1901",
+      "irn": "46623",
+      "name": "Ansonia LSD (1.00% expires 2030; 0.75% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1902",
+      "irn": "46631",
+      "name": "Arcanum-Butler LSD (0.75% expires 2030; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1903",
+      "irn": "46649",
+      "name": "Franklin Monroe LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1904",
+      "irn": "44099",
+      "name": "Greenville CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1905",
+      "irn": "46672",
+      "name": "Mississinawa Valley LSD (0.75% expires 2031; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1906",
+      "irn": "46680",
+      "name": "Tri-Village LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Darke",
+      "sdNumber": "1907",
+      "irn": "45633",
+      "name": "Versailles EVSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Defiance",
+      "sdNumber": "2001",
+      "irn": "46706",
+      "name": "Ayersville LSD (expires 2027)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Defiance",
+      "sdNumber": "2002",
+      "irn": "46714",
+      "name": "Central LSD (0.50% expires 2029; 0.75% CPT)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Defiance",
+      "sdNumber": "2003",
+      "irn": "43869",
+      "name": "Defiance CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Defiance",
+      "sdNumber": "2004",
+      "irn": "45419",
+      "name": "Hicksville EVSD (0.75% expires 2029; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Delaware",
+      "sdNumber": "2101",
+      "irn": "46748",
+      "name": "Big Walnut LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Delaware",
+      "sdNumber": "2102",
+      "irn": "46755",
+      "name": "Buckeye Valley LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2301",
+      "irn": "46847",
+      "name": "Amanda-Clearcreek LSD (expires 2034)",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2020
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2302",
+      "irn": "46854",
+      "name": "Berne Union LSD",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2303",
+      "irn": "46862",
+      "name": "Bloom-Carroll LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1997
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2304",
+      "irn": "46870",
+      "name": "Fairfield Union LSD (1.00% expires 2036; 1.00% CPT)",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2305",
+      "irn": "44206",
+      "name": "Lancaster CSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2306",
+      "irn": "46888",
+      "name": "Liberty Union-Thurston LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2307",
+      "irn": "46896",
+      "name": "Pickerington LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Fairfield",
+      "sdNumber": "2308",
+      "irn": "46904",
+      "name": "Walnut Township LSD (expires 2033)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Fayette",
+      "sdNumber": "2402",
+      "irn": "45013",
+      "name": "Washington Court House CSD (expires 2027)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2021
+    },
+    {
+      "county": "Franklin",
+      "sdNumber": "2501",
+      "irn": "43620",
+      "name": "Bexley CSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Franklin",
+      "sdNumber": "2502",
+      "irn": "46946",
+      "name": "Canal Winchester LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Franklin",
+      "sdNumber": "2509",
+      "irn": "47001",
+      "name": "Reynoldsburg CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Franklin",
+      "sdNumber": "2514",
+      "irn": "45047",
+      "name": "Westerville CSD (CPT)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2602",
+      "irn": "47050",
+      "name": "Evergreen LSD (0.25% expires 2027; 0.50% expires 2029; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2603",
+      "irn": "47068",
+      "name": "Fayette LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2604",
+      "irn": "47076",
+      "name": "Pettisville LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2605",
+      "irn": "47084",
+      "name": "Pike-Delta-York LSD (existing 1% expires 2026, 1.25% CPT begins 2027)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2022
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2606",
+      "irn": "47092",
+      "name": "Swanton LSD (expires 2029)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Fulton",
+      "sdNumber": "2607",
+      "irn": "45641",
+      "name": "Wauseon EVSD (expires 2027)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2023
+    },
+    {
+      "county": "Geauga",
+      "sdNumber": "2801",
+      "irn": "47167",
+      "name": "Berkshire LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Greene",
+      "sdNumber": "2902",
+      "irn": "47258",
+      "name": "Cedar Cliff LSD (0.25% expires 2038; 1.00% CPT)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Greene",
+      "sdNumber": "2903",
+      "irn": "43968",
+      "name": "Fairborn CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Greene",
+      "sdNumber": "2904",
+      "irn": "47266",
+      "name": "Greeneview LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Greene",
+      "sdNumber": "2906",
+      "irn": "45153",
+      "name": "Xenia Community CSD (expires 2030)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1998
+    },
+    {
+      "county": "Greene",
+      "sdNumber": "2907",
+      "irn": "45674",
+      "name": "Yellow Springs EVSD",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2002
+    },
+    {
+      "county": "Hamilton",
+      "sdNumber": "3118",
+      "irn": "47381",
+      "name": "Southwest LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Hamilton",
+      "sdNumber": "3122",
+      "irn": "45146",
+      "name": "Wyoming CSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3201",
+      "irn": "47415",
+      "name": "Arcadia LSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3202",
+      "irn": "47423",
+      "name": "Arlington LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1984
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3203",
+      "irn": "47431",
+      "name": "Cory-Rawson LSD (0.75% expires 2028; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3204",
+      "irn": "43984",
+      "name": "Findlay CSD (CPT)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3205",
+      "irn": "47449",
+      "name": "Liberty-Benton LSD (expires 2030)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3206",
+      "irn": "47456",
+      "name": "McComb LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1984
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3207",
+      "irn": "47464",
+      "name": "Van Buren LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2021
+    },
+    {
+      "county": "Hancock",
+      "sdNumber": "3208",
+      "irn": "47472",
+      "name": "Vanlue LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3301",
+      "irn": "45187",
+      "name": "Ada EVSD (0.75% expires 2027; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3302",
+      "irn": "47498",
+      "name": "Hardin Northern LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3303",
+      "irn": "44172",
+      "name": "Kenton CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3304",
+      "irn": "47506",
+      "name": "Ridgemont LSD (0.75% expires 2030; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3305",
+      "irn": "47514",
+      "name": "Riverdale LSD (expires 2026)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2000
+    },
+    {
+      "county": "Hardin",
+      "sdNumber": "3306",
+      "irn": "47522",
+      "name": "Upper Scioto Valley LSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Henry",
+      "sdNumber": "3501",
+      "irn": "47571",
+      "name": "Holgate LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Henry",
+      "sdNumber": "3502",
+      "irn": "47589",
+      "name": "Liberty Center LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Henry",
+      "sdNumber": "3504",
+      "irn": "47597",
+      "name": "Patrick Henry LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Highland",
+      "sdNumber": "3603",
+      "irn": "45401",
+      "name": "Greenfield EVSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Highland",
+      "sdNumber": "3604",
+      "irn": "44123",
+      "name": "Hillsboro CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3901",
+      "irn": "43596",
+      "name": "Bellevue CSD (expires 2036)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2002
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3902",
+      "irn": "47712",
+      "name": "Monroeville LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3903",
+      "irn": "47720",
+      "name": "New London LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3904",
+      "irn": "44560",
+      "name": "Norwalk CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3905",
+      "irn": "47738",
+      "name": "South Central LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3906",
+      "irn": "47746",
+      "name": "Western Reserve LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Huron",
+      "sdNumber": "3907",
+      "irn": "45096",
+      "name": "Willard CSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2012
+    },
+    {
+      "county": "Knox",
+      "sdNumber": "4201",
+      "irn": "47829",
+      "name": "Centerburg LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Knox",
+      "sdNumber": "4202",
+      "irn": "47837",
+      "name": "Danville LSD (1.25% expires 2034; 0.50% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4501",
+      "irn": "45393",
+      "name": "Granville EVSD (expires 2028)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4503",
+      "irn": "47985",
+      "name": "Johnstown-Monroe LSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4506",
+      "irn": "48017",
+      "name": "Licking Valley LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1994
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4507",
+      "irn": "44453",
+      "name": "Newark CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1998
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4508",
+      "irn": "48025",
+      "name": "North Fork LSD (expires 2031)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4509",
+      "irn": "48033",
+      "name": "Northridge LSD (expires 2046)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2020
+    },
+    {
+      "county": "Licking",
+      "sdNumber": "4510",
+      "irn": "48041",
+      "name": "Southwest Licking LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Logan",
+      "sdNumber": "4604",
+      "irn": "48090",
+      "name": "Riverside LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Lorain",
+      "sdNumber": "4712",
+      "irn": "44594",
+      "name": "Oberlin CSD (0.75% expires 2027; 1.25% CPT)",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Lorain",
+      "sdNumber": "4715",
+      "irn": "45658",
+      "name": "Wellington EVSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Madison",
+      "sdNumber": "4901",
+      "irn": "48256",
+      "name": "Jefferson LSD (expires 2033)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Madison",
+      "sdNumber": "4902",
+      "irn": "48264",
+      "name": "Jonathan Alder LSD (0.75% expires 2026, 0.50% expires 2031)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Madison",
+      "sdNumber": "4903",
+      "irn": "44255",
+      "name": "London CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Madison",
+      "sdNumber": "4904",
+      "irn": "48272",
+      "name": "Madison Plains LSD (expires 2033)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Mahoning",
+      "sdNumber": "5008",
+      "irn": "48355",
+      "name": "Sebring LSD (expires 2026)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Mahoning",
+      "sdNumber": "5010",
+      "irn": "48371",
+      "name": "Springfield LSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2000
+    },
+    {
+      "county": "Marion",
+      "sdNumber": "5101",
+      "irn": "48413",
+      "name": "Elgin LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Marion",
+      "sdNumber": "5103",
+      "irn": "48421",
+      "name": "Pleasant LSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2020
+    },
+    {
+      "county": "Marion",
+      "sdNumber": "5104",
+      "irn": "48439",
+      "name": "Ridgedale LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2021
+    },
+    {
+      "county": "Marion",
+      "sdNumber": "5105",
+      "irn": "48447",
+      "name": "River Valley LSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2020
+    },
+    {
+      "county": "Medina",
+      "sdNumber": "5204",
+      "irn": "48488",
+      "name": "Cloverleaf LSD (0.75% expires 2034, 0.25% CPT)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Mercer",
+      "sdNumber": "5401",
+      "irn": "43729",
+      "name": "Celina CSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Mercer",
+      "sdNumber": "5402",
+      "irn": "45310",
+      "name": "Coldwater EVSD (0.50% expires 2030, 0.50% CPT)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Mercer",
+      "sdNumber": "5406",
+      "irn": "48595",
+      "name": "Fort Recovery LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Mercer",
+      "sdNumber": "5403",
+      "irn": "48553",
+      "name": "Marion LSD (expires 2053)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2024
+    },
+    {
+      "county": "Mercer",
+      "sdNumber": "5405",
+      "irn": "48579",
+      "name": "Parkway LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5501",
+      "irn": "48611",
+      "name": "Bethel LSD (expires 2030)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2011
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5502",
+      "irn": "45229",
+      "name": "Bradford EVSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1983
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5503",
+      "irn": "45336",
+      "name": "Covington EVSD (1.25% expires 2030; 0.75% CPT)",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1994
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5504",
+      "irn": "48629",
+      "name": "Miami East LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5505",
+      "irn": "45518",
+      "name": "Milton Union EVSD (0.75% expires 2030, 1.25% CPT)",
+      "rate2026": 0.02,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2009
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5506",
+      "irn": "48637",
+      "name": "Newton LSD (0.75% expires 2028; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5507",
+      "irn": "44644",
+      "name": "Piqua CSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Miami",
+      "sdNumber": "5509",
+      "irn": "44925",
+      "name": "Troy CSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Montgomery",
+      "sdNumber": "5708",
+      "irn": "48710",
+      "name": "New Lebanon LSD (0.75% expires 2030; 0.50% expires 2031)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1998
+    },
+    {
+      "county": "Montgomery",
+      "sdNumber": "5713",
+      "irn": "48744",
+      "name": "Valley View LSD",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Morrow",
+      "sdNumber": "5901",
+      "irn": "48793",
+      "name": "Cardington-Lincoln LSD (expires 2028)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2014
+    },
+    {
+      "county": "Morrow",
+      "sdNumber": "5902",
+      "irn": "48801",
+      "name": "Highland LSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Morrow",
+      "sdNumber": "5903",
+      "irn": "45534",
+      "name": "Mount Gilead EVSD (0.75% CPT)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Morrow",
+      "sdNumber": "5904",
+      "irn": "48819",
+      "name": "Northmor LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Paulding",
+      "sdNumber": "6301",
+      "irn": "48991",
+      "name": "Antwerp LSD (0.75% expires 2030; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Paulding",
+      "sdNumber": "6302",
+      "irn": "45575",
+      "name": "Paulding EVSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Paulding",
+      "sdNumber": "6303",
+      "irn": "49031",
+      "name": "Wayne Trace LSD (0.75% expires 2031; 0.50% CPT)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Pickaway",
+      "sdNumber": "6501",
+      "irn": "43760",
+      "name": "Circleville CSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Pickaway",
+      "sdNumber": "6502",
+      "irn": "49080",
+      "name": "Logan Elm LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Pickaway",
+      "sdNumber": "6503",
+      "irn": "49098",
+      "name": "Teays Valley LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Portage",
+      "sdNumber": "6704",
+      "irn": "49213",
+      "name": "James A Garfield LSD (expires 2028)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Preble",
+      "sdNumber": "6803",
+      "irn": "43935",
+      "name": "Eaton CSD (0.75% expires 2030; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Preble",
+      "sdNumber": "6802",
+      "irn": "49270",
+      "name": "National Trail LSD (0.75% expires 2030; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Preble",
+      "sdNumber": "6804",
+      "irn": "49288",
+      "name": "Preble-Shawnee LSD (0.75% expires 2031; 1.00% CPT)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Preble",
+      "sdNumber": "6806",
+      "irn": "91397",
+      "name": "Tri-County North LSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2015
+    },
+    {
+      "county": "Preble",
+      "sdNumber": "6805",
+      "irn": "49296",
+      "name": "Twin Valley Community LSD (0.75% expires 2027; 0.75% expires 2028)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2003
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6901",
+      "irn": "49312",
+      "name": "Columbus Grove LSD (0.75% expires 2030; 0.25% expires 2032)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6902",
+      "irn": "49320",
+      "name": "Continental LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6903",
+      "irn": "49338",
+      "name": "Jennings LSD (expires 2030)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6904",
+      "irn": "49346",
+      "name": "Kalida LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6905",
+      "irn": "49353",
+      "name": "Leipsic LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6906",
+      "irn": "49361",
+      "name": "Miller City-New Cleveland LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6907",
+      "irn": "49379",
+      "name": "Ottawa-Glandorf LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6908",
+      "irn": "49387",
+      "name": "Ottoville LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Putnam",
+      "sdNumber": "6909",
+      "irn": "49395",
+      "name": "Pandora-Gilboa LSD (1.00% expires 2036; 0.75% expires 2033)",
+      "rate2026": 0.0175,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1994
+    },
+    {
+      "county": "Richland",
+      "sdNumber": "7001",
+      "irn": "49411",
+      "name": "Clear Fork Valley LSD (expires 2037)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2013
+    },
+    {
+      "county": "Richland",
+      "sdNumber": "7007",
+      "irn": "49460",
+      "name": "Plymouth-Shiloh LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Richland",
+      "sdNumber": "7008",
+      "irn": "44776",
+      "name": "Shelby CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2006
+    },
+    {
+      "county": "Ross",
+      "sdNumber": "7106",
+      "irn": "49536",
+      "name": "Union-Scioto LSD (expires 2029)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Ross",
+      "sdNumber": "7107",
+      "irn": "49544",
+      "name": "Zane Trace LSD (CPT)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2016
+    },
+    {
+      "county": "Sandusky",
+      "sdNumber": "7201",
+      "irn": "45302",
+      "name": "Clyde-Green Springs EVSD (0.50% expires 2030; 1.00% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2009
+    },
+    {
+      "county": "Sandusky",
+      "sdNumber": "7202",
+      "irn": "44016",
+      "name": "Fremont CSD (expires 2028)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1994
+    },
+    {
+      "county": "Sandusky",
+      "sdNumber": "7203",
+      "irn": "45385",
+      "name": "Gibsonburg EVSD (expires 2028)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2014
+    },
+    {
+      "county": "Sandusky",
+      "sdNumber": "7204",
+      "irn": "49569",
+      "name": "Lakota LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Seneca",
+      "sdNumber": "7403",
+      "irn": "49700",
+      "name": "Hopewell-Loudon LSD (expires 2048)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2011
+    },
+    {
+      "county": "Seneca",
+      "sdNumber": "7404",
+      "irn": "49718",
+      "name": "New Riegel LSD (0.75% expires 2031; 0.75% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Seneca",
+      "sdNumber": "7405",
+      "irn": "49726",
+      "name": "Old Fort LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Seneca",
+      "sdNumber": "7406",
+      "irn": "49684",
+      "name": "Seneca East LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2001
+    },
+    {
+      "county": "Seneca",
+      "sdNumber": "7407",
+      "irn": "44891",
+      "name": "Tiffin CSD (expires 2031)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7501",
+      "irn": "49759",
+      "name": "Anna LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1983
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7502",
+      "irn": "49767",
+      "name": "Botkins LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2009
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7503",
+      "irn": "49775",
+      "name": "Fairlawn LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7504",
+      "irn": "49783",
+      "name": "Fort Loramie LSD (expires 2029)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1995
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7505",
+      "irn": "49791",
+      "name": "Hardin-Houston LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7506",
+      "irn": "49809",
+      "name": "Jackson Center LSD",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2010
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7507",
+      "irn": "49817",
+      "name": "Russia LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Shelby",
+      "sdNumber": "7508",
+      "irn": "44784",
+      "name": "Sidney CSD (expires 2031)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2022
+    },
+    {
+      "county": "Stark",
+      "sdNumber": "7612",
+      "irn": "49908",
+      "name": "Northwest LSD (expires 2032)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2011
+    },
+    {
+      "county": "Summit",
+      "sdNumber": "7711",
+      "irn": "44552",
+      "name": "Norton CSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Union",
+      "sdNumber": "8001",
+      "irn": "50328",
+      "name": "Fairbanks LSD (0.25% CPT; 0.75% CPT)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Union",
+      "sdNumber": "8003",
+      "irn": "50336",
+      "name": "North Union LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Van Wert",
+      "sdNumber": "8101",
+      "irn": "50351",
+      "name": "Crestview LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Van Wert",
+      "sdNumber": "8104",
+      "irn": "44966",
+      "name": "Van Wert CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Warren",
+      "sdNumber": "8301",
+      "irn": "50419",
+      "name": "Carlisle LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2004
+    },
+    {
+      "county": "Warren",
+      "sdNumber": "8303",
+      "irn": "50435",
+      "name": "Kings LSD (CPT)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2026
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8501",
+      "irn": "50534",
+      "name": "Chippewa LSD (expires 2027)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8502",
+      "irn": "50542",
+      "name": "Dalton LSD",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8503",
+      "irn": "50559",
+      "name": "Green LSD (expires 2028)",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2019
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8505",
+      "irn": "50575",
+      "name": "Northwestern LSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1990
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8504",
+      "irn": "50567",
+      "name": "Norwayne LSD (expires 2028)",
+      "rate2026": 0.0075,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2014
+    },
+    {
+      "county": "Wayne",
+      "sdNumber": "8509",
+      "irn": "50591",
+      "name": "Triway LSD (expires 2045)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2013
+    },
+    {
+      "county": "Williams",
+      "sdNumber": "8601",
+      "irn": "43679",
+      "name": "Bryan CSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Williams",
+      "sdNumber": "8602",
+      "irn": "50617",
+      "name": "Edgerton LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Williams",
+      "sdNumber": "8604",
+      "irn": "50633",
+      "name": "Millcreek-West Unity LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Williams",
+      "sdNumber": "8605",
+      "irn": "45526",
+      "name": "Montpelier EVSD",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2000
+    },
+    {
+      "county": "Williams",
+      "sdNumber": "8607",
+      "irn": "50658",
+      "name": "Stryker LSD (0.25% expires 2031; 1.25% CPT)",
+      "rate2026": 0.015,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1991
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8701",
+      "irn": "43638",
+      "name": "Bowling Green CSD (0.75% expires 2030, 0.50% CPT)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1993
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8702",
+      "irn": "50674",
+      "name": "Eastwood LSD (expires 2031)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2007
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8703",
+      "irn": "50682",
+      "name": "Elmwood LSD (0.50% expires 2030; 0.75% expires 2031)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8705",
+      "irn": "50708",
+      "name": "North Baltimore LSD (1.00% expires 2027; 0.25% expires 2034)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2008
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8706",
+      "irn": "50716",
+      "name": "Northwood LSD",
+      "rate2026": 0.0025,
+      "earnedIncomeOnlyBase": true,
+      "firstYearEffective": 2015
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8707",
+      "irn": "50724",
+      "name": "Otsego LSD",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2003
+    },
+    {
+      "county": "Wood",
+      "sdNumber": "8708",
+      "irn": "45583",
+      "name": "Perrysburg EVSD",
+      "rate2026": 0.005,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1992
+    },
+    {
+      "county": "Wyandot",
+      "sdNumber": "8801",
+      "irn": "45260",
+      "name": "Carey EVSD (expires 2029)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 2005
+    },
+    {
+      "county": "Wyandot",
+      "sdNumber": "8802",
+      "irn": "50740",
+      "name": "Mohawk LSD (expires 2030)",
+      "rate2026": 0.01,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    },
+    {
+      "county": "Wyandot",
+      "sdNumber": "8803",
+      "irn": "45625",
+      "name": "Upper Sandusky EVSD (expires 2029)",
+      "rate2026": 0.0125,
+      "earnedIncomeOnlyBase": false,
+      "firstYearEffective": 1996
+    }
+  ],
+  "knownGaps": [
+    "Rate expiration dates are embedded in the free-text name field rather than a structured dated field.",
+    "Calculation: ohioSchoolDistrictTax() (src/taxes/state.ts) is wired and computes OH_SDIT off certificate.schoolDistrictCode. Address resolution: geocode/census.ts's fetchSchoolDistrictAtPoint()/fetchSchoolDistrictAtPointSafe() resolve a lat/lon to an Ohio school district via Census's own TIGERweb unified-school-district identify service, consumed by geocode/index.ts's resolveAddress() specifically for OH addresses. Genuinely remaining gap: resolveAddress() only exercises this school-district lookup for Ohio (geographies.state === 'OH'), so a caller resolving a non-OH address never gets a district code back -- structurally fine since only Ohio's SDIT reads one, not a bug.",
+    "firstYearEffective is when the district FIRST adopted SDIT, not when the CURRENT 2026 rate took effect if renewed/changed since."
+  ]
+}

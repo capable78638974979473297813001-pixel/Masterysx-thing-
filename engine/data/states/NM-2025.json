@@ -1,0 +1,1612 @@
+{
+  "code": "NM",
+  "name": "New Mexico",
+  "year": 2025,
+  "method": "new_mexico_percentage_method",
+  "sources": [
+    {
+      "title": "New Mexico Taxation and Revenue Department -- FYI-104 New Mexico Withholding Tax, effective January 1, 2025 (Rev. 11/2024), Internet Archive copy captured 2025-03-11",
+      "url": "https://web.archive.org/web/20250311213128id_/https://realfile.tax.newmexico.gov/FYI-104.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "New Mexico State Wage Withholding Tables for Percentage Method of Withholding (For wages paid on or after January 1, 2025) ... Not Over 313 $0.00 ... 9,063 and over 406.17 + 5.9%"
+    },
+    {
+      "title": "New Mexico TRD -- Important return changes for 2026 (WKC fee notice)",
+      "url": "https://www.tax.newmexico.gov/individuals/wp-content/uploads/sites/5/2026/01/WKC-Fee-Payment-Other-Update-.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "the WKC fee per employee has increased from $4.30 to $4.80, effective starting July 1, 2025."
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "percentageMethodTables": {
+    "$comment": "FYI-104's own 'Percentage Method of Withholding' tables: 8 independently-published per-period bracket schedules (no annualize/divide step at all, unlike almost every other bracket state in this project) x 3 filing statuses (Single, Married, Head of Household). Each bracket is {from, to, base, rate} in this project's standard WIBracket shape -- base is taken VERBATIM from the published table, not recomputed, per this project's standing convention (see Wisconsin's own bracket-shape precedent). A real, disclosed correction: the SEMI-MONTHLY table's own 'Not Over' summary line prints $304/$608/$456, which conflicts with that same table's own first bracket row AND with algebraic scaling from the (internally self-consistent) Annual table -- both independently point to the correct figures being $335/$671/$503. The values below use the corrected figures; see the FYI-104 source note above for the full resolution.",
+    "brackets": {
+      "single": {
+        "weekly": [
+          {
+            "from": 0,
+            "to": 144.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 144.0,
+            "to": 250.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 250.0,
+            "to": 385.0,
+            "base": 1.59,
+            "rate": 0.032
+          },
+          {
+            "from": 385.0,
+            "to": 462.0,
+            "base": 5.89,
+            "rate": 0.032
+          },
+          {
+            "from": 462.0,
+            "to": 635.0,
+            "base": 8.36,
+            "rate": 0.043
+          },
+          {
+            "from": 635.0,
+            "to": 788.0,
+            "base": 15.8,
+            "rate": 0.043
+          },
+          {
+            "from": 788.0,
+            "to": 1115.0,
+            "base": 22.41,
+            "rate": 0.047
+          },
+          {
+            "from": 1115.0,
+            "to": 1423.0,
+            "base": 37.78,
+            "rate": 0.047
+          },
+          {
+            "from": 1423.0,
+            "to": 4183.0,
+            "base": 52.24,
+            "rate": 0.049
+          },
+          {
+            "from": 4183.0,
+            "to": null,
+            "base": 187.46,
+            "rate": 0.059
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 288.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 288.0,
+            "to": 500.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 500.0,
+            "to": 769.0,
+            "base": 3.17,
+            "rate": 0.032
+          },
+          {
+            "from": 769.0,
+            "to": 923.0,
+            "base": 11.79,
+            "rate": 0.032
+          },
+          {
+            "from": 923.0,
+            "to": 1269.0,
+            "base": 16.71,
+            "rate": 0.043
+          },
+          {
+            "from": 1269.0,
+            "to": 1577.0,
+            "base": 31.6,
+            "rate": 0.043
+          },
+          {
+            "from": 1577.0,
+            "to": 2231.0,
+            "base": 44.83,
+            "rate": 0.047
+          },
+          {
+            "from": 2231.0,
+            "to": 2846.0,
+            "base": 75.56,
+            "rate": 0.047
+          },
+          {
+            "from": 2846.0,
+            "to": 8365.0,
+            "base": 104.48,
+            "rate": 0.049
+          },
+          {
+            "from": 8365.0,
+            "to": null,
+            "base": 374.92,
+            "rate": 0.059
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 313.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 313.0,
+            "to": 542.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 542.0,
+            "to": 833.0,
+            "base": 3.44,
+            "rate": 0.032
+          },
+          {
+            "from": 833.0,
+            "to": 1000.0,
+            "base": 12.77,
+            "rate": 0.032
+          },
+          {
+            "from": 1000.0,
+            "to": 1375.0,
+            "base": 18.1,
+            "rate": 0.043
+          },
+          {
+            "from": 1375.0,
+            "to": 1708.0,
+            "base": 34.23,
+            "rate": 0.043
+          },
+          {
+            "from": 1708.0,
+            "to": 2417.0,
+            "base": 48.56,
+            "rate": 0.047
+          },
+          {
+            "from": 2417.0,
+            "to": 3083.0,
+            "base": 81.85,
+            "rate": 0.047
+          },
+          {
+            "from": 3083.0,
+            "to": 9063.0,
+            "base": 113.19,
+            "rate": 0.049
+          },
+          {
+            "from": 9063.0,
+            "to": null,
+            "base": 406.17,
+            "rate": 0.059
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 625.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 625.0,
+            "to": 1083.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 1083.0,
+            "to": 1667.0,
+            "base": 6.88,
+            "rate": 0.032
+          },
+          {
+            "from": 1667.0,
+            "to": 2000.0,
+            "base": 25.54,
+            "rate": 0.032
+          },
+          {
+            "from": 2000.0,
+            "to": 2750.0,
+            "base": 36.21,
+            "rate": 0.043
+          },
+          {
+            "from": 2750.0,
+            "to": 3417.0,
+            "base": 68.46,
+            "rate": 0.043
+          },
+          {
+            "from": 3417.0,
+            "to": 4833.0,
+            "base": 97.13,
+            "rate": 0.047
+          },
+          {
+            "from": 4833.0,
+            "to": 6167.0,
+            "base": 163.71,
+            "rate": 0.047
+          },
+          {
+            "from": 6167.0,
+            "to": 18125.0,
+            "base": 226.38,
+            "rate": 0.049
+          },
+          {
+            "from": 18125.0,
+            "to": null,
+            "base": 812.33,
+            "rate": 0.059
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0,
+            "to": 1875.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1875.0,
+            "to": 3250.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 3250.0,
+            "to": 5000.0,
+            "base": 20.63,
+            "rate": 0.032
+          },
+          {
+            "from": 5000.0,
+            "to": 6000.0,
+            "base": 76.63,
+            "rate": 0.032
+          },
+          {
+            "from": 6000.0,
+            "to": 8250.0,
+            "base": 108.63,
+            "rate": 0.043
+          },
+          {
+            "from": 8250.0,
+            "to": 10250.0,
+            "base": 205.38,
+            "rate": 0.043
+          },
+          {
+            "from": 10250.0,
+            "to": 14500.0,
+            "base": 291.38,
+            "rate": 0.047
+          },
+          {
+            "from": 14500.0,
+            "to": 18500.0,
+            "base": 491.13,
+            "rate": 0.047
+          },
+          {
+            "from": 18500.0,
+            "to": 54375.0,
+            "base": 679.13,
+            "rate": 0.049
+          },
+          {
+            "from": 54375.0,
+            "to": null,
+            "base": 2437.0,
+            "rate": 0.059
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0,
+            "to": 3750.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 3750.0,
+            "to": 6500.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 6500.0,
+            "to": 10000.0,
+            "base": 41.25,
+            "rate": 0.032
+          },
+          {
+            "from": 10000.0,
+            "to": 12000.0,
+            "base": 153.25,
+            "rate": 0.032
+          },
+          {
+            "from": 12000.0,
+            "to": 16500.0,
+            "base": 217.25,
+            "rate": 0.043
+          },
+          {
+            "from": 16500.0,
+            "to": 20500.0,
+            "base": 410.75,
+            "rate": 0.043
+          },
+          {
+            "from": 20500.0,
+            "to": 29000.0,
+            "base": 582.75,
+            "rate": 0.047
+          },
+          {
+            "from": 29000.0,
+            "to": 37000.0,
+            "base": 982.25,
+            "rate": 0.047
+          },
+          {
+            "from": 37000.0,
+            "to": 108750.0,
+            "base": 1358.25,
+            "rate": 0.049
+          },
+          {
+            "from": 108750.0,
+            "to": null,
+            "base": 4874.0,
+            "rate": 0.059
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 7500.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 7500.0,
+            "to": 13000.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 13000.0,
+            "to": 20000.0,
+            "base": 82.5,
+            "rate": 0.032
+          },
+          {
+            "from": 20000.0,
+            "to": 24000.0,
+            "base": 306.5,
+            "rate": 0.032
+          },
+          {
+            "from": 24000.0,
+            "to": 33000.0,
+            "base": 434.5,
+            "rate": 0.043
+          },
+          {
+            "from": 33000.0,
+            "to": 41000.0,
+            "base": 821.5,
+            "rate": 0.043
+          },
+          {
+            "from": 41000.0,
+            "to": 58000.0,
+            "base": 1165.5,
+            "rate": 0.047
+          },
+          {
+            "from": 58000.0,
+            "to": 74000.0,
+            "base": 1964.5,
+            "rate": 0.047
+          },
+          {
+            "from": 74000.0,
+            "to": 217500.0,
+            "base": 2716.5,
+            "rate": 0.049
+          },
+          {
+            "from": 217500.0,
+            "to": null,
+            "base": 9748.0,
+            "rate": 0.059
+          }
+        ],
+        "daily": [
+          {
+            "from": 0,
+            "to": 28.8,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 28.8,
+            "to": 50.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 50.0,
+            "to": 76.9,
+            "base": 0.32,
+            "rate": 0.032
+          },
+          {
+            "from": 76.9,
+            "to": 92.3,
+            "base": 1.18,
+            "rate": 0.032
+          },
+          {
+            "from": 92.3,
+            "to": 126.9,
+            "base": 1.67,
+            "rate": 0.043
+          },
+          {
+            "from": 126.9,
+            "to": 157.7,
+            "base": 3.16,
+            "rate": 0.043
+          },
+          {
+            "from": 157.7,
+            "to": 223.1,
+            "base": 4.48,
+            "rate": 0.047
+          },
+          {
+            "from": 223.1,
+            "to": 284.6,
+            "base": 7.56,
+            "rate": 0.047
+          },
+          {
+            "from": 284.6,
+            "to": 836.5,
+            "base": 10.45,
+            "rate": 0.049
+          },
+          {
+            "from": 836.5,
+            "to": null,
+            "base": 37.49,
+            "rate": 0.059
+          }
+        ]
+      },
+      "married": {
+        "weekly": [
+          {
+            "from": 0,
+            "to": 288.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 288.0,
+            "to": 442.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 442.0,
+            "to": 596.0,
+            "base": 2.31,
+            "rate": 0.032
+          },
+          {
+            "from": 596.0,
+            "to": 769.0,
+            "base": 7.23,
+            "rate": 0.032
+          },
+          {
+            "from": 769.0,
+            "to": 1077.0,
+            "base": 12.77,
+            "rate": 0.043
+          },
+          {
+            "from": 1077.0,
+            "to": 1250.0,
+            "base": 26.0,
+            "rate": 0.043
+          },
+          {
+            "from": 1250.0,
+            "to": 1942.0,
+            "base": 33.44,
+            "rate": 0.047
+          },
+          {
+            "from": 1942.0,
+            "to": 2212.0,
+            "base": 65.98,
+            "rate": 0.047
+          },
+          {
+            "from": 2212.0,
+            "to": 6346.0,
+            "base": 78.63,
+            "rate": 0.049
+          },
+          {
+            "from": 6346.0,
+            "to": null,
+            "base": 281.23,
+            "rate": 0.059
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 577.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 577.0,
+            "to": 885.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 885.0,
+            "to": 1192.0,
+            "base": 4.62,
+            "rate": 0.032
+          },
+          {
+            "from": 1192.0,
+            "to": 1538.0,
+            "base": 14.46,
+            "rate": 0.032
+          },
+          {
+            "from": 1538.0,
+            "to": 2154.0,
+            "base": 25.54,
+            "rate": 0.043
+          },
+          {
+            "from": 2154.0,
+            "to": 2500.0,
+            "base": 52.0,
+            "rate": 0.043
+          },
+          {
+            "from": 2500.0,
+            "to": 3885.0,
+            "base": 66.88,
+            "rate": 0.047
+          },
+          {
+            "from": 3885.0,
+            "to": 4423.0,
+            "base": 131.96,
+            "rate": 0.047
+          },
+          {
+            "from": 4423.0,
+            "to": 12692.0,
+            "base": 157.27,
+            "rate": 0.049
+          },
+          {
+            "from": 12692.0,
+            "to": null,
+            "base": 562.46,
+            "rate": 0.059
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 625.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 625.0,
+            "to": 958.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 958.0,
+            "to": 1292.0,
+            "base": 5.0,
+            "rate": 0.032
+          },
+          {
+            "from": 1292.0,
+            "to": 1667.0,
+            "base": 15.67,
+            "rate": 0.032
+          },
+          {
+            "from": 1667.0,
+            "to": 2333.0,
+            "base": 27.67,
+            "rate": 0.043
+          },
+          {
+            "from": 2333.0,
+            "to": 2708.0,
+            "base": 56.33,
+            "rate": 0.043
+          },
+          {
+            "from": 2708.0,
+            "to": 4208.0,
+            "base": 72.46,
+            "rate": 0.047
+          },
+          {
+            "from": 4208.0,
+            "to": 4792.0,
+            "base": 142.96,
+            "rate": 0.047
+          },
+          {
+            "from": 4792.0,
+            "to": 13750.0,
+            "base": 170.38,
+            "rate": 0.049
+          },
+          {
+            "from": 13750.0,
+            "to": null,
+            "base": 609.33,
+            "rate": 0.059
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 1250.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1250.0,
+            "to": 1917.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 1917.0,
+            "to": 2583.0,
+            "base": 10.0,
+            "rate": 0.032
+          },
+          {
+            "from": 2583.0,
+            "to": 3333.0,
+            "base": 31.33,
+            "rate": 0.032
+          },
+          {
+            "from": 3333.0,
+            "to": 4667.0,
+            "base": 55.33,
+            "rate": 0.043
+          },
+          {
+            "from": 4667.0,
+            "to": 5417.0,
+            "base": 112.67,
+            "rate": 0.043
+          },
+          {
+            "from": 5417.0,
+            "to": 8417.0,
+            "base": 144.92,
+            "rate": 0.047
+          },
+          {
+            "from": 8417.0,
+            "to": 9583.0,
+            "base": 285.92,
+            "rate": 0.047
+          },
+          {
+            "from": 9583.0,
+            "to": 27500.0,
+            "base": 340.75,
+            "rate": 0.049
+          },
+          {
+            "from": 27500.0,
+            "to": null,
+            "base": 1218.67,
+            "rate": 0.059
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0,
+            "to": 3750.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 3750.0,
+            "to": 5750.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 5750.0,
+            "to": 7750.0,
+            "base": 30.0,
+            "rate": 0.032
+          },
+          {
+            "from": 7750.0,
+            "to": 10000.0,
+            "base": 94.0,
+            "rate": 0.032
+          },
+          {
+            "from": 10000.0,
+            "to": 14000.0,
+            "base": 166.0,
+            "rate": 0.043
+          },
+          {
+            "from": 14000.0,
+            "to": 16250.0,
+            "base": 338.0,
+            "rate": 0.043
+          },
+          {
+            "from": 16250.0,
+            "to": 25250.0,
+            "base": 434.75,
+            "rate": 0.047
+          },
+          {
+            "from": 25250.0,
+            "to": 28750.0,
+            "base": 857.75,
+            "rate": 0.047
+          },
+          {
+            "from": 28750.0,
+            "to": 82500.0,
+            "base": 1022.25,
+            "rate": 0.049
+          },
+          {
+            "from": 82500.0,
+            "to": null,
+            "base": 3656.0,
+            "rate": 0.059
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0,
+            "to": 7500.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 7500.0,
+            "to": 11500.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 11500.0,
+            "to": 15500.0,
+            "base": 60.0,
+            "rate": 0.032
+          },
+          {
+            "from": 15500.0,
+            "to": 20000.0,
+            "base": 188.0,
+            "rate": 0.032
+          },
+          {
+            "from": 20000.0,
+            "to": 28000.0,
+            "base": 332.0,
+            "rate": 0.043
+          },
+          {
+            "from": 28000.0,
+            "to": 32500.0,
+            "base": 676.0,
+            "rate": 0.043
+          },
+          {
+            "from": 32500.0,
+            "to": 50500.0,
+            "base": 869.5,
+            "rate": 0.047
+          },
+          {
+            "from": 50500.0,
+            "to": 57500.0,
+            "base": 1715.5,
+            "rate": 0.047
+          },
+          {
+            "from": 57500.0,
+            "to": 165000.0,
+            "base": 2044.5,
+            "rate": 0.049
+          },
+          {
+            "from": 165000.0,
+            "to": null,
+            "base": 7312.0,
+            "rate": 0.059
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 15000.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 15000.0,
+            "to": 23000.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 23000.0,
+            "to": 31000.0,
+            "base": 120.0,
+            "rate": 0.032
+          },
+          {
+            "from": 31000.0,
+            "to": 40000.0,
+            "base": 376.0,
+            "rate": 0.032
+          },
+          {
+            "from": 40000.0,
+            "to": 56000.0,
+            "base": 664.0,
+            "rate": 0.043
+          },
+          {
+            "from": 56000.0,
+            "to": 65000.0,
+            "base": 1352.0,
+            "rate": 0.043
+          },
+          {
+            "from": 65000.0,
+            "to": 101000.0,
+            "base": 1739.0,
+            "rate": 0.047
+          },
+          {
+            "from": 101000.0,
+            "to": 115000.0,
+            "base": 3431.0,
+            "rate": 0.047
+          },
+          {
+            "from": 115000.0,
+            "to": 330000.0,
+            "base": 4089.0,
+            "rate": 0.049
+          },
+          {
+            "from": 330000.0,
+            "to": null,
+            "base": 14624.0,
+            "rate": 0.059
+          }
+        ],
+        "daily": [
+          {
+            "from": 0,
+            "to": 57.7,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 57.7,
+            "to": 88.5,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 88.5,
+            "to": 119.2,
+            "base": 0.46,
+            "rate": 0.032
+          },
+          {
+            "from": 119.2,
+            "to": 153.8,
+            "base": 1.45,
+            "rate": 0.032
+          },
+          {
+            "from": 153.8,
+            "to": 215.4,
+            "base": 2.55,
+            "rate": 0.043
+          },
+          {
+            "from": 215.4,
+            "to": 250.0,
+            "base": 5.2,
+            "rate": 0.043
+          },
+          {
+            "from": 250.0,
+            "to": 388.5,
+            "base": 6.69,
+            "rate": 0.047
+          },
+          {
+            "from": 388.5,
+            "to": 442.3,
+            "base": 13.2,
+            "rate": 0.047
+          },
+          {
+            "from": 442.3,
+            "to": 1269.2,
+            "base": 15.73,
+            "rate": 0.049
+          },
+          {
+            "from": 1269.2,
+            "to": null,
+            "base": 56.25,
+            "rate": 0.059
+          }
+        ]
+      },
+      "hoh": {
+        "weekly": [
+          {
+            "from": 0,
+            "to": 216.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 216.0,
+            "to": 370.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 370.0,
+            "to": 524.0,
+            "base": 2.31,
+            "rate": 0.032
+          },
+          {
+            "from": 524.0,
+            "to": 697.0,
+            "base": 7.23,
+            "rate": 0.032
+          },
+          {
+            "from": 697.0,
+            "to": 1005.0,
+            "base": 12.77,
+            "rate": 0.043
+          },
+          {
+            "from": 1005.0,
+            "to": 1178.0,
+            "base": 26.0,
+            "rate": 0.043
+          },
+          {
+            "from": 1178.0,
+            "to": 1870.0,
+            "base": 33.44,
+            "rate": 0.047
+          },
+          {
+            "from": 1870.0,
+            "to": 2139.0,
+            "base": 65.98,
+            "rate": 0.047
+          },
+          {
+            "from": 2139.0,
+            "to": 6274.0,
+            "base": 78.63,
+            "rate": 0.049
+          },
+          {
+            "from": 6274.0,
+            "to": null,
+            "base": 281.23,
+            "rate": 0.059
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 433.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 433.0,
+            "to": 740.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 740.0,
+            "to": 1048.0,
+            "base": 4.62,
+            "rate": 0.032
+          },
+          {
+            "from": 1048.0,
+            "to": 1394.0,
+            "base": 14.46,
+            "rate": 0.032
+          },
+          {
+            "from": 1394.0,
+            "to": 2010.0,
+            "base": 25.54,
+            "rate": 0.043
+          },
+          {
+            "from": 2010.0,
+            "to": 2356.0,
+            "base": 52.0,
+            "rate": 0.043
+          },
+          {
+            "from": 2356.0,
+            "to": 3740.0,
+            "base": 66.88,
+            "rate": 0.047
+          },
+          {
+            "from": 3740.0,
+            "to": 4279.0,
+            "base": 131.96,
+            "rate": 0.047
+          },
+          {
+            "from": 4279.0,
+            "to": 12548.0,
+            "base": 157.27,
+            "rate": 0.049
+          },
+          {
+            "from": 12548.0,
+            "to": null,
+            "base": 562.46,
+            "rate": 0.059
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 469.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 469.0,
+            "to": 802.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 802.0,
+            "to": 1135.0,
+            "base": 5.0,
+            "rate": 0.032
+          },
+          {
+            "from": 1135.0,
+            "to": 1510.0,
+            "base": 15.67,
+            "rate": 0.032
+          },
+          {
+            "from": 1510.0,
+            "to": 2177.0,
+            "base": 27.67,
+            "rate": 0.043
+          },
+          {
+            "from": 2177.0,
+            "to": 2552.0,
+            "base": 56.33,
+            "rate": 0.043
+          },
+          {
+            "from": 2552.0,
+            "to": 4052.0,
+            "base": 72.46,
+            "rate": 0.047
+          },
+          {
+            "from": 4052.0,
+            "to": 4635.0,
+            "base": 142.96,
+            "rate": 0.047
+          },
+          {
+            "from": 4635.0,
+            "to": 13594.0,
+            "base": 170.38,
+            "rate": 0.049
+          },
+          {
+            "from": 13594.0,
+            "to": null,
+            "base": 609.33,
+            "rate": 0.059
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 938.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 938.0,
+            "to": 1604.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 1604.0,
+            "to": 2271.0,
+            "base": 10.0,
+            "rate": 0.032
+          },
+          {
+            "from": 2271.0,
+            "to": 3021.0,
+            "base": 31.33,
+            "rate": 0.032
+          },
+          {
+            "from": 3021.0,
+            "to": 4354.0,
+            "base": 55.33,
+            "rate": 0.043
+          },
+          {
+            "from": 4354.0,
+            "to": 5104.0,
+            "base": 112.67,
+            "rate": 0.043
+          },
+          {
+            "from": 5104.0,
+            "to": 8104.0,
+            "base": 144.92,
+            "rate": 0.047
+          },
+          {
+            "from": 8104.0,
+            "to": 9271.0,
+            "base": 285.92,
+            "rate": 0.047
+          },
+          {
+            "from": 9271.0,
+            "to": 27188.0,
+            "base": 340.75,
+            "rate": 0.049
+          },
+          {
+            "from": 27188.0,
+            "to": null,
+            "base": 1218.67,
+            "rate": 0.059
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0,
+            "to": 2813.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 2813.0,
+            "to": 4813.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 4813.0,
+            "to": 6813.0,
+            "base": 30.0,
+            "rate": 0.032
+          },
+          {
+            "from": 6813.0,
+            "to": 9063.0,
+            "base": 94.0,
+            "rate": 0.032
+          },
+          {
+            "from": 9063.0,
+            "to": 13063.0,
+            "base": 166.0,
+            "rate": 0.043
+          },
+          {
+            "from": 13063.0,
+            "to": 15313.0,
+            "base": 338.0,
+            "rate": 0.043
+          },
+          {
+            "from": 15313.0,
+            "to": 24313.0,
+            "base": 434.75,
+            "rate": 0.047
+          },
+          {
+            "from": 24313.0,
+            "to": 27813.0,
+            "base": 857.75,
+            "rate": 0.047
+          },
+          {
+            "from": 27813.0,
+            "to": 81563.0,
+            "base": 1022.25,
+            "rate": 0.049
+          },
+          {
+            "from": 81563.0,
+            "to": null,
+            "base": 3656.0,
+            "rate": 0.059
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0,
+            "to": 5625.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 5625.0,
+            "to": 9625.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 9625.0,
+            "to": 13625.0,
+            "base": 60.0,
+            "rate": 0.032
+          },
+          {
+            "from": 13625.0,
+            "to": 18125.0,
+            "base": 188.0,
+            "rate": 0.032
+          },
+          {
+            "from": 18125.0,
+            "to": 26125.0,
+            "base": 332.0,
+            "rate": 0.043
+          },
+          {
+            "from": 26125.0,
+            "to": 30625.0,
+            "base": 676.0,
+            "rate": 0.043
+          },
+          {
+            "from": 30625.0,
+            "to": 48625.0,
+            "base": 869.5,
+            "rate": 0.047
+          },
+          {
+            "from": 48625.0,
+            "to": 55625.0,
+            "base": 1715.5,
+            "rate": 0.047
+          },
+          {
+            "from": 55625.0,
+            "to": 163125.0,
+            "base": 2044.5,
+            "rate": 0.049
+          },
+          {
+            "from": 163125.0,
+            "to": null,
+            "base": 7312.0,
+            "rate": 0.059
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 11250.0,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 11250.0,
+            "to": 19250.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 19250.0,
+            "to": 27250.0,
+            "base": 120.0,
+            "rate": 0.032
+          },
+          {
+            "from": 27250.0,
+            "to": 36250.0,
+            "base": 376.0,
+            "rate": 0.032
+          },
+          {
+            "from": 36250.0,
+            "to": 52250.0,
+            "base": 664.0,
+            "rate": 0.043
+          },
+          {
+            "from": 52250.0,
+            "to": 61250.0,
+            "base": 1352.0,
+            "rate": 0.043
+          },
+          {
+            "from": 61250.0,
+            "to": 97250.0,
+            "base": 1739.0,
+            "rate": 0.047
+          },
+          {
+            "from": 97250.0,
+            "to": 111250.0,
+            "base": 3431.0,
+            "rate": 0.047
+          },
+          {
+            "from": 111250.0,
+            "to": 326250.0,
+            "base": 4089.0,
+            "rate": 0.049
+          },
+          {
+            "from": 326250.0,
+            "to": null,
+            "base": 14624.0,
+            "rate": 0.059
+          }
+        ],
+        "daily": [
+          {
+            "from": 0,
+            "to": 43.3,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 43.3,
+            "to": 74.0,
+            "base": 0.0,
+            "rate": 0.015
+          },
+          {
+            "from": 74.0,
+            "to": 104.8,
+            "base": 0.46,
+            "rate": 0.032
+          },
+          {
+            "from": 104.8,
+            "to": 139.4,
+            "base": 1.45,
+            "rate": 0.032
+          },
+          {
+            "from": 139.4,
+            "to": 201.0,
+            "base": 2.55,
+            "rate": 0.043
+          },
+          {
+            "from": 201.0,
+            "to": 235.6,
+            "base": 5.2,
+            "rate": 0.043
+          },
+          {
+            "from": 235.6,
+            "to": 374.0,
+            "base": 6.69,
+            "rate": 0.047
+          },
+          {
+            "from": 374.0,
+            "to": 427.9,
+            "base": 13.2,
+            "rate": 0.047
+          },
+          {
+            "from": 427.9,
+            "to": 1254.8,
+            "base": 15.73,
+            "rate": 0.049
+          },
+          {
+            "from": 1254.8,
+            "to": null,
+            "base": 56.25,
+            "rate": 0.059
+          }
+        ]
+      }
+    }
+  },
+  "filingStatusNote": "New Mexico has no state-specific withholding certificate -- FYI-104 itself instructs employees to complete a copy of the FEDERAL Form W-4 and write 'For New Mexico State Withholding Only' across the top. The federal 2020+ W-4's own 3 checkboxes ('Single or Married filing separately' / 'Married filing jointly' / 'Head of household') map 1:1 onto FYI-104's own three lettered tables. This engine reuses certificate.filingStatus with the SAME vocabulary as federalW4 (single/married_joint/married_separate/head_of_household) rather than inventing an NM-specific field; married_separate resolves to the Single table exactly as the federal checkbox bundles it. No certificate on file defaults to Single (the narrowest brackets) -- not itself FYI-104-stated (there is no NM form to fail to file), but consistent with this project's standing least-generous-default convention. FYI-104's own note that 'a married employee who elected withholding at the higher single rate for FEDERAL purposes' must also use the single NM table describes the PRE-2020 W-4's Line 3 checkbox, which no longer exists on the 2020+ form this project's federalW4 model represents -- disclosed as legacy guidance not modelled, not silently ignored.",
+  "supplementalWages": {
+    "flatRate": 0.059,
+    "note": "FYI-104's own instruction: 'If the federal withholding is calculated using a flat percent, a flat 5.9% of the supplemental wage or fringe benefit amount should be withheld for state tax purposes' -- 5.9% is also the top marginal percentage-method rate. Dispatched generically via flatRateSupplementalFromConfig(), the same mechanism NY/other states already use -- zero new code needed. BUG FOUND AND FIXED (a later 'go to every state' pass): newMexicoWithholding() was NOT carving supplemental cash out of its own bracket base, so a bonus was taxed once via NM_SIT's regular bracket AND again via NM_SIT_SUPP's flat 5.9% -- a genuine double-taxation defect, caught by a direct calculatePaycheck() check, not by the existing test suite (the original supplemental test only asserted NM_SIT_SUPP, never NM_SIT, so it couldn't see the bug). Fixed to match computeNYSStyleTax()'s (NY) already-correct pattern: periodWages = fullBase minus supplementalCash."
+  },
+  "roundFinalToWholeDollar": false,
+  "stateQuarterlyHeadFee": {
+    "idSuffix": "WC_FEE",
+    "name": "Workers' Compensation Fee",
+    "employeeQuarterly": 2.0,
+    "employerQuarterly": 2.3,
+    "exemptEmploymentCategories": [
+      "household",
+      "agricultural"
+    ],
+    "$comment": "New Mexico Workers' Compensation Administration FAQ (workerscomp.nm.gov/faqs/, read directly 2026-09-23): 'a quarterly assessment fee of $4.80 for each covered employee working for their business on the last working day of each quarter ($2.25 is paid by the workers and $2.55 is paid by employers)', filed with Taxation and Revenue on the WC-1. Up from $4.30 ($2.00 / $2.30) under TRD's RPD-41108 instructions; the increase applies from 2025-07-01 (TRD notice: \"the WKC fee per employee has increased from $4.30 to $4.80, effective starting July 1, 2025\"), so all of 2026 uses the new amounts. Domestic servants and farm and ranch laborers are exempt (RPD-41108), mapped to the household/agricultural employment categories; real estate salespersons and 10%+ owner-officers aren't representable here, so those employers pass employer.quarterlyHeadFeeCollection.NM = 'skip'. Collected evenly across the quarter's cheques by default, which is what PaycheckCity does ($0.38 semimonthly, $0.75 monthly, matching to the cent)."
+  },
+  "roundingComment": "FYI-104's own worked example is cent-precision ($21.80) -- no whole-dollar rounding step anywhere in the document.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "Confirmed via NMSA 7-2-2's own text: New Mexico 'base income' for individual taxpayers is federal adjusted gross income (IRC sec. 62) plus a short specific add-back list untouched by 401(k)/125/HSA/FSA elective deferrals. Same evidentiary tier as Virginia's/West Virginia's/Louisiana's FAGI-conformity citations elsewhere in this project -- one inferential step removed from the withholding wage base itself (FYI-104 doesn't independently define 'wages'), but a genuine direct statute read.",
+  "additionalOrReducedWithholding": {
+    "rule": "FYI-104's own worked example itself demonstrates additional withholding as a plain add-on ('$21.80 + $20.00 (Additional withholding requested by employee) = $41.80') requested via the same New-Mexico-labeled federal W-4 copy -- already covered generically via certificate.additionalWithholding, the same mechanism every other state in this project uses, zero new code needed.",
+    "confidence": "primary_source_confirmed -- FYI-104's own worked example."
+  },
+  "exemptCertificateNote": "FYI-104 documents specific NM-exempt income categories (enrolled tribal members' income earned and domiciled on their own nation's/pueblo's land; active-duty military pay and certain military spouse income) that should not have NM tax withheld at all, via the federal W-4's own Step 4(c) exempt election -- already covered generically via the existing certificate.exempt mechanism (applyStateWithholdingExemption), zero new code needed.",
+  "reciprocity": {
+    "exemptWhenDaysWorkedAtMost": 15,
+    "$dayCountComment": "FYI-104, quoted directly: 'Employers are not required to withhold New Mexico income tax from wages of nonresident employees working in New Mexico for 15 or fewer days during the calendar year' — so 15 days is itself exempt, unlike Alabama's and Illinois's 'fewer than' phrasing.",
+    "$comment": "New Mexico does NOT use this project's usual bilateral-reciprocity mechanism -- FYI-104 states directly: residents are subject to NM tax on ALL income regardless of work location, and 'if that income is also taxed by another state, New Mexico allows a credit for the other state's income tax on that income on their personal income tax return... withholding tax can be reduced or eliminated on such wages' via the employee's own federal-W4-for-NM copy. This is the ordinary return-level-credit baseline this project uses for every other no-reciprocity state, not a special NM mechanism -- reciprocalStates stays empty, no special code needed.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. New Mexico law does not authorize municipalities or counties to levy a local income/wage tax.",
+    "confidence": "cross_source_confirmed via search synthesis; not independently fetched from a specific NM statute barring local income taxation this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory as of 2026. A Paid Family and Medical Leave Act (HB 11, 2025 session -- the 'Welcome Child and Family Wellness Leave Act') cleared committee with a proposed $4/$1,000-wages employer / $5/$1,000-wages employee funding structure, but was not enacted into law this session.",
+    "confidence": "cross_source_confirmed via search synthesis, including a look at the bill's own 2025 committee status; not independently fetched from the bill text or NM Legislature's own tracker this pass."
+  },
+  "knownGaps": [
+    "FYI-104's worked example ('over $742 but not over $1,050 ... $14.77') does not match its own 2025 weekly married table and appears to be carried over from an earlier year, so it is not used as a test.",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 33200,
+    "wageBaseNote": "This file previously carried $31700; the 2026 table publishes $34800. The 2026 figure is used, and the discrepancy is recorded here rather than dropped.",
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "New Mexico's 2026 UI release — wage base $34,800 (up from $33,200). This CORRECTS the $31,700 figure previously carried in this file, which was a prior year's base.",
+    "experienceRange": {
+      "min": 0.0033,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "monthlyDeMinimis": {
+    "monthlyWithholdingFloor": 1,
+    "$comment": "FYI-104, quoted directly: 'No withholding is required if the total withholding for an employee during any one month is less than one dollar.' A MONTHLY test, so it needs a monthly running figure — certificate.stateTaxWithheldThisMonth — which the caller keeps, exactly as Denver's monthly head tax already requires. With nothing supplied the test runs on this cheque alone, which is right for a monthly payroll and conservative everywhere else: it can only ever zero an amount already under a dollar.",
+    "source": {
+      "title": "New Mexico Taxation and Revenue Department — FYI-104, New Mexico Withholding Tax",
+      "url": "https://www.tax.newmexico.gov/forms-publications/",
+      "verifiedOn": "2026-08-25"
+    }
+  },
+  "effectiveDated": [
+    {
+      "from": "2025-07-01",
+      "note": "Workers' compensation fee rose from $4.30 ($2.00 employee / $2.30 employer) to $4.80 ($2.25 / $2.55) a quarter from 2025-07-01.",
+      "set": {
+        "stateQuarterlyHeadFee.employeeQuarterly": 2.25,
+        "stateQuarterlyHeadFee.employerQuarterly": 2.55
+      }
+    }
+  ],
+  "$yearNote": "2025 ruleset: FYI-104 (Rev. 11/2024) percentage tables for wages paid on or after 1 January 2025: 1.5% to 5.9% in ten bands per period for single, married and head of household, parsed from the published tables. Supplemental 5.9%. The workers' compensation fee was $2.00 employee / $2.30 employer a quarter until 2025-06-30 and $2.25 / $2.55 from 2025-07-01 (effectiveDated)."
+}

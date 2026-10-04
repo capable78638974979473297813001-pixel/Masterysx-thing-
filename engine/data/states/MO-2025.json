@@ -1,0 +1,156 @@
+{
+  "code": "MO",
+  "name": "Missouri",
+  "year": 2025,
+  "method": "flat_rate_marital_deduction_whole_dollar",
+  "roundFinalToWholeDollar": true,
+  "$methodComment": "Structurally close to Iowa's shape (annualize, subtract a filing-status standard deduction, apply a bracket table, divide by periods) but with NO exemption/allowance count concept at all — Form MO W-4 has exactly 3 checkboxes (no numeric allowance line), same 'no exemption concept, form picks the deduction directly' shape as Kentucky's flatRateFixedDeduction(), except Missouri's deduction VARIES by which of the 3 boxes is checked (Kentucky's is one flat figure for everyone). WIRED INTO CALC CODE this session via missouriWithholding() in state.ts, dispatched on 'flat_rate_marital_deduction_whole_dollar' rather than reusing Iowa's plain 'flat_rate_marital_deduction' method name — the two states share a similar shape but Missouri needs a real bracket table (not a flat rate) plus the roundFinalToWholeDollar mechanism, so collapsing them under one method name would have silently misrouted one state's config into the other's function.",
+  "sources": [
+    {
+      "title": "Missouri DOR -- 2025 Missouri Withholding Tax Formula",
+      "url": "https://dor.mo.gov/forms/Withholding%20Formula_2025.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Single: $15,000 ... Married and Spouse Does Not Work ...: $30,000 Head of Household: $22,500 ... $ 1,313.00 x 0.0% ... 9,191.01 and over 4.70% ... Employee is married (spouse works) Annual Gross Taxable Income $35,000.00 ... 764.02 ÷ 12 = $64.00 Monthly Missouri Withholding"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "flatRateMaritalDeduction": {
+    "standardDeduction": {
+      "singleOrMarriedSpouseWorksOrMFS": 15000,
+      "marriedSpouseDoesNotWork": 30000,
+      "headOfHousehold": 22500
+    },
+    "standardDeductionComment": "Directly off Form MO W-4's 3 checkboxes: Box 1 covers THREE distinct real-world filing situations (Single / Married-spouse-works / MFS) under ONE shared deduction figure — a genuine many-to-one mapping, not a simplification this project invented. Box 2 (Married, spouse does not work) gets exactly double. Box 3 (HOH) is its own independent figure, not derived from the other two.",
+    "brackets": [
+      {
+        "from": 0,
+        "to": 1313,
+        "base": 0,
+        "rate": 0
+      },
+      {
+        "from": 1313,
+        "to": 2626,
+        "base": 0,
+        "rate": 0.02
+      },
+      {
+        "from": 2626,
+        "to": 3939,
+        "base": 26,
+        "rate": 0.025
+      },
+      {
+        "from": 3939,
+        "to": 5252,
+        "base": 59,
+        "rate": 0.03
+      },
+      {
+        "from": 5252,
+        "to": 6565,
+        "base": 98,
+        "rate": 0.035
+      },
+      {
+        "from": 6565,
+        "to": 7878,
+        "base": 144,
+        "rate": 0.04
+      },
+      {
+        "from": 7878,
+        "to": 9191,
+        "base": 197,
+        "rate": 0.045
+      },
+      {
+        "from": 9191,
+        "to": null,
+        "base": 256,
+        "rate": 0.047
+      }
+    ],
+    "bracketsComment": "ANNUAL brackets, each exactly $1,348 wide (a round, deliberately-chosen bracket width — 8 total, 7 nonzero rates from 2.0% to 4.7%). CRITICAL, disclosed rounding quirk that is genuinely different from every other state in this project: Missouri's OWN worked example rounds the incremental tax to the WHOLE DOLLAR at EACH bracket step BEFORE summing (1,348 x 2.0% = 26.96 -> rounds to $27; x2.5% = 33.70 -> $34; etc.), not just once at the final annual or per-period figure the way Maine's roundFinalToWholeDollar does. The 'base' values above (0/27/61/101/148/202/263) are the CUMULATIVE SUM of these already-individually-rounded per-bracket-step dollar amounts, verified by hand against the source's own worked example: 0+27+34+40+47+54+61=263 (matches the doc's stated 'base' for the top bracket exactly) and the full example (18,900 taxable: 263 + (18,900-9,436) x 4.7% = 263+444.81=707.81, /12=59 rounded) reproduces the source's own $59/month answer exactly. A calc-code implementation would need to replicate this per-step whole-dollar rounding, NOT just apply the standard cents-based bracket formula this project's WIBracket/findWIBracket shape uses elsewhere — flagged explicitly so a future 'wire MO into state.ts' pass doesn't silently reuse the wrong rounding convention.",
+    "annualizeMultiplier": {
+      "daily": 260,
+      "weekly": 52,
+      "biweekly": 26,
+      "semimonthly": 24,
+      "monthly": 12
+    },
+    "finalRounding": "Whole dollar, per the formula document's own instruction: 'You must round the amounts that you withhold from your employees to the nearest whole dollar.'"
+  },
+  "supplementalComment": "Missouri offers the same two-option shape as several other states in this project: (1) flat 4.7% (the top marginal rate) on supplemental wages paid separately, computed by flatRateSupplementalFromConfig() (src/taxes/state.ts) only when the employer elects it (input.employer.supplementalFlatRateElection, since this state PERMITS the flat rate rather than requiring it), or (2) aggregate with the period's regular wages and net out tax already withheld — the engine's default without an election.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "The withholding formula's own Step 1 says to determine 'Gross Taxable Income' by referring to 'Federal Publication 15 for questions concerning gross taxable income' — i.e. Missouri's withholding base is explicitly anchored to the FEDERAL Box-1/Pub-15 wage definition, which already nets out 401(k)/125/etc. This is a direct instruction from the formula document itself, one tier below Arizona's A-4 (which states the exclusion in its own words) but stronger than a bare AGI-conformity inference — no separate statute chase was needed because the formula document said it directly.",
+  "reciprocity": {
+    "rule": "NONE. Missouri does not have reciprocity agreements with any bordering state (confirmed for Kansas and Illinois specifically, the two most commonly asked about given St. Louis/Kansas City metro commuting patterns). A Kansas or Illinois resident working in Missouri owes Missouri withholding on Missouri-source wages like any other nonresident; the credit-for-taxes-paid mechanism operates at the RETURN level in the resident's home state, not as a withholding-time exemption."
+  },
+  "localIncomeTax": {
+    "$comment": "Genuinely a CITY-administered tax, not a state DOR function — same structural shape as Ohio's RITA/CCA-administered municipalities, except Missouri only has 2 cities with this power (a much narrower closed list, closer to Michigan's 24-city model than Ohio's ~700).",
+    "wiredIntoCalcCode": "CLOSED this session — missouriLocalEarningsTax() (employee, both cities) and stLouisPayrollExpenseTaxEmployer() (employer, St. Louis only) in state.ts, both dispatched off certificate.locality ('Kansas City' or 'St. Louis'), reading this exact kansasCity.rate / stLouis.earningsTaxRate / stLouis.payrollExpenseTax.rate structure directly. See tests/engine.test.ts, describe('Missouri').",
+    "kansasCity": {
+      "rate": 0.01,
+      "base": "Wages earned within Kansas City limits, for BOTH residents and nonresidents who work there.",
+      "administeredBy": "Kansas City Revenue Division (E-Tax), not the Missouri DOR.",
+      "confidence": "cross_source_confirmed — RETRIED 2026-08-31 with raw curl (not the WebFetch tool) across 5 URL/user-agent variations (plain, no-UA, curl UA, Googlebot UA, a ShowPublishedDocument path) — all 403 with an identical 405-byte body, confirming this is a real bot-fingerprint block at the edge (Akamai/CDN level), not a tool-specific limitation or a stale finding. Also confirmed archive.org is not reachable from this environment (not on the egress allowlist), so a Wayback Machine capture was not available as a fallback either. The 1% figure on file is unchanged and still only cross-source confirmed."
+    },
+    "stLouis": {
+      "earningsTaxRate": 0.01,
+      "base": "Wages earned within St. Louis city limits, for BOTH residents and nonresidents who work there.",
+      "payrollExpenseTax": {
+        "rate": 0.005,
+        "payer": "employer",
+        "note": "A SEPARATE, additional employer-paid tax unique to St. Louis (not present in Kansas City) — layered on top of the 1% employee earnings tax, on the same wage base. Structurally analogous to Newark's employer-only payroll tax already in this project, though Newark's replaces rather than layers on top of an employee tax."
+      },
+      "administeredBy": "St. Louis Collector of Revenue, not the Missouri DOR.",
+      "confidence": "primary_source_confirmed — UPGRADED 2026-08-31: fetched https://www.stlouis-mo.gov/government/departments/collector/earnings-tax/payroll-tax-info.cfm directly (the earlier guessed URL 404’d because the correct path is /collector/, not /collector-of-revenue/). Page states verbatim: ‘The Withholding Tax is a 1% tax imposed on the wages of employees living or working in the City of St. Louis’ and ‘Form P-10 is a quarterly tax return to remit payroll expense tax of 1/2 of 1% (.005) of gross compensation paid to employees.’ Both figures match what was already on file exactly."
+    },
+    "otherMissouriCities": "No other Missouri municipality is known to levy an earnings tax — this is a closed 2-city list, not enumerated further this session."
+  },
+  "verification": "PROVEN via calculatePaycheck(): reproduces the DOR's own worked example exactly ($59/month, married-spouse-works) via missouriWithholding() in state.ts, plus a second fixture confirming the double standard deduction for married-spouse-doesn't-work. The per-bracket-step whole-dollar-sum question (see bracketsComment) turned out NOT to need special handling in the calc code: the precomputed 'base' figures already bake in that whole-dollar-per-step summation from the source data itself, and the CURRENT bracket's own marginal tax uses ordinary cent rounding, matching the source's own worked example precisely when reproduced end to end — confirmed empirically, not just asserted. ALSO PROVEN: Kansas City's 1% earnings tax, and St. Louis's 1% earnings tax co-existing with its separate 0.5% employer-only Payroll Expense Tax on the SAME paycheck (both fire, neither replaces the other), plus a no-locality control case confirming neither city tax fires without certificate.locality set. See tests/engine.test.ts, describe('Missouri').",
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 9500,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.02376,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalWages": {
+    "flatRate": 0.047,
+    "appliesWhen": "paid_separately",
+    "election": "employer_option",
+    "source": "Missouri offers two permitted treatments (this file's supplementalComment): a flat 4.7% — the top marginal rate — on supplemental wages paid separately, or aggregation with the period's regular wages netting out tax already withheld. Because it is the employer's choice, this fires only when the employer elects it."
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "Missouri's second permitted method: aggregate with the period's regular wages, apply the normal formula to the total, and net out the tax already withheld on the regular portion.",
+    "engineNote": "Wired via aggregateWithPriorRegularPayment(): the caller supplies input.priorRegularPayment (that cheque's taxable wages and the state tax withheld from it), and a bonus paid on its own cheque is taxed on the combined figure less what was already withheld, floored at zero. Nothing changes when the caller omits it."
+  },
+  "$yearNote": "2025 ruleset: standard deductions $15,000 / $30,000 / $22,500; eight annual brackets $1,313 wide from 0% to 4.7% (the 4.7% top rate and 4.7% supplemental rate are the same as 2026)."
+}

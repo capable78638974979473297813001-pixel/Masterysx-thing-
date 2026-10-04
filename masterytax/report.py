@@ -8,6 +8,7 @@ from html import escape
 
 from .deposits import federal_schedule
 from .money import ZERO, fmt
+from .payments import NOT_TRANSMITTED, instructions
 from .pipeline import Workspace
 from .returns import ReturnDoc, w3_reconcile
 
@@ -25,6 +26,8 @@ td.n{text-align:right}.bad{color:var(--bad)}.warn{color:var(--warn)}.ok{color:va
 .note{color:var(--muted);font-size:12px}
 """
 
+DISCLAIMER = ("Tax figures come from the vendored tax engine's sourced, effective-dated rules. "
+              "Verify before filing. MasteryTax never moves money.")
 STATUS_CLASS = {"paid": "ok", "late": "warn", "overdue": "bad", "open": "", "optional-unpaid": ""}
 SEV_CLASS = {"error": "bad", "warning": "warn", "info": ""}
 
@@ -102,12 +105,19 @@ def render_html(ws: Workspace) -> str:
                               [[i.severity, i.code, i.employee_id, i.row or "", i.message] for i in issues],
                               flag_col=0, classes=SEV_CLASS))
 
+        pay = [r for r in instructions(ws.statuses, ws.companies, ws.group, ws.as_of) if r["company_id"] == cid]
+        if pay:
+            out.append(f"<h3>Payment instructions</h3><p class=note>{escape(NOT_TRANSMITTED)}</p>")
+            out.append(_table(["Initiate by", "Payee", "Group", "Tax type", "Period end", "Account", "Amount"],
+                              [[r["initiate_by"], r["payee"], r["deposit_group"], r["eftps_tax_type"],
+                                r["tax_period_end"], r["state_account"], r["amount"]] for r in pay]))
+
         out.append("<h3>Returns</h3>")
         for year, quarter in ws.periods(cid):
             out.append(_doc(ws.form_941(cid, year, quarter)))
         for year in sorted({y for y, _ in ws.periods(cid)}):
             out.append(_doc(ws.form_940(cid, year)))
-            w3, recon = w3_reconcile(company, ws.liabilities, ws.rules, year)
+            w3, recon = w3_reconcile(company, ws.liabilities, year)
             status = "balanced" if not recon else "; ".join(i.message for i in recon)
             out.append(f'<p class="note">W-2/W-3 vs 941 reconciliation {year}: {escape(status)}</p>')
 
@@ -116,6 +126,6 @@ def render_html(ws: Workspace) -> str:
         out.append("<h2>File-level exceptions</h2>")
         out.append(_table(["Severity", "Code", "Source", "Row", "Message"],
                           [[i.severity, i.code, i.source, i.row or "", i.message] for i in unassigned]))
-    out.append(f'<p class="note" style="margin-top:40px">{escape(ws.rules.disclaimer)} Generated {date.today()}.</p>')
+    out.append(f'<p class="note" style="margin-top:40px">{escape(DISCLAIMER)} Generated {date.today()}.</p>')
     out.append("</main></body></html>")
     return "".join(out)

@@ -1,0 +1,93 @@
+{
+  "code": "SC",
+  "name": "South Carolina",
+  "year": 2025,
+  "method": "south_carolina_allowance_deduction",
+  "sources": [
+    {
+      "title": "South Carolina DOR -- WH-1603F Formula for Computing South Carolina 2025 Withholding Tax (Rev. 11/12/24)",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/WH1603F_2025.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Amount per allowance (A) $4,860 ... Maximum standard deduction - one or more allowances (C) $7,300 ... $3,560 $17,830 3% ... $17,830 and above 6.2%, then subtract $677.36 ... Example: $594.88 DIVIDED BY 52 WEEKS = $11.44 STATE TAX PER WEEK"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "flatRateAllowanceDeduction": {
+    "$comment": "WH-1603F's own 4-step formula: annualize wages, subtract a Personal Allowance PLUS a Standard Deduction (both zero unless at least 1 allowance is claimed -- a genuine all-or-nothing structural quirk, see allowanceComment), run through a 3-bracket schedule, divide by periods. Reproduced the document's own worked example exactly (weekly $750, 3 allowances: annual $39,000 - $15,000 personal allowance (3x$5,000) - $3,900 standard deduction (10% of $39,000) = $20,100 taxable; bracket 3 (>=$18,230): $437.70 + 6%x($20,100-$18,230=$1,870=$112.20) = $549.90/yr / 52 = $10.5750 -> $10.58/week).",
+    "allowanceAmountAnnual": 4860.0,
+    "standardDeductionRate": 0.1,
+    "standardDeductionCapAnnual": 7300.0,
+    "allowanceComment": "GENUINE ALL-OR-NOTHING QUIRK, confirmed directly from WH-1603F's own text: 'Personal Allowance: $0 if zero allowances claimed OR $5,000 per personal allowance claimed AND Standard Deduction: $0 if zero allowances claimed OR 10% of gross wages if claiming one or more allowances, up to $7,500 total.' An employee claiming 0 allowances gets NEITHER deduction -- not just a smaller personal allowance, the 10%-of-wages standard deduction disappears too. This is structurally unlike every other state in this project with a similar allowance-driven deduction (e.g. Virginia's flat standard deduction applies regardless of exemption count) -- claiming even 1 allowance is what activates BOTH deduction components at once.",
+    "brackets": {
+      "annual": [
+        {
+          "from": 0,
+          "to": 3560,
+          "base": 0,
+          "rate": 0.0
+        },
+        {
+          "from": 3560,
+          "to": 17830,
+          "base": 0,
+          "rate": 0.03
+        },
+        {
+          "from": 17830,
+          "to": null,
+          "base": 428.1,
+          "rate": 0.062
+        }
+      ],
+      "bracketComment": "Converted from WH-1603F's own 'X%, then subtract $Y' framing into this project's standard {from,to,base,rate} shape (base = cumulative tax already owed AT bracket.from, consistent with every other bracket-table state here). Verified algebraically before trusting the conversion: the document's own bracket-2 rule ('3%, then subtract $109.20') and bracket-3 rule ('6%, then subtract $656.10') are exactly equivalent to this base/rate form -- 3640 x 3% = $109.20 exactly (cancels the 0%-bracket portion), and at the $18,230 boundary, 0% + 3%x(18230-3640=14590) = $437.70 exactly, matching the document's own bracket-3 base constant.",
+      "filingStatusNote": "The SC W-4's own Line 3 has a Single/Married/Married-but-withhold-at-higher-Single-rate checkbox, but WH-1603F's formula NEVER references filing status anywhere in its 4 steps -- confirmed by reading the complete formula document, not by omission. The checkbox appears to only inform which worksheet path the employee follows to arrive at an allowance COUNT (page 3 of the SC W-4, not fetched in full this pass), with the actual withholding CALCULATION depending only on that resulting allowance count, unlike most other states in this project where marital status enters the formula directly (a separate deduction table or bracket schedule)."
+    }
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "UPGRADED ('fix any and all gaps' pass): S.C. Code Ann. sec. 12-6-1120 confirms South Carolina 'substantially conforms to the Internal Revenue Code of 1986, as amended through December 31, 2024,' starting from federal taxable income and applying only a short, specific list of modifications (Sections 78/86/87 excluded, Social Security benefits excluded) -- none of which touch 401(k)/403(b)/457/125 elective deferrals. Same confidence tier as Virginia's/West Virginia's FAGI-conformity citations: a statute-level conformity confirmation, not a direct read of the withholding-specific wage definition (which none of WH-1603F/WH-105/SC W-4 discusses). One tier below Indiana's/Kentucky's complete-enumerated-list reads, since 12-6-1120's own non-adopted-sections list was not independently confirmed exhaustive for this specific question this pass.",
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: WH-1603F, WH-105, and the SC W-4 were all read in full and none mentions a reciprocal agreement with any state. South Carolina has no reciprocal withholding agreement with any state.",
+    "reciprocalStates": []
+  },
+  "outOfStateWorkNote": "WH-105 states directly: 'An employee who works in another state but is a resident of South Carolina will have taxes withheld for the other state. However, if that state does not have an Income Tax, you must withhold South Carolina taxes since South Carolina is the employee's state of legal residence.' This is SC's own default multistate-sourcing convention (withhold based on work location, falling back to residence only when the work state has no income tax at all) -- NOT a bilateral reciprocity agreement (no exemption is granted to the OTHER state's residents working in SC in return). Requires no special reciprocalStates entry: this engine already computes tax based on input.workState by construction, which is exactly consistent with this rule as stated.",
+  "localIncomeTax": {
+    "rule": "NONE. No South Carolina city or county levies a local income/wage tax anywhere in the state.",
+    "confidence": "checked_not_found across WH-105/WH-1603F/SC W-4, consistent with general knowledge that SC has no local income tax authority."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory. South Carolina's Paid Family Leave Insurance Act (Act 206, H.4832, signed 2024-05-21) only authorizes licensed insurance carriers to OFFER voluntary paid family leave policies to employers -- there is no state-run social insurance fund and no mandatory payroll deduction of any kind. Structurally different from every mandatory-program state in this project (NY/NJ/CT/MA/WA/OR/MD/RI/CO/DE) -- correctly not modelled as a payroll deduction since none exists.",
+    "confidence": "cross_source_confirmed via search synthesis; Act 206's own text was not independently fetched this pass."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: WH-1603F (Rev. 11/12/24): $4,860 per allowance, 10% standard deduction up to $7,300, 0% / 3% / 6.2% above $3,560 and $17,830 (2026: $5,000, $7,500, top rate 6%)."
+}

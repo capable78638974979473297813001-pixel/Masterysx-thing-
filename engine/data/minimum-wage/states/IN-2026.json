@@ -1,0 +1,62 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "IN",
+    "name": "Indiana"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2009-07-24",
+    "coverage": "Covered employers under this state's own act, which adopts or matches the federal rate.",
+    "note": "Indiana's minimum wage act sets the rate equal to the federal $7.25 (IC 22-2-2-4)."
+  },
+  "stateStatutoryRate": null,
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 5.12,
+    "maxTipCreditCents": 512,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Matches the federal cash wage and tip credit."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 4.25,
+      "hourlyCents": 425,
+      "id": "federal_youth_opportunity_wage",
+      "label": "Federal youth opportunity wage",
+      "eligibility": "Employees under 20, first 90 consecutive calendar days -- 29 U.S.C. 206(g). Not a state figure; carried here because it is the only sub-minimum wage available in this state."
+    }
+  ],
+  "indexation": {
+    "indexed": false,
+    "note": "Not indexed; moves only if the legislature (or Congress) moves it."
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "knownGaps": [],
+  "confidence": "primary_source_confirmed"
+}

@@ -1,0 +1,98 @@
+{
+  "code": "MS",
+  "name": "Mississippi",
+  "year": 2025,
+  "method": "mississippi_bracket_deduction",
+  "sources": [
+    {
+      "title": "USDA National Finance Center -- Mississippi State Income Tax Withholding (NFC-25-1745343478, effective pay period 06, 2025)",
+      "url": "https://help.nfc.usda.gov/bulletins/2025/1745343478.htm",
+      "verifiedOn": "2026-09-29",
+      "quote": "Single $2,300 ... Married $4,600 ... Head of Household $3,400 ... Over $10,000: $0 plus 4.40% of excess over $10,000"
+    },
+    {
+      "title": "Mississippi Code 27-7-5 (rate schedule by tax year)",
+      "url": "https://law.justia.com/codes/mississippi/title-27/chapter-7/article-1/section-27-7-5/",
+      "verifiedOn": "2026-09-29"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "bracketStatusDeduction": {
+    "$comment": "Reverse-derived from Pub 89-700's own Table A (Single) wage-bracket cells, not transcribed from a formula page (none exists in the source document) -- verified against 3 cells exactly before trusting it. Annual formula: annualWages - standardDeduction[status] - totalExemptionClaimed, then 0% on the first $10,000 of that and 4.0% on the excess.",
+    "rate": 0.044,
+    "bracketThresholdAnnual": 10000.0,
+    "bracketComment": "Pub 89-700's own summary box, read WITHOUT -layout after an initial -layout extraction scrambled the two rows: 'Income Tax Rates / Taxable Income (Tax Year 2026): First $10,000 -> 0% / Remaining balance (excess of $10,000) -> 4.0%.' This directly CONTRADICTS the 4.1% figure repeated, uncited, across several secondary payroll-blog aggregators (Rippling, Halfpricesoft) found during this pass -- the primary document, and this file's own 3-cell reproduction against Table A, both confirm 4.0% for 2026. Trusted the primary quote plus independent reproduction over the repeated secondary figure, consistent with this project's standing practice.",
+    "standardDeductionAnnual": {
+      "single": 2300.0,
+      "headOfFamily": 3400.0,
+      "marriedSpouseNotEmployed": 4600.0,
+      "marriedBothEmployed": 2300.0
+    },
+    "standardDeductionComment": "Single/Head-of-Family/Married(spouse not employed) read directly off Pub 89-700's own summary box. Married-both-employed ($2,300) is NOT independently stated as a dollar figure -- Section 13(d) states directly that Table D (both spouses employed) 'contain[s] allowances and adjustments for the joint married standard deduction that are not included in Tables C... the standard deduction is divided equally for both taxpayer and spouse', i.e. exactly half of $4,600. Engine reads certificate.filingStatus as one of 'single' | 'head_of_family' | 'married_spouse_not_employed' | 'married_both_employed', corresponding to Form 89-350 Lines 1 / 3 / 2(a) / 2(b) respectively.",
+    "totalExemptionClaimedNote": "Engine reads certificate.totalExemptionClaimed as a single dollar figure -- Form 89-350's own Line 6 ('TOTAL AMOUNT OF EXEMPTION CLAIMED -- Lines 1 through 5') is exactly this: the employee sums their personal exemption ($6,000/$9,500/$12,000 by status), $1,500 per dependent, and $1,500 per age-65-or-blind block themselves and reports one total. Modelling the pre-summed total (rather than re-deriving personal+dependent+age/blind breakdown inside the engine) matches the form's own mechanism exactly and avoids inventing a decomposition the source document doesn't itself require the employer to perform.",
+    "verifiedExamples": [
+      "Table A (Single), weekly $505, exemption $0, standard deduction $2,300: 505x52=26,260 annual - 2,300 - 0 = 23,960; excess over $10,000 = 13,960; x4.0% = $558.40/yr; /52 = $10.7385 -> rounds to $11/wk. Matches Table A's own 500-510 row, exemption-0 column ($11) exactly.",
+      "Table A (Single), weekly $605, exemption $0: 605x52=31,460 - 2,300 = 29,160; excess = 19,160; x4.0% = $766.40/yr; /52 = $14.7385 -> $15/wk. Matches Table A's own 600-610 row, exemption-0 column ($15) exactly.",
+      "Table A (Single), weekly $495, exemption $6,000: 495x52=25,740 - 2,300 - 6,000 = 17,440; excess = 7,440; x4.0% = $297.60/yr; /52 = $5.7231 -> $6/wk. Matches Table A's own 490-500 row, exemption-6000 column ($6) exactly.",
+      "Table A (Single), DAILY $167, exemption $0: 167x260=43,420 annual (this engine's standard 260-workday daily convention) - 2,300 = 41,120; excess = 31,120; x4.0% = $1,244.80/yr; /260 = $4.7877 -> $5/day. Matches Table A's own Daily-period 166-168 row, exemption-0 column ($5) exactly -- checked specifically because Louisiana's own Daily table needed a 365-day override instead; Mississippi's Daily table confirmed to use the SAME 260-day basis as every other frequency, no override needed here."
+    ],
+    "independentConfirmation": "'Verify' pass (2026-08-22): USDA NFC's own 2026 bulletin (NFC-26-1768327516, help.nfc.usda.gov) independently reproduces every figure above -- the 0%/4.0% rate structure, all four standard deduction amounts (Single $2,300 / HoF $3,400 / Married $4,600 / Married-both-working $2,300), and the absent-certificate default (Single, $0 exemption) -- from a second federal agency's own independently-operated payroll formula, not a re-read of Pub 89-700. Zero discrepancies found."
+  },
+  "roundFinalToWholeDollar": true,
+  "roundingComment": "Pub 89-700 Section 13(e) states directly: 'This total is the amount to be withheld. This amount should be rounded to the nearest whole dollar.' Handled generically via rules.roundFinalToWholeDollar in stateIncomeTax() -- the same mechanism built for Maine and reused by Virginia/North Carolina -- not duplicated inside mississippiWithholding() itself.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "DISCLOSED, not the strongest tier in this project: modelled the same as every other state's standard 401(k)/125/HSA/FSA exclusion set, consistent with universal payroll-industry practice and Pub 89-700's own 'wages' definition (Section 7 -- lists inclusions, adds nothing back for these categories). BUT the one directly-fetched Mississippi statute found this pass (27-7-15) textually ties its ONLY salary-reduction exclusion to Section 25-17-5, which by its own chapter title and definitions applies to STATE/LOCAL GOVERNMENT employee cafeteria plans specifically -- not a general private-sector 401(k)/125 conformity statute the way Kentucky's/Arkansas's itemized-list citations are, or even the FAGI-starting-point citations Louisiana/Virginia/West Virginia have. A broader private-sector conformity provision may exist elsewhere in Title 27 that this pass did not locate. Flagged honestly as the weakest exemptPretax evidentiary tier in this project rather than silently treated as equivalent to the stronger citations elsewhere.",
+  "additionalOrReducedWithholding": {
+    "rule": "Form 89-350 Line 7 (additional dollar amount per pay period, 'if agreed to by your employer') already works generically via certificate.additionalWithholding -- zero new code needed, same as every other state's Line 2/Line 5/Line 7-style field in this project. Pub 89-700 Section 13(f) separately documents true VOLUNTARY withholding (for categories not otherwise subject to mandatory withholding at all, e.g. agricultural/household workers or MS residents working in a state that doesn't require MS withholding) -- out of scope for a wage-withholding engine that already receives input.workState, not modelled.",
+    "confidence": "primary_source_confirmed."
+  },
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: Pub 89-700's full text contains no reciprocity provision; cross-confirmed via search synthesis (multiple independent sources agree). A Mississippi resident working in another state must rely on a return-level credit, the ordinary non-reciprocal baseline this project uses for every other no-reciprocity state.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Mississippi city or county levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed via search synthesis; not independently verified against a specific parish/municipal-authority statute this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory for private-sector employees. Mississippi's HB 1063 (State Employees Paid Parental Leave Act, effective 2026-01-01) provides paid parental leave to STATE government employees only -- out of scope for a general private-sector wage-withholding engine, same convention as every other state-employee-only benefit found elsewhere in this project. No state-run social-insurance-fund PFML program exists for private employers.",
+    "confidence": "cross_source_confirmed via search synthesis, including a direct look at the current 2026 legislative session's bill tracker; not independently fetched from a specific enacted statute this pass."
+  },
+  "knownGaps": [
+    "DOR has replaced Pub 89-700-25-1 at its URL with the 2026 edition (4.0%), so the 2025 rate is sourced from the federal payroll office's 2025 formula and the statute.",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "Pub 89-700 Section 9: aggregate with the current or last-preceding payroll period, tax the combined amount as a single payment, subtract tax already withheld on the regular portion."
+  },
+  "$yearNote": "2025 ruleset: 0% on the first $10,000 of taxable income, 4.4% above it (Build Up Mississippi Act step-down: 4.4% for 2025, 4.0% for 2026). Exemptions and standard deductions are unchanged from 2026."
+}

@@ -1,0 +1,62 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "CT",
+    "name": "Connecticut"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 16.94,
+    "hourlyCents": 1694,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All covered employers.",
+    "note": "Public Act 19-4 indexed Connecticut to the federal Employment Cost Index from 2024; $16.35 in 2025, $16.94 in 2026."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 6.38,
+    "cashWageCents": 638,
+    "maxTipCredit": 10.56,
+    "maxTipCreditCents": 1056,
+    "tippedEmployeeThreshold": null,
+    "note": "Connecticut runs TWO tipped rates, split by occupation rather than by employer: hotel and restaurant staff at a $6.38 cash wage, bartenders at $8.71. Both are frozen dollar figures, so every ECI increase lands entirely on the tip credit."
+  },
+  "variants": [
+    {
+      "hourly": 8.71,
+      "hourlyCents": 871,
+      "id": "tipped_bartender",
+      "label": "Bartender cash wage",
+      "test": "An employee who customarily and regularly receives tips while working as a bartender.",
+      "maxTipCredit": 8.23,
+      "note": "Conn. Gen. Stat. 31-60(b) sets a separate, smaller tip credit for bartenders."
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "Employment Cost Index (ECI), annually",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

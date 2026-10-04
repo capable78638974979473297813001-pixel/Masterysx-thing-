@@ -1,0 +1,71 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "MD",
+    "name": "Maryland"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 15.0,
+    "hourlyCents": 1500,
+    "effectiveFrom": "2024-01-01",
+    "coverage": "All employers regardless of size. The Fair Wage Act of 2023 ACCELERATED Maryland to $15.00 and abolished the old small-employer (14 or fewer) tier -- a stale table still carrying two Maryland rates is wrong.",
+    "note": "Md. Code, Lab. & Empl. 3-413. No escalator."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 3.63,
+    "cashWageCents": 363,
+    "maxTipCredit": 11.37,
+    "maxTipCreditCents": 1137,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Maryland's $3.63 cash wage is set by statute and does not move with the standard rate."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 12.75,
+      "hourlyCents": 1275,
+      "id": "youth_under_20",
+      "label": "Employees under 20, first 6 months",
+      "eligibility": "85% of the state minimum wage for the first six months of employment for employees under 20 -- Md. Code, Lab. & Empl. 3-413(g). 85% of $15.00 = $12.75.",
+      "confidence": "cross_source_confirmed"
+    }
+  ],
+  "variants": [],
+  "indexation": {
+    "indexed": false
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Montgomery County and Howard County set higher local rates -- see local/MD-local-2026.json.",
+    "Maryland's separate agricultural and amusement/recreational-establishment sub-rates are not carried here."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Maryland Division of Labor and Industry -- Maryland Minimum Wage and Overtime Law (Employment Standards Service)",
+      "url": "https://www.labor.maryland.gov/labor/wages/wagehrfacts.shtml",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the $15.00 uniform rate (no employer-size tiers since the Fair Wage Act of 2023) and the 85%-of-minimum-wage rate for employees under 20 during their first six months, i.e. $12.75."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

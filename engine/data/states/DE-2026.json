@@ -1,0 +1,213 @@
+{
+  "code": "DE",
+  "name": "Delaware",
+  "year": 2026,
+  "method": "bracket_annual_exemption_credit",
+  "$methodComment": "Genuinely new shape in this project: annualize wages, subtract a FLAT standard deduction by filing status (single/MFS $3,250, MFJ $6,500 -- a fixed dollar figure, not Wisconsin's income-phased-out band), look up a 7-bracket progressive schedule, THEN subtract a flat $110-per-exemption CREDIT AGAINST THE COMPUTED TAX -- the first state in this project where the exemption amount is a post-bracket tax credit rather than a pre-bracket wage deduction (Ohio/Wisconsin/Michigan/Indiana/Illinois all reduce the taxable base before the bracket lookup). Delaware also annualizes DAILY pay at x300, not this engine's generic 260-workday PERIODS_PER_YEAR convention -- the same class of per-frequency-divisor mismatch New Jersey's daily table hit at x365 -- so delawareWithholding() uses its own annualizeMultiplier map instead of ctx.periodsPerYear. Verified against all THREE of the Employer's Guide's own worked examples (single/1 exemption, MFJ/3 exemptions, MFS/2 exemptions), each reproduced across all four published per-period divisors (weekly/biweekly/semi-monthly/monthly) -- see tests/engine.test.ts, describe('Delaware').",
+  "sources": [
+    {
+      "title": "Employer's Guide (Withholding Regulations and Employer's Duties) -- Division of Revenue, State of Delaware",
+      "url": "https://revenue.delaware.gov/employers-guide-withholding-regulations-employers-duties/",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "Fetched directly (curl with a browser User-Agent; a plain WebFetch summary of the same page was cross-checked against this raw HTML extraction and matched exactly). Section 17 ('Computing Withholding Taxes') supplied the full annualized-wages formula, the 'Tax Computation Table Effective January 1, 2025' bracket schedule, the $3,250/$6,500 standard deduction figures, the $110 personal-exemption-credit rule, and all three worked examples (single, MFJ, MFS), all quoted verbatim into this file and reproduced to the cent by the engine -- see verification block below."
+    },
+    {
+      "title": "Form W-4NR, Non-Resident Withholding Computation Worksheet (Revision 20220304)",
+      "url": "https://revenuefiles.delaware.gov/docs/w4nr.pdf",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Its own 'EXAMPLE OF GROSS TAX LIABILITY CALCULATION' independently states and demonstrates the IDENTICAL rate table found in the Employer's Guide (10,001-20,001 bracket, base $261.00, 4.80% -- worked example: taxable income $12,000 -> $261.00 + (12,000-10,000)x4.80% = $357.00), a second primary document confirming the same numbers rather than a single source repeated."
+    },
+    {
+      "title": "Form DE-W4, Employee's Withholding Allowance Certificate + DE-W4R Resident Allowance Worksheet (Revision 20220304)",
+      "url": "https://revenuefiles.delaware.gov/2021/DE-W4.pdf",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Confirms Delaware has its OWN state-specific withholding certificate (post-2020 federal Form W-4 cannot be used for Delaware purposes since it dropped the 'allowances' concept the DE formula still relies on): Line 3 is a Married/Single checkbox, Line 4 carries the allowance count (populated via the DE-W4R worksheet's Line G/10, NOT a bare dependents count despite Line 4's own printed label 'Total number of dependents you can claim' -- a real, disclosed label/instruction mismatch, see knownGaps), Line 5 is additional per-paycheck withholding (maps to this engine's generic applyAdditionalStateWithholding()). The worksheet's own Line G formula (self 1-2, spouse 1-2, dependents, child/dependent-care credit, age/blind) was read but its exact per-line dollar weighting is NOT separately modeled here -- the engine's certificate.exemptions field takes the RESULT of that worksheet as a single caller-supplied count, the same convention as Michigan's single allowances count."
+    },
+    {
+      "title": "Delaware House Bill 13 (153rd General Assembly) + House Substitute No. 2 for HB13 -- bracket-restructuring proposal",
+      "url": "https://legis.delaware.gov/BillDetail?LegislationId=141813",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "Fetched the bill's own legislative text and status directly rather than assuming either 'nothing changed' or trusting a secondary site's rate table at face value. HB13's original text proposed new brackets 'for taxable years beginning after December 31, 2025' (this exact tax year) with a top rate reaching 6.95% above $250,000; HS2 for HB13 proposed a different restructuring again. Checked the bill's actual status directly: HS2 for HB13 did NOT pass before the General Assembly adjourned for the 2025 session ('failed to advance this session but will likely resurface next year', cross-confirmed via a second independent legislative recap). Confirmed separately that Delaware's OWN developer-facing tax-rate-changes page still shows the pre-existing table with no update. Net: the OLD 2.20%-6.60% table (unchanged since 2014) is what is actually in force for 2026 -- a real, checked non-change, not an assumed one, following the same discipline as Ohio's mid-year HB96 check."
+    },
+    {
+      "title": "Delaware Department of Labor -- Employer Services / Unemployment Insurance Tax (Merit Rate Table)",
+      "url": "https://labor.delaware.gov/divisions/unemployment-insurance/employer-services/",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "Fetched directly. Its own 'Delaware Merit Rate Table' (columns 2026/2025/2024/2023/2022) gives 2026: New Employer Rate 1.0%, New Construction Rate 1.0%, Lowest Rate 0.3%, Highest Rate 5.4%, Delinquent Rate 6.3%, Wage Base $14,500.00. CAUGHT A REAL ERROR from a prior secondary-source pass in this same session: an initial WebSearch summary claimed '2026 new employer rate 1.8%' -- checking the primary table directly showed 1.8% is actually the 2022 column's figure, not 2026's; the real 2026 new-employer rate is 1.0%. Corrected before writing to this file, not after."
+    },
+    {
+      "title": "City of Wilmington FY2025 Tax Rates -- City of Wilmington Budget Office",
+      "url": "https://wilmdebudget.org/wp-content/uploads/2024/03/fy25-tax-rates.pdf",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "PDF downloaded and text-extracted directly from Wilmington's own budget office. Quoted verbatim: 'WAGE TAX. Base: Individual gross earned income of City residents. Individual gross earned income of non-City residents working within the City limits. Rate: 1.25% (as set by Delaware General Assembly).' Wilmington's own city-hosted page (wilmingtonde.gov) returned an Akamai bot-block (HTTP 403) to every fetch attempt in this session, including a browser-UA curl -- the budget-office PDF and a New Castle County government HR intake form (both independently stating the same 1.25% figure and residence-OR-work-location rule) were used instead, one tier below a direct city-page fetch but still a primary city document, not a third-party tax site."
+    },
+    {
+      "title": "Employer's Guide (Withholding Regulations and Employer's Duties) -- supplemental wages section",
+      "url": "https://revenue.delaware.gov/employers-guide-withholding-regulations-employers-duties/",
+      "verifiedOn": "2026-08-27",
+      "verifiedBy": "Fetched for the 'find and fix anything missing across all 50 states' pass. Quoted: \"If you pay supplemental wages in a different payment from the regular wages... 1. Annualize the employee's regular wages and compute the tax on this amount. 2. Annualize the regular wages and ADD THE SUPPLEMENTAL WAGE to this amount. Compute tax on this amount. 3. Subtract the difference in the tax amounts. 4. The remainder is the amount to be withheld.\" A MARGINAL-AMOUNT method textually different from Hawaii/Mississippi/Rhode Island/New Jersey's own \"treat the combined amount as a single wage payment for the period\" framing (which this engine's existing aggregateWithPriorRegularPayment() mechanism correctly reproduces, verified this pass against Hawaii's and Mississippi's own numbers): Delaware's own Step 2 adds the RAW bonus dollar amount to an ALREADY-ANNUALIZED regular-wages total, not to a per-period figure that then gets annualized again. Attempting this via the existing mechanism would multiply the bonus by periodsPerYear before adding it (the SAME bug already found and NOT shipped for West Virginia this pass), over-taxing it substantially for any frequency shorter than annual. NOT wired this pass rather than shipped unverified — same class of gap as West Virginia, needing a bespoke annual-marginal function."
+    }
+  ],
+  "delawareWithholding": {
+    "brackets": [
+      {
+        "from": 0,
+        "to": 2000,
+        "base": 0,
+        "rate": 0
+      },
+      {
+        "from": 2000,
+        "to": 5000,
+        "base": 0,
+        "rate": 0.022
+      },
+      {
+        "from": 5000,
+        "to": 10000,
+        "base": 66.0,
+        "rate": 0.039
+      },
+      {
+        "from": 10000,
+        "to": 20000,
+        "base": 261.0,
+        "rate": 0.048
+      },
+      {
+        "from": 20000,
+        "to": 25000,
+        "base": 741.0,
+        "rate": 0.052
+      },
+      {
+        "from": 25000,
+        "to": 60000,
+        "base": 1001.0,
+        "rate": 0.0555
+      },
+      {
+        "from": 60000,
+        "to": null,
+        "base": 2943.5,
+        "rate": 0.066
+      }
+    ],
+    "standardDeduction": {
+      "single": 3250,
+      "married": 6500
+    },
+    "standardDeductionComment": "single applies to BOTH 'Single' and 'Married Filing Separately' -- confirmed by the Guide's own third worked example (MFS, 2 exemptions, uses the $3,250 figure, not half of $6,500). Only 'mfj' (Married Filing Jointly) selects the $6,500 married figure.",
+    "personalCreditPerExemption": 110,
+    "annualizeMultiplier": {
+      "weekly": 52,
+      "biweekly": 26,
+      "semimonthly": 24,
+      "monthly": 12,
+      "daily": 300
+    },
+    "annualizeMultiplierComment": "Verbatim from Section 17: 'Multiply the daily gross by 300, weekly gross by 52, monthly gross by 12, semi-monthly gross by 24 and bi-weekly by 26.' Daily's x300 is NOT this engine's generic 260-workday PERIODS_PER_YEAR convention -- deliberately kept as Delaware's own published multiplier rather than silently using the engine default, the same fix New Jersey's daily table needed. Quarterly/semiannual/annual are not published by the Guide at all and are left absent -- delawareWithholding() throws a clear error for those rather than guessing.",
+    "certificateFields": "input.workState.certificate.{maritalStatus ('mfj' selects married; anything else -- including 'single', 'mfs', or absent -- selects single, matching the Guide's Section 15(a) no-certificate default of 'a single person who has no withholding allowances'), exemptions (a single count -- the RESULT of Form DE-W4R's own Line G/10 worksheet, which the engine does not itself compute; the caller supplies the final number, same convention as Michigan's single allowances count)}."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "The Employer's Guide's own Section 2 defines withholding obligation by reference to federal law, quoted verbatim: 'Delaware withholding is required provided such payments are subject to withholding under the Internal Revenue Code.' This ties Delaware's withholding base directly to IRC-defined wages subject to federal withholding -- which already exclude 401(k)/125/HSA/FSA/dependent-care pretax deferrals at the federal level -- the same structural anchor already used for Idaho/Ohio/Michigan/Wisconsin's exemptPretax lists (conforms to federal, unlike Pennsylvania's carve-out). One tier below a state anchoring to its OWN codified 'taxable income = federal AGI' statute (as MI's MCL 206.30 and WI's Wis. Stat. 71.03(13) do) since Delaware's own citation here is about the withholding OBLIGATION, not a separate state 'taxable income' definition statute -- not separately located or read this session.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "The Employer's Guide states directly, Section 11: 'The State of Delaware does not have Reciprocal Agreements with any other state regarding the taxation of non-resident employees.' reciprocalStates deliberately empty (checked, found none), not omitted."
+  },
+  "localIncomeTax": {
+    "rule": "City of Wilmington Wage Tax: 1.25% of gross earned income, applying to City residents AND to non-residents who work within Wilmington's city limits (whichever condition is met). The ONLY municipality in Delaware with authority to levy a wage/earned-income tax -- a closed list of one, the same structural shape as Michigan's 24-city Act 284 list, just smaller.",
+    "rate": 0.0125,
+    "administeredBy": "New Castle County (collects on the City of Wilmington's behalf, per the county's own employer intake form).",
+    "confidence": "primary_source_confirmed for the 1.25% rate and the resident-OR-work-location trigger (Wilmington's own FY2025 budget-office PDF), but Wilmington's own city-hosted informational page (wilmingtonde.gov) could not be fetched directly this session (Akamai bot-block, HTTP 403, tried both plain WebFetch and browser-UA curl) -- the rate itself is corroborated by two independent Wilmington/New-Castle-County government documents, but the FULL administrative mechanism (withholding thresholds, any exemption amount, filing frequency) was not read from the city's own page and is not claimed here.",
+    "notWiredIntoEngine": "WIRED (2026-08-25, 'do all remaining states symetry level' pass): wilmingtonWageTax() in src/taxes/state.ts, gated on certificate.locality === 'Wilmington' -- the same caller-resolved 'resident OR work location' shape as Missouri's Kansas City/St. Louis earnings tax (missouriLocalEarningsTax()), since Wilmington's own rule is explicitly an either-condition trigger too. Proven via tests/engine.test.ts, describe('Delaware') > 'Wilmington Wage Tax'. Still not independently confirmed: any withholding threshold, exemption amount, or filing-frequency mechanic beyond the flat 1.25% rate itself, since Wilmington's own city page remains unreachable (Akamai bot-block)."
+  },
+  "paidLeave": {
+    "program": "Delaware Paid Leave (Healthy Delaware Families Act), administered by the Division of Paid Leave -- benefit payments begin 2026-01-01.",
+    "combinedContributionRate": {
+      "parental": 0.0032,
+      "medical": 0.004,
+      "familyCaregiver": 0.0008,
+      "total": 0.008
+    },
+    "employerResponsibility": "Employers fund 100% of the contribution by statute, but MAY require employees to pay up to 50% of whichever component(s) apply -- this is a genuine employer ELECTION with a ceiling, not a fixed statutory employee rate.",
+    "wageBase": "Capped at the federal Social Security (FICA) wage base, but only counting wages earned IN Delaware (the one difference from the FICA cap itself).",
+    "employerSizeGating": "Employers with 1-9 Delaware-based eligible employees are exempt from the Act entirely. Employers with 10-24 employees need only offer Parental Leave (0.32% combined, so up to 0.16% employee share) unless they choose a broader private plan. Employers with 25+ employees must offer all three components (0.8% combined, so up to 0.4% employee share).",
+    "notWiredIntoEngine": "Deliberately NOT modeled as a statePaidLeaveEmployee config, unlike New Jersey/New York/Connecticut's mandatory single-rate programs. Two independent reasons, both real: (1) the actual employee-withheld amount depends on an EMPLOYER ELECTION (how much of the up-to-50% ceiling to actually charge -- could be 0%) that this engine has no certificate or config field to represent; guessing '50%, always' would be wrong for any employer that charges less. (2) the applicable combined rate itself depends on EMPLOYER SIZE (a 1-9/10-24/25+ headcount tier), which nothing in this engine's types.ts or PaycheckInput currently carries -- a structurally different kind of input than any pretax/wage field it already has, the same class of gap Kansas's SUTA experience-rating and Wisconsin's reserve-percentage SUTA schedule already disclosed for employer-only taxes, now appearing for the first time on an EMPLOYEE-facing tax.",
+    "primarySource": {
+      "title": "Employer's & TPAs' Guide to Delaware Paid Leave",
+      "url": "https://laborfiles.delaware.gov/main/pfl/Employer_and_TPAs_Guide_to_DPL.pdf",
+      "verifiedOn": "2026-08-19",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Rate figures, employer-size tiers, and the 50%-cost-sharing-ceiling rule are all quoted or closely paraphrased from this document's own 'Contribution Rates & Calculations' section."
+    }
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUTA) -- no employee contribution, so not wired into the calc engine, matching every other state's employer-only SUTA in this project.",
+    "administeredBy": "Delaware Department of Labor, Division of Unemployment Insurance",
+    "wageBase": 14500.0,
+    "newEmployerRate": 0.01,
+    "newConstructionRate": 0.01,
+    "experiencedRateRange": {
+      "lowest": 0.003,
+      "highest": 0.054
+    },
+    "delinquentRate": 0.063,
+    "confidence": "primary_source_confirmed -- Delaware DOL's own Employer Services page, its 'Delaware Merit Rate Table,' fetched and read directly this session (see sources above). This CORRECTED a wrong 1.8%-new-employer-rate claim that appeared in an earlier secondary-source pass within this same session (1.8% was actually the table's 2022 column, misread/misattributed by the secondary source) -- caught before being written here, not after.",
+    "unconfirmedClaim": "A secondary source (not Delaware DOL's own page) separately claimed a '0.2% Operations and Technology Assessment' surcharge on all wages. Searched Delaware DOL's own Employer Services page directly for any mention of an assessment/technology/surcharge and found none -- not included as a fact in this file, flagged here as an unconfirmed claim rather than either asserted or silently dropped."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN: all THREE of the Employer's Guide's own worked examples (single/1 exemption, MFJ/3 exemptions, MFS/2 exemptions -- each starting from the same $25,000 annualized-wage figure, so the three examples cross-check each other's shared bracket/annualization steps while isolating the standard-deduction and credit differences) reproduced to the cent across all FOUR of the Guide's own published per-period divisors (weekly $13.88/$6.52/$11.77, biweekly $27.77/$13.04/$23.54, semi-monthly $30.08/$14.13/$25.50, monthly $60.17/$28.25/$51.00) -- 12 assertions total, run through the actual calculatePaycheck() engine, not a standalone reimplementation. See tests/engine.test.ts, describe('Delaware').",
+    "notCoveredByAnyFixtures": "Daily pay frequency (x300 multiplier) -- Delaware publishes no worked example using it, so its correctness rests on the Guide's own annualization sentence rather than a to-the-cent reproduced answer, the same one-tier-below-worked-example confidence as several other states' unexercised frequencies in this project. Reciprocity (there is none, so nothing to exercise). Local tax, Paid Leave, and SUTA -- none implemented in the calculation engine, see their own notWiredIntoEngine/knownGap notes above."
+  },
+  "knownGaps": [
+    "Non-resident withholding uses a genuinely DIFFERENT mechanism than delawareWithholding()'s own resident formula (Form W-4NR's own proration worksheet: compute tax as if resident, then multiply by a Delaware-source-income / federal-AGI fraction) — applied via applyNonresidentAllocation() (src/taxes/state.ts), which scales the resident-formula tax by certificate.nonresidentAllocationFraction. The engine does not compute that fraction itself — the Delaware-source-income / federal-AGI ratio is a fact only the caller has.",
+    "Form DE-W4's Line 4 is printed as 'Total number of dependents you can claim on your return,' but the DE-W4R worksheet instructs the employee to 'enter the number from Line G onto the Delaware Form W-4' -- Line G is a broader allowance count (self, spouse, dependents, child-care credit, age/blind additions), not merely a dependents count. This is a real, disclosed label/instruction inconsistency in Delaware's own form, not resolved by this project -- certificate.exemptions is documented as accepting whatever final number the worksheet produces, whatever field it's filed under.",
+    "RESOLVED (stale note fixed this pass): the City of Wilmington 1.25% wage tax IS wired -- see localIncomeTax.notWiredIntoEngine above (wilmingtonWageTax() in src/taxes/state.ts, gated on certificate.locality).",
+    "Delaware Paid Leave's actual employee-withheld amount is an employer election within a statutory ceiling, not a fixed rate — computed via the statePaidLeaveEmployer block below, where coverage TIER comes from input.employer.paidLeaveTier (nothing computes without it) and the employee's share comes from input.employer.paidLeaveEmployeeShareFraction, clamped at the statutory 50% ceiling.",
+    "SUTA's 0.2% 'Operations and Technology Assessment' claim from a secondary source was checked against Delaware DOL's own page and NOT found there -- left out of unemploymentInsurance's modeled figures, flagged as unconfirmed rather than included or silently dropped.",
+    "Daily pay frequency's x300 annualization multiplier is transcribed from the Guide's own formula sentence but not proven against a to-the-cent worked example (none published for 'daily') the way weekly/biweekly/semi-monthly/monthly all are.",
+    "Supplemental wages: Delaware's own Employer's Guide describes a distinct annual-marginal method for a bonus paid separately (annualize regular wages alone, separately annualize regular-plus-bonus, withhold the difference) — a genuinely different shape from the \"combine as one per-period payment\" this engine's generic supplementalAggregation mechanism implements. delawareSupplementalAnnualMarginal() (src/taxes/state.ts) implements Delaware's own method exactly: a bonus on its own cheque annualizes the prior regular wage alone (input.priorRegularPayment), separately annualizes regular-plus-bonus, runs both through delawareWithholding()'s own bracket/standard-deduction/exemption-credit formula, and withholds the difference. Falls back to annualizing the bonus alone when the caller supplies no priorRegularPayment. Verified against a hand-derived worked case ($2,000/wk regular + $5,000 standalone bonus, single/0 exemptions -> bonus taxed at exactly 6.6% = $330.00) in tests/engine.test.ts."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14500,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.003,
+      "max": 0.054
+    },
+    "experienceRangeSource": "Fixed 2026-09-01: this block previously read {0.006, 0.056}, a transcription slip that disagreed with both the live Delaware Merit Rate Table (labor.delaware.gov, Lowest Rate 0.3% / Highest Rate 5.4%) and this same file's own primary-sourced unemploymentInsurance.experiencedRateRange block elsewhere in the file ({lowest: 0.003, highest: 0.054}).",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.008,
+    "tiers": {
+      "exempt": 0,
+      "parentalOnly": 0.0032,
+      "full": 0.008
+    },
+    "employeeShareFraction": 0,
+    "maxEmployeeShareFraction": 0.5,
+    "wageBase": "ssWageBase",
+    "employerSizeGated": false,
+    "$comment": "Delaware Paid Leave (Healthy Delaware Families Act), wired from this file's own paidLeave block. Two features no other state in this project has, both encoded rather than flattened: (1) the premium depends on employer HEADCOUNT — 1-9 employees exempt from the Act entirely, 10-24 owe the parental component only (0.32%), 25+ owe all three (0.80%) — so the caller names the tier via input.employer.paidLeaveTier and nothing computes without it; (2) the statute puts 100% of the contribution on the EMPLOYER but permits recovering up to HALF from employees, so employeeShareFraction defaults to 0 and an employer election (input.employer.paidLeaveEmployeeShareFraction) moves it, clamped at maxEmployeeShareFraction. Wage base is the federal Social Security wage base, counting Delaware wages only. CORRECTED 2026-09-06: this was a hand-copied literal 184500 (a real, undisclosed drift risk found on a \"go to every state\" pass, the same anti-pattern already fixed for Washington/Connecticut/Massachusetts/Maine's own SS-linked Paid Leave programs the same pass) -- now the 'ssWageBase' sentinel, resolved LIVE from data/federal/2026.json's own socialSecurity.wageBase by resolvePaidLeaveWageBase() in src/taxes/state.ts."
+  },
+  "nonresidentAllocation": {
+    "basis": "source_income_fraction",
+    "form": "W-4NR",
+    "$comment": "Form W-4NR's own proration worksheet: compute the tax as if the employee were a Delaware resident, then multiply by Delaware-source income over federal AGI. The engine already computes the resident-basis tax, so the remaining input is the fraction itself."
+  }
+}

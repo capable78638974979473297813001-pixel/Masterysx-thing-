@@ -1,0 +1,411 @@
+{
+  "$comment": "Where each engine tax line is remitted and on what schedule. Tax AMOUNTS come from the engine; this file only routes them. Any group's schedule can be overridden per company with deposit_schedules in the companies file.",
+  "federal_groups": {
+    "US-941": {
+      "name": "Federal 941 taxes (FIT, Social Security, Medicare)",
+      "agency": "IRS",
+      "schedule": "federal_941",
+      "return": "941",
+      "penalty": "irc6656",
+      "eftps_tax_type": "94105"
+    },
+    "US-940": {
+      "name": "Federal unemployment (FUTA)",
+      "agency": "IRS",
+      "schedule": "futa",
+      "threshold": "500",
+      "return": "940",
+      "penalty": "irc6656",
+      "eftps_tax_type": "09405"
+    },
+    "US-CT1": {
+      "name": "Railroad retirement (RRTA)",
+      "agency": "IRS",
+      "schedule": "federal_941",
+      "return": "CT-1",
+      "penalty": "irc6656",
+      "eftps_tax_type": "11105"
+    },
+    "US-RUIA": {
+      "name": "Railroad unemployment (RUIA)",
+      "agency": "Railroad Retirement Board",
+      "schedule": "quarterly",
+      "return": "BA-11 / quarterly RUIA report"
+    }
+  },
+  "federal_ids": {
+    "US-941": [
+      "US_FIT",
+      "US_FIT_SUPP",
+      "US_SS_EE",
+      "US_SS_ER",
+      "US_MED_EE",
+      "US_MED_ER",
+      "US_MED_ADDL"
+    ],
+    "US-940": [
+      "US_FUTA"
+    ],
+    "US-CT1": [
+      "US_RRTA_TIER1_EE",
+      "US_RRTA_TIER1_ER",
+      "US_RRTA_TIER2_EE",
+      "US_RRTA_TIER2_ER",
+      "US_RRTA_MED_EE",
+      "US_RRTA_MED_ER",
+      "US_RRTA_MED_ADDL"
+    ],
+    "US-RUIA": [
+      "US_RUIA_ER"
+    ]
+  },
+  "local_ids": {
+    "PA_EIT": "PA-LOCAL",
+    "PA_LST": "PA-LOCAL",
+    "OH_LOCAL": "OH-MUNI",
+    "OH_JEDD": "OH-MUNI",
+    "OH_SDIT": "OH-SD",
+    "MI_LOCAL": "MI-CITY",
+    "KY_LOCAL": "KY-OCC",
+    "AL_LOCAL": "AL-LOCAL",
+    "AL_COUNTY": "AL-LOCAL",
+    "IN_COUNTY": "IN-WH",
+    "WILMINGTON_WAGE": "LOCAL-WILMINGTON",
+    "KC_EARN": "LOCAL-KC",
+    "STL_EARN": "LOCAL-STL",
+    "STL_PAYROLL_ER": "LOCAL-STL",
+    "OR_METRO_SHS": "LOCAL-PORTLAND",
+    "OR_MULTNOMAH_PFA": "LOCAL-PORTLAND",
+    "SEATTLE_PAYROLL_ER": "LOCAL-SEATTLE",
+    "NEWARK_PAYROLL_ER": "LOCAL-NEWARK",
+    "WV_LOCAL_FEE": "LOCAL-WV"
+  },
+  "local_groups": {
+    "PA-LOCAL": {
+      "name": "Pennsylvania EIT / LST (Act 32)",
+      "agency": "Tax collection district collector",
+      "schedule": "quarterly",
+      "return": "Quarterly EIT return"
+    },
+    "OH-MUNI": {
+      "name": "Ohio municipal income tax",
+      "agency": "Municipality / RITA / CCA",
+      "schedule": "monthly",
+      "due_day": 15,
+      "return": "Municipal withholding return"
+    },
+    "OH-SD": {
+      "name": "Ohio school district income tax",
+      "agency": "Ohio Department of Taxation",
+      "schedule": "quarterly",
+      "return": "SD 101"
+    },
+    "MI-CITY": {
+      "name": "Michigan city income tax",
+      "agency": "City treasurer",
+      "schedule": "quarterly",
+      "return": "City withholding return"
+    },
+    "KY-OCC": {
+      "name": "Kentucky occupational license tax",
+      "agency": "City / county",
+      "schedule": "quarterly",
+      "return": "Occupational license return"
+    },
+    "AL-LOCAL": {
+      "name": "Alabama occupational tax",
+      "agency": "City / county",
+      "schedule": "monthly",
+      "due_day": 20,
+      "return": "Occupational tax return"
+    },
+    "LOCAL-WILMINGTON": {
+      "name": "Wilmington earned income tax",
+      "agency": "City of Wilmington",
+      "schedule": "monthly",
+      "due_day": 15,
+      "return": "Wage tax return"
+    },
+    "LOCAL-KC": {
+      "name": "Kansas City earnings tax",
+      "agency": "City of Kansas City",
+      "schedule": "monthly",
+      "due_day": 15,
+      "return": "RD-110"
+    },
+    "LOCAL-STL": {
+      "name": "St. Louis earnings / payroll tax",
+      "agency": "City of St. Louis",
+      "schedule": "monthly",
+      "due_day": 15,
+      "return": "E-1 / P-10"
+    },
+    "LOCAL-PORTLAND": {
+      "name": "Metro SHS / Multnomah PFA",
+      "agency": "City of Portland Revenue Division",
+      "schedule": "quarterly",
+      "return": "Quarterly withholding return"
+    },
+    "LOCAL-SEATTLE": {
+      "name": "Seattle payroll expense tax",
+      "agency": "City of Seattle",
+      "schedule": "annual",
+      "return": "Payroll expense tax return"
+    },
+    "LOCAL-NEWARK": {
+      "name": "Newark payroll tax",
+      "agency": "City of Newark",
+      "schedule": "quarterly",
+      "return": "Payroll tax return"
+    },
+    "LOCAL-WV": {
+      "name": "West Virginia city service fee",
+      "agency": "Municipality",
+      "schedule": "quarterly",
+      "return": "Service fee return"
+    }
+  },
+  "state_defaults": {
+    "WH": {
+      "name": "{name} withholding",
+      "agency": "{wh_agency}",
+      "schedule": "follows_federal",
+      "return": "{code} withholding return",
+      "unconfigured_warning": true
+    },
+    "UI": {
+      "name": "{name} unemployment insurance",
+      "agency": "{ui_agency}",
+      "schedule": "quarterly",
+      "return": "{code} quarterly UI wage report"
+    },
+    "PFML": {
+      "name": "{name} paid family & medical leave",
+      "agency": "{name} paid leave program",
+      "schedule": "quarterly",
+      "return": "{code} paid leave quarterly report"
+    },
+    "LTC": {
+      "name": "{name} long-term care",
+      "agency": "{name} long-term care program",
+      "schedule": "quarterly",
+      "return": "{code} quarterly report"
+    },
+    "DI": {
+      "name": "{name} disability insurance",
+      "agency": "{name} disability program",
+      "schedule": "quarterly",
+      "return": "{code} quarterly report"
+    },
+    "OTHER": {
+      "name": "{name} {suffix}",
+      "agency": "{name}",
+      "schedule": "quarterly",
+      "return": "{code} quarterly report"
+    }
+  },
+  "state_overrides": {
+    "CA": {
+      "ids": {
+        "CA_DBL_EE": "CA-WH"
+      },
+      "groups": {
+        "CA-WH": {
+          "name": "California PIT + SDI",
+          "agency": "CA EDD",
+          "schedule": "follows_federal",
+          "return": "DE 9 / DE 9C"
+        },
+        "CA-UI": {
+          "name": "California UI + ETT",
+          "agency": "CA EDD",
+          "return": "DE 9 / DE 9C"
+        }
+      }
+    },
+    "NY": {
+      "ids": {
+        "NY_PFML_EE": "NY-CARRIER",
+        "NY_DBL_EE": "NY-CARRIER"
+      },
+      "groups": {
+        "NY-WH": {
+          "name": "New York withholding (incl. NYC / Yonkers)",
+          "agency": "NY DTF",
+          "schedule": "accumulated_threshold",
+          "threshold": "700",
+          "business_days": 5,
+          "return": "NYS-45"
+        },
+        "NY-UI": {
+          "name": "New York UI + Re-employment Service Fund",
+          "agency": "NY DOL",
+          "return": "NYS-45"
+        },
+        "NY-CARRIER": {
+          "name": "New York DBL / PFL premiums",
+          "agency": "Your DBL/PFL insurance carrier",
+          "schedule": "quarterly",
+          "return": "Carrier premium statement",
+          "note": "Employee DBL/PFL contributions are remitted to the insurance carrier, not to the state."
+        }
+      }
+    },
+    "NJ": {
+      "ids": {
+        "NJ_UC_EE": "NJ-UI",
+        "NJ_DBL_EE": "NJ-UI",
+        "NJ_PFML_EE": "NJ-UI"
+      },
+      "groups": {
+        "NJ-WH": {
+          "name": "New Jersey gross income tax withholding",
+          "agency": "NJ Division of Taxation",
+          "return": "NJ-927 / NJ-500"
+        },
+        "NJ-UI": {
+          "name": "New Jersey UI / DI / FLI",
+          "agency": "NJ Department of Labor",
+          "return": "NJ-927 / WR-30"
+        }
+      }
+    },
+    "HI": {
+      "ids": {
+        "HI_DBL_EE": "HI-CARRIER"
+      },
+      "groups": {
+        "HI-CARRIER": {
+          "name": "Hawaii TDI premiums",
+          "agency": "Your TDI insurance carrier",
+          "schedule": "quarterly",
+          "return": "Carrier premium statement"
+        }
+      }
+    },
+    "TX": {
+      "groups": {
+        "TX-UI": {
+          "agency": "Texas Workforce Commission",
+          "return": "C-3"
+        }
+      }
+    },
+    "FL": {
+      "groups": {
+        "FL-UI": {
+          "agency": "Florida Department of Revenue",
+          "return": "RT-6"
+        }
+      }
+    },
+    "PA": {
+      "groups": {
+        "PA-UI": {
+          "return": "UC-2 / UC-2A"
+        },
+        "PA-WH": {
+          "agency": "PA Department of Revenue",
+          "return": "PA-W3"
+        }
+      }
+    },
+    "IL": {
+      "groups": {
+        "IL-UI": {
+          "return": "UI-3/40"
+        },
+        "IL-WH": {
+          "agency": "IL Department of Revenue",
+          "return": "IL-941"
+        }
+      }
+    },
+    "MA": {
+      "groups": {
+        "MA-WH": {
+          "agency": "MA Department of Revenue",
+          "return": "M-941"
+        },
+        "MA-PFML": {
+          "agency": "MA Department of Family and Medical Leave"
+        }
+      }
+    },
+    "WA": {
+      "groups": {
+        "WA-UI": {
+          "agency": "WA Employment Security Department"
+        },
+        "WA-PFML": {
+          "agency": "WA Employment Security Department"
+        },
+        "WA-LTC": {
+          "agency": "WA Employment Security Department (WA Cares)"
+        }
+      }
+    }
+  },
+  "levies": [
+    {
+      "code": "CA_ETT",
+      "name": "California Employment Training Tax",
+      "state": "CA",
+      "base_tax": "CA_SUI_ER",
+      "rate": "0.001",
+      "rate_key": "ett_rate",
+      "group": "CA-UI",
+      "source": "CA UIC 976.6 (0.1% of UI taxable wages; 0 for negative-reserve employers via ett_rate)"
+    },
+    {
+      "code": "NY_RSF",
+      "name": "New York Re-employment Service Fund",
+      "state": "NY",
+      "base_tax": "NY_SUI_ER",
+      "rate": "0.00075",
+      "rate_key": "rsf_rate",
+      "group": "NY-UI",
+      "source": "NY Labor Law 581-b (0.075% of UI taxable wages)"
+    }
+  ],
+  "wh_agencies": {
+    "$comment": "Withholding agency where it is not '<State> Department of Revenue'.",
+    "CA": "CA EDD",
+    "NY": "NY Department of Taxation and Finance",
+    "NJ": "NJ Division of Taxation",
+    "OH": "Ohio Department of Taxation",
+    "VA": "Virginia Department of Taxation",
+    "MD": "Comptroller of Maryland",
+    "DC": "DC Office of Tax and Revenue",
+    "DE": "Delaware Division of Revenue",
+    "HI": "Hawaii Department of Taxation",
+    "ID": "Idaho State Tax Commission",
+    "UT": "Utah State Tax Commission",
+    "NM": "NM Taxation and Revenue Department",
+    "RI": "RI Division of Taxation",
+    "CT": "CT Department of Revenue Services",
+    "VT": "Vermont Department of Taxes",
+    "WV": "West Virginia Tax Division",
+    "IN": "Indiana Department of Revenue",
+    "OR": "Oregon Department of Revenue"
+  },
+  "ui_agencies": {
+    "$comment": "UI agency where the engine's state file does not name one.",
+    "AK": "Alaska Department of Labor and Workforce Development",
+    "CT": "CT Department of Labor",
+    "IA": "Iowa Workforce Development",
+    "ID": "Idaho Department of Labor",
+    "KS": "Kansas Department of Labor",
+    "MA": "MA Department of Unemployment Assistance",
+    "MD": "MD Division of Unemployment Insurance",
+    "ME": "Maine Department of Labor",
+    "MN": "MN Unemployment Insurance (DEED)",
+    "MT": "Montana Department of Labor & Industry",
+    "NH": "NH Employment Security",
+    "NJ": "NJ Department of Labor",
+    "NY": "NY Department of Labor",
+    "PA": "PA Department of Labor & Industry",
+    "VT": "Vermont Department of Labor",
+    "WA": "WA Employment Security Department"
+  }
+}

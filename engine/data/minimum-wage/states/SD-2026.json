@@ -1,0 +1,69 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "SD",
+    "name": "South Dakota"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 11.85,
+    "hourlyCents": 1185,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All covered employers.",
+    "note": "S.D. Const. / SDCL 60-11-3 annual CPI adjustment under Initiated Measure 18 (2014)."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 5.925,
+    "cashWageCents": 592.5,
+    "maxTipCredit": 5.925,
+    "maxTipCreditCents": 592.5,
+    "tippedEmployeeThreshold": {
+      "amount": 35.0,
+      "period": "month"
+    },
+    "note": "EXACTLY half the minimum wage, and South Dakota's own Department of Labor publishes it to a HALF CENT: '$5.925 per hour'. DOL's federal table rounds it to $5.93. This file carries the state's own $5.925 (rounding down to $5.92 would underpay; the engine computes in cents and this is the one rate in this database that is not a whole number of cents)."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 4.25,
+      "hourlyCents": 425,
+      "id": "federal_youth_opportunity_wage",
+      "label": "Federal youth opportunity wage",
+      "eligibility": "Employees under 20, first 90 consecutive calendar days -- 29 U.S.C. 206(g). Not a state figure; carried here because it is the only sub-minimum wage available in this state."
+    }
+  ],
+  "variants": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI, rounded to the nearest $0.05",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "title": "South Dakota Department of Labor and Regulation -- Minimum Wage FAQ",
+      "url": "https://dlr.sd.gov/employment_laws/minimum_wage_faq.aspx",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Quoted: 'The minimum wage is $11.85 per hour (effective Jan. 1, 2026)' and 'Effective Jan. 1. 2026, employers must pay tipped employees a cash wage of no less than $5.925 per hour', i.e. no less than 50% of the state minimum wage. The same page confirms South Dakota has NO separate youth minimum wage -- only the federal $4.25 opportunity wage -- contradicting several secondary aggregators that publish an $8.50 South Dakota youth rate."
+    },
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

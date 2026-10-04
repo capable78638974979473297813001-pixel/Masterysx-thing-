@@ -11,10 +11,11 @@ import re
 from datetime import date
 from pathlib import Path
 
-from .models import DEDUCTION_COLUMNS, REPORTED_COLUMNS, Company, Issue, PayLine
+from .models import DEDUCTION_COLUMNS, REPORTED_COLUMNS, TAX_ID_COLUMN, Company, Issue, PayLine
 from .money import ZERO, D
 
 REQUIRED = ("company_id", "employee_id", "ssn", "first_name", "last_name", "pay_date", "work_state", "gross_wages")
+PAY_FREQUENCIES = ("weekly", "biweekly", "semimonthly", "monthly", "quarterly", "semiannual", "annual", "daily")
 SSN_RE = re.compile(r"^\d{3}-?\d{2}-?\d{4}$")
 
 
@@ -76,7 +77,7 @@ def _parse_row(raw, rownum, source, companies, supported_states):
         err("invalid-ssn", "SSN is not a valid, issuable number")
     state = row["work_state"].upper()
     if state not in supported_states:
-        err("unsupported-state", f"no state rules for {state}; only federal taxes will be computed", "warning")
+        err("unsupported-state", f"{state} is not a state the tax engine covers")
 
     dates = {}
     for col in ("pay_date", "period_start", "period_end"):
@@ -86,24 +87,33 @@ def _parse_row(raw, rownum, source, companies, supported_states):
             except ValueError:
                 err("bad-date", f"{col} {row[col]!r} is not YYYY-MM-DD")
 
+    tax_cols = [c for c in row if TAX_ID_COLUMN.match(c)]
     money = {}
-    for col in ("gross_wages", *DEDUCTION_COLUMNS, *REPORTED_COLUMNS):
+    for col in ("gross_wages", "supplemental_wages", "hours_worked", *DEDUCTION_COLUMNS, *REPORTED_COLUMNS, *tax_cols):
         if row.get(col):
             try:
                 money[col] = D(row[col])
             except ValueError:
                 err("bad-amount", f"{col} {row[col]!r} is not a number")
+    freq = row.get("pay_frequency", "").lower() or None
+    if freq and freq not in PAY_FREQUENCIES:
+        err("bad-frequency", f"pay_frequency {freq!r} must be one of {', '.join(PAY_FREQUENCIES)}")
     if any(i.severity == "error" for i in issues):
         return None, issues
 
     gross = money["gross_wages"]
+    supplemental = money.get("supplemental_wages", ZERO)
+    if abs(supplemental) > abs(gross):
+        err("supplemental-exceeds-gross", "supplemental_wages is part of gross_wages and cannot exceed it")
+        return None, issues
     deductions = {DEDUCTION_COLUMNS[c]: money.get(c, ZERO) for c in DEDUCTION_COLUMNS}
     if gross < 0:
         err("negative-wages", "negative gross treated as a correction/reversal", "warning")
     if gross >= 0 and sum(deductions.values()) > gross:
         err("deductions-exceed-gross", "pre-tax deductions exceed gross wages")
         return None, issues
-    for col in REPORTED_COLUMNS:
+    reported_cols = [*REPORTED_COLUMNS, *tax_cols]
+    for col in reported_cols:
         if money.get(col, ZERO) < 0 and gross >= 0:
             err("negative-withholding", f"{col} is negative on a positive paycheck", "warning")
 
@@ -120,9 +130,12 @@ def _parse_row(raw, rownum, source, companies, supported_states):
             work_state=state,
             gross=gross,
             deductions=deductions,
-            reported={c: money[c] for c in REPORTED_COLUMNS if c in money},
+            reported={c: money[c] for c in reported_cols if c in money},
             period_start=dates.get("period_start"),
             period_end=dates.get("period_end"),
+            pay_frequency=freq,
+            supplemental=supplemental,
+            hours=money.get("hours_worked"),
         ),
         issues,
     )

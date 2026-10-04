@@ -1,0 +1,54 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "AZ",
+    "name": "Arizona"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 15.15,
+    "hourlyCents": 1515,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All employers except the state, its political subdivisions, and small businesses grossing under $500,000 that are exempt from the FLSA.",
+    "note": "Annual CPI adjustment under the Fair Wages and Healthy Families Act (Prop 206, 2016)."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 12.15,
+    "cashWageCents": 1215,
+    "maxTipCredit": 3.0,
+    "maxTipCreditCents": 300,
+    "tippedEmployeeThreshold": null,
+    "note": "A.R.S. 23-363(C) caps the tip credit at $3.00/hr flat -- a fixed DOLLAR credit, not a percentage, so it does not grow with the minimum wage."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-U (US city average), rounded to the nearest $0.05",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "Flagstaff and Tucson set higher local minimum wages -- see local/AZ-local-2026.json."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

@@ -7,19 +7,22 @@ exported or mapped to an e-file format without re-deriving numbers.
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 
+from . import taxengine
 from .bizcal import quarter_bounds
 from .deposits import Obligation, federal_schedule, futa_credit_reduction
-from .engine import period_total
+from .engine import NYC_YONKERS, period_total
 from .models import Company, Issue, Liability
 from .money import ZERO, fmt, r2
-from .rules import RuleBook
+from .remittance import Remittance
 
-FICA_CODES = ("FED_SS_EE", "FED_SS_ER", "FED_MED_EE", "FED_MED_ER", "FED_ADDL_MED")
+FIT_CODES = ("US_FIT", "US_FIT_SUPP")
+FICA_CODES = ("US_SS_EE", "US_SS_ER", "US_MED_EE", "US_MED_ER", "US_MED_ADDL")
 DE_MINIMIS_941 = Decimal("2500")
 
 
@@ -70,13 +73,19 @@ def _jsonable(obj):
     return obj
 
 
-def _sum(liabs, code, attr="amount") -> Decimal:
-    return sum((getattr(l, attr) for l in liabs if l.tax_code == code), ZERO)
+def _sum(liabs, codes, attr="amount") -> Decimal:
+    codes = (codes,) if isinstance(codes, str) else codes
+    return sum((getattr(l, attr) for l in liabs if l.tax_code in codes), ZERO)
+
+
+def _withheld(l: Liability) -> Decimal:
+    """What actually left the employee's pay: payroll's figure when reported."""
+    return l.reported if l.reported is not None else l.amount
 
 
 # ------------------------------------------------------------------ 941 ---
 
-def form_941(company: Company, liabilities: list[Liability], rules: RuleBook, year: int, quarter: int,
+def form_941(company: Company, liabilities: list[Liability], year: int, quarter: int,
              deposits: Decimal = ZERO, obligations: list[Obligation] | None = None) -> ReturnDoc:
     start, end = quarter_bounds(year, quarter)
     q = [l for l in liabilities if l.company_id == company.id and start <= l.pay_date <= end]
@@ -85,7 +94,7 @@ def form_941(company: Company, liabilities: list[Liability], rules: RuleBook, ye
     twelfth = date(year, quarter * 3, 12)
     employees, used_month_fallback = set(), False
     for l in q:
-        if l.tax_code != "FED_FIT":
+        if l.tax_code != "US_FIT":
             continue
         line = l.line
         if line.period_start and line.period_end:
@@ -97,28 +106,29 @@ def form_941(company: Company, liabilities: list[Liability], rules: RuleBook, ye
     if used_month_fallback:
         doc.notes.append("Line 1: some rows lacked pay-period dates; counted employees paid in the quarter's last month.")
 
-    ss = rules.taxes["FED_SS_EE"].version_for(end).rate + rules.taxes["FED_SS_ER"].version_for(end).rate
-    med = rules.taxes["FED_MED_EE"].version_for(end).rate + rules.taxes["FED_MED_ER"].version_for(end).rate
-    addl = rules.taxes["FED_ADDL_MED"].version_for(end).rate
+    rates = taxengine.fica_rates(year)
+    ss, med, addl = rates["ss"], rates["med"], rates["addl"]
 
     doc.add("1", f"Employees paid for the pay period including {twelfth:%b %d}", len(employees))
-    doc.add("2", "Wages, tips, and other compensation", _sum(q, "FED_FIT", "subject_wages"))
-    l3 = doc.add("3", "Federal income tax withheld", _sum(q, "FED_FIT"))
-    ss_w = doc.add("5a.1", "Taxable social security wages", _sum(q, "FED_SS_EE", "taxable_wages"))
+    doc.add("2", "Wages, tips, and other compensation", _sum(q, FIT_CODES, "taxable_wages"))
+    l3 = doc.add("3", "Federal income tax withheld", _sum(q, FIT_CODES))
+    ss_w = doc.add("5a.1", "Taxable social security wages", _sum(q, "US_SS_EE", "taxable_wages"))
     ss_t = doc.add("5a.2", f"Social security tax (x {ss})", r2(ss_w * ss))
-    med_w = doc.add("5c.1", "Taxable Medicare wages & tips", _sum(q, "FED_MED_EE", "taxable_wages"))
+    med_w = doc.add("5c.1", "Taxable Medicare wages & tips", _sum(q, "US_MED_EE", "taxable_wages"))
     med_t = doc.add("5c.2", f"Medicare tax (x {med})", r2(med_w * med))
-    addl_w = doc.add("5d.1", "Wages subject to Additional Medicare withholding", _sum(q, "FED_ADDL_MED", "taxable_wages"))
+    addl_w = doc.add("5d.1", "Wages subject to Additional Medicare withholding", _sum(q, "US_MED_ADDL", "taxable_wages"))
     addl_t = doc.add("5d.2", f"Additional Medicare tax (x {addl})", r2(addl_w * addl))
     l5e = doc.add("5e", "Total social security and Medicare taxes", ss_t + med_t + addl_t)
     l6 = doc.add("6", "Total taxes before adjustments", l3 + l5e)
-    actual_fica = sum((_sum(q, c) for c in FICA_CODES), ZERO)
+    actual_fica = _sum(q, FICA_CODES)
     l7 = doc.add("7", "Current quarter's adjustment for fractions of cents", actual_fica - l5e)
     l10 = doc.add("10", "Total taxes after adjustments", l6 + l7)
     l12 = doc.add("12", "Total taxes after adjustments and nonrefundable credits", l10)
     l13 = doc.add("13", "Total deposits for this quarter", deposits)
     doc.add("14", "Balance due", max(l12 - l13, ZERO))
     doc.add("15", "Overpayment", max(l13 - l12, ZERO))
+    if abs(l7) > Decimal("1.00") * max(1, len({l.line.row for l in q})):
+        doc.notes.append("Line 7 is larger than per-check rounding explains — review withholding variances.")
 
     daily: dict[date, Decimal] = defaultdict(lambda: ZERO)
     for l in q:
@@ -146,27 +156,28 @@ def form_941(company: Company, liabilities: list[Liability], rules: RuleBook, ye
     return doc
 
 
-
 # ------------------------------------------------------------------ 940 ---
 
-def form_940(company: Company, liabilities: list[Liability], rules: RuleBook, year: int,
-             deposits: Decimal = ZERO) -> ReturnDoc:
-    y = [l for l in liabilities if l.company_id == company.id and l.pay_date.year == year and l.tax_code == "FED_FUTA"]
+def form_940(company: Company, liabilities: list[Liability], year: int, deposits: Decimal = ZERO) -> ReturnDoc:
+    y = [l for l in liabilities if l.company_id == company.id and l.pay_date.year == year and l.tax_code == "US_FUTA"]
     doc = ReturnDoc("940", company.id, company.name, company.fein, str(year))
-    rate = rules.taxes["FED_FUTA"].version_for(date(year, 12, 31)).rate
+    futa = taxengine.futa_rates(year)
+    rate = futa["net"]
+    exempt_cats = taxengine.federal_exempt(year, "futa")
     states = sorted({l.line.work_state for l in y})
     if len(states) == 1:
         doc.add("1a", "State where you paid state unemployment tax", states[0])
     else:
         doc.add("1b", "Multi-state employer (see Schedule A)", ", ".join(states))
     total = doc.add("3", "Total payments to all employees", sum((l.line.gross for l in y), ZERO))
-    exempt = doc.add("4", "Payments exempt from FUTA tax", sum((l.line.gross - l.subject_wages for l in y), ZERO))
-    over = doc.add("5", "Total of payments made to each employee in excess of $7,000",
-                   sum((l.subject_wages - l.taxable_wages for l in y), ZERO))
-    l6 = doc.add("6", "Subtotal (line 4 + line 5)", exempt + over)
+    exempt = doc.add("4", "Payments exempt from FUTA tax", sum((l.line.exempt(exempt_cats) for l in y), ZERO))
+    subject = total - exempt
+    taxable = sum((l.taxable_wages for l in y), ZERO)
+    doc.add("5", f"Total of payments made to each employee in excess of ${futa['base']:,.0f}", subject - taxable)
+    l6 = doc.add("6", "Subtotal (line 4 + line 5)", exempt + subject - taxable)
     l7 = doc.add("7", "Total taxable FUTA wages", total - l6)
     l8 = doc.add("8", f"FUTA tax before adjustments (x {rate})", r2(l7 * rate))
-    cr, cr_detail = futa_credit_reduction(y, rules, year)
+    cr, cr_detail = futa_credit_reduction(y, year)
     l11 = doc.add("11", "Credit reduction (Schedule A)", cr)
     l12 = doc.add("12", "Total FUTA tax after adjustments", l8 + l11)
     l13 = doc.add("13", "FUTA tax deposited for the year", deposits)
@@ -188,14 +199,27 @@ def form_940(company: Company, liabilities: list[Liability], rules: RuleBook, ye
     for l in y:
         wages_by_state[l.line.work_state] += l.taxable_wages
     doc.schedules["Schedule A (multi-state / credit reduction)"] = [
-        {"state": st, "futa_taxable_wages": w, "credit_reduction_rate": rules.futa_credit_reduction(year, st),
+        {"state": st, "futa_taxable_wages": w, "credit_reduction_rate": futa["credit_reductions"].get(st, ZERO),
          "credit_reduction": cr_detail.get(st, ZERO)} for st, w in sorted(wages_by_state.items())]
-    if year not in rules.taxes["FED_FUTA"].credit_reductions:
-        doc.notes.append(f"Credit reduction states for {year} are not in the rule file yet (announced each November).")
+    if not futa["credit_reductions"] and futa["determination_date"] and date.today().isoformat() < futa["determination_date"]:
+        doc.notes.append(f"{year} credit-reduction states are determined after {futa['determination_date']}; "
+                         "line 11 may change when DOL publishes them.")
     return doc
 
 
 # ------------------------------------------------------------- W-2 / W-3 ---
+
+BOX14_LABELS = {"CA_DBL_EE": "CASDI", "NY_PFML_EE": "NY PFL", "NY_DBL_EE": "NY SDI", "NJ_UC_EE": "NJ UI/WF/SWF",
+                "NJ_DBL_EE": "NJ DI", "NJ_PFML_EE": "NJ FLI", "PA_UC_EE": "PA UC", "WA_PFML_EE": "WA PFML",
+                "WA_LTC_EE": "WA CARES", "MA_PFML_EE": "MA PFML", "CO_PFML_EE": "CO FAMLI", "OR_PFML_EE": "OR PFL",
+                "RI_DBL_EE": "RI TDI", "HI_DBL_EE": "HI TDI", "CT_PFML_EE": "CT PL", "DE_PFML_EE": "DE PFML",
+                "MN_PFML_EE": "MN PL", "ME_PFML_EE": "ME PFML", "MD_PFML_EE": "MD FAMLI"}
+# Local income taxes that use the state's wage definition: W-2 box 18 shows the state wages.
+STATE_CONFORMING_LOCAL = re.compile(r"^[A-Z]{2}_(NYC|YONKERS)_SIT|^MI_LOCAL$|^IN_COUNTY$")
+W2_DEFERRAL_CODES = {"deferral_401k": "D", "deferral_403b": "E", "deferral_457": "G", "deferral_simple": "S",
+                     "hsa": "W"}
+SIT_ID = re.compile(r"^([A-Z]{2})_SIT")
+
 
 def w2_records(liabilities: list[Liability], year: int, company_id: str | None = None) -> list[dict]:
     per: dict[tuple, dict] = {}
@@ -208,32 +232,60 @@ def w2_records(liabilities: list[Liability], year: int, company_id: str | None =
         line = group[0].line
         rec = per.setdefault((line.company_id, line.employee_id), {
             "company_id": line.company_id, "employee_id": line.employee_id, "ssn": line.ssn, "name": line.name,
-            "box1": ZERO, "box2": ZERO, "box3": ZERO, "box4": ZERO, "box5": ZERO, "box6": ZERO,
-            "box12_D": ZERO, "box14_CASDI": ZERO, "states": {}})
-        codes = {l.tax_code: l for l in group}
-        rec["box1"] += codes["FED_FIT"].subject_wages
-        rec["box2"] += codes["FED_FIT"].amount
-        rec["box3"] += codes["FED_SS_EE"].taxable_wages
-        rec["box4"] += line.reported.get("ss_withheld", codes["FED_SS_EE"].amount)
-        rec["box5"] += codes["FED_MED_EE"].taxable_wages
-        rec["box6"] += line.reported.get("medicare_withheld", codes["FED_MED_EE"].amount + codes["FED_ADDL_MED"].amount)
-        rec["box12_D"] += line.deductions.get("k401", ZERO)
-        if "CA_SDI" in codes:
-            rec["box14_CASDI"] += line.reported.get("sdi_withheld", codes["CA_SDI"].amount)
-        sit = codes.get(f"{line.work_state}_SIT")
-        if sit:
-            st = rec["states"].setdefault(line.work_state, {"box16": ZERO, "box17": ZERO})
-            st["box16"] += sit.subject_wages
-            st["box17"] += sit.amount
+            "first_name": line.first_name, "last_name": line.last_name,
+            "box1": ZERO, "box2": ZERO, "box3": ZERO, "box4": ZERO, "box5": ZERO, "box6": ZERO, "box10": ZERO,
+            "box12": {}, "box14": {}, "states": {}, "locals": {}})
+        rec["box1"] += _sum(group, FIT_CODES, "taxable_wages")
+        rec["box2"] += sum((_withheld(l) for l in group if l.tax_code in FIT_CODES), ZERO)
+        rec["box3"] += _sum(group, "US_SS_EE", "taxable_wages")
+        rec["box4"] += sum((_withheld(l) for l in group if l.tax_code == "US_SS_EE"), ZERO)
+        rec["box5"] += _sum(group, "US_MED_EE", "taxable_wages")
+        rec["box6"] += sum((_withheld(l) for l in group if l.tax_code in ("US_MED_EE", "US_MED_ADDL")), ZERO)
+        rec["box10"] += line.deductions.get("dependent_care", ZERO)
+        for cat, code in W2_DEFERRAL_CODES.items():
+            if line.deductions.get(cat):
+                rec["box12"][code] = rec["box12"].get(code, ZERO) + line.deductions[cat]
+        sit_states = set()
+        for l in group:
+            if l.level == "state" and l.payer == "employee" and not l.withholding:
+                label = BOX14_LABELS.get(l.tax_code, f"{l.jurisdiction} {l.name}")
+                rec["box14"][label] = rec["box14"].get(label, ZERO) + _withheld(l)
+            m = SIT_ID.match(l.tax_code)
+            if m and l.withholding and l.level == "state":
+                st = rec["states"].setdefault(m.group(1), {"box16": ZERO, "box17": ZERO})
+                if m.group(1) not in sit_states:
+                    sit_states.add(m.group(1))
+                    st["box16"] += line.gross - line.exempt(taxengine.exempt_pretax(m.group(1), year))
+                st["box17"] += _withheld(l)
+            if l.payer == "employee" and (l.level == "local" or NYC_YONKERS.match(l.tax_code)):
+                loc = rec["locals"].setdefault(l.name or l.tax_code, {"state": l.jurisdiction, "box18": ZERO, "box19": ZERO})
+                if STATE_CONFORMING_LOCAL.match(l.tax_code):
+                    loc["box18"] += line.gross - line.exempt(taxengine.exempt_pretax(l.jurisdiction, year))
+                elif l.tax_code not in ("PA_LST", "WV_LOCAL_FEE"):
+                    loc["box18"] += l.taxable_wages
+                loc["box19"] += _withheld(l)
     return sorted(per.values(), key=lambda r: (r["company_id"], r["employee_id"]))
 
 
-def w3_reconcile(company: Company, liabilities: list[Liability], rules: RuleBook, year: int) -> tuple[dict, list[Issue]]:
+def w2_flat(rec: dict) -> dict:
+    """Every W-2 box as one flat {label: amount} map (for W-2c diffs and exports)."""
+    out = {b: rec[b] for b in ("box1", "box2", "box3", "box4", "box5", "box6", "box10")}
+    out.update({f"box12{code}": v for code, v in rec["box12"].items()})
+    out.update({f"box14 {k}": v for k, v in rec["box14"].items()})
+    for st, v in rec["states"].items():
+        out[f"box16 {st}"], out[f"box17 {st}"] = v["box16"], v["box17"]
+    for name, v in rec["locals"].items():
+        out[f"box18 {name}"], out[f"box19 {name}"] = v["box18"], v["box19"]
+    return out
+
+
+def w3_reconcile(company: Company, liabilities: list[Liability], year: int) -> tuple[dict, list[Issue]]:
     """W-3 totals and the year-end W-2 <-> 941 reconciliation agencies run (CP-2100/AUR style)."""
     w2s = w2_records(liabilities, year, company.id)
-    w3 = {b: sum((r[b] for r in w2s), ZERO) for b in ("box1", "box2", "box3", "box4", "box5", "box6", "box12_D")}
+    w3 = {b: sum((r[b] for r in w2s), ZERO) for b in ("box1", "box2", "box3", "box4", "box5", "box6", "box10")}
+    w3["box12D"] = sum((r["box12"].get("D", ZERO) for r in w2s), ZERO)
     w3["forms"] = len(w2s)
-    quarters = [form_941(company, liabilities, rules, year, q) for q in (1, 2, 3, 4)]
+    quarters = [form_941(company, liabilities, year, q) for q in (1, 2, 3, 4)]
     pairs = [("box1", "2", "wages (W-3 box 1 vs 941 line 2)"),
              ("box2", "3", "federal income tax (W-3 box 2 vs 941 line 3)"),
              ("box3", "5a.1", "social security wages (W-3 box 3 vs 941 line 5a)"),
@@ -244,20 +296,19 @@ def w3_reconcile(company: Company, liabilities: list[Liability], rules: RuleBook
         if total_941 != w3[box]:
             issues.append(Issue("error", "w3-941-mismatch",
                                 f"{year} {label}: W-3 {fmt(w3[box])} vs 941s {fmt(total_941)}", company.id))
-    _, year_end = quarter_bounds(year, 4)
-    ss_rule = rules.taxes["FED_SS_EE"].version_for(year_end)
-    ss_max = r2(ss_rule.wage_base * ss_rule.rate)
+    rates = taxengine.fica_rates(year)
+    ss_max = r2(rates["ss_base"] * rates["ss_ee"])
     for r in w2s:
-        if r["box3"] > ss_rule.wage_base or r["box4"] > ss_max:
+        if r["box3"] > rates["ss_base"] or r["box4"] > ss_max:
             issues.append(Issue("error", "w2-ss-over-max",
                                 f"{year} W-2 {r['employee_id']}: SS wages {fmt(r['box3'])}, withheld {fmt(r['box4'])}; "
-                                f"annual maximum is {fmt(ss_rule.wage_base)} wages, {fmt(ss_max)} tax — refund the excess",
+                                f"annual maximum is {fmt(rates['ss_base'])} wages, {fmt(ss_max)} tax — refund the excess",
                                 company.id, r["employee_id"]))
-        elif abs(r["box4"] - r2(r["box3"] * ss_rule.rate)) > Decimal("1.00"):
+        elif abs(r["box4"] - r2(r["box3"] * rates["ss_ee"])) > Decimal("1.00"):
             issues.append(Issue("warning", "w2-ss-rate",
-                                f"{year} W-2 {r['employee_id']}: box 4 {fmt(r['box4'])} is not {ss_rule.rate} x box 3",
+                                f"{year} W-2 {r['employee_id']}: box 4 {fmt(r['box4'])} is not {rates['ss_ee']} x box 3",
                                 company.id, r["employee_id"]))
-    ss_owed = _sum([l for l in liabilities if l.company_id == company.id and l.pay_date.year == year], "FED_SS_EE")
+    ss_owed = _sum([l for l in liabilities if l.company_id == company.id and l.pay_date.year == year], "US_SS_EE")
     if abs(w3["box4"] - ss_owed) > Decimal("1.00"):
         issues.append(Issue("warning", "w3-ss-withheld",
                             f"{year} W-3 box 4 SS withheld {fmt(w3['box4'])} differs from SS owed {fmt(ss_owed)}",
@@ -267,66 +318,69 @@ def w3_reconcile(company: Company, liabilities: list[Liability], rules: RuleBook
 
 # --------------------------------------------------- state wage reports ---
 
-def state_wage_report(company: Company, liabilities: list[Liability], rules: RuleBook, state: str,
+def state_wage_report(company: Company, liabilities: list[Liability], remittance: Remittance, state: str,
                       year: int, quarter: int) -> ReturnDoc:
     start, end = quarter_bounds(year, quarter)
     q = [l for l in liabilities if l.company_id == company.id and start <= l.pay_date <= end
-         and l.line.work_state == state]
-    groups = sorted({l.deposit_group for l in q if l.jurisdiction == state})
-    form = " / ".join(sorted({rules.groups[g].return_form for g in groups})) or "state wage report"
+         and l.jurisdiction == state]
+    groups = sorted({l.deposit_group for l in q})
+    form = " / ".join(sorted({remittance.group(g, company).return_form for g in groups})) or "state wage report"
     doc = ReturnDoc(form, company.id, company.name, company.fein, f"{year} Q{quarter} {state}")
     acct = company.state_accounts.get(state, {})
     doc.add("acct", "State employer account", acct.get("account", "(not on file)"))
 
     emp: dict[str, dict] = {}
+    seen_lines: set[int] = set()
     for l in q:
         e = emp.setdefault(l.line.employee_id, {"employee_id": l.line.employee_id, "name": l.line.name,
-                                                "ssn_last4": l.line.ssn[-4:], "gross": ZERO, "sui_subject": ZERO,
-                                                "sui_taxable": ZERO, "sit_withheld": ZERO, "sdi_withheld": ZERO})
-        if l.tax_code == f"{state}_SUI":
+                                                "ssn_last4": l.line.ssn[-4:], "gross": ZERO, "ui_taxable": ZERO,
+                                                "income_tax_withheld": ZERO, "other_employee_taxes": ZERO})
+        if id(l.line) not in seen_lines and l.line.work_state == state:
+            seen_lines.add(id(l.line))
             e["gross"] += l.line.gross
-            e["sui_subject"] += l.subject_wages
-            e["sui_taxable"] += l.taxable_wages
-        elif l.tax_code == f"{state}_SIT":
-            e["sit_withheld"] += l.amount
-        elif l.tax_code == f"{state}_SDI":
-            e["sdi_withheld"] += l.amount
+        if l.tax_code == f"{state}_SUI_ER":
+            e["ui_taxable"] += l.taxable_wages
+        elif l.withholding:
+            e["income_tax_withheld"] += _withheld(l)
+        elif l.payer == "employee":
+            e["other_employee_taxes"] += _withheld(l)
     doc.schedules["Employee wage detail"] = sorted(emp.values(), key=lambda e: e["employee_id"])
     doc.add("emp", "Employees reported", len(emp))
-    doc.add("subject", "Total subject wages", sum((e["sui_subject"] for e in emp.values()), ZERO))
-    doc.add("taxable", "Total UI taxable wages", sum((e["sui_taxable"] for e in emp.values()), ZERO))
-    for code in sorted({l.tax_code for l in q if l.jurisdiction == state}):
-        doc.add(code, rules.taxes[code].name, period_total([l for l in q if l.tax_code == code]))
+    doc.add("gross", "Total gross wages", sum((e["gross"] for e in emp.values()), ZERO))
+    doc.add("taxable", "Total UI taxable wages", sum((e["ui_taxable"] for e in emp.values()), ZERO))
+    for code in sorted({l.tax_code for l in q}):
+        ls = [l for l in q if l.tax_code == code]
+        doc.add(code, f"{ls[0].name} ({remittance.group(ls[0].deposit_group, company).agency})", period_total(ls))
     return doc
 
 
 # ----------------------------------------------------------- amendments ---
 
-X_MAP = [  # (941 line, 941-X line, label, tax rate source)
+X_MAP = [  # (941 line, 941-X line, label, rate key in taxengine.fica_rates)
     ("2", "6", "Wages, tips and other compensation", None),
     ("3", "7", "Federal income tax withheld", "self"),
-    ("5a.1", "8", "Taxable social security wages", ("FED_SS_EE", "FED_SS_ER")),
-    ("5c.1", "10", "Taxable Medicare wages & tips", ("FED_MED_EE", "FED_MED_ER")),
-    ("5d.1", "11", "Wages subject to Additional Medicare withholding", ("FED_ADDL_MED",)),
+    ("5a.1", "8", "Taxable social security wages", "ss"),
+    ("5c.1", "10", "Taxable Medicare wages & tips", "med"),
+    ("5d.1", "11", "Wages subject to Additional Medicare withholding", "addl"),
 ]
 
 
-def amend_941(company: Company, original: list[Liability], corrected: list[Liability], rules: RuleBook,
+def amend_941(company: Company, original: list[Liability], corrected: list[Liability],
               year: int, quarter: int) -> ReturnDoc:
-    a = form_941(company, original, rules, year, quarter)
-    b = form_941(company, corrected, rules, year, quarter)
-    _, end = quarter_bounds(year, quarter)
+    a = form_941(company, original, year, quarter)
+    b = form_941(company, corrected, year, quarter)
+    rates = taxengine.fica_rates(year)
     doc = ReturnDoc("941-X", company.id, company.name, company.fein, f"{year} Q{quarter}")
     rows, total = [], ZERO
-    for src, xline, label, rate_src in X_MAP:
+    for src, xline, label, rate_key in X_MAP:
         orig, corr = a.value(src), b.value(src)
         diff = corr - orig
-        if rate_src is None:
+        if rate_key is None:
             tax = None
-        elif rate_src == "self":
+        elif rate_key == "self":
             tax = diff
         else:
-            tax = r2(diff * sum((rules.taxes[c].version_for(end).rate for c in rate_src), ZERO))
+            tax = r2(diff * rates[rate_key])
         if tax is not None:
             total += tax
         rows.append({"941_x_line": xline, "941_line": src, "label": label, "corrected": corr,
@@ -338,22 +392,16 @@ def amend_941(company: Company, original: list[Liability], corrected: list[Liabi
     return doc
 
 
-W2_BOXES = ("box1", "box2", "box3", "box4", "box5", "box6", "box12_D", "box14_CASDI")
-
-
 def w2c_records(original: list[Liability], corrected: list[Liability], year: int, company_id: str) -> list[dict]:
     a = {r["employee_id"]: r for r in w2_records(original, year, company_id)}
     b = {r["employee_id"]: r for r in w2_records(corrected, year, company_id)}
     out = []
     for emp in sorted(set(a) | set(b)):
-        ra, rb = a.get(emp), b.get(emp)
-        changes = {}
-        for box in W2_BOXES:
-            va = ra[box] if ra else ZERO
-            vb = rb[box] if rb else ZERO
-            if va != vb:
-                changes[box] = {"previously_reported": va, "correct": vb}
+        fa = w2_flat(a[emp]) if emp in a else {}
+        fb = w2_flat(b[emp]) if emp in b else {}
+        changes = {box: {"previously_reported": fa.get(box, ZERO), "correct": fb.get(box, ZERO)}
+                   for box in sorted(set(fa) | set(fb)) if fa.get(box, ZERO) != fb.get(box, ZERO)}
         if changes:
-            ref = rb or ra
+            ref = b.get(emp) or a[emp]
             out.append({"employee_id": emp, "name": ref["name"], "ssn_last4": ref["ssn"][-4:], "changes": changes})
     return out

@@ -1,0 +1,68 @@
+{
+  "code": "FL",
+  "name": "Florida",
+  "year": 2026,
+  "method": "no_income_tax",
+  "$scopeNote": "Florida has NO state individual wage income tax -- a constitutional prohibition (Fla. Const. Art. VII, sec. 5), not a mere policy choice. Never has had one.",
+  "sources": [
+    {
+      "title": "Florida Department of Revenue -- Reemployment Tax Rate Information",
+      "url": "https://floridarevenue.com/taxes/taxesfees/Pages/rt_rate.aspx",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly. Quoted verbatim: taxable wage base 'up to $7,000 per employee', new employer rate 'the initial tax rate is 0.0270 (2.7%). This rate remains in place until the employer has reported for 10 quarters', minimum rate '0.0010 (0.1%) or $7 per employee', maximum rate '0.0540 (5.4%) or $378 per employee'. Florida calls this 'Reemployment Tax' (renamed from Unemployment Compensation tax in 2012) and, unusually among the states in this project, it is administered by the Department of REVENUE, not a labor/workforce agency."
+    },
+    {
+      "title": "Florida Paid Family Leave Insurance Act -- cross-source",
+      "url": "https://www.floridapolicy.org/posts/a-smart-investment-the-case-for-paid-family-leave-in-florida",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Cross-source confirmed only, not independently fetched from a Florida statute this pass. Authorizes VOLUNTARY private paid-family-leave insurance products -- no state fund, no mandatory payroll deduction."
+    },
+    {
+      "title": "Fla. Stat. sec. 218.077 -- Local government employment benefit mandates preempted",
+      "url": "https://www.flsenate.gov/Laws/Statutes/2025/218.077",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "RESOLVED ('do a quick verification' pass) -- the local-paid-leave-preemption claim was previously cross-source only; fetched the actual statute text directly. Quoted verbatim: 'a political subdivision may not establish, mandate, or otherwise require an employer to pay a minimum wage, other than a state or federal minimum wage... or to provide employment benefits not otherwise required by state or federal law.' Originated as 2013 HB 655; broader than paid leave alone (also bars local minimum-wage, scheduling, and heat-protection mandates). Three narrow carve-outs: the political subdivision's OWN employees, employers receiving a direct tax abatement/subsidy as a contract condition, or where federal funding conditions require it. A 2024 amendment separately barred local governments from using vendor wages/benefits as a contracting 'evaluation factor,' with the wage/scheduling provisions specifically taking effect 2026-09-30 -- a forward date, not yet in force as of this file's 2026 target, noted for completeness but not load-bearing for the paid-leave preemption itself (already long in force)."
+    }
+  ],
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Florida has no income tax to be reciprocal about, same convention as this project's other no-income-tax states (SD, TN)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE, and constitutionally barred. No Florida city or county levies, or may levy, a tax on wages or earned income.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory, and none permitted locally either. The Florida Paid Family Leave Insurance Act authorizes licensed insurers to OFFER voluntary paid-leave policies -- no state fund, no mandatory deduction (same voluntary-insurance-only shape as South Carolina's Act 206 and Tennessee's 2023 Act). Florida additionally preempts local governments from creating their own paid-leave mandates -- CONFIRMED directly via Fla. Stat. sec. 218.077's own text (see sources above), not just cross-sourced: 'a political subdivision may not... require an employer to... provide employment benefits not otherwise required by state or federal law.'",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Florida calls this Reemployment Tax, not UI/SUTA -- administered by the Department of Revenue (unusual; every other state in this project uses a labor/workforce/employment-security agency). Employer-only, confirmed directly.",
+    "administeredBy": "Florida Department of Revenue",
+    "wageBase": 7000.0,
+    "newEmployerRate": 0.027,
+    "newEmployerRateNote": "Applies until the employer has reported for 10 full quarters (2.5 years), per FL DOR's own page.",
+    "experiencedEmployerRateRange": [0.001, 0.054],
+    "confidence": "primary_source_confirmed -- floridarevenue.com's own Reemployment Tax Rate Information page, fetched directly.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual rate depends on employer-specific history a static jurisdiction file can't hold, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "The local-government paid-leave preemption is now RESOLVED via a direct Fla. Stat. sec. 218.077 statute read (see sources above).",
+    "Given no income tax exists, this file is intentionally lighter-weight than income-tax states in this project -- consistent with the South Dakota/Tennessee precedent."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 7000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.054
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

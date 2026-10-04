@@ -1,0 +1,160 @@
+{
+  "jurisdiction": {
+    "level": "federal",
+    "code": "US",
+    "name": "United States (FLSA)"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "The FLSA floor. Every other file in this folder is a rate that sits ON TOP of this one: an employer owes the HIGHEST of the federal, state and local minimum wages that cover a given hour of work, never the one printed closest to hand. That 'highest applicable' rule is DOL's own, quoted in the sources below, and it is the single rule minimumWage() in src/minimum-wage.ts implements.",
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2009-07-24",
+    "coverage": "Employees of enterprises with at least $500,000 in annual business volume, plus individually covered employees engaged in interstate commerce -- 29 U.S.C. 203(s), 206(a).",
+    "note": "Unchanged since 2009-07-24, the last step of the Fair Minimum Wage Act of 2007. There is no federal indexation mechanism: the figure moves only when Congress moves it."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 5.12,
+    "maxTipCreditCents": 512,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month",
+      "note": "29 U.S.C. 203(t): an employee who customarily and regularly receives MORE than $30 a month in tips."
+    },
+    "note": "The employer must make up any shortfall: cash wage plus tips actually received must reach $7.25/hr for every hour worked. A tip credit is available only if the employee was informed of it and retains all tips (except a valid tip pool)."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 4.25,
+      "hourlyCents": 425,
+      "id": "youth_opportunity_wage",
+      "label": "Youth opportunity wage",
+      "eligibility": "Employees under 20 years old, for the first 90 CONSECUTIVE CALENDAR days after initial employment -- 29 U.S.C. 206(g). Not 90 days worked, and not renewable by re-hiring.",
+      "note": "Several states republish this same federal 90-day wage rather than legislating their own; a handful (Iowa, Michigan, Wisconsin, Minnesota, Nebraska) set a DIFFERENT training figure, which is carried in that state's own file."
+    }
+  ],
+  "otherFederalMinimums": {
+    "$comment": "Federal minimum wages that are NOT the FLSA floor. Carried because a payroll system that only knows $7.25 will underpay on a covered federal contract -- and, in 2026 specifically, will OVERpay if it is still applying the revoked Executive Order 14026 rate.",
+    "executiveOrder13658": {
+      "hourly": 13.65,
+      "hourlyCents": 1365,
+      "tippedCashWage": 9.55,
+      "tippedCashWageCents": 955,
+      "effectiveFrom": "2026-05-11",
+      "coverage": "Contracts entered into, renewed or extended BEFORE 2022-01-30 that remain covered by EO 13658 (Establishing a Minimum Wage for Contractors, 2014).",
+      "note": "DOL published the 2026 rate change notice on 2026-02-09 (91 FR, 'Minimum Wage for Federal Contracts Covered by Executive Order 13658, Notice of Rate Change in Effect'), raising the rate to $13.65 and the tipped rate to $9.55 effective 2026-05-11."
+    },
+    "executiveOrder14026": {
+      "status": "REVOKED",
+      "revokedOn": "2025-03-14",
+      "lastRate": {
+        "hourly": 17.75,
+        "hourlyCents": 1775,
+        "effectiveFrom": "2025-01-01"
+      },
+      "note": "EO 14026 (2021) had set a $17.75 contractor minimum wage for 2025, indexed annually. Executive Order 14236 of 2025-03-14 revoked it; DOL stopped enforcing EO 14026 and 29 CFR part 23 and has published no rate for it since. A REAL TRAP for a payroll system carrying a stale 2025 table: EO 14026's rate is not merely frozen, it no longer applies at all, and covered older contracts fall back to EO 13658's much lower $13.65."
+    },
+    "section14cSubminimum": {
+      "status": "certificate-based, not modelled",
+      "note": "Section 14(c) certificates (workers with disabilities), 14(a) student-learner / full-time-student certificates, and the messenger and learner programs all permit sub-minimum wages set individually by certificate, not by a published rate. Nothing in this database asserts a figure for them; a payroll system handling a 14(c) employer must read that employer's own certificate."
+    },
+    "electionWorkers": {
+      "status": "likely outside FLSA coverage entirely, but not a bright-line statutory exemption",
+      "note": "Election judges, inspectors and poll workers are commonly paid a per-diem by a county or municipal board of elections -- a public agency. 29 U.S.C. 203(e)(4)(A) (29 CFR 553.106) excludes from 'employee' anyone who VOLUNTEERS for a public agency and receives no more than a 'nominal fee' (DOL's own rule of thumb: roughly 20% or less of what a comparable regular employee would be paid). The one federal appellate decision on point, Evers v. Tart, 48 F.3d 319 (8th Cir. 1995), held poll workers paid $35-50/day plus mileage were volunteers, not employees, on exactly this basis. U.S. DOL's own 1986 Wage and Hour Opinion Letter states the Department 'has taken no position' on whether poll workers are employees at all -- so there is no official blanket ruling, only this one circuit's reasoning and DOL's own nominal-fee regulation to apply to a given jurisdiction's actual per-diem. A state's own minimum wage law can still reach these workers independently of this federal analysis; see states/NY-2026.json's exemptions.electionWorkers for how New York specifically resolves that (its own Article 19 does not reach them either, via the ordinary government-employee exclusion in Lab. Law 651(5)(n) -- not an election-specific carve-out).",
+      "seeAlso": "This is a MINIMUM WAGE coverage question, not a tax one -- the separate, already-settled $2,500 FICA/Social-Security coverage threshold for election workers (26 U.S.C. 3121(b)(7)(F)(iv)) is modelled in data/federal/2026.json's employmentCategories.electionWorker and is unaffected by whether a given election worker also counts as an FLSA 'employee'."
+    }
+  },
+  "whiteCollarExemptions": {
+    "$comment": "The federal 'white collar' (executive/administrative/professional) exemption from BOTH minimum wage and overtime, 29 CFR Part 541 -- a DUTIES test this database does not adjudicate, plus a SALARY floor it does carry, since that part is a number rather than a legal judgment call. States may set a HIGHER salary floor of their own for the executive/administrative branch specifically (New York does -- see states/NY-2026.json's exemptSalaryThresholds); none is known to set a lower one, since 29 U.S.C. 218(a) makes the FLSA a floor a state may exceed but not undercut.",
+    "standardSalaryLevel": {
+      "weekly": 684.0,
+      "annualized": 35568.0,
+      "effectiveFrom": "2019-01-01",
+      "note": "DOL's 2024 final rule (89 FR 32842) would have raised this to $844/week on 2024-07-01 and $1,128/week on 2025-01-01, but the U.S. District Court for the Eastern District of Texas VACATED the entire rule nationwide on 2024-11-15 (State of Texas v. DOL) -- including the July 2024 increase that had already taken effect. The enforceable figure reverted to the 2019 rule's $684/week and has not changed since; DOL has not appealed."
+    },
+    "highlyCompensatedEmployee": {
+      "annualized": 107432.0,
+      "effectiveFrom": "2019-01-01",
+      "note": "A relaxed duties test applies above this total-annual-compensation level. Also reverted by the same 2024 vacatur, which would have raised it to $132,964."
+    },
+    "computerEmployee": {
+      "weekly": 684.0,
+      "hourly": 27.63,
+      "hourlyCents": 2763,
+      "statute": "29 U.S.C. 213(a)(17)",
+      "note": "A computer systems analyst, programmer, software engineer or similarly skilled worker is exempt if paid EITHER the standard $684/week salary OR at least $27.63/hour -- the only white-collar exemption category with a genuine hourly alternative to the salary test."
+    },
+    "confidence": "cross_source_confirmed",
+    "sources": [
+      {
+        "title": "U.S. DOL Wage and Hour Division -- Fact Sheet 17A: Exemption for Executive, Administrative, Professional, Computer & Outside Sales Employees",
+        "url": "https://www.dol.gov/agencies/whd/fact-sheets/17a-overtime",
+        "verifiedOn": "2026-09-09",
+        "verifiedBy": "Not fetched directly this session (cited as the authoritative DOL source for these figures); the dollar figures themselves are cross-confirmed against two independent 2026 employment-law compliance summaries that agree on all three numbers and the vacatur history."
+      },
+      {
+        "title": "State of Texas v. U.S. Department of Labor, No. 4:24-cv-499 (E.D. Tex. 2024-11-15)",
+        "url": "https://www.dol.gov/agencies/whd/overtime/rulemaking",
+        "verifiedOn": "2026-09-09",
+        "verifiedBy": "Found via search this session: the court vacated DOL's 2024 final rule nationwide, reverting the salary and HCE thresholds to their 2019 levels. Multiple independent law-firm summaries agree the $684/week and $107,432/year figures remain the enforceable ones through 2026."
+      }
+    ]
+  },
+  "highestApplicableRule": "DOL, on its own State Minimum Wage Laws page: where federal, state and local minimum wage laws all cover the same employee, the employer must pay the HIGHEST of the applicable rates. This database therefore stores each level separately and never pre-merges them.",
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "id": "dol-consolidated",
+      "title": "U.S. DOL Wage and Hour Division -- Consolidated Minimum Wage Table",
+      "url": "https://www.dol.gov/agencies/whd/mw-consolidated",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched this session as a THIRD cross-check on the two tables above (which state is above / at / below the federal floor, plus the Montana, New Jersey, New York, Ohio and Oregon sub-rates)."
+    },
+    {
+      "id": "flsa-206",
+      "title": "29 U.S.C. 206 -- Minimum wage (FLSA section 6), including 206(g)'s youth opportunity wage",
+      "url": "https://www.dol.gov/agencies/whd/flsa",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Statutory citation for the $7.25 / $2.13 / $4.25 figures, which DOL's own tables (fetched this session) restate."
+    },
+    {
+      "id": "eo13658-2026",
+      "title": "Minimum Wage for Federal Contracts Covered by Executive Order 13658, Notice of Rate Change in Effect (published 2026-02-09)",
+      "url": "https://www.federalregister.gov/documents/2026/02/09/2026-02466/minimum-wage-for-federal-contracts-covered-by-executive-order-13658-notice-of-rate-change-in-effect",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed: the Federal Register notice's own title and DOL's government-contracts minimum wage page both surfaced this session giving $13.65 / $9.55 effective 2026-05-11. The notice text itself was not rendered directly."
+    },
+    {
+      "id": "eo14236",
+      "title": "Executive Order 14236, Additional Rescissions of Harmful Executive Orders and Actions (2025-03-14), revoking EO 14026",
+      "url": "https://www.dol.gov/agencies/whd/government-contracts/eo14026",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed across DOL's own EO 14026 landing page (which now carries the non-enforcement notice) and multiple independent employment-law summaries."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": [
+    "Special federal minimum wages set by certificate (14(c), student learners, apprentices, messengers) carry no figure here -- they are per-certificate, not per-jurisdiction.",
+    "The Service Contract Act and Davis-Bacon Act prevailing wages are a different mechanism entirely (per-contract wage determinations, not a single rate) and are out of scope for this database.",
+    "American Samoa's FLSA floor is NOT $7.25 -- it is a set of 18 industry-specific rates, carried in territories/AS-2026.json.",
+    "whiteCollarExemptions carries the SALARY half of the executive/administrative/professional/computer/outside-sales exemptions only. The DUTIES tests (29 CFR 541 Subparts B-E) that actually decide whether a given job qualifies are a legal determination this database does not model, the same discipline applied to every other coverage/classification question here.",
+    "otherFederalMinimums.electionWorkers documents a genuinely UNSETTLED area (DOL has taken no official position) rather than a clean rule -- treat its conclusion as the best available legal analysis, not a guarantee, and re-verify against the specific per-diem and duties of the jurisdiction in question."
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "code": "ND",
+  "name": "North Dakota",
+  "year": 2026,
+  "method": "north_dakota_dual_vintage",
+  "$scopeNote": "WIRED TO CALC CODE (a later 'go to every state, look for what's missing' pass): originally a DATA-ONLY pass (Scott: 'do the Dakotas and the Virginias, just for the data'); northDakotaWithholding() in src/taxes/state.ts now dispatches both vintages for real. North Dakota has one of the lowest real income tax rates in the country (0% / 1.95% / 2.50%, three brackets, genuinely close to Idaho/Iowa in simplicity) but a genuinely two-track withholding SYSTEM depending on which vintage of Form W-4 the employee has on file -- a structural complexity Iowa is the only other state in this project to have (its formVintage dispatch). Wiring this in surfaced a real transcription bug, fixed in the same pass: see annualBrackets.bracketNote below.",
+  "sources": [
+    {
+      "title": "2026 Income Tax Withholding Rates and Instructions (North Dakota Office of State Tax Commissioner)",
+      "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2026-iit/2026-income-tax-withholding-rates-booklet.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly (pdftotext -layout, clean extraction, no column-shift hazard). Read both Section 1 (pre-2020 W-4) and Section 2 (2020+ W-4) in full, including their own worked examples and all 8 per-period percentage-method tables in Section 1 and the 3-status annual table in Section 2."
+    },
+    {
+      "title": "North Dakota Issues 2026 Unemployment Insurance Rates -- Bloomberg Tax",
+      "url": "https://news.bloombergtax.com/payroll/north-dakota-issues-2026-unemployment-insurance-rates",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Cross-source confirmed via search synthesis, not independently fetched in full this session -- citing Job Service North Dakota's own rate release. Wage base and new-employer rate figures below are one tier below a direct jobsnd.com/apps.nd.gov fetch."
+    },
+    {
+      "title": "Form NDW-R -- Reciprocity Exemption from Withholding for Qualifying Minnesota and Montana Residents",
+      "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/business/ndwrfillable.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Form's own existence and title fetched/confirmed directly (linked from tax.nd.gov's withholding page); the reciprocity RULE itself (MN/MT residents working in ND are exempt from ND withholding) is cross-source confirmed via search synthesis, not read from the form's own instructions text this session -- the annual filing deadlines (to employer by Feb 28, to the state by Mar 31) came from a secondary summary, not the form's own primary text."
+    },
+    {
+      "title": "2026 ND Income Tax Withholding Rates and Instructions -- Section 3, Supplemental Wages (page 57)",
+      "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2026-iit/2026-income-tax-withholding-rates-booklet.pdf",
+      "verifiedOn": "2026-08-27",
+      "verifiedBy": "Same booklet already on file for this state, re-fetched and its own Section 3 (previously flagged as 'not read in detail') read in full for the 'find and fix anything missing across all 50 states' pass. Two employer options, both quoted: Option 1 -- \"Multiply the supplemental wages by 1.50% (.0150).\" Option 2 (aggregate) -- \"add the supplemental wages to the amount of regular wages paid... for the most recent payroll period,\" compute withholding on the combined amount, subtract what was already withheld on the regular payment. Both apply only when the supplemental wage is separately paid or separately identified; combined-and-unidentified payments use the ordinary formula, which is this engine's default when neither option is elected/supplied. The booklet's own worked examples (Ex. 1: ,000 bonus x 1.5% = 5.00; Ex. 2: ,500+,000=,500 combined, tax 2 less 2 already withheld = 0) use the WAGE BRACKET tables, not the percentage/annual-bracket method this engine implements (the same class of expected cent-level divergence already documented for California's Examples E/F and New Mexico's pre-2020 W-4 tables) -- the 1.50% flat rate and the aggregation MECHANISM are what was verified, not an exact cent-for-cent reproduction of Example 2."
+    }
+  ],
+  "withholdingStructure": {
+    "$comment": "Two fully separate methods depending on which W-4 vintage is on file -- North Dakota's own booklet titles them Section 1 and Section 2. A newly hired employee with NO Form W-4 on file uses Section 2, treated as Single -- this is the modern default, not Section 1.",
+    "section1_preFederal2020W4": {
+      "appliesWhen": "Employee's Form W-4 on file predates the 2020 federal redesign (still uses withholding allowances).",
+      "mechanism": "Subtract (number of allowances x a flat per-period allowance dollar amount) from gross wages, then look up the result in a filing-status-specific (Single-including-HoH, or Married) bracket table for the pay period. Rounds to the NEAREST WHOLE DOLLAR -- the same whole-dollar convention this project's Maine file uses, genuinely unusual among states built so far (most round to the cent).",
+      "allowanceAmountAnnual": 5050.0,
+      "allowanceAmountByPeriod": {
+        "weekly": 97.0,
+        "biweekly": 194.0,
+        "semimonthly": 210.0,
+        "monthly": 420.0,
+        "quarterly": 1268.0,
+        "semiannual": 2525.0,
+        "annual": 5050.0,
+        "daily": 19.0
+      },
+      "annualBrackets": {
+        "single": [
+          {
+            "from": 0,
+            "to": 57625,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 57625,
+            "to": 258450,
+            "base": 0,
+            "rate": 0.0195
+          },
+          {
+            "from": 258450,
+            "to": null,
+            "base": 3916.09,
+            "rate": 0.025
+          }
+        ],
+        "married": [
+          {
+            "from": 0,
+            "to": 57500,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 57500,
+            "to": 168525,
+            "base": 0,
+            "rate": 0.0195
+          },
+          {
+            "from": 168525,
+            "to": null,
+            "base": 2164.99,
+            "rate": 0.025
+          }
+        ],
+        "bracketNote": "Transcribed verbatim from Table 7 (Annual Payroll Period). Single's own table oddly prints '$0' for both the first AND second row's base before the excess-rate column, but the worked mechanics (confirmed against Table 1-6's algebra: e.g. weekly base $75.31 at $1,108 = 1.95% x $3,862-ish scaled -- internally consistent) make clear the true structure is 0% up to $57,625, then 1.95% on the excess up to $258,450, then a fixed $3,916.09 base plus 2.50% above that -- i.e. only TWO effective rates (0%, 1.95%, 2.50%), not three independently-based tiers. Recorded as 3 rows for shape-consistency with this project's other bracket tables (WIBracket-style), with the middle row's base correctly $0 since it starts exactly where the 0% bracket ends. BUG FIXED (wiring pass): the Single table's first bracket had rate 0.0195 here, not 0 -- inconsistent with this very prose AND with Section 2's own Single table below, which covers the identical boundaries and correctly has rate 0 on the first bracket. Corrected to 0."
+      },
+      "note": "Full per-period tables (weekly/biweekly/semimonthly/monthly/quarterly/semiannual/daily) are published directly by ND -- NOT derived from the annual figures by simple division the way Iowa's were provably shown to be; not independently re-verified this pass that ND's own per-period tables are exact prorations of the annual ones (a real open question, not assumed either way)."
+    },
+    "section2_2020AndLaterW4": {
+      "appliesWhen": "Employee's Form W-4 is 2020-or-later vintage, OR a newly hired employee has submitted no Form W-4 at all (treated as Single by ND's own instruction, matching this project's standing no-certificate-default convention for once being a state-stated rule rather than an inferred one).",
+      "mechanism": "Genuinely distinct from every other state in this project: there is NO ND-specific exemption/allowance subtraction step at all. The employer takes the employee's TAXABLE WAGES FOR THE PAY PERIOD (i.e. wages already net of whatever the federal Form W-4's own Steps 2-4c produced -- multiple-jobs adjustment, dependents credit converted to a wage-equivalent reduction, other income, deductions), annualizes by the pay-period count, and looks the ANNUAL figure up directly in one of THREE filing-status tables (Married Filing Jointly / Head of Household / Single) pulled straight from the employee's Form W-4 Step 1(c) checkbox. Because the input is already the FEDERALLY-adjusted wage figure, 401(k)/125/HSA-type pretax deferrals are excluded from the ND base BY CONSTRUCTION, not by any separate ND statute or rule -- the strongest possible confidence tier for exemptPretax conformity, stronger than every other state's federal-AGI-conformity finding in this project, since there's no intermediate 'ND adjusted gross income' concept to independently verify -- the federal number IS the ND number at this step.",
+      "annualBrackets": {
+        "marriedFilingJointly": [
+          {
+            "from": 0,
+            "to": 57500,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 57500,
+            "to": 168525,
+            "base": 0,
+            "rate": 0.0195
+          },
+          {
+            "from": 168525,
+            "to": null,
+            "base": 2164.99,
+            "rate": 0.025
+          }
+        ],
+        "headOfHousehold": [
+          {
+            "from": 0,
+            "to": 78475,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 78475,
+            "to": 289675,
+            "base": 0,
+            "rate": 0.0195
+          },
+          {
+            "from": 289675,
+            "to": null,
+            "base": 4118.4,
+            "rate": 0.025
+          }
+        ],
+        "single": [
+          {
+            "from": 0,
+            "to": 57625,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 57625,
+            "to": 258450,
+            "base": 0,
+            "rate": 0.0195
+          },
+          {
+            "from": 258450,
+            "to": null,
+            "base": 3916.09,
+            "rate": 0.025
+          }
+        ]
+      },
+      "worksheetSteps": "Booklet's own Percentage Method Worksheet: (1) taxable wages this period, (2) periods/year, (3) annualize (1x2), (4) look up annual withholding from the filing-status table, (5) divide line 4 by line 2 for the per-period amount, rounded to the nearest whole dollar -- same whole-dollar rounding convention as Section 1."
+    },
+    "supplementalWages": "Booklet has a dedicated Section 3 (page 57) for supplemental wages, not read in detail this pass -- flagged as an open item below rather than guessed at."
+  },
+  "roundFinalToWholeDollar": true,
+  "roundingComment": "Both Section 1 and Section 2 round to the nearest whole dollar per the booklet's own text (see worksheetSteps above) -- handled generically via rules.roundFinalToWholeDollar in stateIncomeTax(), the same mechanism built for Maine and reused by several other states in this project.",
+  "reciprocity": {
+    "reciprocalStates": [
+      "MN",
+      "MT"
+    ],
+    "mechanism": "Form NDW-R, filed by the employee with the employer (due by Feb 28 or within 30 days of hire/address change; employer mails to the state by Mar 31; must be refiled annually).",
+    "rule": "A Minnesota or Montana resident working in North Dakota is exempt from ND withholding on those wages, provided NDW-R is on file.",
+    "confidence": "The existence and MN/MT scope of the agreement is confirmed by the form's own title, fetched directly. The specific mechanics (deadlines, annual refiling) are cross-source only this pass -- NDW-R's own instructions text was not read line-by-line, unlike this project's usual standard for a reciprocity mechanism (e.g. Kansas's KW-100 worked example, Ohio's IT 4NR)."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "Job Service North Dakota",
+    "wageBase": 46600.0,
+    "wageBaseNote": "Up from $45,100 in 2025 -- confirmed as a real year-over-year increase, not a stale figure.",
+    "newEmployerRates": {
+      "positiveRated": 0.01,
+      "negativeRated": 0.0607,
+      "construction": 0.0967
+    },
+    "experiencedEmployerRateRange": {
+      "positiveRated": [
+        0.0007,
+        0.011
+      ],
+      "negativeRated": [
+        0.0607,
+        0.0967
+      ]
+    },
+    "confidence": "cross_source_confirmed only (Bloomberg Tax's own summary of Job Service ND's rate release) -- not independently fetched from jobsnd.com/apps.nd.gov this pass, one tier below this file's income-tax-withholding sourcing."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. Cross-source confirmed: no North Dakota city, county, or municipality levies a tax on wages or earned income.",
+    "confidence": "cross_source_confirmed, not tied to a specific enabling/prohibiting statute citation this pass."
+  },
+  "paidLeave": {
+    "rule": "NONE, and structurally locked out at the local level too: North Dakota has no mandatory state Paid Family/Medical Leave program, and (a genuinely distinctive fact among every state in this project so far) North Dakota law affirmatively PREEMPTS cities and counties from enacting their OWN mandatory paid-leave ordinances -- not merely an absence of a state program the way most no-PFML states in this project are, but a state-level ceiling that forecloses the Wilmington/JEDD-style local patchwork risk this project has flagged in other states.",
+    "confidence": "cross_source_confirmed via search synthesis, not independently read from the ND Century Code preemption provision itself this pass."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "FIXED (wiring pass): this field was previously stored as a note object, not an array, which would have thrown ('object is not iterable') the moment any calc code called ctx.taxableWagesFor() against this ruleset -- caught by the first test run, not by inspection. Set to the standard exclusion list this project uses everywhere else. For Section 2 (2020+ W-4) this is doubly justified: the ND base IS whatever wage figure the federal W-4 process already produced, so pretax deferrals are excluded by construction regardless of this list. Section 1 (pre-2020 W-4) relies on this list directly, consistent with every other state's federal-conformity-based exemptPretax -- not independently re-derived from a North Dakota-specific statute this pass.",
+  "certificateFields": {
+    "$comment": "northDakotaWithholding() dispatches on certificate.formVintage.",
+    "section1_pre2020": "certificate.formVintage = 'pre_2020', certificate.maritalStatus ('single'|'married', default 'single'), certificate.allowances (count, default 0).",
+    "section2_2020Plus": "Default path (formVintage unset or anything else). No separate ND certificate -- status is read directly from input.federalW4.filingStatus per the booklet's own instruction that it comes 'straight from the employee's Form W-4 Step 1(c) checkbox.' federalW4.filingStatus 'married_separate' resolves to the Single table (the 2020+ federal form bundles Single/MFS into one checkbox), same convention as New Mexico."
+  },
+  "knownGaps": [
+    "WIRED (this pass): northDakotaWithholding() in state.ts dispatches both Section 1 and Section 2. Verified against 2 hand-derived fixtures per section before running -- see tests/engine.test.ts describe('North Dakota'). Not yet checked against any of the booklet's OWN worked examples specifically (none were located/transcribed in the original data-only pass) -- a genuine remaining gap, disclosed rather than treated as equivalent to a source-worked-example verification.",
+    "RESOLVED: Section 3 (supplemental wages, booklet page 57) has now been read in full -- see this file's own supplementalWages/supplementalAggregation blocks and sources[] entry. Both of the booklet's two options (flat 1.50%, or aggregate with the most recent payroll period) are wired; the booklet's own worked examples use the wage-bracket tables rather than this engine's percentage-method implementation, so exact cent-for-cent reproduction of those specific examples was not attempted (same class of divergence already documented for California and New Mexico).",
+    "Section 1's per-period tables (weekly/biweekly/etc.) were NOT independently verified to be exact prorations of the annual figures the way this project proved for Iowa -- recorded as annual-only, an open question rather than an assumption either way.",
+    "Section 1's own exemptPretax property (whether pre-2020-W-4 'gross wages' already excludes federal pretax deferrals the same structural way Section 2 does) was not separately checked -- likely yes by the same federal-conformity logic, but not confirmed this pass.",
+    "UI rate/wage-base figures and the reciprocity mechanism's exact deadlines are cross-source only, not independently fetched from a ND government page this pass -- one tier below this file's own withholding-booklet sourcing.",
+    "Local-tax and paid-leave 'none' claims are cross-source confirmed only, not tied to a specific ND Century Code citation."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 46600,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0.0007,
+      "max": 0.0967
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  },
+  "supplementalWages": {
+    "$comment": "ND Section 3, Option 1: \"Multiply the supplemental wages by 1.50% (.0150).\" An employer option (Option 2, aggregation, is the alternative) -- matching Missouri's own dual-method shape in this project.",
+    "flatRate": 0.015,
+    "appliesWhen": "paid_separately",
+    "election": "employer_option",
+    "confidence": "primary_source_confirmed"
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "ND Section 3, Option 2: aggregate with the most recent regular payroll period, tax the combined amount, subtract tax already withheld on the regular portion."
+  }
+}

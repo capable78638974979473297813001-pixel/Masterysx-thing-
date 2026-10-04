@@ -1,0 +1,4883 @@
+{
+  "$comment": "ALL 679 currently-active Ohio municipal income tax jurisdictions (this $comment previously said 678, off by one from municipalityCount and the array's own length below -- corrected 2026-09-02), sourced directly from the Ohio Dept of Taxation's own official Finder database (bulk CSV, not hand-searched/transcribed). This replaces the earlier 3-anchor-city approach in this file with real, primary-sourced comprehensive coverage -- genuinely comparable in depth to what a competitor like Symmetry would maintain for Ohio.",
+  "year": 2026,
+  "asOf": "2026-08-11",
+  "source": {
+    "title": "Ohio Municipal Income Tax Rates (The Finder, bulk CSV download)",
+    "url": "https://api.thefinder.tax.ohio.gov/finder/api/v1/tax-rates/downloads/Muni/OHMuniRateTable.csv",
+    "downloadedOn": "2026-08-11",
+    "downloadedBy": "fetched directly via curl this session -- this is the SAME authoritative feed Ohio's own Finder tool uses, not a secondary aggregator",
+    "method": "Filtered to rows with EffEndDate=99991231 (currently open-ended / in force). Historical superseded rates (404 additional rows) were excluded, not deleted -- available by re-fetching the same URL and keeping earlier rows if effective-dated history is ever needed.",
+    "rateFormat": "Rate is a fraction (e.g. 0.025 = 2.5%), matching the source CSV's own convention -- no conversion applied."
+  },
+  "taxableWages": {
+    "basis": "Ohio municipal 'qualifying wages' (ORC 718.01(R)): Medicare wages under IRC 3121(a), less Section 125 cafeteria-plan amounts, with 401(k), 403(b) and 457 employee deferrals added back. This is NOT the Ohio state income tax base: an elective retirement deferral reduces Ohio state (and school district) taxable income but does not reduce the municipal base.",
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ],
+    "exemptPretaxComment": "Mirrors the federal Medicare list (data/federal/2026.json medicare.exemptPretax): section125/hsa/fsa/dependent_care are cafeteria-plan amounts ORC 718.01(R)(1)(a) deducts, and qualified transportation fringes (commuter) are excluded from 3121(a) wages by 3121(a)(20) with no ORC add-back. deferral_401k/403b/457/simple are deliberately absent: 3121(a) already includes them and (R)(2)(c) adds back any 401(k)/403(b)/457 amount not included.",
+    "sources": [
+      {
+        "title": "Ohio Revised Code 718.01(R), definition of \"qualifying wages\"",
+        "url": "https://codes.ohio.gov/ohio-revised-code/section-718.01",
+        "verifiedOn": "2026-09-25",
+        "quote": "\"Qualifying wages\" means wages, as defined in section 3121(a) of the Internal Revenue Code, without regard to any wage limitations, adjusted as follows: (1) Deduct ... (a) Any amount included in wages if the amount constitutes compensation attributable to a plan or program described in section 125 ... (2) Add ... (c) Any amount not included in wages if the amount is an amount described in section 401(k), 403(b), or 457 of the Internal Revenue Code. Division (R)(2)(c) of this section applies only to employee contributions and employee deferrals."
+      }
+    ]
+  },
+  "residencyNote": "Ohio municipal income tax is primarily workplace-sourced: this single rate generally applies to income earned within the municipality regardless of the earner's residence (unlike Michigan's explicit resident/nonresident split). ohioLocalTax() (src/taxes/state.ts) implements the ORC 718.121 resident-credit-against-work-city at withholding time -- a resident working in a DIFFERENT taxing municipality gets that home municipality's tax reduced by the tax paid to the work municipality, capped at the home rate, verified end-to-end in tests/engine.test.ts.",
+  "confidence": "primary_source_confirmed for every row -- downloaded directly from Ohio's own database, not cross-referenced from secondary sites. This is a STRONGER confidence tier than the per-city web-search approach used for 21 of Michigan's 24 cities, because it is bulk-sourced from the authority itself rather than corroborated across secondary summaries.",
+  "municipalityCount": 682,
+  "municipalities": [
+    {
+      "name": "Aberdeen",
+      "municode": "00142",
+      "rate": 0.01,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ada",
+      "municode": "00198",
+      "rate": 0.0165,
+      "effectiveFrom": "2011-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Addyston",
+      "municode": "00436",
+      "rate": 0.015,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Adelphi",
+      "municode": "00450",
+      "rate": 0.01,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Akron",
+      "municode": "01000",
+      "rate": 0.025,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Alexandria",
+      "municode": "01154",
+      "rate": 0.01,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Alger",
+      "municode": "01210",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Alliance",
+      "municode": "01420",
+      "rate": 0.02,
+      "effectiveFrom": "2007-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Amanda",
+      "municode": "01630",
+      "rate": 0.01,
+      "effectiveFrom": "2015-09-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Amberley",
+      "municode": "01672",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Amelia",
+      "municode": "01742",
+      "rate": 0,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Amherst",
+      "municode": "01798",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Amsterdam",
+      "municode": "01938",
+      "rate": 0.01,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Andover",
+      "municode": "02050",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Anna",
+      "municode": "02092",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Ansonia",
+      "municode": "02120",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Antwerp",
+      "municode": "02204",
+      "rate": 0.01,
+      "effectiveFrom": "2006-09-12",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Apple Creek",
+      "municode": "02232",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Arcanum",
+      "municode": "02330",
+      "rate": 0.01,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Archbold",
+      "municode": "02344",
+      "rate": 0.018,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Arlington",
+      "municode": "02400",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Arlington Heights",
+      "municode": "02428",
+      "rate": 0.021,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ashland",
+      "municode": "02568",
+      "rate": 0.02,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Ashley",
+      "municode": "02582",
+      "rate": 0.01,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ashtabula",
+      "municode": "02638",
+      "rate": 0.018,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Ashville",
+      "municode": "02680",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Athens",
+      "municode": "02736",
+      "rate": 0.0195,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Aurora",
+      "municode": "03086",
+      "rate": 0.02,
+      "effectiveFrom": "2003-04-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Avon",
+      "municode": "03352",
+      "rate": 0.0195,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Avon Lake",
+      "municode": "03464",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Baltic",
+      "municode": "03744",
+      "rate": 0.015,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Baltimore",
+      "municode": "03758",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Barberton",
+      "municode": "03828",
+      "rate": 0.0225,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Barnesville",
+      "municode": "03926",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Batavia",
+      "municode": "04150",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bay Village",
+      "municode": "04416",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Beach City",
+      "municode": "04458",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Beachwood",
+      "municode": "04500",
+      "rate": 0.02,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Beaverdam",
+      "municode": "04752",
+      "rate": 0.01,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bedford",
+      "municode": "04878",
+      "rate": 0.03,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bedford Heights",
+      "municode": "04920",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bellaire",
+      "municode": "05074",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Belle Center",
+      "municode": "05116",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bellefontaine",
+      "municode": "05130",
+      "rate": 0.016,
+      "effectiveFrom": "2024-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bellevue",
+      "municode": "05228",
+      "rate": 0.02,
+      "effectiveFrom": "2018-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bellville",
+      "municode": "05284",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Belpre",
+      "municode": "05424",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bentleyville",
+      "municode": "05550",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Berea",
+      "municode": "05690",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bethel",
+      "municode": "06068",
+      "rate": 0.01,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bettsville",
+      "municode": "06194",
+      "rate": 0.01,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Beverly",
+      "municode": "06222",
+      "rate": 0.0125,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bexley",
+      "municode": "06278",
+      "rate": 0.025,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Blanchester",
+      "municode": "06908",
+      "rate": 0.01,
+      "effectiveFrom": "2024-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bloomdale",
+      "municode": "07062",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bloomingdale",
+      "municode": "07202",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bloomville",
+      "municode": "07286",
+      "rate": 0.01,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Blue Ash",
+      "municode": "07300",
+      "rate": 0.0125,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bluffton",
+      "municode": "07426",
+      "rate": 0.0165,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bolivar",
+      "municode": "07594",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Boston Heights",
+      "municode": "07790",
+      "rate": 0.02,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Botkins",
+      "municode": "07832",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bowerston",
+      "municode": "07916",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bowling Green",
+      "municode": "07972",
+      "rate": 0.0215,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bradford",
+      "municode": "08084",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bradner",
+      "municode": "08112",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bratenahl",
+      "municode": "08336",
+      "rate": 0.02,
+      "effectiveFrom": "2019-06-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Brecksville",
+      "municode": "08364",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bremen",
+      "municode": "08392",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Brewster",
+      "municode": "08504",
+      "rate": 0.02,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Brice",
+      "municode": "08532",
+      "rate": 0.02,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bridgeport",
+      "municode": "08560",
+      "rate": 0.01,
+      "effectiveFrom": "2019-08-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Broadview Heights",
+      "municode": "09064",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Brook Park",
+      "municode": "09288",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Brooklyn",
+      "municode": "09246",
+      "rate": 0.025,
+      "effectiveFrom": "2009-06-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Brooklyn Heights",
+      "municode": "09274",
+      "rate": 0.025,
+      "effectiveFrom": "2018-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Brookville",
+      "municode": "09358",
+      "rate": 0.02,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Brunswick",
+      "municode": "09680",
+      "rate": 0.02,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Bryan",
+      "municode": "09792",
+      "rate": 0.018,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Buckland",
+      "municode": "09974",
+      "rate": 0.01,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Bucyrus",
+      "municode": "10030",
+      "rate": 0.0225,
+      "effectiveFrom": "2023-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Burbank",
+      "municode": "10254",
+      "rate": 0.01,
+      "effectiveFrom": "2022-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Burton",
+      "municode": "10436",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Butler",
+      "municode": "10632",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Byesville",
+      "municode": "10716",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Cadiz",
+      "municode": "10800",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Cairo",
+      "municode": "10884",
+      "rate": 0.005,
+      "effectiveFrom": "2007-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Caldwell",
+      "municode": "10940",
+      "rate": 0.01,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cambridge",
+      "municode": "10996",
+      "rate": 0.02,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Camden",
+      "municode": "11024",
+      "rate": 0.01,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Campbell",
+      "municode": "11066",
+      "rate": 0.025,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Canal Fulton",
+      "municode": "11304",
+      "rate": 0.02,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Canal Winchester",
+      "municode": "11332",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Canfield",
+      "municode": "11360",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Canton",
+      "municode": "12000",
+      "rate": 0.025,
+      "effectiveFrom": "2018-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Cardington",
+      "municode": "12084",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Carey",
+      "municode": "12112",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Carlisle",
+      "municode": "12168",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Carroll",
+      "municode": "12252",
+      "rate": 0.0075,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Carrollton",
+      "municode": "12280",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Castine",
+      "municode": "12504",
+      "rate": 0,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Catawba",
+      "municode": "12560",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cecil",
+      "municode": "12700",
+      "rate": 0.01,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cedarville",
+      "municode": "12784",
+      "rate": 0.0125,
+      "effectiveFrom": "2015-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Celina",
+      "municode": "12868",
+      "rate": 0.015,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Centerburg",
+      "municode": "13036",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Centerville",
+      "municode": "13190",
+      "rate": 0.0225,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Chagrin Falls",
+      "municode": "13358",
+      "rate": 0.0185,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Chardon",
+      "municode": "13554",
+      "rate": 0.02,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Chesterville",
+      "municode": "14114",
+      "rate": 0.01,
+      "effectiveFrom": "2018-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cheviot",
+      "municode": "14128",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Chickasaw",
+      "municode": "14156",
+      "rate": 0.01,
+      "effectiveFrom": "2022-10-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Chillicothe",
+      "municode": "14184",
+      "rate": 0.018,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Cincinnati",
+      "municode": "15000",
+      "rate": 0.018,
+      "effectiveFrom": "2020-10-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Circleville",
+      "municode": "15070",
+      "rate": 0.025,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Clarksville",
+      "municode": "15406",
+      "rate": 0.01,
+      "effectiveFrom": "2016-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Clay Center",
+      "municode": "15588",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Clayton",
+      "municode": "15644",
+      "rate": 0.025,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Cleveland",
+      "municode": "16000",
+      "rate": 0.025,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Cleveland Heights",
+      "municode": "16014",
+      "rate": 0.0225,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Clinton",
+      "municode": "16182",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Clyde",
+      "municode": "16308",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Coal Grove",
+      "municode": "16378",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Coldwater",
+      "municode": "16532",
+      "rate": 0.015,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "College Corner",
+      "municode": "16700",
+      "rate": 0,
+      "effectiveFrom": "2025-09-13",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Columbiana",
+      "municode": "17036",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Columbus",
+      "municode": "18000",
+      "rate": 0.025,
+      "effectiveFrom": "2009-10-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Columbus Grove",
+      "municode": "18014",
+      "rate": 0.0125,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Commercial Point",
+      "municode": "18070",
+      "rate": 0.0075,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Conesville",
+      "municode": "18266",
+      "rate": 0.005,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Conneaut",
+      "municode": "18350",
+      "rate": 0.0165,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Continental",
+      "municode": "18504",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Convoy",
+      "municode": "18546",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Corwin",
+      "municode": "18840",
+      "rate": 0.005,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Coshocton",
+      "municode": "18868",
+      "rate": 0.02,
+      "effectiveFrom": "2015-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Covington",
+      "municode": "19050",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Crestline",
+      "municode": "19330",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Creston",
+      "municode": "19344",
+      "rate": 0.01,
+      "effectiveFrom": "2008-02-04",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cridersville",
+      "municode": "19400",
+      "rate": 0.015,
+      "effectiveFrom": "2021-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Crooksville",
+      "municode": "19456",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cuyahoga Falls",
+      "municode": "19778",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cuyahoga Heights",
+      "municode": "19806",
+      "rate": 0.025,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Cygnet",
+      "municode": "19820",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Dalton",
+      "municode": "19974",
+      "rate": 0.015,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Danville",
+      "municode": "20114",
+      "rate": 0.015,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Darbyville",
+      "municode": "20212",
+      "rate": 0.01,
+      "effectiveFrom": "2016-10-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Dayton",
+      "municode": "21000",
+      "rate": 0.025,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "De Graff",
+      "municode": "21378",
+      "rate": 0.0175,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Deer Park",
+      "municode": "21266",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Defiance",
+      "municode": "21308",
+      "rate": 0.018,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Delaware",
+      "municode": "21434",
+      "rate": 0.0185,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Dellroy",
+      "municode": "21560",
+      "rate": 0,
+      "effectiveFrom": "2001-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Delphos",
+      "municode": "21602",
+      "rate": 0.0175,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Delta",
+      "municode": "21616",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Dennison",
+      "municode": "21714",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Deshler",
+      "municode": "21812",
+      "rate": 0.01,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Dover",
+      "municode": "22456",
+      "rate": 0.015,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Doylestown",
+      "municode": "22568",
+      "rate": 0.02,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Dresden",
+      "municode": "22610",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Dublin",
+      "municode": "22694",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Dunkirk",
+      "municode": "22946",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "East Canton",
+      "municode": "23324",
+      "rate": 0.015,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "East Cleveland",
+      "municode": "23380",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "East Liverpool",
+      "municode": "23730",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "East Palestine",
+      "municode": "23940",
+      "rate": 0.015,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Eastlake",
+      "municode": "23618",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Eaton",
+      "municode": "24234",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Edgerton",
+      "municode": "24486",
+      "rate": 0.0175,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Edison",
+      "municode": "24598",
+      "rate": 0.005,
+      "effectiveFrom": "2009-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Edon",
+      "municode": "24640",
+      "rate": 0.0175,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Elida",
+      "municode": "24808",
+      "rate": 0.0075,
+      "effectiveFrom": "2006-04-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Elmore",
+      "municode": "25144",
+      "rate": 0.0175,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Elmwood Place",
+      "municode": "25186",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Elyria",
+      "municode": "25256",
+      "rate": 0.0225,
+      "effectiveFrom": "2016-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Empire",
+      "municode": "25368",
+      "rate": 0.01,
+      "effectiveFrom": "2014-08-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Englewood",
+      "municode": "25396",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Euclid",
+      "municode": "25704",
+      "rate": 0.0285,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Evendale",
+      "municode": "25802",
+      "rate": 0.012,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fairborn",
+      "municode": "25914",
+      "rate": 0.02,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fairfax",
+      "municode": "25942",
+      "rate": 0.0175,
+      "effectiveFrom": "2004-04-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fairfield",
+      "municode": "25970",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fairlawn",
+      "municode": "26166",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fairport Harbor",
+      "municode": "26306",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fairview Park",
+      "municode": "26446",
+      "rate": 0.02,
+      "effectiveFrom": "2005-04-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Farmersville",
+      "municode": "26656",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fayette",
+      "municode": "26768",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fayetteville",
+      "municode": "26796",
+      "rate": 0.01,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Felicity",
+      "municode": "26880",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Findlay",
+      "municode": "27048",
+      "rate": 0.01,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Forest",
+      "municode": "27636",
+      "rate": 0.0125,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Forest Park",
+      "municode": "27706",
+      "rate": 0.015,
+      "effectiveFrom": "2007-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fort Jennings",
+      "municode": "27818",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fort Loramie",
+      "municode": "27832",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fort Recovery",
+      "municode": "27902",
+      "rate": 0.015,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fostoria",
+      "municode": "28014",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Franklin",
+      "municode": "28476",
+      "rate": 0.02,
+      "effectiveFrom": "2011-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Frazeysburg",
+      "municode": "28574",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fredericksburg",
+      "municode": "28616",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Fredericktown",
+      "municode": "28658",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fremont",
+      "municode": "28826",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Fulton",
+      "municode": "29050",
+      "rate": 0.01,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Gahanna",
+      "municode": "29106",
+      "rate": 0.025,
+      "effectiveFrom": "2019-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Galena",
+      "municode": "29148",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Galion",
+      "municode": "29162",
+      "rate": 0.02,
+      "effectiveFrom": "2006-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Gallipolis",
+      "municode": "29204",
+      "rate": 0.015,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Gambier",
+      "municode": "29246",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Garfield Heights",
+      "municode": "29428",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Garrettsville",
+      "municode": "29442",
+      "rate": 0.0175,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Gates Mills",
+      "municode": "29498",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Geneva",
+      "municode": "29610",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Geneva-On-The-Lake",
+      "municode": "29652",
+      "rate": 0.015,
+      "effectiveFrom": "2012-09-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Genoa",
+      "municode": "29722",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Georgetown",
+      "municode": "29778",
+      "rate": 0.01,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Germantown",
+      "municode": "",
+      "rate": 0.015,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA",
+      "source": [
+        {
+          "title": "RITA member page -- Germantown (rate history)",
+          "url": "https://www.ritaohio.com/municipalities/Home/MemberPage?id=353",
+          "fetchedOn": "2026-09-30"
+        },
+        {
+          "title": "CCA Division of Taxation -- Tax Rates (2026 and 2025 tables)",
+          "url": "https://www.ccaohio.gov/tax-rates",
+          "fetchedOn": "2026-09-30"
+        }
+      ],
+      "$addedNote": "ADDED 2026-09-30: a taxing city missing from the Finder extract. RITA: 1.5% since at least 2020-01-01 (RITA from 2026-01-01; CCA collected it in 2025 at 1.5%). Ohio municode not captured."
+    },
+    {
+      "name": "Gettysburg",
+      "municode": "29974",
+      "rate": 0.01,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Gibsonburg",
+      "municode": "30072",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Girard",
+      "municode": "30198",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Glandorf",
+      "municode": "30282",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Glenmont",
+      "municode": "30506",
+      "rate": 0.01,
+      "effectiveFrom": "2024-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Glenwillow",
+      "municode": "30632",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Gnadenhutten",
+      "municode": "30702",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Golf Manor",
+      "municode": "30786",
+      "rate": 0.017,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Grafton",
+      "municode": "31150",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Grand Rapids",
+      "municode": "31206",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Grand River",
+      "municode": "31234",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Grandview",
+      "municode": "31262",
+      "rate": 0,
+      "effectiveFrom": "9999-12-31",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Grandview Heights",
+      "municode": "31304",
+      "rate": 0.025,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Granville",
+      "municode": "31402",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Gratis",
+      "municode": "31472",
+      "rate": 0.01,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Green",
+      "municode": "31860",
+      "rate": 0.02,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Green Springs",
+      "municode": "32256",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Greenfield",
+      "municode": "32088",
+      "rate": 0.01625,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Greenhills",
+      "municode": "32158",
+      "rate": 0.015,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Greenville",
+      "municode": "32340",
+      "rate": 0.015,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Greenwich",
+      "municode": "32368",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Grove City",
+      "municode": "32592",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Groveport",
+      "municode": "32606",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hamersville",
+      "municode": "32984",
+      "rate": 0.01,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hamilton",
+      "municode": "33012",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hamler",
+      "municode": "33096",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Hanging Rock",
+      "municode": "33194",
+      "rate": 0.01,
+      "effectiveFrom": "2025-02-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hanover",
+      "municode": "33292",
+      "rate": 0.01,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Harrisburg",
+      "municode": "33740",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Harrison",
+      "municode": "33838",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Harrod",
+      "municode": "34118",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hartville",
+      "municode": "34328",
+      "rate": 0.015,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Haskins",
+      "municode": "34412",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Heath",
+      "municode": "34748",
+      "rate": 0.02,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Hebron",
+      "municode": "34790",
+      "rate": 0.015,
+      "effectiveFrom": "2009-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Helena",
+      "municode": "34860",
+      "rate": 0.01,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hicksville",
+      "municode": "35098",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Highland Heights",
+      "municode": "35252",
+      "rate": 0.02,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Highland Hills",
+      "municode": "35255",
+      "rate": 0.025,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Hilliard",
+      "municode": "35476",
+      "rate": 0.025,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hillsboro",
+      "municode": "35560",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Hiram",
+      "municode": "35658",
+      "rate": 0.0225,
+      "effectiveFrom": "2018-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Holgate",
+      "municode": "35854",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Holland",
+      "municode": "35882",
+      "rate": 0.0225,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Holmesville",
+      "municode": "35994",
+      "rate": 0.01,
+      "effectiveFrom": "2024-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hopedale",
+      "municode": "36260",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hubbard",
+      "municode": "36582",
+      "rate": 0.015,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Huber Heights",
+      "municode": "36610",
+      "rate": 0.0225,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Hudson",
+      "municode": "36651",
+      "rate": 0.02,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Hunting Valley",
+      "municode": "36918",
+      "rate": 0,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Huntsville",
+      "municode": "36988",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Huron",
+      "municode": "37016",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Independence",
+      "municode": "37240",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Indian Hill",
+      "municode": "76582",
+      "rate": 0.005,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "self_or_other",
+      "$correctionNote": "CORRECTED 2026-09-30: was 0.45%. Indian Hill's emergency ordinance of 2025-12-15 raised the rate to 0.5% for tax year 2025 and prospectively for 2026 (https://indianhill.gov/departments/tax/)."
+    },
+    {
+      "name": "Ironton",
+      "municode": "37464",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Jackson",
+      "municode": "37842",
+      "rate": 0.015,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Jackson Center",
+      "municode": "38220",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Jamestown",
+      "municode": "38374",
+      "rate": 0.01,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Jefferson",
+      "municode": "38500",
+      "rate": 0.015,
+      "effectiveFrom": "2005-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Jeffersonville",
+      "municode": "38920",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Jenera",
+      "municode": "38948",
+      "rate": 0.01,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Jerry City",
+      "municode": "39074",
+      "rate": 0.01,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Jewett",
+      "municode": "39172",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Johnstown",
+      "municode": "39340",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Kalida",
+      "municode": "39536",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Kent",
+      "municode": "39872",
+      "rate": 0.0225,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Kenton",
+      "municode": "39886",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Kettering",
+      "municode": "40040",
+      "rate": 0.0225,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Kettlersville",
+      "municode": "40054",
+      "rate": 0,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Killbuck",
+      "municode": "40180",
+      "rate": 0.01,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Kirby",
+      "municode": "40558",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Kirkersville",
+      "municode": "40572",
+      "rate": 0.01,
+      "effectiveFrom": "2017-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Kirtland",
+      "municode": "40642",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lagrange",
+      "municode": "41230",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lakeline",
+      "municode": "41398",
+      "rate": 0.01,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lakemore",
+      "municode": "41454",
+      "rate": 0.0225,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lakeview",
+      "municode": "41608",
+      "rate": 0.01,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lakewood",
+      "municode": "41664",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lancaster",
+      "municode": "41720",
+      "rate": 0.023,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Latty",
+      "municode": "41986",
+      "rate": 0.01,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lebanon",
+      "municode": "42364",
+      "rate": 0.015,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Leesburg",
+      "municode": "42476",
+      "rate": 0.01,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Leetonia",
+      "municode": "42560",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Leipsic",
+      "municode": "42602",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lewisburg",
+      "municode": "42938",
+      "rate": 0.0175,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lexington",
+      "municode": "42994",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Liberty Center",
+      "municode": "43414",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lima",
+      "municode": "43554",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lincoln Heights",
+      "municode": "43722",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Linndale",
+      "municode": "43918",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Lisbon",
+      "municode": "44030",
+      "rate": 0.02,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lithopolis",
+      "municode": "44086",
+      "rate": 0.01,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lockbourne",
+      "municode": "44310",
+      "rate": 0.025,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lockington",
+      "municode": "44352",
+      "rate": 0.01,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lockland",
+      "municode": "44366",
+      "rate": 0.021,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lodi",
+      "municode": "44604",
+      "rate": 0.01,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Logan",
+      "municode": "44632",
+      "rate": 0.02,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "London",
+      "municode": "44674",
+      "rate": 0.015,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lorain",
+      "municode": "44856",
+      "rate": 0.025,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lordstown",
+      "municode": "44912",
+      "rate": 0.015,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Loudonville",
+      "municode": "45066",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Louisville",
+      "municode": "45094",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Loveland",
+      "municode": "45108",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lowellville",
+      "municode": "45178",
+      "rate": 0.02,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Luckey",
+      "municode": "45332",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Lyndhurst",
+      "municode": "45556",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Lyons",
+      "municode": "45626",
+      "rate": 0.01,
+      "effectiveFrom": "2016-11-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Macedonia",
+      "municode": "45976",
+      "rate": 0.025,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Madeira",
+      "municode": "46312",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Madison",
+      "municode": "46480",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Maineville",
+      "municode": "46872",
+      "rate": 0.01,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Malinta",
+      "municode": "46942",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Malta",
+      "municode": "46970",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Malvern",
+      "municode": "46998",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Manchester",
+      "municode": "47012",
+      "rate": 0.01,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mansfield",
+      "municode": "47138",
+      "rate": 0.0225,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mantua",
+      "municode": "47180",
+      "rate": 0.02,
+      "effectiveFrom": "2022-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Maple Heights",
+      "municode": "47306",
+      "rate": 0.025,
+      "effectiveFrom": "2007-03-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Marble Cliff",
+      "municode": "47474",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Marengo",
+      "municode": "47558",
+      "rate": 0.01,
+      "effectiveFrom": "2016-12-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mariemont",
+      "municode": "47600",
+      "rate": 0.0125,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Marietta",
+      "municode": "47628",
+      "rate": 0.0185,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Marion",
+      "municode": "47754",
+      "rate": 0.02,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Marshallville",
+      "municode": "48048",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Martins Ferry",
+      "municode": "48104",
+      "rate": 0.01,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Marysville",
+      "municode": "48160",
+      "rate": 0.015,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mason",
+      "municode": "48188",
+      "rate": 0.0112,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Massillon",
+      "municode": "48244",
+      "rate": 0.02,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Maumee",
+      "municode": "48342",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mayfield",
+      "municode": "48468",
+      "rate": 0.02,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mayfield Heights",
+      "municode": "48482",
+      "rate": 0.015,
+      "effectiveFrom": "2020-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mcclure",
+      "municode": "45794",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mccomb",
+      "municode": "45808",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mcconnelsville",
+      "municode": "45822",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mcdonald",
+      "municode": "45934",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mcguffey",
+      "municode": "46046",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mechanicsburg",
+      "municode": "48706",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Medina",
+      "municode": "48790",
+      "rate": 0.0125,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Melrose",
+      "municode": "49000",
+      "rate": 0.01,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mendon",
+      "municode": "49042",
+      "rate": 0,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mentor",
+      "municode": "49056",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mentor-On-The-Lake",
+      "municode": "49098",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Metamora",
+      "municode": "49238",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Miamisburg",
+      "municode": "49434",
+      "rate": 0.0225,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Middle Point",
+      "municode": "49728",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Middleburg Heights",
+      "municode": "49644",
+      "rate": 0.02,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Middlefield",
+      "municode": "49700",
+      "rate": 0.0125,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Middleport",
+      "municode": "49756",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Middletown",
+      "municode": "49840",
+      "rate": 0.02,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Midvale",
+      "municode": "49966",
+      "rate": 0.015,
+      "effectiveFrom": "2021-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mifflin",
+      "municode": "50036",
+      "rate": 0.01,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Milan",
+      "municode": "50134",
+      "rate": 0.01,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Milford",
+      "municode": "50176",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Milford Center",
+      "municode": "50218",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Millbury",
+      "municode": "50260",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Miller City",
+      "municode": "50358",
+      "rate": 0.01,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Millersburg",
+      "municode": "50372",
+      "rate": 0.015,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Millersport",
+      "municode": "50400",
+      "rate": 0.01,
+      "effectiveFrom": "2016-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Millville",
+      "municode": "50540",
+      "rate": 0.01,
+      "effectiveFrom": "2025-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mineral City",
+      "municode": "50764",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Minerva",
+      "municode": "50834",
+      "rate": 0.015,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Minerva Park",
+      "municode": "50862",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mingo Junction",
+      "municode": "50904",
+      "rate": 0.02,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Minster",
+      "municode": "50918",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mogadore",
+      "municode": "51058",
+      "rate": 0.025,
+      "effectiveFrom": "2019-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Monroe",
+      "municode": "51310",
+      "rate": 0.02,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Monroeville",
+      "municode": "51618",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Montgomery",
+      "municode": "51716",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Montpelier",
+      "municode": "51772",
+      "rate": 0.018,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Moraine",
+      "municode": "52010",
+      "rate": 0.025,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Moreland Hills",
+      "municode": "52052",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Morral",
+      "municode": "52276",
+      "rate": 0.01,
+      "effectiveFrom": "2013-10-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Morrow",
+      "municode": "52374",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Moscow",
+      "municode": "52416",
+      "rate": 0,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mount Blanchard",
+      "municode": "52598",
+      "rate": 0.01,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mount Cory",
+      "municode": "52668",
+      "rate": 0.01,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mount Eaton",
+      "municode": "52682",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mount Gilead",
+      "municode": "52738",
+      "rate": 0.0125,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mount Healthy",
+      "municode": "52752",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mount Orab",
+      "municode": "52906",
+      "rate": 0.0135,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mount Sterling",
+      "municode": "53046",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Mount Vernon",
+      "municode": "53102",
+      "rate": 0.02,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Mount Victory",
+      "municode": "53144",
+      "rate": 0.01,
+      "effectiveFrom": "2013-06-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Munroe Falls",
+      "municode": "53312",
+      "rate": 0.0225,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Napoleon",
+      "municode": "53550",
+      "rate": 0.015,
+      "effectiveFrom": "2009-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Nashville",
+      "municode": "53634",
+      "rate": 0.01,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Navarre",
+      "municode": "53690",
+      "rate": 0.0175,
+      "effectiveFrom": "2019-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Nelsonville",
+      "municode": "53886",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Albany",
+      "municode": "53970",
+      "rate": 0.02,
+      "effectiveFrom": "2003-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Bavaria",
+      "municode": "54110",
+      "rate": 0.01,
+      "effectiveFrom": "2011-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Bloomington",
+      "municode": "54152",
+      "rate": 0.01,
+      "effectiveFrom": "2002-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Boston",
+      "municode": "54166",
+      "rate": 0.025,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Bremen",
+      "municode": "54194",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "New Carlisle",
+      "municode": "54334",
+      "rate": 0.015,
+      "effectiveFrom": "2015-07-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "New Concord",
+      "municode": "54446",
+      "rate": 0.0225,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Franklin",
+      "municode": "54562",
+      "rate": 0.02,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Knoxville",
+      "municode": "54838",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "New Lebanon",
+      "municode": "54852",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Lexington",
+      "municode": "54866",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New London",
+      "municode": "54908",
+      "rate": 0.015,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "New Madison",
+      "municode": "54978",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "New Miami",
+      "municode": "55104",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "New Paris",
+      "municode": "55188",
+      "rate": 0.01,
+      "effectiveFrom": "2012-10-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "New Philadelphia",
+      "municode": "55216",
+      "rate": 0.015,
+      "effectiveFrom": "2005-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "New Richmond",
+      "municode": "55384",
+      "rate": 0.01,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Riegel",
+      "municode": "55398",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Washington",
+      "municode": "55776",
+      "rate": 0.015,
+      "effectiveFrom": "2003-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "New Waterford",
+      "municode": "55790",
+      "rate": 0.01,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Newark",
+      "municode": "54040",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Newburgh Heights",
+      "municode": "54250",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Newcomerstown",
+      "municode": "54432",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Newton Falls",
+      "municode": "55650",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Newtonsville",
+      "municode": "55664",
+      "rate": 0,
+      "effectiveFrom": "2021-02-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Newtown",
+      "municode": "55678",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ney",
+      "municode": "55874",
+      "rate": 0.01,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Niles",
+      "municode": "55916",
+      "rate": 0.02,
+      "effectiveFrom": "2016-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Baltimore",
+      "municode": "56154",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "North Canton",
+      "municode": "56294",
+      "rate": 0.02,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North College Hill",
+      "municode": "56322",
+      "rate": 0.015,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Hampton",
+      "municode": "",
+      "rate": 0.01,
+      "effectiveFrom": "2025-07-01",
+      "administeredBy": "RITA",
+      "source": [
+        {
+          "title": "RITA member page -- North Hampton (rate history)",
+          "url": "https://www.ritaohio.com/municipalities/Home/MemberPage?id=695",
+          "fetchedOn": "2026-09-30"
+        }
+      ],
+      "$addedNote": "ADDED 2026-09-30: new 1% tax from 2025-07-01, missing from the Finder extract. Ohio municode not captured."
+    },
+    {
+      "name": "North Kingsville",
+      "municode": "56700",
+      "rate": 0.013,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "North Lewisburg",
+      "municode": "56770",
+      "rate": 0.0175,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Olmsted",
+      "municode": "56882",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Perry",
+      "municode": "56910",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Randall",
+      "municode": "56924",
+      "rate": 0.0275,
+      "effectiveFrom": "2009-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "North Ridgeville",
+      "municode": "56966",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Robinson",
+      "municode": "56994",
+      "rate": 0.01,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Royalton",
+      "municode": "57008",
+      "rate": 0.02,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "North Star",
+      "municode": "57064",
+      "rate": 0.005,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Northfield",
+      "municode": "56448",
+      "rate": 0.02,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Northwood",
+      "municode": "57190",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Norton",
+      "municode": "57260",
+      "rate": 0.02,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Norwalk",
+      "municode": "57302",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Norwood",
+      "municode": "57386",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Oak Harbor",
+      "municode": "57582",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Oak Hill",
+      "municode": "57596",
+      "rate": 0.01,
+      "effectiveFrom": "2025-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Oakwood (Cuyahoga)",
+      "municode": "57750",
+      "rate": 0.025,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "unknown_ambiguous_name",
+      "administeredByNote": "Ohio has 3 municipalities named Oakwood (Cuyahoga, Montgomery, Paulding counties); RITA and/or CCA list \"Oakwood\" without a county qualifier, so which one(s) are members could not be determined this session."
+    },
+    {
+      "name": "Oakwood (Montgomery)",
+      "municode": "57764",
+      "rate": 0.025,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "unknown_ambiguous_name",
+      "administeredByNote": "Ohio has 3 municipalities named Oakwood (Cuyahoga, Montgomery, Paulding counties); RITA and/or CCA list \"Oakwood\" without a county qualifier, so which one(s) are members could not be determined this session."
+    },
+    {
+      "name": "Oakwood (Paulding)",
+      "municode": "57792",
+      "rate": 0.01,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "unknown_ambiguous_name",
+      "administeredByNote": "Ohio has 3 municipalities named Oakwood (Cuyahoga, Montgomery, Paulding counties); RITA and/or CCA list \"Oakwood\" without a county qualifier, so which one(s) are members could not be determined this session."
+    },
+    {
+      "name": "Oberlin",
+      "municode": "57834",
+      "rate": 0.025,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Obetz",
+      "municode": "57862",
+      "rate": 0.025,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Octa",
+      "municode": "57918",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ohio City",
+      "municode": "58002",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Olmsted Falls",
+      "municode": "58422",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ontario",
+      "municode": "58520",
+      "rate": 0.015,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Orange",
+      "municode": "58604",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Oregon",
+      "municode": "58730",
+      "rate": 0.0225,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Orrville",
+      "municode": "58828",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Orwell",
+      "municode": "58856",
+      "rate": 0.015,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Osgood",
+      "municode": "58912",
+      "rate": 0.01,
+      "effectiveFrom": "2009-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Ostrander",
+      "municode": "58940",
+      "rate": 0.01,
+      "effectiveFrom": "2016-09-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ottawa",
+      "municode": "58982",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ottawa Hills",
+      "municode": "59010",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ottoville",
+      "municode": "59052",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Owensville",
+      "municode": "59220",
+      "rate": 0.01,
+      "effectiveFrom": "2005-06-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Oxford",
+      "municode": "59234",
+      "rate": 0.02,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Painesville",
+      "municode": "59416",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pandora",
+      "municode": "59738",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Parma",
+      "municode": "61000",
+      "rate": 0.025,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Parma Heights",
+      "municode": "61028",
+      "rate": 0.03,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pataskala",
+      "municode": "61112",
+      "rate": 0.01,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Patterson",
+      "municode": "61182",
+      "rate": 0.005,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Paulding",
+      "municode": "61252",
+      "rate": 0.01,
+      "effectiveFrom": "2025-07-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Payne",
+      "municode": "61322",
+      "rate": 0.01,
+      "effectiveFrom": "2018-09-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pemberville",
+      "municode": "61504",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Peninsula",
+      "municode": "61574",
+      "rate": 0.02,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pepper Pike",
+      "municode": "61686",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Perry",
+      "municode": "61882",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Perrysburg",
+      "municode": "62148",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Perrysville",
+      "municode": "62190",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Phillipsburg",
+      "municode": "62414",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Pickerington",
+      "municode": "62498",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Piketon",
+      "municode": "62708",
+      "rate": 0.01,
+      "effectiveFrom": "2005-09-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pioneer",
+      "municode": "62834",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Piqua",
+      "municode": "62848",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pitsburg",
+      "municode": "62890",
+      "rate": 0.01,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Plain City",
+      "municode": "63030",
+      "rate": 0.015,
+      "effectiveFrom": "2016-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Pleasant Hill",
+      "municode": "63534",
+      "rate": 0.01,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Pleasantville",
+      "municode": "63716",
+      "rate": 0.01,
+      "effectiveFrom": "2013-10-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Plymouth",
+      "municode": "63800",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Pomeroy",
+      "municode": "64024",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Port Clinton",
+      "municode": "64150",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Port Washington",
+      "municode": "64346",
+      "rate": 0.015,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Portage",
+      "municode": "64108",
+      "rate": 0.01,
+      "effectiveFrom": "2009-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Portsmouth",
+      "municode": "64304",
+      "rate": 0.025,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Powell",
+      "municode": "64486",
+      "rate": 0.02,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Powhatan Point",
+      "municode": "64542",
+      "rate": 0.01,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Quincy",
+      "municode": "65200",
+      "rate": 0.01,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ravenna",
+      "municode": "65592",
+      "rate": 0.025,
+      "effectiveFrom": "2016-05-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Reading",
+      "municode": "65732",
+      "rate": 0.02,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Reminderville",
+      "municode": "66152",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Reynoldsburg",
+      "municode": "66390",
+      "rate": 0.025,
+      "effectiveFrom": "2017-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Richfield",
+      "municode": "66530",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Richmond Heights",
+      "municode": "66894",
+      "rate": 0.0225,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Richwood",
+      "municode": "66936",
+      "rate": 0.01,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ridgeway",
+      "municode": "67118",
+      "rate": 0.01,
+      "effectiveFrom": "2024-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Rio Grande",
+      "municode": "67258",
+      "rate": 0.02,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Ripley",
+      "municode": "67272",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Risingsun",
+      "municode": "67314",
+      "rate": 0.01,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Rittman",
+      "municode": "67356",
+      "rate": 0.015,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Riverside",
+      "municode": "67468",
+      "rate": 0.025,
+      "effectiveFrom": "2022-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Rock Creek",
+      "municode": "67846",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Rockford",
+      "municode": "67874",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Rocky River",
+      "municode": "68056",
+      "rate": 0.02,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Roseville",
+      "municode": "68560",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Rossford",
+      "municode": "68686",
+      "rate": 0.0225,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Roswell",
+      "municode": "68742",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Rushsylvania",
+      "municode": "69176",
+      "rate": 0.01,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Rushville",
+      "municode": "69204",
+      "rate": 0.01,
+      "effectiveFrom": "2025-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Russells Point",
+      "municode": "69302",
+      "rate": 0.01,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Russia",
+      "municode": "69344",
+      "rate": 0.015,
+      "effectiveFrom": "2004-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Rutland",
+      "municode": "69358",
+      "rate": 0.01,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sabina",
+      "municode": "69400",
+      "rate": 0.015,
+      "effectiveFrom": "2017-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Salem",
+      "municode": "69834",
+      "rate": 0.0125,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Salineville",
+      "municode": "70100",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sandusky",
+      "municode": "70380",
+      "rate": 0.0125,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sardinia",
+      "municode": "70534",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Scio",
+      "municode": "70814",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Sebring",
+      "municode": "71220",
+      "rate": 0.02,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Seven Hills",
+      "municode": "71416",
+      "rate": 0.025,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Seville",
+      "municode": "71486",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Shaker Heights",
+      "municode": "71682",
+      "rate": 0.0225,
+      "effectiveFrom": "2012-10-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sharonville",
+      "municode": "71892",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Shawnee Hills (Delaware)",
+      "municode": "71976",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA",
+      "sourceNote": "DISAMBIGUATED 2026-08-12: Ohio has 2 municipalities named Shawnee Hills (Delaware County village, Greene County village) sharing one unqualified name in the Finder source, the same ambiguity pattern as Oakwood below. Rate assigned to Delaware County confirmed via RITA's own published Tax Rates Table (municipality code 749, 2.000%) and an Ohio Auditor of State audit report explicitly naming 'the Village of Shawnee Hills, Delaware County, Ohio ... a municipal income tax of 2.0 percent.'"
+    },
+    {
+      "name": "Shawnee Hills (Greene)",
+      "municode": "71983",
+      "rate": 0,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA",
+      "sourceNote": "DISAMBIGUATED 2026-08-12: by elimination from Shawnee Hills (Delaware)'s sourceNote -- RITA's own Tax Rates Table lists only one 'Shawnee Hills' (code 749, 2.000%), which the Ohio Auditor of State confirms is the Delaware County village, so this second Finder entry (0% rate) is inferred to be the Greene County village. Not independently confirmed against a Greene-County-specific primary source; administeredBy='RITA' is carried over from the Finder row as-is and not separately re-verified for this specific municipality."
+    },
+    {
+      "name": "Sheffield",
+      "municode": "72060",
+      "rate": 0.02,
+      "effectiveFrom": "2009-05-31",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sheffield Lake",
+      "municode": "72088",
+      "rate": 0.02,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Shelby",
+      "municode": "72102",
+      "rate": 0.0175,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Sherrodsville",
+      "municode": "72242",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Sherwood",
+      "municode": "72256",
+      "rate": 0.01,
+      "effectiveFrom": "2004-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Shreve",
+      "municode": "72396",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Sidney",
+      "municode": "72424",
+      "rate": 0.0175,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Silver Lake",
+      "municode": "72494",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Silverton",
+      "municode": "72522",
+      "rate": 0.0125,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Smithfield",
+      "municode": "72760",
+      "rate": 0,
+      "effectiveFrom": "2020-10-29",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Smithville",
+      "municode": "72788",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Solon",
+      "municode": "72928",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Somerset",
+      "municode": "72977",
+      "rate": 0.01,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "South Amherst",
+      "municode": "73040",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Bloomfield",
+      "municode": "73068",
+      "rate": 0.01,
+      "effectiveFrom": "2005-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Charleston",
+      "municode": "73124",
+      "rate": 0.0125,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Euclid",
+      "municode": "73264",
+      "rate": 0.02,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Lebanon",
+      "municode": "73446",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "South Russell",
+      "municode": "73684",
+      "rate": 0.0125,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "South Solon",
+      "municode": "73768",
+      "rate": 0.01,
+      "effectiveFrom": "2014-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Vienna",
+      "municode": "73796",
+      "rate": 0.01,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "South Zanesville",
+      "municode": "73894",
+      "rate": 0.015,
+      "effectiveFrom": "2005-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Spencerville",
+      "municode": "74034",
+      "rate": 0.015,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Springboro",
+      "municode": "74076",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Springdale",
+      "municode": "74104",
+      "rate": 0.02,
+      "effectiveFrom": "2019-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Springfield",
+      "municode": "74118",
+      "rate": 0.024,
+      "effectiveFrom": "2017-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "St. Bernard",
+      "municode": "69470",
+      "rate": 0.021,
+      "effectiveFrom": "2005-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "St. Clairsville",
+      "municode": "69526",
+      "rate": 0.0075,
+      "effectiveFrom": "2011-04-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "St. Henry",
+      "municode": "69540",
+      "rate": 0.015,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "St. Louisville",
+      "municode": "69652",
+      "rate": 0.01,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "St. Marys",
+      "municode": "69680",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "St. Paris",
+      "municode": "69708",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Steubenville",
+      "municode": "74608",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Stockport",
+      "municode": "",
+      "rate": 0.01,
+      "effectiveFrom": "2023-07-01",
+      "administeredBy": "RITA",
+      "source": [
+        {
+          "title": "RITA member page -- Stockport (rate history)",
+          "url": "https://www.ritaohio.com/municipalities/Home/MemberPage?id=719",
+          "fetchedOn": "2026-09-30"
+        }
+      ],
+      "$addedNote": "ADDED 2026-09-30: 1% since 2023-07-01, missing from the Finder extract. Ohio municode not captured."
+    },
+    {
+      "name": "Stone Creek",
+      "municode": "74804",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Stoutsville",
+      "municode": "74916",
+      "rate": 0.01,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Stow",
+      "municode": "74944",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Strasburg",
+      "municode": "74958",
+      "rate": 0.015,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Stratton",
+      "municode": "75000",
+      "rate": 0.01,
+      "effectiveFrom": "2008-08-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Streetsboro",
+      "municode": "75014",
+      "rate": 0.02,
+      "effectiveFrom": "2009-05-28",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Strongsville",
+      "municode": "75098",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Struthers",
+      "municode": "75126",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Stryker",
+      "municode": "75140",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Sugar Grove",
+      "municode": "75252",
+      "rate": 0.0075,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sugarcreek",
+      "municode": "75210",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sunbury",
+      "municode": "75602",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Swanton",
+      "municode": "75896",
+      "rate": 0.015,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sycamore",
+      "municode": "75980",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Sylvania",
+      "municode": "76022",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Tallmadge",
+      "municode": "76106",
+      "rate": 0.0225,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Thurston",
+      "municode": "76764",
+      "rate": 0.01,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Tiffin",
+      "municode": "76778",
+      "rate": 0.02,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Timberlake",
+      "municode": "76834",
+      "rate": 0.02,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Tipp City",
+      "municode": "76876",
+      "rate": 0.015,
+      "effectiveFrom": "2011-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Tiro",
+      "municode": "76932",
+      "rate": 0.01,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Toledo",
+      "municode": "77000",
+      "rate": 0.025,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Tontogany",
+      "municode": "77070",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Toronto",
+      "municode": "77112",
+      "rate": 0.02,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Tremont City",
+      "municode": "77308",
+      "rate": 0.01,
+      "effectiveFrom": "2009-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Trenton",
+      "municode": "77322",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Trimble",
+      "municode": "77406",
+      "rate": 0.01,
+      "effectiveFrom": "2015-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Trotwood",
+      "municode": "77504",
+      "rate": 0.0275,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Troy",
+      "municode": "77588",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Tuscarawas",
+      "municode": "77924",
+      "rate": 0.015,
+      "effectiveFrom": "2023-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Twinsburg",
+      "municode": "78050",
+      "rate": 0.02,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Uhrichsville",
+      "municode": "78176",
+      "rate": 0.02,
+      "effectiveFrom": "2017-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Union",
+      "municode": "78470",
+      "rate": 0.015,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "Union City",
+      "municode": "78624",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "University Heights",
+      "municode": "78932",
+      "rate": 0.025,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Upper Arlington",
+      "municode": "79002",
+      "rate": 0.025,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Upper Sandusky",
+      "municode": "79044",
+      "rate": 0.0175,
+      "effectiveFrom": "2025-12-17",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Urbana",
+      "municode": "79072",
+      "rate": 0.014,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Urbancrest",
+      "municode": "79100",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Utica",
+      "municode": "79114",
+      "rate": 0.0175,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Valley Hi",
+      "municode": "79226",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Valley View",
+      "municode": "79268",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Van Wert",
+      "municode": "79562",
+      "rate": 0.0172,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Vandalia",
+      "municode": "79492",
+      "rate": 0.02,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Vanlue",
+      "municode": "79534",
+      "rate": 0.01,
+      "effectiveFrom": "2016-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Vermilion",
+      "municode": "79716",
+      "rate": 0.015,
+      "effectiveFrom": "2013-06-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Versailles",
+      "municode": "79912",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Wadsworth",
+      "municode": "80304",
+      "rate": 0.014,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wakeman",
+      "municode": "80458",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Walbridge",
+      "municode": "80486",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Walton Hills",
+      "municode": "80738",
+      "rate": 0.025,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wapakoneta",
+      "municode": "80766",
+      "rate": 0.015,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Warren",
+      "municode": "80892",
+      "rate": 0.025,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Warrensville Heights",
+      "municode": "80990",
+      "rate": 0.026,
+      "effectiveFrom": "2009-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Warsaw",
+      "municode": "81032",
+      "rate": 0.01,
+      "effectiveFrom": "2023-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Washington",
+      "municode": "81214",
+      "rate": 0.0175,
+      "effectiveFrom": "2026-01-01",
+      "administeredBy": "self_or_other",
+      "$correctionNote": "CORRECTED 2026-09-30: was 1.95% (the Finder extract's open row). The City of Washington (Court House) Tax Department: 'Income Tax Rate Change effective January 1, 2026. Current Rate - 1.95%. New Rate - 1.75%.' (https://www.cityofwch.com/183/Tax-Department)"
+    },
+    {
+      "name": "Washingtonville",
+      "municode": "81732",
+      "rate": 0.01,
+      "effectiveFrom": "2024-04-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Waterville",
+      "municode": "81858",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wauseon",
+      "municode": "81928",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Waverly City",
+      "municode": "81942",
+      "rate": 0.01,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Wayne",
+      "municode": "82334",
+      "rate": 0.0075,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Wayne Lakes",
+      "municode": "82348",
+      "rate": 0.01,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Waynesfield",
+      "municode": "82390",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Waynesville",
+      "municode": "82418",
+      "rate": 0.0075,
+      "effectiveFrom": "2021-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wellington",
+      "municode": "82642",
+      "rate": 0.0175,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wellston",
+      "municode": "82712",
+      "rate": 0.01,
+      "effectiveFrom": "2005-12-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wellsville",
+      "municode": "82740",
+      "rate": 0.015,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Alexandria",
+      "municode": "82880",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Carrollton City",
+      "municode": "83111",
+      "rate": 0.0225,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "West Elkton",
+      "municode": "83216",
+      "rate": 0.01,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Jefferson",
+      "municode": "83580",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "West Lafayette",
+      "municode": "83608",
+      "rate": 0.015,
+      "effectiveFrom": "2012-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Liberty",
+      "municode": "83734",
+      "rate": 0.01,
+      "effectiveFrom": "2013-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Mansfield",
+      "municode": "83818",
+      "rate": 0.01,
+      "effectiveFrom": "2013-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Millgrove",
+      "municode": "83888",
+      "rate": 0.01,
+      "effectiveFrom": "2020-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "West Milton",
+      "municode": "83902",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "CCA"
+    },
+    {
+      "name": "West Salem",
+      "municode": "84196",
+      "rate": 0.01,
+      "effectiveFrom": "2010-10-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "West Union",
+      "municode": "84294",
+      "rate": 0.01,
+      "effectiveFrom": "2008-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "West Unity",
+      "municode": "84308",
+      "rate": 0.015,
+      "effectiveFrom": "2004-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Westerville",
+      "municode": "83342",
+      "rate": 0.02,
+      "effectiveFrom": "2009-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Westfield Center",
+      "municode": "83468",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Westlake",
+      "municode": "83622",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Weston",
+      "municode": "83972",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Whitehall",
+      "municode": "84742",
+      "rate": 0.025,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Whitehouse",
+      "municode": "84770",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wickliffe",
+      "municode": "85036",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Willard",
+      "municode": "85232",
+      "rate": 0.0175,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Williamsburg",
+      "municode": "85288",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Williamsport",
+      "municode": "85414",
+      "rate": 0.005,
+      "effectiveFrom": "2018-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Willoughby",
+      "municode": "85484",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Willoughby Hills",
+      "municode": "85512",
+      "rate": 0.02,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Willowick",
+      "municode": "85638",
+      "rate": 0.02,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Willshire",
+      "municode": "85736",
+      "rate": 0.01,
+      "effectiveFrom": "2006-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wilmington",
+      "municode": "85792",
+      "rate": 0.015,
+      "effectiveFrom": "2017-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Wilmot",
+      "municode": "85806",
+      "rate": 0.0175,
+      "effectiveFrom": "2024-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Windham",
+      "municode": "85946",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wintersville",
+      "municode": "86184",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Woodlawn",
+      "municode": "86366",
+      "rate": 0.023,
+      "effectiveFrom": "2019-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Woodmere",
+      "municode": "86394",
+      "rate": 0.025,
+      "effectiveFrom": "2010-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Woodsfield",
+      "municode": "86436",
+      "rate": 0.01,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Woodstock",
+      "municode": "86478",
+      "rate": 0.01,
+      "effectiveFrom": "2006-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wooster",
+      "municode": "86548",
+      "rate": 0.015,
+      "effectiveFrom": "2014-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Worthington",
+      "municode": "86604",
+      "rate": 0.025,
+      "effectiveFrom": "2010-07-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Wyoming",
+      "municode": "86730",
+      "rate": 0.01,
+      "effectiveFrom": "2015-01-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Xenia",
+      "municode": "86772",
+      "rate": 0.0225,
+      "effectiveFrom": "2011-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Yellow Springs",
+      "municode": "86940",
+      "rate": 0.015,
+      "effectiveFrom": "2002-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Yorkshire",
+      "municode": "87164",
+      "rate": 0.01,
+      "effectiveFrom": "2021-07-01",
+      "administeredBy": "self_or_other"
+    },
+    {
+      "name": "Youngstown",
+      "municode": "88000",
+      "rate": 0.0275,
+      "effectiveFrom": "2003-01-01",
+      "administeredBy": "RITA"
+    },
+    {
+      "name": "Zanesville",
+      "municode": "88084",
+      "rate": 0.019,
+      "effectiveFrom": "2007-01-01",
+      "administeredBy": "self_or_other"
+    }
+  ],
+  "knownGaps": [
+    "ohioLocalTax() (src/taxes/state.ts) is wired and dispatched -- this project now has local-tax compute paths for Ohio, PA, MI, IN, KY, AL, NY/Yonkers, MO, NJ, OR, CO, DE, WV and more.",
+    "ohioLocalTax() implements the ORC 718.121 resident-city-vs-work-city credit at withholding time — the home municipality's tax is reduced by the tax paid to the work municipality, capped at the home rate. Verified: working in Columbus while living in Cleveland produces one $75.00 line rather than two.",
+    "JEDD/JEDZ zones are a SEPARATE dataset -- see data/local/OH-jedd-jedz-2026.json -- because they are legally distinct (contractual zones, not municipalities) and use a different ID scheme in Ohio's own data.",
+    "This is a snapshot as of the fetch date; Ohio's own CSV is the living source of truth and should be re-fetched periodically (harvester territory, Phase 9) rather than this file treated as permanently current.",
+    "CHECKED 2026-09-02: Grandview's (municode 31262) effectiveFrom of \"9999-12-31\" looks like a transcription bug (Ohio's own EffEndDate=99991231 'still in force' sentinel leaking into the wrong field) but ISN'T one -- re-checked directly against a fresh pull of the same Finder CSV this file is built from: Grandview's own row is genuinely EffStartDate=99991231, EffEndDate=99991231, rate=0% in Ohio's own source data, a degenerate placeholder row Ohio itself publishes, faithfully transcribed here. No dollar impact (0% rate) and effectiveFrom isn't read by any lookup/gating logic in this project, so left as-is rather than 'fixed' into a number Ohio's own data doesn't actually give.",
+    "2026-09-30 cross-check against RITA's member list and CCA's rate table found three taxing towns absent from the Finder extract (Germantown, North Hampton, Stockport -- added) and two stale open rows (Washington 1.95% -> 1.75% from 2026-01-01; Indian Hill 0.45% -> 0.5%). Towns administered by neither agency were not cross-checked the same way."
+  ],
+  "administeringAgencies": {
+    "$comment": "NEW this session: WHO an employer actually remits municipal withholding to. Ohio municipalities do not uniformly collect their own tax the way Michigan's 24 cities do -- many contract with a regional third-party agency. This is a real operational fact a payroll company needs (where to send the money and file the return), separate from the rate itself.",
+    "RITA": {
+      "fullName": "Regional Income Tax Agency",
+      "source": {
+        "url": "https://www.ritaohio.com/municipalities",
+        "verifiedOn": "2026-08-12",
+        "verifiedBy": "fetched directly via browser, full member list read"
+      },
+      "memberCountOnRitaSite": 415,
+      "matchedInThisDataset": 410,
+      "note": "Formed 1971. Roughly 50% of Ohio's income-tax municipalities use RITA per RITA's own About page."
+    },
+    "CCA": {
+      "fullName": "Central Collection Agency",
+      "source": {
+        "url": "https://www.ccaohio.gov/member-municipalities",
+        "verifiedOn": "2026-08-12",
+        "verifiedBy": "fetched directly via browser, full member list read"
+      },
+      "memberCountOnCcaSite": 36,
+      "matchedInThisDataset": 35,
+      "note": "Centered on Cleveland; over 50 member municipalities per CCA's own site."
+    },
+    "selfOrOtherNote": "'self_or_other' means NOT found on the RITA or CCA member list -- the municipality either self-administers (like Columbus, Cincinnati) or uses a different, smaller third-party agency not checked this session. This is a residual/default label, not a confirmed 'self-administers' claim for every name in it.",
+    "knownDataGap": "5 RITA/CCA member municipalities were NOT found anywhere in this file's 679-municipality list after name normalization: [\"DeGraff\",\"Germantown\",\"North Hampton\",\"Stockport\",\"Valleyview (Franklin)\"]. RE-CHECKED 2026-09-02 against a fresh pull of the same Finder CSV this file is built from (thefinder.tax.ohio.gov's own municipal rate download, 685 unique municipality codes as of this pull vs. this file's 679): DeGraff, North Hampton, and Stockport are CONFIRMED still genuinely absent from Finder itself, not just from this file's parse -- Ohio's own database has no rate row for any of the three under that name. Germantown and Valleyview, however, ARE present in the fresh CSV -- the original 'genuinely absent' claim for those two was imprecise. The real, different problem: Germantown's most recent row is $.015 effective 2019-01-01 but EXPIRES 2025-12-31 (MuniCode 29932), and Valleyview's is $.01 effective 2012-01-01 but EXPIRES 2017-12-31 (MuniCode 79282) -- both with no successor row as of this pull, meaning either the levy genuinely lapsed (some Ohio villages tax via a renewable, time-limited voter levy) or Finder simply hasn't posted a renewal yet. Deliberately NOT added with either the expired rate or a guessed continuation -- adding a rate that may no longer be legally in effect would be a worse error than the current $0/no-line outcome, and this project's own standing rule is to disclose an ambiguity rather than guess through it. Whether Germantown's/Valleyview's levies are still active needs a source Finder's CSV itself doesn't resolve (each village's own current ordinance or the county auditor), not a re-parse of this same pipeline. This means the municipality COUNT (679) is a genuine undercount by 3 confirmed-real, currently-unlisted municipalities (DeGraff/North Hampton/Stockport) plus 2 more (Germantown/Valleyview) whose CURRENT rate is unconfirmed rather than confirmed-zero.",
+    "oakwoodAmbiguity": "RITA and/or CCA's lists include 'Oakwood' without a county qualifier, and this file has 3 same-named municipalities (Cuyahoga, Montgomery, Paulding counties) -- left as administeredBy='unknown_ambiguous_name' on all 3 rather than guessing."
+  }
+}

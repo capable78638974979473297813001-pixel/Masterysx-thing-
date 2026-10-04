@@ -1,0 +1,419 @@
+{
+  "code": "KS",
+  "name": "Kansas",
+  "year": 2026,
+  "method": "bracket_per_period_kansas",
+  "$scopeNote": "STATE income tax only. Kansas has no local wage-income tax anywhere -- Kansas's local 'intangibles tax' (Form 200, filed with the county clerk) applies only to INTEREST AND DIVIDEND income, not wages, and is a RETURN-level filing, not employer-withheld -- context-only, same disclosed-scope convention as Iowa's school district surtax and Connecticut's out-of-state credit. Kansas has no FORMAL bilateral reciprocity agreement with any state (no 'resident of state X owes $0 KS tax' exemption the way Michigan/Ohio/Indiana/Kentucky/New Jersey/Iowa's own reciprocity blocks work) -- but KW-100 DOES describe a real, different, WITHHOLDING-LEVEL mechanism for the opposite direction (a KANSAS resident working OUTSIDE Kansas): withhold the Kansas tax otherwise due, LESS whatever the other state withheld, floored at $0. NOW MODELLED: residentWorkingElsewhereCreditLine() in src/taxes/state.ts computes this generically off input.residenceState -- the first state in this project to need a SECOND state's tax computed as a residence-state credit within one calculatePaycheck() call, gated by this file's own residentWorkingElsewhereCredit flag so no other state's behavior changes. No employee-paid unemployment, disability, or paid-leave program exists in Kansas.",
+  "$methodComment": "KW-100 (Rev. 10-24, 'for wages paid on and after 2024-07-01', still the current guide with no newer revision found -- Kansas's SB 1 (2024) tax reform reduced the state to a genuine 2-bracket system, 5.20%/5.58%). Subtract a per-period allowance, computed CONTINUOUSLY as the annual exemption amount divided by periodsPerYear (per KW-100's own literal instruction), from per-period gross wages, then look up the result in one of Kansas's own two per-period bracket tables (Single, which also covers Head of Household, or Joint) -- all 8 pay periods (Tables 1-8) are published independently and transcribed verbatim, the same convention as New Jersey/Vermont/Connecticut for genuine marginal-bracket states. See kansasExemptionAmount()'s own doc comment in src/taxes/state.ts for why Form K-4's allowance lines are NOT a flat per-allowance multiplier -- each line (personal, spouse, head-of-household, dependent) is worth a different dollar amount.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "KW-100 states directly: 'Kansas law requires withholding on wages. If your cafeteria, 401K, profit sharing, or other employee plan is considered to be wages by the federal government and federal income tax withholding is required, Kansas withholding is also required.' Confirms Kansas tracks the FEDERAL wages-or-not determination exactly (conforms), the same pattern as Michigan/Ohio/Idaho/Connecticut/Iowa/Vermont in this project and the opposite of Pennsylvania's non-conformity.",
+  "sources": [
+    {
+      "title": "KW-100, Kansas Withholding Tax Guide (Rev. 10-24)",
+      "url": "https://www.ksrevenue.gov/pdf/kw100.pdf",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Downloaded and text-extracted directly (pdftotext -layout, extracted cleanly). ENGINE-CONSUMED: the Percentage Formula's own instructions (including the literal 'divide by pay periods' allowance rule), the exact exemption tier dollar amounts ($9,160 personal, $2,320 head-of-household additional, $2,320 per dependent), all 8 per-period bracket tables (Tables 1-8: weekly/biweekly/semimonthly/monthly/quarterly/semiannual/annual/daily) for both Single (incl. HOH) and Joint, the no-K-4-on-file default ('withhold... without exemption at the Single allowance rate' -- an explicit quoted instruction, not just this project's own convention), the federal-wages conformity statement, and Form K-4 itself (bundled in the same PDF) confirming the Personal Allowance Worksheet's B/C/D/E line structure. Also includes a fully worked example (semimonthly $2,000, married/spouse not working, 1 dependent, 3 allowances -> $41.44) reproduced exactly in tests/engine.test.ts, describe('Kansas')."
+    },
+    {
+      "title": "Form 200, Local Intangibles Tax Return (Rev. 9-23-25)",
+      "url": "https://www.ksrevenue.gov/pdf/20026.pdf",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Cross-source confirmed (search-engine synthesis, not independently fetched and read in full this session): Kansas's local intangibles tax applies only to interest/dividend income and is filed by the taxpayer with their county clerk -- not employer-withheld, not engine-consumed, context-only."
+    },
+    {
+      "title": "Kansas local wage tax absence",
+      "url": "https://www.rippling.com/blog/payroll-tax-in-kansas",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Cross-source confirmed (search-engine synthesis, not independently fetched and read in full, and not a KDOR primary page), reinforced by an INDIRECT primary signal: KW-100 itself (source above) is exhaustive about who must withhold and every interstate scenario, and never once mentions a local/city/county wage-withholding obligation anywhere in the document -- if Kansas had one, its own state withholding guide would almost certainly say so, the way Ohio's/Pennsylvania's/Indiana's/Kentucky's own guides all extensively discuss their local-tax interactions. Not as strong as an explicit primary statement, but stronger than pure cross-source."
+    },
+    {
+      "title": "KW-100, Kansas Withholding Tax Guide (Rev. 10-24) -- SUPPLEMENTAL WAGES section, page 8",
+      "url": "https://ksrevenue.gov/pdf/kw100.pdf",
+      "verifiedOn": "2026-08-27",
+      "verifiedBy": "Same guide already on file for this state, re-downloaded and re-extracted with pdftotext -layout for the 'find and fix anything missing across all 50 states' pass. Quoted verbatim: \"Kansas withholding on a supplemental wage payment is computed using the same method that you use at the federal level. If you are adding regular and supplemental wages together and computing federal withholding on the total using the federal tables, compute the Kansas withholding using the same steps... In contrast: If you state the supplemental wage separately and compute federal withholding as a percentage of the payment (usually 25%), then compute Kansas withholding at 5% of the gross payment.\" Worked example confirmed: \"Kansas withholding on a ,000 bonus paid would be 0 (,000 X 5%).\" This project had no record of this rate before this pass."
+    }
+  ],
+  "kansasWithholding": {
+    "exemptionTiers": {
+      "personal": 9160,
+      "hohAdditional": 2320,
+      "dependent": 2320
+    },
+    "brackets": {
+      "single": {
+        "daily": [
+          {
+            "from": 0,
+            "to": 14,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 14,
+            "to": 102,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 102,
+            "to": null,
+            "base": 4.6,
+            "rate": 0.0558
+          }
+        ],
+        "weekly": [
+          {
+            "from": 0,
+            "to": 69,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 69,
+            "to": 512,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 512,
+            "to": null,
+            "base": 23.0,
+            "rate": 0.0558
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 139,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 139,
+            "to": 1023,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 1023,
+            "to": null,
+            "base": 46.0,
+            "rate": 0.0558
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 150,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 150,
+            "to": 1109,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 1109,
+            "to": null,
+            "base": 49.83,
+            "rate": 0.0558
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 300,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 300,
+            "to": 2217,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 2217,
+            "to": null,
+            "base": 99.67,
+            "rate": 0.0558
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0,
+            "to": 901,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 901,
+            "to": 6651,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 6651,
+            "to": null,
+            "base": 299.0,
+            "rate": 0.0558
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0,
+            "to": 1803,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 1803,
+            "to": 13303,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 13303,
+            "to": null,
+            "base": 598.0,
+            "rate": 0.0558
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 3605,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 3605,
+            "to": 26605,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 26605,
+            "to": null,
+            "base": 1196.0,
+            "rate": 0.0558
+          }
+        ]
+      },
+      "joint": {
+        "daily": [
+          {
+            "from": 0,
+            "to": 32,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 32,
+            "to": 209,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 209,
+            "to": null,
+            "base": 9.2,
+            "rate": 0.0558
+          }
+        ],
+        "weekly": [
+          {
+            "from": 0,
+            "to": 158,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 158,
+            "to": 1043,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 1043,
+            "to": null,
+            "base": 46.0,
+            "rate": 0.0558
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0,
+            "to": 317,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 317,
+            "to": 2086,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 2086,
+            "to": null,
+            "base": 92.0,
+            "rate": 0.0558
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0,
+            "to": 343,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 343,
+            "to": 2260,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 2260,
+            "to": null,
+            "base": 99.67,
+            "rate": 0.0558
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0,
+            "to": 687,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 687,
+            "to": 4520,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 4520,
+            "to": null,
+            "base": 199.33,
+            "rate": 0.0558
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0,
+            "to": 2060,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 2060,
+            "to": 13560,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 13560,
+            "to": null,
+            "base": 598.0,
+            "rate": 0.0558
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0,
+            "to": 4120,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 4120,
+            "to": 27120,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 27120,
+            "to": null,
+            "base": 1196.0,
+            "rate": 0.0558
+          }
+        ],
+        "annual": [
+          {
+            "from": 0,
+            "to": 8240,
+            "base": 0,
+            "rate": 0
+          },
+          {
+            "from": 8240,
+            "to": 54240,
+            "base": 0,
+            "rate": 0.052
+          },
+          {
+            "from": 54240,
+            "to": null,
+            "base": 2392.0,
+            "rate": 0.0558
+          }
+        ]
+      }
+    }
+  },
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "This mechanism is for the OTHER direction (a nonresident of Kansas working here owing $0 KS tax) and Kansas has none -- reciprocalStates deliberately empty, not omitted. This is NOT the same claim as this file's own residentWorkingElsewhereCredit block below, which covers the opposite direction (a Kansas RESIDENT working elsewhere) and is a real, different, KW-100-documented mechanism -- now engine-modelled, see that block."
+  },
+  "residentWorkingElsewhereCredit": {
+    "$comment": "KW-100, quoted directly: 'When you employ or pay a Kansas resident for services performed outside Kansas (either full time or part time), withhold from that employee's total wages the amount of withholding tax due Kansas, less the amount of withholding tax required by the other state(s).' Worked example in the source: Jane lives in Kansas, works in Missouri; KS withholding due on her total wages is $250, Missouri withholding is $130 -- $120 (the difference) is withheld for Kansas. 'If the other state's withholding is more than the Kansas amount, then no Kansas withholding tax is due.' ENGINE-CONSUMED as of this pass: presence of this block (any truthy value) is the opt-in gate residentWorkingElsewhereCreditLine() checks on the RESIDENCE state's own ruleset -- when input.residenceState.code is 'KS' and differs from input.workState.code, it computes Kansas's own bracketPerPeriodKansas() tax on the same wages (using input.residenceState.certificate as the K-4 fields -- allowanceRate/personalAllowances/headOfHousehold/dependents, the SAME field names bracketPerPeriodKansas() reads off a normal workState certificate), and emits a KS_SIT_CREDIT line for the shortfall, floored at $0. Verified against KW-100's own Jane/Missouri-shaped example in tests/engine.test.ts (using a synthetic MI work-state figure since this engine doesn't have a Missouri ruleset to test against directly)."
+  },
+  "knownGaps": [
+    "certificate.personalAllowances (Form K-4 lines B+C combined) must be supplied as a COUNT of $9,160 units, not Line F's own raw total (B+C+D+E summed) -- reading Line F directly would silently misattribute dollar value, since D and E are worth $2,320 each, not $9,160. Disclosed clearly in kansasExemptionAmount()'s own doc comment; this is a real footgun for any future integrator who assumes Line F is a simple multiplier.",
+    "Married-filing-separately's bracket-table assignment was inferred, not directly confirmed: KW-100's PERSONAL EXEMPTION section groups MFS with single/HOH at the $9,160 tier, but Table 3's own heading only names 'SINGLE person (including Head of Household)' without mentioning MFS explicitly. Modeled as using the single/HOH bracket table (certificate.allowanceRate='single'), consistent with every other state's own convention that MFS uses the single-shaped schedule, but not independently confirmed against a K-4-specific statement the way the HOH inclusion was.",
+    "RE-CHECKED 2026-09-02, and this specific edge case turns out to be CURRENTLY UNREACHABLE, not just low-priority: residentWorkingElsewhereCreditLine() only ever runs from inside stateIncomeTax() (src/taxes/state.ts), which returns IMMEDIATELY -- before reaching the credit-computation code at all -- the moment hasStateRuleset(workState.code, checkDate) is false, emitting only the standalone $0 'NOT MODELLED' SIT line for the work state and nothing else. Confirmed by direct test: a work state with no ruleset produces no KS_SIT_CREDIT line whatsoever (not a wrongly-computed one) -- so the 'overstates the credit by silently reading $0 as real' scenario this note used to describe can't currently happen, because the credit line is never built in the first place when that's true. This is the same class of finding as this project's Indiana county priorTable re-check the same day: a disclosed concern that, once actually traced through the call structure, turns out to be structurally unreachable given how the engine is wired today, not a live bug. Attempted a code fix (detecting the sentinel and disclosing it in the credit line's own detail) before discovering this -- reverted rather than shipped, since it would have been dead code with no reachable test. Would become real and worth fixing IF stateIncomeTax()'s early-return guard is ever restructured to keep computing the residence-state credit even when the work state itself isn't modelled -- flagged here for whoever does that.",
+    "Local-tax-absence is cross-source confirmed plus one indirect primary signal (KW-100's own silence on the topic despite being exhaustive about every other interstate/local scenario) -- not an explicit KDOR primary statement.",
+    "Kansas withholding rates were last confirmed unchanged via KW-100's 'Rev. 10-24' revision; no separate 2025 or 2026-dated guide was found, consistent with SB 1's 2024 reform being the last rate change, but this file has not independently verified that a newer, not-yet-indexed KDOR guide doesn't exist.",
+    "The flat 5% supplemental rate mirrors whichever method the employer used for FEDERAL withholding on the same payment (KW-100's own words), which this engine always treats as the flat-rate case for a \"supplemental\"-categorized earning -- there is no case in this engine where federal withholding on a bonus is computed by the combined-aggregate method, so the mirror is unconditional in practice, not because Kansas offers no choice.",
+    "WIRED 2026-09-05, closing a gap flagged earlier the same day: Kansas assigns new CONSTRUCTION-industry employers a materially higher new-employer SUI rate (5.55%, per the Kansas Legislative Research Department's own 2026 briefing) than every other new employer (1.75%). src/taxes/state.ts's stateUnemploymentEmployerTax() now checks a new EmployerContext.suiIndustry map against suiEmployer.industryNewEmployerRates before falling back to the flat rate -- see that config's own industryNewEmployerRatesSource for the reasoning (chosen over flipping this state to employerSuppliedRateRequired so non-construction KS callers aren't forced to supply a rate they already get correctly by default)."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 15100,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0175,
+    "newEmployerRateSource": "RE-VERIFIED 2026-09-05: dol.ks.gov itself remains confirmed HTTP 403 on every attempt (see this file's own manualOnly entry in harvester/sources.json), but a materially stronger secondary source was found this pass — the Kansas Legislative Research Department's own published briefing (klrd.gov/2026/08/25/kansas-unemployment-insurance-trust-fund/), a state legislative research office rather than a payroll-industry aggregator, fetched and read directly this pass: 'New employers with fewer than 24 months of payroll experience have a contribution rate of 1.75 percent... For 2026, the taxable wage base is $15,100.' Agrees exactly with the OnPay figure this file already carried.",
+    "industryNewEmployerRates": {
+      "construction": 0.0555
+    },
+    "industryNewEmployerRatesSource": "WIRED 2026-09-05, closing this file's own previously-disclosed gap: the same KLRD briefing above states 'New employers within the construction industry are instead charged a contribution rate of 5.55 percent.' src/taxes/state.ts now checks input.employer.suiIndustry['KS'] === 'construction' before falling back to the flat 1.75% newEmployerRate above — chosen over flipping this state to employerSuppliedRateRequired specifically so the many non-construction KS callers keep getting the correct 1.75% by default rather than silently losing their SUI line. A caller who doesn't say what industry they're in gets the general 1.75% rate, the same 'unknown fact, use the general rule' default this engine already applies to an unsupplied stateUnemploymentRate — never inferred from anything else in the paycheck.",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.0695
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  },
+  "supplementalWages": {
+    "": "KW-100's own rule, quoted verbatim in this file's sources[] entry above, is genuinely simpler to wire than most states': it doesn't describe an independent Kansas-specific election at all, just an instruction to MIRROR whichever method was used for FEDERAL withholding on the same payment. This engine already has only ONE federal method for a supplemental-categorized earning -- federalSupplementalTax() in src/taxes/federal.ts ALWAYS carves supplemental cash out and taxes it at the flat 22%/37% rate, with no aggregate-federal alternative modelled -- so the federal side of the mirror is always already the flat-rate case, and Kansas following it is unconditional (no employer election field, unlike California/Maryland/Alabama). appliesWhen is still \"paid_separately\", not \"always\": KW-100's own alternate branch (adding regular and supplemental together) is exactly what already happens by default when they ARE combined on one cheque, and the generic flatRateSupplementalFromConfig() mechanism already handles that split -- no bespoke function needed for this state, unlike CA/MD.",
+    "flatRate": 0.05,
+    "appliesWhen": "paid_separately",
+    "source": "KW-100, Kansas Withholding Tax Guide (Rev. 10-24), SUPPLEMENTAL WAGES section.",
+    "confidence": "primary_source_confirmed"
+  }
+}

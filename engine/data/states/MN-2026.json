@@ -1,0 +1,303 @@
+{
+  "code": "MN",
+  "name": "Minnesota",
+  "year": 2026,
+  "method": "bracket_flat_allowance",
+  "$methodComment": "A genuine progressive 4-bracket schedule like Wisconsin's, but with a materially simpler reduction step ahead of it: a FLAT dollar amount per withholding allowance ($5,300 x allowances claimed on Form W-4MN), not Wisconsin's income-phased-out standard deduction. The genuinely novel piece versus Wisconsin: Minnesota publishes TWO DIFFERENT bracket schedules (single vs. married), not one shared schedule with only the deduction differing by status -- confirmed directly from wh-inst-26's own 'Computer Formula' chart (the 0%-band alone ends at $4,700 single vs. $14,700 married, and every threshold above it differs too). Supplemental (bonus) wages use a genuinely simpler mechanic than Wisconsin's bracket-dependent rate: ONE FLAT 6.25% rate regardless of the employee's bracket or allowances -- Minnesota's own words, 'regardless of how many allowances employees claim.'",
+  "sources": [
+    {
+      "title": "2026 Minnesota Withholding Tax Instructions and Tables (wh-inst-26)",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2025-12/wh-inst-26.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Downloaded and text-extracted directly (77-page PDF). The 'Computer Formula' section (p.34) was read verbatim for both the single and married bracket charts. Because the PDF's column layout shifts the chart's numbers out of visual alignment on extraction (the same kind of artifact already seen and worked around in this project's Ohio school-district and Wisconsin bracket data), every bracket base was independently RE-DERIVED by chaining the marginal-rate math forward from bracket to bracket (e.g. single: 5.35% x (38,010-4,700) = 1,782.085 -> matches the document's own stated 1,782.09 'Add' figure for the next bracket; continued through all 5 single and 5 married brackets) rather than trusted from the raw extracted text positions.",
+      "additionalVerification": "Cross-checked the reconstructed formula against wh-inst-26's own published withholding TABLES (pp.16-33), not just its formula -- a genuinely separate part of the same document. Computed 3 table cells by hand at the midpoint wage of the row's 'at least / but less than' range and compared to the table's own whole-dollar answer: single/0-allowance, weekly $600-610 row -> table says $28, formula at $605 gives $27.53 -> rounds to $28. Single/2-allowance, same row -> table says $17, formula gives $16.63 -> rounds to $17. Married/3-allowance, weekly $900-910 row -> table says $17, formula gives $16.93 -> rounds to $17. All three matched. This is a lower precision bar than Wisconsin's to-the-cent worked examples, but it's the strongest verification wh-inst-26 actually offers -- Minnesota's own document doesn't publish cent-level worked examples the way Wisconsin's W-166 does."
+    },
+    {
+      "title": "2026 Form W-4MN, Minnesota Employee Withholding Certificate",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-04/w-4mn.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Downloaded and text-extracted directly, full form and instructions read. Surfaced two real structural gaps not visible from wh-inst-26 alone -- see withholdingExemptionGap below and certificateFields' note on the third marital-status option."
+    }
+  ],
+  "bracketFlatAllowance": {
+    "brackets": {
+      "single": [
+        { "from": 0, "to": 4700, "base": 0, "rate": 0.0000 },
+        { "from": 4700, "to": 38010, "base": 0, "rate": 0.0535 },
+        { "from": 38010, "to": 114130, "base": 1782.09, "rate": 0.0680 },
+        { "from": 114130, "to": 207850, "base": 6958.25, "rate": 0.0785 },
+        { "from": 207850, "to": null, "base": 14315.27, "rate": 0.0985 }
+      ],
+      "married": [
+        { "from": 0, "to": 14700, "base": 0, "rate": 0.0000 },
+        { "from": 14700, "to": 63400, "base": 0, "rate": 0.0535 },
+        { "from": 63400, "to": 208180, "base": 2605.45, "rate": 0.0680 },
+        { "from": 208180, "to": 352630, "base": 12450.49, "rate": 0.0785 },
+        { "from": 352630, "to": null, "base": 23789.82, "rate": 0.0985 }
+      ]
+    },
+    "bracketsComment": "Both schedules share the same 4 marginal rates (5.35% / 6.80% / 7.85% / 9.85%) plus an effective 0% band at the bottom -- only the dollar thresholds differ by marital status. Base amounts independently re-derived and internally self-consistent: e.g. married, 5.35% x (63,400-14,700) = 2,605.45 exactly matches wh-inst-26's own stated 'Add' figure for the next bracket up; 6.80% x (208,180-63,400) = 9,845.04, +2,605.45 = 12,450.49, again matching exactly.",
+    "allowanceAmount": 5300,
+    "allowanceComment": "Form W-4MN, one flat dollar amount per allowance claimed -- unlike Wisconsin's WT-4 (one combined exemption count feeding an amount AFTER a separate phased-out standard deduction), Minnesota has no separate standard-deduction concept in its withholding formula at all; the allowance amount is the only reduction.",
+    "supplementalRate": 0.0625,
+    "certificateFields": "input.workState.certificate.{maritalStatus ('single'|'married', defaults to 'single' if absent or any other value -- wh-inst-26's tables have no separate head-of-household schedule, mapped to 'single' by engine convention, not an MN-published rule), allowances (a single count, Form W-4MN)}.",
+    "certificateFieldsGap": "Form W-4MN's own marital-status checkboxes are actually THREE options, not two: 'Single,' 'Married,' and 'Married, but withhold at higher Single rate.' The engine's boolean maritalStatus field can still represent this correctly -- the caller must set maritalStatus:'single' for the third checkbox, since that IS what 'withhold at the higher single rate' means mechanically -- but nothing in this file or in state.ts's type currently documents that mapping requirement, so a caller populating certificate.maritalStatus directly and naively from the checkbox label (e.g. storing 'married_higher_single') would silently fall through the '=== \"married\"' check to the wrong (married) schedule instead of the intended single one. Flagged as an interface-clarity gap, not a broken calculation -- the correct behavior IS reachable with the current schema, but a caller has to already know this mapping."
+  },
+  "supplementalComment": "wh-inst-26's own 'Method 2': 'Multiply the supplemental payment by 6.25% (.0625) to find how much to withhold from that payment' -- applied when the supplemental payment is listed separately from regular wages on payroll records, which this engine's earnings[].category:'supplemental' split always satisfies. Genuinely simpler than Wisconsin's supplemental method: ONE flat rate regardless of the employee's own bracket or allowances claimed, confirmed by the source's own words ('regardless of how many allowances employees claim'). The same 6.25% rate is separately confirmed as MN's default backup-withholding-adjacent flat rate elsewhere in the document (W-4MNP non-response default, mining/exploration royalty withholding) -- a recurring flat constant in Minnesota's withholding scheme, not a supplemental-wage-specific number invented for this one context.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "UPGRADED to the same evidentiary tier as Wisconsin's file. Minnesota Department of Revenue's own 'Definition of Wages' page (Withholding Fact Sheet 9, updated 12/23/25), fetched directly, states plainly: 'Minnesota follows the federal provisions for determining taxable wages.' That blanket statement is now backed by the same checked-additions-list discipline used for Wisconsin: Minn. Stat. 290.0131 (the full statutory list of additions Minnesota makes BACK to federal taxable income for individuals), fetched and read directly, was checked item by item -- all 14 items (federally exempt interest, state income/sales/use/motor-vehicle/excise taxes paid, lump-sum-distribution capital gain, income taxes deducted from federal AGI, disallowed expense/interest/tax add-backs, partner's pro rata share, bonus depreciation, section 179 expensing, first-time-homebuyer-savings-account addition, 529 plan addition, section 199A addition (trusts/estates only), foreign-derived intangible income, disallowed business-interest deduction, disallowed NOL deduction) -- and NONE touch 401(k)/403(b)/457/SIMPLE deferrals, section 125 cafeteria plans, HSA, FSA, dependent care, or commuter benefits. Same evidentiary shape as Wisconsin's file (blanket conformity statement + a checked statutory additions-list containing nothing relevant) -- one tier below an explicit named per-category enumeration (which neither state's guidance provides for every category), but no longer a bare inference.",
+  "withholdingExemption": {
+    "$comment": "A real, currently-unimplemented correctness gap, not a hypothetical one -- surfaced by reading Form W-4MN's own Section 2 directly, not visible anywhere in wh-inst-26 itself. This is a PROJECT-WIDE gap (federalW4.exempt exists and IS honored by federal.ts's own withholding calculation, but NO state ruleset in this project -- not PA, MI, IN, IL, KY, WI, or MN -- has an equivalent state-level exempt flag or check in state.ts), documented here specifically because Minnesota's own form makes the exemption categories unusually concrete and enumerable.",
+    "categories": [
+      "A: Claims exempt from BOTH federal and Minnesota withholding.",
+      "B: Not exempt from federal, but exempt from Minnesota specifically -- had no MN tax liability last year, received a full refund of MN withholding, or expects no MN tax liability this year.",
+      "C: Military Spouse Residency Relief Act (MSRRA) -- spouse is a military member assigned to MN, employee's domicile is another state, employee is in MN solely to be with their spouse.",
+      "D: American Indian who resides AND works on the reservation for which they are enrolled.",
+      "E: Minnesota National Guard or active-duty U.S. military member, exempt on military pay specifically.",
+      "F: Military retirement/pension pay under 10 U.S.C. 1401-1414, 1447-1455, and 12733."
+    ],
+    "source": {
+      "title": "2026 Form W-4MN, Section 2 -- Exemption From Minnesota Withholding",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-04/w-4mn.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched and read directly, full form text."
+    },
+    "cannotClaimExemptIf": "Form W-4MN's own instructions, quoted verbatim: an employee CANNOT claim exempt if ALL THREE of these apply: 'Another person can claim you as a dependent on their federal tax return,' 'Your annual income exceeds $1,300,' AND 'Your annual income includes more than $350 of unearned income.' All three must hold together to disqualify -- not any one alone.",
+    "defaultWhenNoValidForm": "Form W-4MN's own employer instructions, quoted verbatim: 'If a valid Form W-4MN is not completed by the employee, withhold taxes as if the employee is single and claiming zero withholding allowances.' This independently CONFIRMS (rather than contradicts) this engine's existing default behavior in bracketFlatAllowance() -- maritalStatus defaults to 'single' and allowances defaults to 0 when the certificate is absent or fields are unset -- so the current fallback, originally chosen by engine convention rather than sourced, turns out to already match Minnesota's own published default exactly.",
+    "knownGap": "RESOLVED: state.ts's applyStateWithholdingExemption() reads certificate.exempt (a generic boolean covering all 6 boxes uniformly, since every one of them means '$0 MN withholding' from a calculation standpoint) and zeroes MN_SIT and MN_SIT_SUPP alike, proven in tests/engine.test.ts. Genuinely still missing: WHICH of the 6 boxes applies isn't tracked (not needed for the withholding amount, but would matter for audit/paperwork purposes)."
+  },
+  "additionalWithholding": {
+    "$comment": "A second, separate correctness gap found by reading Form W-4MN directly, distinct from the exemption gap above -- Section 1, Line 2 of the form. NOT documented anywhere before this pass.",
+    "formText": "Form W-4MN, Section 1, Line 2, quoted verbatim: 'Additional Minnesota withholding you want deducted for each pay period (see instructions) . . . $'. The instructions add: 'If you would like an additional amount of tax to be deducted per payment period, enter the amount on line 2. Do not enter a percentage of the payment you want to be deducted' -- confirming it is a flat per-period dollar amount, the same shape as federalW4.extraWithholding (Step 4(c) on the federal W-4), not a rate or annual figure.",
+    "source": {
+      "title": "2026 Form W-4MN, Section 1, Line 2 and its instructions",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-04/w-4mn.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched and read directly, full form text."
+    },
+    "knownGap": "RESOLVED: state.ts's applyAdditionalStateWithholding() reads certificate.additionalWithholding (cents, same convention as federalW4.extraWithholding) and adds it to MN_SIT, proven in tests/engine.test.ts. Built generically, not MN-specific — every other state's income-tax method gets this for free by the same shared `${code}_SIT` id-prefix mechanism (see the MI/IL/KY fixtures added alongside this one)."
+  },
+  "nonresidentAlienProcedure": {
+    "$comment": "A third gap surfaced by Form W-4MN's own employer instructions, genuinely different in kind from the two above -- not a missing field, but a stated alternate CALCULATION PATH this engine doesn't have at all.",
+    "rule": "Form W-4MN's employer instructions, quoted verbatim: 'If the wages to this employee are subject to income tax withholding, you will use Table 1 and the procedure under Withholding Adjustment for Nonresident Alien Employees in IRS Publication 15-T to determine the correct Minnesota withholding tax.' CORRECTED characterization from an earlier pass: reading Pub 15-T's actual procedure directly (not just this form's summary of it) shows this is NOT a wholesale alternate calculation path replacing the Computer Formula -- it's a fixed per-period DOLLAR AMOUNT added to wages BEFORE the ordinary formula runs (Pub 15-T's own Step 1-2: add the table amount to wages, then use that inflated figure as the starting taxable-wages input to the SAME worksheet everyone else uses). The instructions also carve out narrower exceptions: 'do not use this procedure for nonresident alien students from India and business apprentices from India,' and refer to 'IRS Notice 1392' for certain South Korea residents.",
+    "knownGap": "RESOLVED, in both DATA and CODE: certificate.nonresidentAlien now triggers this adjustment in bracketFlatAllowance(), reusing federal.ts's own new nonresidentAlienAdjustment table (built for this fix, also used by US_FIT) rather than a separate MN-specific dollar table -- proven with a fixture showing the adjustment genuinely moves the employee into a different bracket. UNRESOLVED, disclosed rather than guessed: this form's own text says 'Table 1' (the table for employees on a PRE-2020 Form W-4), but this project's FederalW4/certificate model represents ONLY 2020-or-later forms -- so Table 2 is what's actually implemented, since it's the table that matches what this engine's inputs represent. Whether that's a real drafting imprecision in Minnesota's own instructions or something this session is still missing was not resolved further. India-student/apprentice and South-Korea carve-outs are the caller's responsibility, same as every other eligibility determination this engine trusts the input for."
+  },
+  "otherMinnesotaWithholdingTypes": {
+    "$comment": "This project's own framing shifted this session from 'a payroll withholding engine' to 'a database of Minnesota tax code' -- so this block exists to close a DATABASE gap, not a calculation gap. wh-inst-26 documents SIX distinct withholding/tax mechanisms beyond ordinary wage withholding, all with their own real rates. None were captured anywhere in this file before this pass, even as knownGaps -- they were simply invisible, which is a worse failure mode than a disclosed gap. All six are recorded here with their exact rate, mechanism, and source; none are wired into calculatePaycheck() (they don't fit the ordinary wage-withholding TaxLine shape this engine computes -- several aren't employee withholding at all, e.g. the entertainer tax is paid by a promoter, not withheld from an employee's wages) but they are no longer missing from the DATA.",
+    "nonresidentEntertainerTax": {
+      "rate": 0.02,
+      "base": "Gross compensation received by a nonresident entertainer or entertainment entity for performing in Minnesota -- NOT the ordinary wage-withholding base, and explicitly kept separate: 'Do not report the nonresident entertainer tax with the income tax you withhold from your employees.'",
+      "exemption": "Does not apply to Michigan or North Dakota residents, per the same reciprocity carve-out as ordinary wage withholding.",
+      "payer": "The PROMOTER (the person responsible for paying the entertainment entity) deducts and remits the tax -- not the entertainer's own employer, and the entertainer is not the promoter's 'employee' in the ordinary sense this engine models.",
+      "forms": "Form ETD (promoter's deposit, due end of month following the performance), Form ETA (promoter's annual reconciliation, due Jan. 31), Form ETR (the entertainer's own return, due Apr. 15).",
+      "quote": "wh-inst-26, quoted verbatim: 'This tax is equal to 2% of the gross compensation received by a nonresident entertainer or entertainment entity.'"
+    },
+    "royaltyPaymentWithholding": {
+      "rate": 0.0625,
+      "base": "Mining and exploration royalties paid for use of Minnesota land.",
+      "quote": "wh-inst-26, quoted verbatim: 'If you pay mining and exploration royalties for use of Minnesota land, you must withhold income tax on the royalties. The withholding rate is 6.25% (.0625) of the royalties paid during the year.'",
+      "note": "The SAME 6.25% figure as the ordinary supplemental-wage rate and the W-4MNP non-response default -- confirms (rather than coincidentally repeats) supplementalComment's earlier observation that 6.25% is a recurring flat constant across several distinct parts of Minnesota's withholding scheme, not a supplemental-wage-specific number."
+    },
+    "suretyDepositsForNonMNContractors": {
+      "rate": 0.08,
+      "threshold": "Contract value exceeds $50,000.",
+      "base": "Payments to a non-Minnesota construction contractor performing construction work in Minnesota.",
+      "exemptionMechanism": "Form SDE (Exemption from Surety Deposits), filed per-project before work begins. Without an approved SDE, the payer withholds via Form SDD; the contractor can later apply for a refund via Form SDR once all state/local taxes for the project are paid.",
+      "quote": "wh-inst-26, quoted verbatim: 'If you contract with a non-Minnesota construction contractor to perform construction work in Minnesota, you must withhold 8% (.08) of the payments when the contract's value exceeds $50,000.'"
+    },
+    "constructionContractorAffidavits": {
+      "rule": "Construction contractors working on a project for the State of Minnesota or its political subdivisions (counties, cities, school districts) must comply with a separate withholding-affidavit requirement -- Form IC134, Contractor Affidavit -- before final payment, confirming their own withholding-tax obligations are current.",
+      "quote": "wh-inst-26, quoted verbatim: 'If you are a construction contractor, you must comply with Minnesota's withholding tax requirements when working on a project for the state of Minnesota or its political subdivisions.'",
+      "note": "A compliance/attestation mechanism, not a tax rate of its own -- recorded for completeness of the withholding-adjacent forms landscape, not because it has a number to compute."
+    },
+    "backupWithholding": {
+      "rate": 0.24,
+      "base": "Payments for personal services performed by a non-employee (independent contractor) who fails to provide a correct SSN/TIN.",
+      "quote": "wh-inst-26, quoted verbatim: 'Minnesota follows the federal provisions for backup withholding on payments for personal services... If the person performing services for you does not provide a Social Security or tax ID number, or if the number is incorrect, you must withhold tax equal to 9.85% (.0985) of the payments.'",
+      "note": "CORRECTED while transcribing: the quoted rate is Minnesota's OWN 9.85% (its top marginal income-tax rate), not the FEDERAL backup withholding rate (24%, already on file in data/federal/2026.json's incomeTax.backupWithholdingRate) -- despite the sentence opening with 'Minnesota follows the federal provisions,' which describes the MECHANISM (withhold when TIN is missing/incorrect), not the rate. The rate field above is corrected to 0.0985 to match the actual quoted figure, not the federal one a careless read of the opening clause might substitute."
+    },
+    "pensionAndAnnuityWithholding": {
+      "form": "W-4MNP, Minnesota Withholding Certificate for Retirement Account, Pension, or Commercial Annuity Payments",
+      "defaultRate": 0.0625,
+      "defaultRateCondition": "Applies when a recipient is REQUESTED to file Form W-4MNP and does not respond: 'you must begin withholding at 6.25% of the distribution. Do not begin withholding at 6.25% without first requesting a Form W-4MNP from the recipient.'",
+      "generalRule": "Pension/annuity payments are withheld unless the recipient affirmatively opts out via W-4MNP. Recipients who filed W-4MN/W-4MNP before receiving distributions may continue that method; the two-method choice for non-periodic distributions (add to periodic payment and use the wage tables, OR use the tables for the periodic payment and 6.25% flat on the non-periodic amount alone) mirrors the same Method-1/Method-2 structure as ordinary supplemental wages.",
+      "note": "A genuinely distinct population (retirement-distribution recipients, not active employees) with its own certificate and its own default rate -- not modelled anywhere in this engine, which has no concept of a pension/annuity PaycheckInput shape at all (every input models active W-2 wage employment)."
+    },
+    "interstateCarrierRules": {
+      "groundCarriers": "Interstate carrier companies (trucking, bus, rail) withhold based SOLELY on the employee's state of RESIDENCE for employees who regularly perform assigned duties in more than one state -- quoted verbatim: 'withhold income tax for their state of residence only.' A genuinely different sourcing rule than this engine's ordinary work-state-based withholding.",
+      "airCarriers": "Interstate AIR carriers withhold for BOTH the state of residence AND any state where the employee earns more than 50% of their pay, determined by scheduled flight time: 'considered to have earned more than 50% of their pay in any state where scheduled flight time is more than 50% of total scheduled flight time for the calendar year.' A third, still different sourcing rule from both ground carriers and this engine's ordinary single-work-state model.",
+      "note": "Neither rule is representable in this engine today -- PaycheckInput models exactly one workState per paycheck, with no concept of a multi-state-duties employee or a flight-time allocation. A genuinely different population from the reciprocity mechanism already built (which handles a fixed HOME/WORK state pair, not a variable multi-state duty pattern)."
+    }
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Minnesota city, county, or municipality levies a local income tax -- confirmed via Minnesota DOR's own withholding-tax overview page (silent on any local layer) plus two independent secondary payroll-compliance summaries. Minneapolis and St. Paul set their own local MINIMUM WAGES, a genuinely different (and not payroll-tax) mechanism, not to be confused with a local income tax.",
+    "statute": {
+      "title": "Minn. Stat. § 477A.016",
+      "url": "https://www.revisor.mn.gov/statutes/cite/477A.016",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched and read directly. Quoted verbatim, full text of the operative sentence: 'No county, city, town or other taxing authority shall increase a present tax or impose a new tax on sales or income.' In effect since 1971 (a statewide general prohibition, per secondary corroboration), and framed broadly enough to reach home-rule charter cities and counties, not just statutory ones -- Minnesota's home-rule charter authority (unlike some states') does not carve out an exception to this prohibition."
+    },
+    "confidence": "UPGRADED to Wisconsin-file tier: now a direct statute citation (Minn. Stat. 477A.016, fetched and read verbatim) plus the two original secondary sources plus the state DOR's own silence on the topic -- the same 'statute + guide silence' combination that gave Wisconsin's claim its confidence, though Wisconsin's is still corroborated by one more independent source (4 vs. 3)."
+  },
+  "reciprocity": {
+    "sources": [
+      {
+        "title": "Minnesota Department of Revenue -- Reciprocity for Individuals, and wh-inst-26 p.4 ('Reciprocity for Residents of Michigan or North Dakota')",
+        "url": "https://www.revenue.state.mn.us/reciprocity",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched directly. Quoted verbatim: 'Minnesota has income tax reciprocity agreements with Michigan and North Dakota.' Cross-checked against wh-inst-26 itself (p.4), also fetched and read directly, which states the same two states and adds the mechanics: 'you are not required to withhold Minnesota income tax from wages if all of these apply: Your employees are Michigan or North Dakota residents. They work in Minnesota. They give you a properly completed Form MWR, Reciprocity Exemption/Affidavit of Residency, each year.'"
+      },
+      {
+        "title": "Minn. Stat. § 290.081 (Income of nonresidents, reciprocity)",
+        "url": "https://www.revisor.mn.gov/statutes/cite/290.081",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched and read directly, in full. This IS the general enabling statute -- paragraph (a) is written state-agnostically ('an individual whose residence... is in another state... provided that such state allows a similar exclusion'), not limited to Wisconsin by its own terms. Paragraphs (b) through (g), however, ARE Wisconsin-specific: they set up a formal REVENUE-EQUALIZATION PAYMENT mechanism (quarterly payments between the two states' treasuries when one state's tax loss from the arrangement exceeds the other's, paid Feb/May/Aug/Nov 15) that exists ONLY for the Minnesota-Wisconsin relationship -- 'the commissioner of revenue is authorized to enter into agreements with the state of Wisconsin' specifying these payment procedures. No equivalent payment-sharing subsections are attached to Michigan or North Dakota anywhere in this statute."
+      },
+      {
+        "title": "Minn. R. 8002.0200 (administrative rule implementing 290.081's reciprocity exclusion)",
+        "url": "https://www.revisor.mn.gov/rules/8002.0200/",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched and read directly. This is the rule that actually NAMES all three states operating under 290.081(a)'s general exclusion: 'Minnesota gross income does not include personal or professional service income earned in Minnesota by a resident of Wisconsin, North Dakota, or Michigan,' with an added monthly-return-home condition for the ND/Michigan residents specifically ('A resident of North Dakota or Michigan can use this provision only if the resident customarily returns at least once a month to their residence in that state'), and states directly: 'Wisconsin, North Dakota, and Michigan are the only three states that have reciprocity exclusion agreements with the state of Minnesota.'"
+      }
+    ],
+    "legalStructureResolved": "Reconciles what initially looked like a contradiction (290.081 names only Wisconsin; the DOR's current guidance names only Michigan and North Dakota). Reading all three sources together: 290.081(a) is the GENERAL reciprocity-exclusion statute, open-ended by its own text to any state offering a similar exclusion back to Minnesota residents. Rule 8002.0200 is the administrative rule that has, historically, named the three states Minnesota actually extended that general exclusion to -- Wisconsin, North Dakota, and Michigan. Paragraphs (b)-(g) of 290.081 layer an ADDITIONAL, Wisconsin-specific revenue-equalization payment mechanism on top of the general exclusion, apparently because that border's commuting volume was large enough to justify a formal treasury-to-treasury settlement process the smaller ND/MI relationships never needed. The rule's continued naming of Wisconsin, despite the DOR's current-guidance pages and wh-inst-26 both stating the Wisconsin arrangement is NOT presently active (terminated 2010, under legislative study to return per 2023 S.B. 374), is the same 'authorizing text outlives the currently-operative agreement' pattern as Wisconsin's own file's resolved $1,500-vs-$2,000 threshold issue: the rule describes who CAN be covered if an agreement is in force, not which agreements currently ARE. For 2026, that leaves MI and ND as the only states with a live agreement, which is what actually governs withholding.",
+    "correctionFromInitialAssumption": "Scouting for this state started from an assumption (based on general knowledge of a historical Minnesota-Wisconsin reciprocity pact) that Wisconsin would be the reciprocal partner for 2026. Direct confirmation from MN DOR's own reciprocity page, and now the underlying statute/rule structure above, corrected and then explained this: Wisconsin remains named in the RULE but its actual 2010-terminated agreement is not presently in force, while Michigan and North Dakota -- not part of the initial assumption at all -- are the two live agreements for 2026.",
+    "crossValidation": "Independently corroborated, not just self-reported: data/states/MI-2026.json's own reciprocity.reciprocalStates already lists MN as one of Michigan's 6 reciprocal states (recorded in an earlier, separate session, before this MN file existed) -- the two files agree without either having been built to match the other.",
+    "reciprocalStates": ["MI", "ND"],
+    "reciprocalStatesEligibleButNotCurrentlyActive": ["WI"],
+    "rule": "A resident of MI/ND working in Minnesota is NOT REQUIRED to have Minnesota tax withheld on those wages, provided they file Form MWR with the employer annually and (per Rule 8002.0200) customarily return to their home-state residence at least once a month. Notably softer framing than Wisconsin's or Kentucky's exemption language: wh-inst-26 explicitly says employers may still choose to withhold as 'a courtesy to your employee' even though not required -- an employer discretion PA's reciprocity mechanic doesn't have either (PA frames its swap as something the employer 'agrees' to, but once agreed, must swap to the other state's withholding; Minnesota's is a true no-withholding option with no swap-in requirement).",
+    "mechanism": "Form MWR, Reciprocity Exemption/Affidavit of Residency -- filed with the employer annually; employer must send copies to the Department. Deadline confirmed directly from Form W-4MN's own employer instructions: 'Your employee must complete a Form MWR by February 28 of each year, or within 30 days after they begin working or change their permanent residence.'",
+    "nonresidentDeMinimisThreshold": 15300.0,
+    "nonresidentDeMinimisComment": "Genuinely separate from reciprocity, and not seen in this shape in any other state built so far: Minnesota does not require withholding from ANY nonresident (reciprocal-state or not) if the employer does not expect to pay them at least $15,300 in the year -- confirmed directly from wh-inst-26 p.4 ('The amount you expect to pay the employee is less than $15,300'). This is a dollar-threshold exemption orthogonal to the MI/ND reciprocity rule above.",
+    "knownGap": "RESOLVED: state.ts's reciprocityExemptionReason() and nonresidentDeMinimisReason() both read this block generically (reciprocalStates, nonresidentDeMinimisThreshold) and zero MN_SIT when either applies, proven in tests/engine.test.ts across 5 fixtures (MI-resident exemption, same-state guard, non-reciprocal-state guard, below-threshold de minimis, at-threshold de minimis). Both checks trust input.residenceState at face value — no verification that Form MWR is actually on file, the same simplification this engine already makes for W-4 elections generally."
+  },
+  "statePaidLeaveEmployee": {
+    "rate": 0.0044,
+    "wageBase": 185000.0,
+    "comment": "ENGINE-FACING config, dispatched generically by statePaidLeaveEmployeeTax() in state.ts off this block's presence — any future state adds Paid Leave withholding by adding this block, no code change. This 0.44% rate applies to EVERY employer, small or standard — confirmed by two independent primary sources (see smallEmployerSplitCONFIRMED below): the small-employer discount (0.88% -> 0.66% total premium) comes entirely off the employer's own share (0.44% -> 0.22%), never the employee's. So despite there being a documented 'small employer rate,' this engine's flat employee-side rate needs no employer-size branch to be correct — the number that varies by employer size is one this engine never computes for any state (the employer's own share of any tax)."
+  },
+  "minnesotaPaidLeave": {
+    "$comment": "The narrative/citation record for Minnesota Paid Leave — statePaidLeaveEmployee above is what the engine actually reads. Minnesota Paid Leave launched 2026-01-01: a mandatory, EMPLOYEE-PAID wage premium, the same general shape as Pennsylvania's employee-paid UC (stateUnemploymentEmployee) and now wired the same way via statePaidLeaveEmployeeTax(), a separate dispatch function from stateUnemploymentEmployeeTax() since it draws on its own YTD tracker (input.ytd.statePaidLeave) rather than reusing UC's.",
+    "premiumRate2026": 0.0088,
+    "premiumRateDiscrepancyResolved": "The codified text of the underlying statute, Minn. Stat. 268B.14 subd. 6, fetched and read directly, states an initial rate of 0.7% 'beginning January 1, 2026' -- but THREE independent primary/official sources (pl.mn.gov's premium-rate page, a DEED official GovDelivery bulletin titled 'Paid Leave confirms premium rate,' and a dated DEED actuarial report, MN_Paid_Leave_2026_Actuary_Report.pdf) all consistently state the ACTUAL 2026 rate is 0.88%. The DEED bulletin, fetched and read directly, states: 'when Paid Leave begins in 2026, the premium rate will be 0.88 percent,' and separately: 'The premium rate cannot exceed the maximum rate set in state law' -- consistent with subd. 6a's statutory ceiling of 1.1%, since 0.88% sits below it. Treated 0.88% as the correct operative 2026 figure on the strength of three consistent, independent, dated official sources against one statute-subdivision figure that appears to be superseded in practice -- the same 'authorizing/enacting text not yet reflecting the operative figure' pattern already seen in this project (Wisconsin's stale $1,500 threshold, Minnesota's own reciprocity rule still naming Wisconsin above). UNRESOLVED: could not find the specific session-law citation that amended the rate from the statute's stated 0.7% to the operative 0.88% -- disclosed as an open gap rather than invented.",
+    "premiumRateStatutoryCap": 0.011,
+    "premiumRateStatutoryCapComment": "Minn. Stat. 268B.14 subd. 6a (fetched and read directly): 'In no year shall the annual premium rate exceed 1.1 percent of taxable wages paid to each employee.' Also establishes the annual rate-setting mechanism: 'By July 31, 2026, and then by July 31 of each year thereafter, the commissioner must adjust the annual premium rates for the following calendar year based on program historical experience and sound actuarial principles.'",
+    "wageBase": 185000.0,
+    "wageBaseComment": "Statute ties this to the federal Social Security (FICA OASDI) taxable wage base for the year, not a fixed dollar figure of its own: Minn. Stat. 268B.14 subd. 4, fetched and read directly, states 'The maximum wages subject to premium in a calendar year is equal to the maximum earnings in that year subject to the FICA Old-Age, Survivors, and Disability Insurance tax.' $185,000 is 2026's OASDI wage base under that link, not an independently-set Paid Leave figure -- meaning this number will move in lockstep with whatever federal.ts's own OASDI cap is for a given year, not require separate tracking.",
+    "employeeMaxShare": 0.0044,
+    "employeeMaxShareComment": "Minn. Stat. 268B.14 subd. 3, fetched and read directly: 'employers must pay a minimum of 50 percent of the annual premiums paid under this section. Employees...must pay the remaining portion.' At the standard 0.88% rate, that caps the employee share at 0.44%, consistent with pl.mn.gov's own framing ('employers can collect up to 0.44 percent from employees').",
+    "smallEmployerRate": 0.0066,
+    "smallEmployerThreshold": "30 or fewer employees per quarter, average wage <= 150% of the statewide average quarterly wage",
+    "smallEmployerSplitCONFIRMED": "RESOLVED with a second, independent, official PRIMARY source: DEED's own 'Paid Leave Small Employer Premium Rate Designation' PDF (fetched and read directly, full text), quoted verbatim: 'The effective rate for small employers is 0.66% of wages up to the same Social Security withholding limit. Like large employers, small employers can deduct up to 0.44% of wages from employees for their portion of the premium.' This independently confirms the literal-statute-quote reading already on file (subd. 5a: employer's minimum share is 25% of the STANDARD rate, 0.22%, not 25% of the reduced 0.66%) against a SEPARATE official document, not just a re-read of the same statute. CONCLUSION, now confirmed rather than merely reasoned: the employee's withheld share is 0.44% REGARDLESS of employer size -- the entire small-employer discount (0.88% -> 0.66%) comes off the employer's own cost, never the employee's paycheck. This means statePaidLeaveEmployee's flat 0.44% rate is ALREADY CORRECT for small employers too -- no employer-size branch is needed in the engine for the EMPLOYEE-facing withholding calculation, only for computing the EMPLOYER's own share (which this engine, consistent with every other state's employer-paid tax, doesn't compute at all).",
+    "wageBaseRoundingRule": "The same DEED PDF adds a precision this file didn't have before: the Paid Leave wage cap is the Social Security withholding limit 'rounded to the nearest thousand dollars (currently $185,000)' -- confirming $185,000 is a ROUNDED figure tied to (but not always identical to) the exact OASDI wage base federal.ts uses, not merely 'the same number.' For 2026 they happen to coincide exactly, but a future year where OASDI lands on a non-round number could see Paid Leave's own cap diverge from federal's exact figure by up to $500 -- not an issue this engine can hit yet since statePaidLeaveEmployee.wageBase is a static per-year config value, not derived from federal.ts at compute time, but worth knowing before assuming the two will always match.",
+    "sources": [
+      {
+        "title": "Minn. Stat. § 268B.14 (Premium rates)",
+        "url": "https://www.revisor.mn.gov/statutes/cite/268B.14",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched and read directly, subdivisions 3, 4, 5a, 6, and 6a/7 specifically."
+      },
+      {
+        "title": "Minnesota DEED -- 'Paid Leave confirms premium rate, remains on track for launch in 2026' (official bulletin)",
+        "url": "https://content.govdelivery.com/accounts/MNDEED/bulletins/3d3828d",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Fetched and read directly."
+      },
+      {
+        "title": "Minnesota Paid Leave -- Premium rate and contributions",
+        "url": "https://pl.mn.gov/resources/calculators/premium-rate-and-contributions",
+        "verifiedOn": "2026-08-13",
+        "verifiedBy": "Content obtained via search-summary tooling, not a direct fetch (a direct WebFetch attempt returned HTTP 403) -- one tier below this file's directly-fetched sources, though its figures are corroborated by the two directly-fetched sources above."
+      }
+    ],
+    "knownGap": "FULLY RESOLVED: statePaidLeaveEmployee's flat 0.44% employee rate is correct for EVERY employer, small or standard — confirmed by two independent primary sources (the statute's literal text and DEED's own small-employer PDF), see smallEmployerSplitCONFIRMED above. What remains unmodelled is the EMPLOYER's own share of the premium (0.22% small / 0.44% standard) — but this engine doesn't compute any state's employer-paid tax share anywhere, so that's not a Minnesota-specific gap, it's the same scope boundary as every other state's employer-paid SUTA."
+  },
+  "unemploymentInsuranceEmployer": {
+    "$comment": "Employer-only (like most states' SUTA) -- NOT the same as the employee-paid Minnesota Paid Leave program above. Context/audit only, same status as MI/IN/OH's employer SUTA elsewhere in this project: no per-employer experience-rating input exists in types.ts for any state, so this cannot be computed even though the wage base and rate structure are now on file.",
+    "administeredBy": "Minnesota Department of Employment and Economic Development (DEED), via uimn.org",
+    "wageBase2026": 44000.0,
+    "wageBaseComment": "PRIMARY-SOURCE RESOLVED a genuine secondary-source conflict: various payroll-compliance blogs gave $44,000 and $43,000 for 2026 in the same search pass. uimn.org's own tax-rate page, fetched and read directly, states unambiguously: 'The Taxable wage base for 2026 is $44,000,' computed as 'sixty percent of the state's average annual wage for the previous calendar year.' $43,000 was simply wrong/stale.",
+    "rateStructure": "Total rate = a 0.40% flat BASE tax rate + an employer-specific new-employer-or-experience rate + a 14.00% ADDITIONAL ASSESSMENT surcharge for 2026 (per uimn.org, fetched directly) -- a three-layer structure not yet fully unpacked (the 14.00% figure's exact base -- of the combined base+experience rate, or of something else -- was not resolved this session).",
+    "newEmployerRates2026": {
+      "range": "1.00% to 8.90% for 2026, by NAICS industry -- ~51 distinct rates total (non-construction grouped by 2-digit NAICS prefix, construction by full 5-digit NAICS code, per uimn.org).",
+      "sample": [
+        { "industry": "Agriculture, Forestry, Fishing and Hunting", "rate": 0.0150 },
+        { "industry": "Mining", "rate": 0.0406 },
+        { "industry": "Utilities", "rate": 0.0100 },
+        { "industry": "Manufacturing (NAICS 31)", "rate": 0.0110 },
+        { "industry": "Manufacturing (NAICS 32)", "rate": 0.0128 },
+        { "industry": "Manufacturing (NAICS 33)", "rate": 0.0100 },
+        { "industry": "Wholesale Trade", "rate": 0.0100 },
+        { "industry": "Retail Trade (NAICS 44)", "rate": 0.0100 },
+        { "industry": "Retail Trade (NAICS 45)", "rate": 0.0100 },
+        { "industry": "Transportation and Warehousing (NAICS 48)", "rate": 0.0129 },
+        { "industry": "Transportation and Warehousing (NAICS 49)", "rate": 0.0100 },
+        { "industry": "Information", "rate": 0.0129 },
+        { "industry": "Finance and Insurance", "rate": 0.0100 },
+        { "industry": "Real Estate and Rental and Leasing", "rate": 0.0106 },
+        { "industry": "Professional, Scientific, and Technical Services", "rate": 0.0108 },
+        { "industry": "Management of Companies and Enterprises", "rate": 0.0100 },
+        { "industry": "Administrative and Support and Waste Management Services", "rate": 0.0204 },
+        { "industry": "Educational Services", "rate": 0.0100 },
+        { "industry": "Health Care and Social Assistance", "rate": 0.0100 },
+        { "industry": "Arts, Entertainment, and Recreation", "rate": 0.0105 },
+        { "industry": "Accommodation and Food Services", "rate": 0.0100 },
+        { "industry": "Other Services (except Public Administration)", "rate": 0.0100 },
+        { "industry": "Public Administration", "rate": 0.0100 },
+        { "industry": "Construction -- Residential Building", "rate": 0.0198 },
+        { "industry": "Construction -- Industrial Building", "rate": 0.0613 },
+        { "industry": "Construction -- Masonry Contractors", "rate": 0.0890 },
+        { "industry": "Construction -- Water/Sewer Line", "rate": 0.0890 }
+      ],
+      "sampleComment": "26 of the ~51 published rates: ALL 22 non-construction 2-digit-NAICS-prefix categories (essentially complete for that half of the table) plus 4 representative construction rows out of the ~29 remaining 5-digit-NAICS construction-specific codes. Covers the low end (1.00% -- the floor for most service/trade/finance/healthcare/education/public-administration industries), the high end (8.90% -- specific high-risk construction trades), and the spread in between. Construction remains the genuinely incomplete part of this table -- it has far more NAICS-code-specific rows than non-construction does.",
+      "sampleSourceNote": "Obtained via a single fetch of uimn.org's new-employer-rates page rather than a full download-and-parse pass (contrast with Wisconsin's Schedule D or Ohio's municipality CSV, which were bulk-downloaded and parsed programmatically) -- individual rate values here have not been independently cross-checked the way those bulk imports were."
+    },
+    "source": {
+      "title": "Unemployment Insurance Minnesota -- Unemployment Tax Rates / New employer tax rates",
+      "url": "https://www.uimn.org/employers/wages-taxes/tax-rates/index.jsp",
+      "urlNewEmployerRates": "https://www.uimn.org/employers/wages-taxes/tax-rates/new-employer-rates.jsp",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Both fetched and read directly."
+    },
+    "knownGap": "Wage base is primary-confirmed. New-employer rates now cover essentially all 22 non-construction categories plus a construction sample (26 of ~51 rows total) -- the remaining gap is specifically the ~25 unlisted construction-specific NAICS codes, not the table generally. No experience-rated schedule (unlike Wisconsin's full Schedule D) is on file at all. Even a complete table wouldn't be consumable by this engine -- no per-employer experience-rating or size-classification input exists for any state, the same structural gap as every other state's employer SUTA/experience-rated program in this project."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN, not just plausible: formula independently re-derived from wh-inst-26's Computer Formula section (column-shifted on raw PDF extraction, reconstructed via chained marginal-rate arithmetic), cross-checked against 3 cells of the document's own published withholding tables (pp.16-33, matching to the whole dollar), AND run through the actual calculatePaycheck() engine as 4 hand-derived fixtures (single/0-allowance, single/2-allowance, married/3-allowance to prove the two schedules are genuinely distinct, and a zero-net-wage edge case) — see tests/engine.test.ts, describe('Minnesota'). One of these fixtures' own hand-derivation caught its own arithmetic slip (91.2696 misread as $91.28 instead of the correct $91.27) when the engine's output disagreed — the engine was right, the hand math was fixed to match, not the other way around.",
+    "supplementalWagesCalculation": "PROVEN: formula is a direct quote from wh-inst-26 ('Multiply the supplemental payment by 6.25%'), the simplest-shaped supplemental rule of any state in this project so far — no bracket lookup, no annualization. 2 fixtures cover it: one exercising the actual flat-rate calculation alongside a regular-wages bracket lookup on the same cheque, one confirming no MN_SIT_SUPP line appears when there's no supplemental income. 6 total MN fixtures, 94/94 tests passing project-wide.",
+    "notCoveredByAnyFixtures": "Only the nonresident-alien procedure and the small-employer Paid Leave split remain undocumented by any test — everything else in this file (reciprocity, the $15,300 de minimis threshold, the Section 2 exemption, Line 2 additional withholding, and standard-rate Paid Leave including its wage-base cap) now has a working engine implementation AND at least one hand-derived fixture proving it, see the 11 new Minnesota tests plus the cross-state MI/IL/IN/KY tests proving the underlying mechanisms are genuinely generic, not MN-specific."
+  },
+  "knownGaps": [
+    "RESOLVED: localIncomeTax's 'none' claim has a direct statute citation (Minn. Stat. 477A.016, fetched and read verbatim) at the same evidentiary tier as Wisconsin's file.",
+    "RESOLVED: exemptPretax has a checked statutory additions-list (Minn. Stat. 290.0131, all 14 items read, none relevant) backing the blanket conformity statement -- same evidentiary shape as Wisconsin's file.",
+    "RESOLVED, in both DATA and CODE: reciprocity's legal structure (290.081 general statute + Rule 8002.0200 naming all three historically-eligible states + why Wisconsin still appears in the rule despite its 2010-terminated agreement, plus the Form MWR filing deadline) is traced through primary sources, AND state.ts's reciprocityExemptionReason()/nonresidentDeMinimisReason() now compute it -- 5 fixtures in tests/engine.test.ts. This mechanism turned out to be entirely generic: it also activated Michigan/Illinois/Kentucky/Wisconsin/Indiana's own already-documented reciprocity data with zero state-specific code, and along the way surfaced (and fixed) a real correctness bug it would otherwise have introduced for Indiana, whose reciprocity exempts STATE tax only, not its mandatory county tax.",
+    "RESOLVED, in both DATA and CODE: Minnesota Paid Leave's rate (0.88%, corrected from a stale-looking 0.7% statute figure via 3 independent official sources), statutory rate ceiling (1.1%), wage-base mechanism (pegged to, and rounded from, the federal OASDI cap), and employee-share cap are primary-sourced AND computed by statePaidLeaveEmployeeTax() (3 fixtures, including a wage-base-cap case using YTD). The small-employer split question is now FULLY CONFIRMED by a second independent primary source (DEED's own small-employer PDF): the employee's 0.44% share never changes by employer size, so no employer-size branch was needed in the engine at all -- see smallEmployerSplitCONFIRMED above.",
+    "MOSTLY RESOLVED: employer-side SUTA has a primary-confirmed 2026 wage base ($44,000, resolving a real $44k-vs-$43k secondary-source conflict), the rate structure (0.40% base + industry rate + 14.00% additional assessment), and now essentially all 22 non-construction NAICS categories plus a construction sample (26 of ~51 rows). Construction-specific codes remain incomplete, and there's no experience-rating schedule -- and even a complete table wouldn't be consumable by this engine, which has no per-employer experience-rating/size input for any state.",
+    "RESOLVED, in both DATA and CODE: Section 2's 6-category withholding exemption (found by reading Form W-4MN directly) is now computed via applyStateWithholdingExemption()/certificate.exempt -- correct for the WITHHOLDING AMOUNT regardless of which box is checked, though the engine still doesn't track WHICH of the 6 applies. Also confirms this engine's single/zero-allowance default already matched Minnesota's own published fallback rule, independent of this fix.",
+    "RESOLVED, in both DATA and CODE: Form W-4MN Section 1 Line 2's flat per-period 'additional withholding' amount is now read via certificate.additionalWithholding and applied generically across every state in this project, not just Minnesota -- see additionalWithholding above and the MI/IL/KY fixtures proving it.",
+    "RESOLVED, in both DATA and CODE: nonresident alien employees are now handled via certificate.nonresidentAlien, which reuses federal.ts's own new Pub 15-T Table 2 adjustment table (data/federal/2026.json's incomeTax.nonresidentAlienAdjustment) rather than duplicating the dollar figures -- proven in tests/engine.test.ts for both US_FIT and MN_SIT. DISCLOSED, not silently resolved: W-4MN's own instructions literally say 'Table 1' (the pre-2020-W-4 table), but this engine's FederalW4/certificate model only ever represents a 2020+-style form, so Table 2 -- the table that actually matches what this engine's inputs represent -- is what's used; that apparent mismatch in MN's own source text is recorded in nonresidentAlienProcedure above, not quietly smoothed over. Nonresident alien STUDENTS FROM INDIA and business apprentices remain out of scope (Pub 15-T's own carve-out; the caller is responsible for not setting the flag for that population).",
+    "RESOLVED, in both DATA and CODE: Form W-4MN's third marital-status checkbox ('Married, but withhold at higher Single rate') is now an explicitly recognized value (certificate.maritalStatus:'married_withhold_as_single'), correctly resolving to the SINGLE bracket schedule -- proven with a fixture showing it produces a genuinely different number than the married schedule would. An unrecognized maritalStatus value now THROWS instead of silently defaulting to single, so a typo can no longer produce a plausible-looking wrong number -- see resolveMNMaritalStatus() in state.ts."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 44000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": null,
+    "newEmployerRateSource": "No single new-employer figure exists for this state: the rate is industry-assigned or schedule-driven. The engine therefore requires the employer's own assigned rate here and computes nothing without it.",
+    "experienceRange": {
+      "min": 0.004,
+      "max": 0.089
+    },
+    "employerSuppliedRateRequired": true,
+    "confidence": "no_single_rate"
+  }
+}

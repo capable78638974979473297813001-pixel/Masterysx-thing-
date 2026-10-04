@@ -1,0 +1,65 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "WI",
+    "name": "Wisconsin"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2009-07-24",
+    "coverage": "Covered employers under this state's own act, which adopts or matches the federal rate.",
+    "note": "Wisconsin's own rate is $7.25 (Wis. Admin. Code DWD 272.03)."
+  },
+  "stateStatutoryRate": null,
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.33,
+    "cashWageCents": 233,
+    "maxTipCredit": 4.92,
+    "maxTipCreditCents": 492,
+    "tippedEmployeeThreshold": null,
+    "note": "Wisconsin's own cash wage for tipped employees is $2.33."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 5.9,
+      "hourlyCents": 590,
+      "id": "opportunity_wage",
+      "label": "Opportunity wage",
+      "eligibility": "Employees under 20, first 90 CONSECUTIVE days of employment -- Wis. Stat. 104.035(2). Higher than the federal $4.25 youth wage, so it is the binding figure in Wisconsin."
+    }
+  ],
+  "indexation": {
+    "indexed": false,
+    "note": "Not indexed; moves only if the legislature (or Congress) moves it."
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "title": "Wisconsin Legislature -- Wis. Stat. 104.035 (minimum wage; opportunity employees)",
+      "url": "https://docs.legis.wisconsin.gov/2017/statutes/statutes/104/035/9",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the $5.90 opportunity wage; the statute section itself was surfaced but not rendered in full."
+    },
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "knownGaps": [],
+  "confidence": "primary_source_confirmed"
+}

@@ -1,0 +1,68 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "MN",
+    "name": "Minnesota"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 11.41,
+    "hourlyCents": 1141,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "ALL employers regardless of size. Minnesota's large-employer / small-employer split ENDED on 2025-01-01 -- a table still carrying two Minnesota rates is out of date.",
+    "note": "Minn. Stat. 177.24 annual inflation adjustment (capped at 5%)."
+  },
+  "tipped": {
+    "tipCreditAllowed": false,
+    "cashWage": 11.41,
+    "cashWageCents": 1141,
+    "maxTipCredit": 0.0,
+    "maxTipCreditCents": 0,
+    "tippedEmployeeThreshold": null,
+    "note": "This state allows NO tip credit: the full state minimum wage must be paid in cash before any tips. Minn. Stat. 177.24 subd. 2 -- Minnesota has never allowed a tip credit."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 9.31,
+      "hourlyCents": 931,
+      "id": "training_wage_90_day",
+      "label": "90-day training wage",
+      "eligibility": "Employees under 20, first 90 CONSECUTIVE days of employment -- Minn. Stat. 177.24 subd. 1(f). Also the figure Minnesota publishes for youth (under 18) and J-1 visa hotel/resort employees."
+    }
+  ],
+  "variants": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "implicit price deflator, capped at 5%",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Minnesota Department of Labor and Industry -- Minimum wage in Minnesota",
+      "url": "https://www.dli.mn.gov/business/employment-practices/minimum-wage-minnesota",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session: '$11.41 an hour' and the '$9.31 an hour' 90-day training wage, both effective 2026-01-01, and no large/small employer distinction remaining."
+    }
+  ],
+  "knownGaps": [
+    "Minneapolis and Saint Paul set much higher local rates -- see local/MN-local-2026.json."
+  ],
+  "confidence": "primary_source_confirmed"
+}

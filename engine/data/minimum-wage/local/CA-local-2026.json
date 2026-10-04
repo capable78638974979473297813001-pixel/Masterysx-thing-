@@ -1,0 +1,1030 @@
+{
+  "state": "CA",
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "$comment": "38 California city and county minimum wage ordinances -- more than the rest of the country combined. Two things make California local rates a distinctive trap: they adjust on TWO different cycles (January 1 and July 1), so any single annual refresh leaves half of them stale, and none of them permits a tip credit, because state law forbids it everywhere in California. Rates here are the ones IN EFFECT on this file's asOf date (2026-09-08), i.e. the July 1, 2026 figures for July-cycle cities and the January 1, 2026 figures for the rest. The 11 July-cycle jurisdictions (10 cities plus unincorporated LA County) also carry a historicalPredecessorOf variant with the July 2025-June 2026 figure that was in effect before this file's own headline number, so a checkDate earlier in 2026 resolves correctly too.",
+  "tipCreditAllowed": false,
+  "jurisdictions": [
+    {
+      "id": "alameda",
+      "name": "Alameda",
+      "level": "city",
+      "hourly": 17.76,
+      "hourlyCents": 1776,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.76,
+        "cashWageCents": 1776,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 17.46,
+          "hourlyCents": 1746,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $17.76."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 17.46,
+          "hourlyCents": 1746,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "belmont",
+      "name": "Belmont",
+      "level": "city",
+      "hourly": 18.95,
+      "hourlyCents": 1895,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.95,
+        "cashWageCents": 1895,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "berkeley",
+      "name": "Berkeley",
+      "level": "city",
+      "hourly": 19.61,
+      "hourlyCents": 1961,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 19.61,
+        "cashWageCents": 1961,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 19.18,
+          "hourlyCents": 1918,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $19.61."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 19.18,
+          "hourlyCents": 1918,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "burlingame",
+      "name": "Burlingame",
+      "level": "city",
+      "hourly": 17.86,
+      "hourlyCents": 1786,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.86,
+        "cashWageCents": 1786,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "cupertino",
+      "name": "Cupertino",
+      "level": "city",
+      "hourly": 18.7,
+      "hourlyCents": 1870,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.7,
+        "cashWageCents": 1870,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "daly_city",
+      "name": "Daly City",
+      "level": "city",
+      "hourly": 17.5,
+      "hourlyCents": 1750,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.5,
+        "cashWageCents": 1750,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "east_palo_alto",
+      "name": "East Palo Alto",
+      "level": "city",
+      "hourly": 17.9,
+      "hourlyCents": 1790,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.9,
+        "cashWageCents": 1790,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "el_cerrito",
+      "name": "El Cerrito",
+      "level": "city",
+      "hourly": 18.82,
+      "hourlyCents": 1882,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.82,
+        "cashWageCents": 1882,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "emeryville",
+      "name": "Emeryville",
+      "level": "city",
+      "hourly": 20.34,
+      "hourlyCents": 2034,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 20.34,
+        "cashWageCents": 2034,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 19.9,
+          "hourlyCents": 1990,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $20.34."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 19.9,
+          "hourlyCents": 1990,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "foster_city",
+      "name": "Foster City",
+      "level": "city",
+      "hourly": 17.85,
+      "hourlyCents": 1785,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.85,
+        "cashWageCents": 1785,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "fremont",
+      "name": "Fremont",
+      "level": "city",
+      "hourly": 18.05,
+      "hourlyCents": 1805,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.05,
+        "cashWageCents": 1805,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 17.75,
+          "hourlyCents": 1775,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $18.05."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 17.75,
+          "hourlyCents": 1775,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "half_moon_bay",
+      "name": "Half Moon Bay",
+      "level": "city",
+      "hourly": 17.91,
+      "hourlyCents": 1791,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.91,
+        "cashWageCents": 1791,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "hayward",
+      "name": "Hayward",
+      "level": "city",
+      "hourly": 17.79,
+      "hourlyCents": 1779,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.79,
+        "cashWageCents": 1779,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0
+      },
+      "variants": [
+        {
+          "id": "small_employer",
+          "label": "Employers with 25 or fewer employees",
+          "hourly": 16.9,
+          "hourlyCents": 1690,
+          "test": "Hayward's small-employer tier is pinned to the CALIFORNIA state minimum wage, so it moves whenever the state rate does.",
+          "appliesWhen": {
+            "employeeCountMax": 25
+          }
+        }
+      ],
+      "appliesWhen": {
+        "employeeCountMin": 26
+      }
+    },
+    {
+      "id": "los_altos",
+      "name": "Los Altos",
+      "level": "city",
+      "hourly": 18.7,
+      "hourlyCents": 1870,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.7,
+        "cashWageCents": 1870,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "los_angeles",
+      "name": "Los Angeles",
+      "level": "city",
+      "hourly": 18.42,
+      "hourlyCents": 1842,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.42,
+        "cashWageCents": 1842,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 17.87,
+          "hourlyCents": 1787,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $18.42."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 17.87,
+          "hourlyCents": 1787,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "los_angeles_county_unincorporated",
+      "name": "Los Angeles County (unincorporated areas only)",
+      "level": "county",
+      "hourly": 18.47,
+      "hourlyCents": 1847,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.47,
+        "cashWageCents": 1847,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0
+      },
+      "coverage": "Applies ONLY in unincorporated Los Angeles County. Work inside any incorporated city in the county is governed by that city's own ordinance (or the state rate), not this one.",
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 17.81,
+          "hourlyCents": 1781,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 step to $18.47."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 17.81,
+          "hourlyCents": 1781,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "malibu",
+      "name": "Malibu",
+      "level": "city",
+      "hourly": 17.91,
+      "hourlyCents": 1791,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.91,
+        "cashWageCents": 1791,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "Rate held through June 2026 (one-year increase suspension)",
+          "hourly": 17.27,
+          "hourlyCents": 1727,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2024-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "Malibu City Council approved a one-year suspension of its own scheduled CPI increase, holding the rate at $17.27 for two full years before resuming to $17.91 on 2026-07-01.",
+          "confidence": "cross_source_confirmed"
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "Tipped cash wage, held through June 2026",
+          "hourly": 17.27,
+          "hourlyCents": 1727,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2024-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "menlo_park",
+      "name": "Menlo Park",
+      "level": "city",
+      "hourly": 17.55,
+      "hourlyCents": 1755,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.55,
+        "cashWageCents": 1755,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "milpitas",
+      "name": "Milpitas",
+      "level": "city",
+      "hourly": 18.5,
+      "hourlyCents": 1850,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.5,
+        "cashWageCents": 1850,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 18.2,
+          "hourlyCents": 1820,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $18.50."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 18.2,
+          "hourlyCents": 1820,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "mountain_view",
+      "name": "Mountain View",
+      "level": "city",
+      "hourly": 19.7,
+      "hourlyCents": 1970,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 19.7,
+        "cashWageCents": 1970,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "novato",
+      "name": "Novato",
+      "level": "city",
+      "hourly": 17.46,
+      "hourlyCents": 1746,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.46,
+        "cashWageCents": 1746,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0
+      },
+      "coverage": "Middle tier: 26-99 employees.",
+      "variants": [
+        {
+          "id": "very_large_employer",
+          "label": "Employers with 100 or more employees",
+          "hourly": 17.73,
+          "hourlyCents": 1773,
+          "test": "Novato is the only California city with THREE employer-size tiers.",
+          "appliesWhen": {
+            "employeeCountMin": 100
+          }
+        },
+        {
+          "id": "small_employer",
+          "label": "Employers with 1-25 employees",
+          "hourly": 16.9,
+          "hourlyCents": 1690,
+          "test": "Pinned to the California state minimum wage.",
+          "appliesWhen": {
+            "employeeCountMax": 25
+          }
+        }
+      ],
+      "appliesWhen": {
+        "employeeCountMin": 26,
+        "employeeCountMax": 99
+      }
+    },
+    {
+      "id": "oakland",
+      "name": "Oakland",
+      "level": "city",
+      "hourly": 17.34,
+      "hourlyCents": 1734,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.34,
+        "cashWageCents": 1734,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "palo_alto",
+      "name": "Palo Alto",
+      "level": "city",
+      "hourly": 18.7,
+      "hourlyCents": 1870,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.7,
+        "cashWageCents": 1870,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "pasadena",
+      "name": "Pasadena",
+      "level": "city",
+      "hourly": 18.57,
+      "hourlyCents": 1857,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.57,
+        "cashWageCents": 1857,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 18.04,
+          "hourlyCents": 1804,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $18.57."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 18.04,
+          "hourlyCents": 1804,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "petaluma",
+      "name": "Petaluma",
+      "level": "city",
+      "hourly": 18.31,
+      "hourlyCents": 1831,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.31,
+        "cashWageCents": 1831,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "redwood_city",
+      "name": "Redwood City",
+      "level": "city",
+      "hourly": 18.65,
+      "hourlyCents": 1865,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.65,
+        "cashWageCents": 1865,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "richmond",
+      "name": "Richmond",
+      "level": "city",
+      "hourly": 19.18,
+      "hourlyCents": 1918,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 19.18,
+        "cashWageCents": 1918,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "san_carlos",
+      "name": "San Carlos",
+      "level": "city",
+      "hourly": 17.75,
+      "hourlyCents": 1775,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.75,
+        "cashWageCents": 1775,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "san_diego",
+      "name": "San Diego",
+      "level": "city",
+      "hourly": 17.75,
+      "hourlyCents": 1775,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.75,
+        "cashWageCents": 1775,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "san_francisco",
+      "name": "San Francisco",
+      "level": "city",
+      "hourly": 19.61,
+      "hourlyCents": 1961,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 19.61,
+        "cashWageCents": 1961,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 19.18,
+          "hourlyCents": 1918,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $19.61."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 19.18,
+          "hourlyCents": 1918,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "san_jose",
+      "name": "San Jose",
+      "level": "city",
+      "hourly": 18.45,
+      "hourlyCents": 1845,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.45,
+        "cashWageCents": 1845,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "san_mateo",
+      "name": "San Mateo",
+      "level": "city",
+      "hourly": 18.6,
+      "hourlyCents": 1860,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.6,
+        "cashWageCents": 1860,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "san_mateo_county_unincorporated",
+      "name": "San Mateo County (unincorporated areas only)",
+      "level": "county",
+      "hourly": 17.95,
+      "hourlyCents": 1795,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 17.95,
+        "cashWageCents": 1795,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0
+      },
+      "coverage": "Applies ONLY in unincorporated San Mateo County -- the county's many incorporated cities each set their own rate (nine of them appear separately in this file)."
+    },
+    {
+      "id": "santa_clara",
+      "name": "Santa Clara",
+      "level": "city",
+      "hourly": 18.7,
+      "hourlyCents": 1870,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.7,
+        "cashWageCents": 1870,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "santa_monica",
+      "name": "Santa Monica",
+      "level": "city",
+      "hourly": 18.47,
+      "hourlyCents": 1847,
+      "effectiveFrom": "2026-07-01",
+      "adjustmentDate": "07-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.47,
+        "cashWageCents": 1847,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      },
+      "variants": [
+        {
+          "id": "pre_2026_06_30",
+          "label": "July 2025 - June 2026 rate",
+          "hourly": 17.81,
+          "hourlyCents": 1781,
+          "historicalPredecessorOf": "standard",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "In effect before the 2026-07-01 CPI step to $18.47."
+        },
+        {
+          "id": "pre_2026_06_30_tipped",
+          "label": "July 2025 - June 2026 tipped cash wage",
+          "hourly": 17.81,
+          "hourlyCents": 1781,
+          "historicalPredecessorOf": "tipped",
+          "effectiveFrom": "2025-07-01",
+          "effectiveTo": "2026-06-30",
+          "note": "California bars any tip credit statewide; the tipped cash wage always equals the standard rate."
+        }
+      ]
+    },
+    {
+      "id": "santa_rosa",
+      "name": "Santa Rosa",
+      "level": "city",
+      "hourly": 18.21,
+      "hourlyCents": 1821,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.21,
+        "cashWageCents": 1821,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "sonoma",
+      "name": "Sonoma",
+      "level": "city",
+      "hourly": 18.47,
+      "hourlyCents": 1847,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.47,
+        "cashWageCents": 1847,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0
+      },
+      "coverage": "Employers with 26 or more employees.",
+      "variants": [
+        {
+          "id": "small_employer",
+          "label": "Employers with 25 or fewer employees",
+          "hourly": 17.38,
+          "hourlyCents": 1738,
+          "appliesWhen": {
+            "employeeCountMax": 25
+          }
+        }
+      ],
+      "appliesWhen": {
+        "employeeCountMin": 26
+      }
+    },
+    {
+      "id": "south_san_francisco",
+      "name": "South San Francisco",
+      "level": "city",
+      "hourly": 18.15,
+      "hourlyCents": 1815,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 18.15,
+        "cashWageCents": 1815,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "sunnyvale",
+      "name": "Sunnyvale",
+      "level": "city",
+      "hourly": 19.5,
+      "hourlyCents": 1950,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 19.5,
+        "cashWageCents": 1950,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    },
+    {
+      "id": "west_hollywood",
+      "name": "West Hollywood",
+      "level": "city",
+      "hourly": 20.25,
+      "hourlyCents": 2025,
+      "effectiveFrom": "2026-01-01",
+      "adjustmentDate": "01-01",
+      "tipped": {
+        "tipCreditAllowed": false,
+        "cashWage": 20.25,
+        "cashWageCents": 2025,
+        "maxTipCredit": 0.0,
+        "maxTipCreditCents": 0,
+        "note": "California bars any tip credit statewide (Labor Code 351); the full local rate is owed in cash."
+      }
+    }
+  ],
+  "sources": [
+    {
+      "title": "UC Berkeley Labor Center -- Inventory of US City and County Minimum Wage Ordinances",
+      "url": "https://laborcenter.berkeley.edu/inventory-of-us-city-and-county-minimum-wage-ordinances/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. The standing national census of local minimum wage ordinances -- used here to establish WHICH jurisdictions exist (so none is silently omitted), with each rate then cross-checked against a second source."
+    },
+    {
+      "title": "CalChamber HRWatchdog -- California Local Minimum Wage Rates Increases Starting January 1, 2026",
+      "url": "https://hrwatchdog.calchamber.com/2025/12/california-local-minimum-wage-rates-increases-starting-january-1-2026/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session; its full city-by-city table agreed with the UC Berkeley inventory on every January-adjusting California rate, including the Hayward, Novato and Sonoma employer-size tiers."
+    },
+    {
+      "title": "Fisher Phillips -- California Local Minimum Wage Increases Effective July 1, 2026 (and CalChamber's parallel July list)",
+      "url": "https://www.fisherphillips.com/en/insights/insights/california-local-minimum-wage-increases-effective-july-1-2026",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session: the July-adjusting California rates agreed with the UC Berkeley inventory figure for figure."
+    },
+    {
+      "title": "City of Malibu -- 2026 minimum wage determination",
+      "url": "https://www.malibucity.org/minimumwage",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session at the city's own page. Quoted: the increase reflects 'the Consumer Price Index (CPI-W) during the last 12-month period posted for November 2025 ... increased 3.7% for Urban Wage Earners and Clerical Workers ... in the Los Angeles-Long Beach-Anaheim statistical region,' per Malibu Municipal Code Sec. 5.36.040, giving $17.91 effective 2026-07-01."
+    },
+    {
+      "title": "California local minimum wage increases effective July 1, 2025 (prior-year figures for the ten July-cycle cities)",
+      "url": "https://hrwatchdog.calchamber.com/2025/06/california-local-minimum-wage-increases-for-july-1-2025/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the July 2025 - June 2026 figures now carried as historicalPredecessorOf entries on each of the ten July-cycle cities: Alameda $17.46, Berkeley $19.18, Emeryville $19.90, Fremont $17.75, Los Angeles $17.87, Milpitas $18.20, Pasadena $18.04, San Francisco $19.18, Santa Monica $17.81, and Malibu's own one-year-suspended $17.27 (held two full years rather than one, per its city council's own suspension of its scheduled increase)."
+    },
+    {
+      "title": "Unincorporated Los Angeles County minimum wage, July 1, 2025 step ($17.81)",
+      "url": "https://dcba.lacounty.gov/newsroom/new-worker-protections-for-july-1-2025/",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session: the rate increased from $17.27 to $17.81 effective 2025-07-01, in effect through 2026-06-30, before the step to $18.47 this file's own headline figure carries."
+    }
+  ],
+  "confidence": "cross_source_confirmed",
+  "knownGaps": [
+    "Employer-size tiers are recorded only where a city publishes one (Hayward, Novato, Sonoma). Cities not carrying a tier apply one rate to all employers.",
+    "Several California cities ALSO run sector-specific minimum wages (hotel and airport workers in Los Angeles, hotel workers in Santa Monica, Long Beach, Glendale and West Hollywood). All five are now carried in sectoral/CA-sectoral-2026.json rather than here -- Glendale has no general local minimum wage ordinance of its own, only its hotel-worker one, which is why it has no entry in THIS file's own jurisdictions list.",
+    "A few of these ordinances exempt very small employers or government/nonprofit employers on their own terms; those coverage tests are not modelled per-city."
+  ]
+}

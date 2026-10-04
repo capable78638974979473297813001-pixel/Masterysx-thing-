@@ -1,0 +1,1841 @@
+{
+  "code": "CA",
+  "name": "California",
+  "year": 2025,
+  "method": "bracket_per_period_three_status",
+  "roundFinalToWholeDollar": false,
+  "$methodComment": "California's Method B - Exact Calculation Method (2026 Withholding Schedules, EDD, fetched and read directly): six sequential steps, genuinely more granular than any other state built in this project so far. (1) Low Income Exemption check -- if gross wages for the period are AT OR BELOW a threshold, withholding is $0 and every later step is skipped entirely, not just floored to zero after the fact. (2) Subtract an Estimated-Deduction allowance (Table 2) if the employee claimed one on DE 4 Worksheet B -- explicitly NOT counted toward the exemption credit later (Method B's own footnote 1). (3) Subtract a Standard Deduction (Table 3). (4) Look up the result DIRECTLY in a genuinely PER-PERIOD bracket table (Tables 8-28) -- no annualize-then-divide step needed at all, since EDD publishes a real table for every one of the 8 payroll periods this engine's own PayFrequency type supports (the first and only state in this project to cover all 8 natively). (5) Subtract a flat Exemption Allowance Credit (Table 4) based on REGULAR allowances ONLY. (6) Floor at $0 (a formality here since the low-income-exemption check already prevents negative results from ever needing a floor in practice, but kept for defensive correctness). WIRED INTO CALC CODE via californiaWithholding() in state.ts, verified against ALL SIX of EDD's own published worked examples (A-F) reproduced to the cent -- a rarer luxury than most states in this project get, since most sources publish at most one or two.",
+  "sources": [
+    {
+      "title": "EDD -- California Withholding Schedules for 2025, Method B (Exact Calculation Method)",
+      "url": "https://edd.ca.gov/siteassets/files/pdf_pub_ctr/25methb.pdf",
+      "verifiedOn": "2026-09-29",
+      "quote": "Example C: Monthly earnings of $5,100 married, and claiming five withholding allowances ... Net amount of tax to be withheld ... $ 3.89. Example D: Weekly earnings of $950, unmarried head of household, and three withholding allowances ... $ 2.20"
+    },
+    {
+      "title": "EDD -- 2025 SDI rate (1.2%, no taxable wage limit)",
+      "url": "https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/",
+      "verifiedOn": "2026-09-29"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "bracketPerPeriodThreeStatus": {
+    "$comment": "Certificate fields: filingStatus ('single_or_married_two_incomes' | 'married_one_income' | 'hoh', default 'single_or_married_two_incomes' per DE 4's own no-form default), regularAllowances (Worksheet A, line 1a -- used for BOTH the married-status threshold bucket below AND the Table 4 exemption credit), estimatedDeductionAllowances (Worksheet B, line 1b -- used ONLY for the Table 2 subtraction, explicitly excluded from the Table 4 credit per Method B's own footnote 1).",
+    "lowIncomeExemption": {
+      "$comment": "Table 1. Two threshold sets, not three: 'single_or_married_two_incomes' and 'married_one_income with 0-1 regular allowances' share IDENTICAL figures; 'married_one_income with 2+ regular allowances' and 'hoh' likewise share IDENTICAL figures -- a real, verbatim-transcribed quirk where a married employee's OWN allowance count (not filing status alone) determines which threshold set applies. Below-or-equal to this threshold, withholding is $0 and no further step is computed.",
+      "lower": {
+        "weekly": 353.0,
+        "biweekly": 706.0,
+        "semimonthly": 765.0,
+        "monthly": 1531.0,
+        "quarterly": 4592.0,
+        "semiannual": 9184.0,
+        "annual": 18368.0,
+        "daily": 71.0
+      },
+      "higher": {
+        "weekly": 706.0,
+        "biweekly": 1413.0,
+        "semimonthly": 1531.0,
+        "monthly": 3061.0,
+        "quarterly": 9184.0,
+        "semiannual": 18368.0,
+        "annual": 36736.0,
+        "daily": 141.0
+      }
+    },
+    "estimatedDeductionTable": {
+      "$comment": "Table 2. Dollars per additional Worksheet-B allowance claimed, by period. Values for 1-10 directly; per the table's own footnote 2, allowances beyond 10 multiply the 1-allowance figure by the count claimed (a flat linear table, not stepped).",
+      "weekly": [
+        19.0,
+        38.0,
+        58.0,
+        77.0,
+        96.0,
+        115.0,
+        135.0,
+        154.0,
+        173.0,
+        192.0
+      ],
+      "biweekly": [
+        38.0,
+        77.0,
+        115.0,
+        154.0,
+        192.0,
+        231.0,
+        269.0,
+        308.0,
+        346.0,
+        385.0
+      ],
+      "semimonthly": [
+        42.0,
+        83.0,
+        125.0,
+        167.0,
+        208.0,
+        250.0,
+        292.0,
+        333.0,
+        375.0,
+        417.0
+      ],
+      "monthly": [
+        83.0,
+        167.0,
+        250.0,
+        333.0,
+        417.0,
+        500.0,
+        583.0,
+        667.0,
+        750.0,
+        833.0
+      ],
+      "quarterly": [
+        250.0,
+        500.0,
+        750.0,
+        1000.0,
+        1250.0,
+        1500.0,
+        1750.0,
+        2000.0,
+        2250.0,
+        2500.0
+      ],
+      "semiannual": [
+        500.0,
+        1000.0,
+        1500.0,
+        2000.0,
+        2500.0,
+        3000.0,
+        3500.0,
+        4000.0,
+        4500.0,
+        5000.0
+      ],
+      "annual": [
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0,
+        9000.0,
+        10000.0
+      ],
+      "daily": [
+        4.0,
+        8.0,
+        12.0,
+        15.0,
+        19.0,
+        23.0,
+        27.0,
+        31.0,
+        35.0,
+        38.0
+      ]
+    },
+    "standardDeduction": {
+      "$comment": "Table 3. Same 'lower'/'higher' two-set structure as the Low Income Exemption table above, and for the same reason (married-status threshold is allowance-count-dependent, not filing-status-alone).",
+      "lower": {
+        "weekly": 107.0,
+        "biweekly": 213.0,
+        "semimonthly": 231.0,
+        "monthly": 462.0,
+        "quarterly": 1385.0,
+        "semiannual": 2770.0,
+        "annual": 5540.0,
+        "daily": 21.0
+      },
+      "higher": {
+        "weekly": 213.0,
+        "biweekly": 426.0,
+        "semimonthly": 462.0,
+        "monthly": 923.0,
+        "quarterly": 2770.0,
+        "semiannual": 5540.0,
+        "annual": 11080.0,
+        "daily": 43.0
+      }
+    },
+    "exemptionCreditTable": {
+      "$comment": "Table 4. A SINGLE shared table, NOT split by filing status at all -- unlike every other table in this file, one flat per-regular-allowance credit schedule applies uniformly to Single/Married/HOH alike. Values for 0-10 directly; footnote 1 says allowances beyond 10 multiply the 1-allowance figure by the count claimed.",
+      "weekly": [
+        0.0,
+        3.15,
+        6.3,
+        9.46,
+        12.61,
+        15.76,
+        18.91,
+        22.06,
+        25.22,
+        28.37,
+        31.52
+      ],
+      "biweekly": [
+        0.0,
+        6.3,
+        12.61,
+        18.91,
+        25.22,
+        31.52,
+        37.82,
+        44.13,
+        50.43,
+        56.73,
+        63.04
+      ],
+      "semimonthly": [
+        0.0,
+        6.83,
+        13.66,
+        20.49,
+        27.32,
+        34.15,
+        40.98,
+        47.8,
+        54.63,
+        61.46,
+        68.29
+      ],
+      "monthly": [
+        0.0,
+        13.66,
+        27.32,
+        40.98,
+        54.63,
+        68.29,
+        81.95,
+        95.61,
+        109.27,
+        122.93,
+        136.58
+      ],
+      "quarterly": [
+        0.0,
+        40.98,
+        81.95,
+        122.93,
+        163.9,
+        204.88,
+        245.85,
+        286.83,
+        327.8,
+        368.78,
+        409.75
+      ],
+      "semiannual": [
+        0.0,
+        81.95,
+        163.9,
+        245.85,
+        327.8,
+        409.75,
+        491.7,
+        573.65,
+        655.6,
+        737.55,
+        819.5
+      ],
+      "annual": [
+        0.0,
+        163.9,
+        327.8,
+        491.7,
+        655.6,
+        819.5,
+        983.4,
+        1147.3,
+        1311.2,
+        1475.1,
+        1639.0
+      ],
+      "daily": [
+        0.0,
+        0.63,
+        1.26,
+        1.89,
+        2.52,
+        3.15,
+        3.78,
+        4.41,
+        5.04,
+        5.67,
+        6.3
+      ]
+    },
+    "brackets": {
+      "$comment": "Tables 5-28, transcribed verbatim, genuinely PER-PERIOD (not derived from the annual table by dividing) -- EDD publishes all 8 periods x 3 statuses = 24 tables directly. 'singleOrMarriedTwoIncomes' = Tables 5/8/11/14/17/20/23/26 ('Single Persons, Dual Income Married or Married with Multiple Employers'). 'marriedOneIncome' = Tables 6/9/12/15/18/21/24/27 ('Married Persons'). 'hoh' = Tables 7/10/13/16/19/22/25/28 ('Unmarried/Head of Household').",
+      "singleOrMarriedTwoIncomes": {
+        "annual": [
+          {
+            "from": 0.0,
+            "to": 10756.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 10756.0,
+            "to": 25499.0,
+            "base": 118.32,
+            "rate": 0.022
+          },
+          {
+            "from": 25499.0,
+            "to": 40245.0,
+            "base": 442.67,
+            "rate": 0.044
+          },
+          {
+            "from": 40245.0,
+            "to": 55866.0,
+            "base": 1091.49,
+            "rate": 0.066
+          },
+          {
+            "from": 55866.0,
+            "to": 70606.0,
+            "base": 2122.48,
+            "rate": 0.088
+          },
+          {
+            "from": 70606.0,
+            "to": 360659.0,
+            "base": 3419.6,
+            "rate": 0.1023
+          },
+          {
+            "from": 360659.0,
+            "to": 432787.0,
+            "base": 33092.02,
+            "rate": 0.1133
+          },
+          {
+            "from": 432787.0,
+            "to": 721314.0,
+            "base": 41264.12,
+            "rate": 0.1243
+          },
+          {
+            "from": 721314.0,
+            "to": 1000000.0,
+            "base": 77128.03,
+            "rate": 0.1353
+          },
+          {
+            "from": 1000000.0,
+            "to": null,
+            "base": 114834.25,
+            "rate": 0.1463
+          }
+        ],
+        "daily": [
+          {
+            "from": 0.0,
+            "to": 41.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 41.0,
+            "to": 98.0,
+            "base": 0.45,
+            "rate": 0.022
+          },
+          {
+            "from": 98.0,
+            "to": 155.0,
+            "base": 1.7,
+            "rate": 0.044
+          },
+          {
+            "from": 155.0,
+            "to": 215.0,
+            "base": 4.21,
+            "rate": 0.066
+          },
+          {
+            "from": 215.0,
+            "to": 272.0,
+            "base": 8.17,
+            "rate": 0.088
+          },
+          {
+            "from": 272.0,
+            "to": 1387.0,
+            "base": 13.19,
+            "rate": 0.1023
+          },
+          {
+            "from": 1387.0,
+            "to": 1665.0,
+            "base": 127.25,
+            "rate": 0.1133
+          },
+          {
+            "from": 1665.0,
+            "to": 2774.0,
+            "base": 158.75,
+            "rate": 0.1243
+          },
+          {
+            "from": 2774.0,
+            "to": 3846.0,
+            "base": 296.6,
+            "rate": 0.1353
+          },
+          {
+            "from": 3846.0,
+            "to": null,
+            "base": 441.64,
+            "rate": 0.1463
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0.0,
+            "to": 2689.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 2689.0,
+            "to": 6375.0,
+            "base": 29.58,
+            "rate": 0.022
+          },
+          {
+            "from": 6375.0,
+            "to": 10061.0,
+            "base": 110.67,
+            "rate": 0.044
+          },
+          {
+            "from": 10061.0,
+            "to": 13967.0,
+            "base": 272.85,
+            "rate": 0.066
+          },
+          {
+            "from": 13967.0,
+            "to": 17652.0,
+            "base": 530.65,
+            "rate": 0.088
+          },
+          {
+            "from": 17652.0,
+            "to": 90165.0,
+            "base": 854.93,
+            "rate": 0.1023
+          },
+          {
+            "from": 90165.0,
+            "to": 108197.0,
+            "base": 8273.01,
+            "rate": 0.1133
+          },
+          {
+            "from": 108197.0,
+            "to": 180329.0,
+            "base": 10316.04,
+            "rate": 0.1243
+          },
+          {
+            "from": 180329.0,
+            "to": 250000.0,
+            "base": 19282.05,
+            "rate": 0.1353
+          },
+          {
+            "from": 250000.0,
+            "to": null,
+            "base": 28708.54,
+            "rate": 0.1463
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0.0,
+            "to": 5378.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 5378.0,
+            "to": 12750.0,
+            "base": 59.16,
+            "rate": 0.022
+          },
+          {
+            "from": 12750.0,
+            "to": 20122.0,
+            "base": 221.34,
+            "rate": 0.044
+          },
+          {
+            "from": 20122.0,
+            "to": 27934.0,
+            "base": 545.71,
+            "rate": 0.066
+          },
+          {
+            "from": 27934.0,
+            "to": 35304.0,
+            "base": 1061.3,
+            "rate": 0.088
+          },
+          {
+            "from": 35304.0,
+            "to": 180330.0,
+            "base": 1709.86,
+            "rate": 0.1023
+          },
+          {
+            "from": 180330.0,
+            "to": 216394.0,
+            "base": 16546.02,
+            "rate": 0.1133
+          },
+          {
+            "from": 216394.0,
+            "to": 360658.0,
+            "base": 20632.07,
+            "rate": 0.1243
+          },
+          {
+            "from": 360658.0,
+            "to": 500000.0,
+            "base": 38564.09,
+            "rate": 0.1353
+          },
+          {
+            "from": 500000.0,
+            "to": null,
+            "base": 57417.06,
+            "rate": 0.1463
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0.0,
+            "to": 448.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 448.0,
+            "to": 1062.0,
+            "base": 4.93,
+            "rate": 0.022
+          },
+          {
+            "from": 1062.0,
+            "to": 1677.0,
+            "base": 18.44,
+            "rate": 0.044
+          },
+          {
+            "from": 1677.0,
+            "to": 2328.0,
+            "base": 45.5,
+            "rate": 0.066
+          },
+          {
+            "from": 2328.0,
+            "to": 2942.0,
+            "base": 88.47,
+            "rate": 0.088
+          },
+          {
+            "from": 2942.0,
+            "to": 15027.0,
+            "base": 142.5,
+            "rate": 0.1023
+          },
+          {
+            "from": 15027.0,
+            "to": 18033.0,
+            "base": 1378.8,
+            "rate": 0.1133
+          },
+          {
+            "from": 18033.0,
+            "to": 30055.0,
+            "base": 1719.38,
+            "rate": 0.1243
+          },
+          {
+            "from": 30055.0,
+            "to": 41667.0,
+            "base": 3213.71,
+            "rate": 0.1353
+          },
+          {
+            "from": 41667.0,
+            "to": null,
+            "base": 4784.81,
+            "rate": 0.1463
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0.0,
+            "to": 896.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 896.0,
+            "to": 2124.0,
+            "base": 9.86,
+            "rate": 0.022
+          },
+          {
+            "from": 2124.0,
+            "to": 3354.0,
+            "base": 36.88,
+            "rate": 0.044
+          },
+          {
+            "from": 3354.0,
+            "to": 4656.0,
+            "base": 91.0,
+            "rate": 0.066
+          },
+          {
+            "from": 4656.0,
+            "to": 5884.0,
+            "base": 176.93,
+            "rate": 0.088
+          },
+          {
+            "from": 5884.0,
+            "to": 30054.0,
+            "base": 284.99,
+            "rate": 0.1023
+          },
+          {
+            "from": 30054.0,
+            "to": 36066.0,
+            "base": 2757.58,
+            "rate": 0.1133
+          },
+          {
+            "from": 36066.0,
+            "to": 60110.0,
+            "base": 3438.74,
+            "rate": 0.1243
+          },
+          {
+            "from": 60110.0,
+            "to": 83334.0,
+            "base": 6427.41,
+            "rate": 0.1353
+          },
+          {
+            "from": 83334.0,
+            "to": null,
+            "base": 9569.62,
+            "rate": 0.1463
+          }
+        ],
+        "weekly": [
+          {
+            "from": 0.0,
+            "to": 207.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 207.0,
+            "to": 490.0,
+            "base": 2.28,
+            "rate": 0.022
+          },
+          {
+            "from": 490.0,
+            "to": 774.0,
+            "base": 8.51,
+            "rate": 0.044
+          },
+          {
+            "from": 774.0,
+            "to": 1074.0,
+            "base": 21.01,
+            "rate": 0.066
+          },
+          {
+            "from": 1074.0,
+            "to": 1358.0,
+            "base": 40.81,
+            "rate": 0.088
+          },
+          {
+            "from": 1358.0,
+            "to": 6936.0,
+            "base": 65.8,
+            "rate": 0.1023
+          },
+          {
+            "from": 6936.0,
+            "to": 8323.0,
+            "base": 636.43,
+            "rate": 0.1133
+          },
+          {
+            "from": 8323.0,
+            "to": 13871.0,
+            "base": 793.58,
+            "rate": 0.1243
+          },
+          {
+            "from": 13871.0,
+            "to": 19231.0,
+            "base": 1483.2,
+            "rate": 0.1353
+          },
+          {
+            "from": 19231.0,
+            "to": null,
+            "base": 2208.41,
+            "rate": 0.1463
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0.0,
+            "to": 414.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 414.0,
+            "to": 980.0,
+            "base": 4.55,
+            "rate": 0.022
+          },
+          {
+            "from": 980.0,
+            "to": 1548.0,
+            "base": 17.0,
+            "rate": 0.044
+          },
+          {
+            "from": 1548.0,
+            "to": 2148.0,
+            "base": 41.99,
+            "rate": 0.066
+          },
+          {
+            "from": 2148.0,
+            "to": 2716.0,
+            "base": 81.59,
+            "rate": 0.088
+          },
+          {
+            "from": 2716.0,
+            "to": 13872.0,
+            "base": 131.57,
+            "rate": 0.1023
+          },
+          {
+            "from": 13872.0,
+            "to": 16646.0,
+            "base": 1272.83,
+            "rate": 0.1133
+          },
+          {
+            "from": 16646.0,
+            "to": 27742.0,
+            "base": 1587.12,
+            "rate": 0.1243
+          },
+          {
+            "from": 27742.0,
+            "to": 38462.0,
+            "base": 2966.35,
+            "rate": 0.1353
+          },
+          {
+            "from": 38462.0,
+            "to": null,
+            "base": 4416.77,
+            "rate": 0.1463
+          }
+        ]
+      },
+      "marriedOneIncome": {
+        "annual": [
+          {
+            "from": 0.0,
+            "to": 21512.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 21512.0,
+            "to": 50998.0,
+            "base": 236.63,
+            "rate": 0.022
+          },
+          {
+            "from": 50998.0,
+            "to": 80490.0,
+            "base": 885.32,
+            "rate": 0.044
+          },
+          {
+            "from": 80490.0,
+            "to": 111732.0,
+            "base": 2182.97,
+            "rate": 0.066
+          },
+          {
+            "from": 111732.0,
+            "to": 141212.0,
+            "base": 4244.94,
+            "rate": 0.088
+          },
+          {
+            "from": 141212.0,
+            "to": 721318.0,
+            "base": 6839.18,
+            "rate": 0.1023
+          },
+          {
+            "from": 721318.0,
+            "to": 865574.0,
+            "base": 66184.02,
+            "rate": 0.1133
+          },
+          {
+            "from": 865574.0,
+            "to": 1000000.0,
+            "base": 82528.22,
+            "rate": 0.1243
+          },
+          {
+            "from": 1000000.0,
+            "to": 1442628.0,
+            "base": 99237.37,
+            "rate": 0.1353
+          },
+          {
+            "from": 1442628.0,
+            "to": null,
+            "base": 159124.94,
+            "rate": 0.1463
+          }
+        ],
+        "daily": [
+          {
+            "from": 0.0,
+            "to": 82.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 82.0,
+            "to": 196.0,
+            "base": 0.9,
+            "rate": 0.022
+          },
+          {
+            "from": 196.0,
+            "to": 310.0,
+            "base": 3.41,
+            "rate": 0.044
+          },
+          {
+            "from": 310.0,
+            "to": 430.0,
+            "base": 8.43,
+            "rate": 0.066
+          },
+          {
+            "from": 430.0,
+            "to": 544.0,
+            "base": 16.35,
+            "rate": 0.088
+          },
+          {
+            "from": 544.0,
+            "to": 2774.0,
+            "base": 26.38,
+            "rate": 0.1023
+          },
+          {
+            "from": 2774.0,
+            "to": 3330.0,
+            "base": 254.51,
+            "rate": 0.1133
+          },
+          {
+            "from": 3330.0,
+            "to": 3846.0,
+            "base": 317.5,
+            "rate": 0.1243
+          },
+          {
+            "from": 3846.0,
+            "to": 5549.0,
+            "base": 381.64,
+            "rate": 0.1353
+          },
+          {
+            "from": 5549.0,
+            "to": null,
+            "base": 612.06,
+            "rate": 0.1463
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0.0,
+            "to": 5378.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 5378.0,
+            "to": 12750.0,
+            "base": 59.16,
+            "rate": 0.022
+          },
+          {
+            "from": 12750.0,
+            "to": 20122.0,
+            "base": 221.34,
+            "rate": 0.044
+          },
+          {
+            "from": 20122.0,
+            "to": 27934.0,
+            "base": 545.71,
+            "rate": 0.066
+          },
+          {
+            "from": 27934.0,
+            "to": 35304.0,
+            "base": 1061.3,
+            "rate": 0.088
+          },
+          {
+            "from": 35304.0,
+            "to": 180330.0,
+            "base": 1709.86,
+            "rate": 0.1023
+          },
+          {
+            "from": 180330.0,
+            "to": 216394.0,
+            "base": 16546.02,
+            "rate": 0.1133
+          },
+          {
+            "from": 216394.0,
+            "to": 250000.0,
+            "base": 20632.07,
+            "rate": 0.1243
+          },
+          {
+            "from": 250000.0,
+            "to": 360657.0,
+            "base": 24809.3,
+            "rate": 0.1353
+          },
+          {
+            "from": 360657.0,
+            "to": null,
+            "base": 39781.19,
+            "rate": 0.1463
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0.0,
+            "to": 10756.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 10756.0,
+            "to": 25500.0,
+            "base": 118.32,
+            "rate": 0.022
+          },
+          {
+            "from": 25500.0,
+            "to": 40244.0,
+            "base": 442.69,
+            "rate": 0.044
+          },
+          {
+            "from": 40244.0,
+            "to": 55868.0,
+            "base": 1091.43,
+            "rate": 0.066
+          },
+          {
+            "from": 55868.0,
+            "to": 70608.0,
+            "base": 2122.61,
+            "rate": 0.088
+          },
+          {
+            "from": 70608.0,
+            "to": 360660.0,
+            "base": 3419.73,
+            "rate": 0.1023
+          },
+          {
+            "from": 360660.0,
+            "to": 432788.0,
+            "base": 33092.05,
+            "rate": 0.1133
+          },
+          {
+            "from": 432788.0,
+            "to": 500000.0,
+            "base": 41264.15,
+            "rate": 0.1243
+          },
+          {
+            "from": 500000.0,
+            "to": 721314.0,
+            "base": 49618.6,
+            "rate": 0.1353
+          },
+          {
+            "from": 721314.0,
+            "to": null,
+            "base": 79562.38,
+            "rate": 0.1463
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0.0,
+            "to": 896.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 896.0,
+            "to": 2124.0,
+            "base": 9.86,
+            "rate": 0.022
+          },
+          {
+            "from": 2124.0,
+            "to": 3354.0,
+            "base": 36.88,
+            "rate": 0.044
+          },
+          {
+            "from": 3354.0,
+            "to": 4656.0,
+            "base": 91.0,
+            "rate": 0.066
+          },
+          {
+            "from": 4656.0,
+            "to": 5884.0,
+            "base": 176.93,
+            "rate": 0.088
+          },
+          {
+            "from": 5884.0,
+            "to": 30054.0,
+            "base": 284.99,
+            "rate": 0.1023
+          },
+          {
+            "from": 30054.0,
+            "to": 36066.0,
+            "base": 2757.58,
+            "rate": 0.1133
+          },
+          {
+            "from": 36066.0,
+            "to": 41667.0,
+            "base": 3438.74,
+            "rate": 0.1243
+          },
+          {
+            "from": 41667.0,
+            "to": 60110.0,
+            "base": 4134.94,
+            "rate": 0.1353
+          },
+          {
+            "from": 60110.0,
+            "to": null,
+            "base": 6630.28,
+            "rate": 0.1463
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0.0,
+            "to": 1792.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 1792.0,
+            "to": 4248.0,
+            "base": 19.71,
+            "rate": 0.022
+          },
+          {
+            "from": 4248.0,
+            "to": 6708.0,
+            "base": 73.74,
+            "rate": 0.044
+          },
+          {
+            "from": 6708.0,
+            "to": 9312.0,
+            "base": 181.98,
+            "rate": 0.066
+          },
+          {
+            "from": 9312.0,
+            "to": 11768.0,
+            "base": 353.84,
+            "rate": 0.088
+          },
+          {
+            "from": 11768.0,
+            "to": 60108.0,
+            "base": 569.97,
+            "rate": 0.1023
+          },
+          {
+            "from": 60108.0,
+            "to": 72132.0,
+            "base": 5515.15,
+            "rate": 0.1133
+          },
+          {
+            "from": 72132.0,
+            "to": 83334.0,
+            "base": 6877.47,
+            "rate": 0.1243
+          },
+          {
+            "from": 83334.0,
+            "to": 120220.0,
+            "base": 8269.88,
+            "rate": 0.1353
+          },
+          {
+            "from": 120220.0,
+            "to": null,
+            "base": 13260.56,
+            "rate": 0.1463
+          }
+        ],
+        "weekly": [
+          {
+            "from": 0.0,
+            "to": 414.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 414.0,
+            "to": 980.0,
+            "base": 4.55,
+            "rate": 0.022
+          },
+          {
+            "from": 980.0,
+            "to": 1548.0,
+            "base": 17.0,
+            "rate": 0.044
+          },
+          {
+            "from": 1548.0,
+            "to": 2148.0,
+            "base": 41.99,
+            "rate": 0.066
+          },
+          {
+            "from": 2148.0,
+            "to": 2716.0,
+            "base": 81.59,
+            "rate": 0.088
+          },
+          {
+            "from": 2716.0,
+            "to": 13872.0,
+            "base": 131.57,
+            "rate": 0.1023
+          },
+          {
+            "from": 13872.0,
+            "to": 16646.0,
+            "base": 1272.83,
+            "rate": 0.1133
+          },
+          {
+            "from": 16646.0,
+            "to": 19231.0,
+            "base": 1587.12,
+            "rate": 0.1243
+          },
+          {
+            "from": 19231.0,
+            "to": 27743.0,
+            "base": 1908.44,
+            "rate": 0.1353
+          },
+          {
+            "from": 27743.0,
+            "to": null,
+            "base": 3060.11,
+            "rate": 0.1463
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0.0,
+            "to": 828.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 828.0,
+            "to": 1960.0,
+            "base": 9.11,
+            "rate": 0.022
+          },
+          {
+            "from": 1960.0,
+            "to": 3096.0,
+            "base": 34.01,
+            "rate": 0.044
+          },
+          {
+            "from": 3096.0,
+            "to": 4296.0,
+            "base": 83.99,
+            "rate": 0.066
+          },
+          {
+            "from": 4296.0,
+            "to": 5432.0,
+            "base": 163.19,
+            "rate": 0.088
+          },
+          {
+            "from": 5432.0,
+            "to": 27744.0,
+            "base": 263.16,
+            "rate": 0.1023
+          },
+          {
+            "from": 27744.0,
+            "to": 33292.0,
+            "base": 2545.68,
+            "rate": 0.1133
+          },
+          {
+            "from": 33292.0,
+            "to": 38462.0,
+            "base": 3174.27,
+            "rate": 0.1243
+          },
+          {
+            "from": 38462.0,
+            "to": 55486.0,
+            "base": 3816.9,
+            "rate": 0.1353
+          },
+          {
+            "from": 55486.0,
+            "to": null,
+            "base": 6120.25,
+            "rate": 0.1463
+          }
+        ]
+      },
+      "hoh": {
+        "annual": [
+          {
+            "from": 0.0,
+            "to": 21527.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 21527.0,
+            "to": 51000.0,
+            "base": 236.8,
+            "rate": 0.022
+          },
+          {
+            "from": 51000.0,
+            "to": 65744.0,
+            "base": 885.21,
+            "rate": 0.044
+          },
+          {
+            "from": 65744.0,
+            "to": 81364.0,
+            "base": 1533.95,
+            "rate": 0.066
+          },
+          {
+            "from": 81364.0,
+            "to": 96107.0,
+            "base": 2564.87,
+            "rate": 0.088
+          },
+          {
+            "from": 96107.0,
+            "to": 490493.0,
+            "base": 3862.25,
+            "rate": 0.1023
+          },
+          {
+            "from": 490493.0,
+            "to": 588593.0,
+            "base": 44207.94,
+            "rate": 0.1133
+          },
+          {
+            "from": 588593.0,
+            "to": 980987.0,
+            "base": 55322.67,
+            "rate": 0.1243
+          },
+          {
+            "from": 980987.0,
+            "to": 1000000.0,
+            "base": 104097.24,
+            "rate": 0.1353
+          },
+          {
+            "from": 1000000.0,
+            "to": null,
+            "base": 106669.7,
+            "rate": 0.1463
+          }
+        ],
+        "daily": [
+          {
+            "from": 0.0,
+            "to": 83.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 83.0,
+            "to": 196.0,
+            "base": 0.91,
+            "rate": 0.022
+          },
+          {
+            "from": 196.0,
+            "to": 253.0,
+            "base": 3.4,
+            "rate": 0.044
+          },
+          {
+            "from": 253.0,
+            "to": 313.0,
+            "base": 5.91,
+            "rate": 0.066
+          },
+          {
+            "from": 313.0,
+            "to": 370.0,
+            "base": 9.87,
+            "rate": 0.088
+          },
+          {
+            "from": 370.0,
+            "to": 1887.0,
+            "base": 14.89,
+            "rate": 0.1023
+          },
+          {
+            "from": 1887.0,
+            "to": 2264.0,
+            "base": 170.08,
+            "rate": 0.1133
+          },
+          {
+            "from": 2264.0,
+            "to": 3773.0,
+            "base": 212.79,
+            "rate": 0.1243
+          },
+          {
+            "from": 3773.0,
+            "to": 3846.0,
+            "base": 400.36,
+            "rate": 0.1353
+          },
+          {
+            "from": 3846.0,
+            "to": null,
+            "base": 410.24,
+            "rate": 0.1463
+          }
+        ],
+        "quarterly": [
+          {
+            "from": 0.0,
+            "to": 5382.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 5382.0,
+            "to": 12750.0,
+            "base": 59.2,
+            "rate": 0.022
+          },
+          {
+            "from": 12750.0,
+            "to": 16436.0,
+            "base": 221.3,
+            "rate": 0.044
+          },
+          {
+            "from": 16436.0,
+            "to": 20341.0,
+            "base": 383.48,
+            "rate": 0.066
+          },
+          {
+            "from": 20341.0,
+            "to": 24027.0,
+            "base": 641.21,
+            "rate": 0.088
+          },
+          {
+            "from": 24027.0,
+            "to": 122623.0,
+            "base": 965.58,
+            "rate": 0.1023
+          },
+          {
+            "from": 122623.0,
+            "to": 147148.0,
+            "base": 11051.95,
+            "rate": 0.1133
+          },
+          {
+            "from": 147148.0,
+            "to": 245247.0,
+            "base": 13830.63,
+            "rate": 0.1243
+          },
+          {
+            "from": 245247.0,
+            "to": 250000.0,
+            "base": 26024.34,
+            "rate": 0.1353
+          },
+          {
+            "from": 250000.0,
+            "to": null,
+            "base": 26667.42,
+            "rate": 0.1463
+          }
+        ],
+        "semiannual": [
+          {
+            "from": 0.0,
+            "to": 10764.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 10764.0,
+            "to": 25500.0,
+            "base": 118.4,
+            "rate": 0.022
+          },
+          {
+            "from": 25500.0,
+            "to": 32872.0,
+            "base": 442.59,
+            "rate": 0.044
+          },
+          {
+            "from": 32872.0,
+            "to": 40682.0,
+            "base": 766.96,
+            "rate": 0.066
+          },
+          {
+            "from": 40682.0,
+            "to": 48054.0,
+            "base": 1282.42,
+            "rate": 0.088
+          },
+          {
+            "from": 48054.0,
+            "to": 245246.0,
+            "base": 1931.16,
+            "rate": 0.1023
+          },
+          {
+            "from": 245246.0,
+            "to": 294296.0,
+            "base": 22103.9,
+            "rate": 0.1133
+          },
+          {
+            "from": 294296.0,
+            "to": 490494.0,
+            "base": 27661.27,
+            "rate": 0.1243
+          },
+          {
+            "from": 490494.0,
+            "to": 500000.0,
+            "base": 52048.68,
+            "rate": 0.1353
+          },
+          {
+            "from": 500000.0,
+            "to": null,
+            "base": 53334.84,
+            "rate": 0.1463
+          }
+        ],
+        "semimonthly": [
+          {
+            "from": 0.0,
+            "to": 897.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 897.0,
+            "to": 2125.0,
+            "base": 9.87,
+            "rate": 0.022
+          },
+          {
+            "from": 2125.0,
+            "to": 2739.0,
+            "base": 36.89,
+            "rate": 0.044
+          },
+          {
+            "from": 2739.0,
+            "to": 3390.0,
+            "base": 63.91,
+            "rate": 0.066
+          },
+          {
+            "from": 3390.0,
+            "to": 4004.0,
+            "base": 106.88,
+            "rate": 0.088
+          },
+          {
+            "from": 4004.0,
+            "to": 20437.0,
+            "base": 160.91,
+            "rate": 0.1023
+          },
+          {
+            "from": 20437.0,
+            "to": 24525.0,
+            "base": 1842.01,
+            "rate": 0.1133
+          },
+          {
+            "from": 24525.0,
+            "to": 40874.0,
+            "base": 2305.18,
+            "rate": 0.1243
+          },
+          {
+            "from": 40874.0,
+            "to": 41667.0,
+            "base": 4337.36,
+            "rate": 0.1353
+          },
+          {
+            "from": 41667.0,
+            "to": null,
+            "base": 4444.65,
+            "rate": 0.1463
+          }
+        ],
+        "monthly": [
+          {
+            "from": 0.0,
+            "to": 1794.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 1794.0,
+            "to": 4250.0,
+            "base": 19.73,
+            "rate": 0.022
+          },
+          {
+            "from": 4250.0,
+            "to": 5478.0,
+            "base": 73.76,
+            "rate": 0.044
+          },
+          {
+            "from": 5478.0,
+            "to": 6780.0,
+            "base": 127.79,
+            "rate": 0.066
+          },
+          {
+            "from": 6780.0,
+            "to": 8008.0,
+            "base": 213.72,
+            "rate": 0.088
+          },
+          {
+            "from": 8008.0,
+            "to": 40874.0,
+            "base": 321.78,
+            "rate": 0.1023
+          },
+          {
+            "from": 40874.0,
+            "to": 49050.0,
+            "base": 3683.97,
+            "rate": 0.1133
+          },
+          {
+            "from": 49050.0,
+            "to": 81748.0,
+            "base": 4610.31,
+            "rate": 0.1243
+          },
+          {
+            "from": 81748.0,
+            "to": 83334.0,
+            "base": 8674.67,
+            "rate": 0.1353
+          },
+          {
+            "from": 83334.0,
+            "to": null,
+            "base": 8889.26,
+            "rate": 0.1463
+          }
+        ],
+        "weekly": [
+          {
+            "from": 0.0,
+            "to": 414.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 414.0,
+            "to": 981.0,
+            "base": 4.55,
+            "rate": 0.022
+          },
+          {
+            "from": 981.0,
+            "to": 1264.0,
+            "base": 17.02,
+            "rate": 0.044
+          },
+          {
+            "from": 1264.0,
+            "to": 1565.0,
+            "base": 29.47,
+            "rate": 0.066
+          },
+          {
+            "from": 1565.0,
+            "to": 1848.0,
+            "base": 49.34,
+            "rate": 0.088
+          },
+          {
+            "from": 1848.0,
+            "to": 9433.0,
+            "base": 74.24,
+            "rate": 0.1023
+          },
+          {
+            "from": 9433.0,
+            "to": 11319.0,
+            "base": 850.19,
+            "rate": 0.1133
+          },
+          {
+            "from": 11319.0,
+            "to": 18865.0,
+            "base": 1063.87,
+            "rate": 0.1243
+          },
+          {
+            "from": 18865.0,
+            "to": 19231.0,
+            "base": 2001.84,
+            "rate": 0.1353
+          },
+          {
+            "from": 19231.0,
+            "to": null,
+            "base": 2051.36,
+            "rate": 0.1463
+          }
+        ],
+        "biweekly": [
+          {
+            "from": 0.0,
+            "to": 828.0,
+            "base": 0.0,
+            "rate": 0.011
+          },
+          {
+            "from": 828.0,
+            "to": 1962.0,
+            "base": 9.11,
+            "rate": 0.022
+          },
+          {
+            "from": 1962.0,
+            "to": 2528.0,
+            "base": 34.06,
+            "rate": 0.044
+          },
+          {
+            "from": 2528.0,
+            "to": 3130.0,
+            "base": 58.96,
+            "rate": 0.066
+          },
+          {
+            "from": 3130.0,
+            "to": 3696.0,
+            "base": 98.69,
+            "rate": 0.088
+          },
+          {
+            "from": 3696.0,
+            "to": 18866.0,
+            "base": 148.5,
+            "rate": 0.1023
+          },
+          {
+            "from": 18866.0,
+            "to": 22638.0,
+            "base": 1700.39,
+            "rate": 0.1133
+          },
+          {
+            "from": 22638.0,
+            "to": 37730.0,
+            "base": 2127.76,
+            "rate": 0.1243
+          },
+          {
+            "from": 37730.0,
+            "to": 38462.0,
+            "base": 4003.7,
+            "rate": 0.1353
+          },
+          {
+            "from": 38462.0,
+            "to": null,
+            "base": 4102.74,
+            "rate": 0.1463
+          }
+        ]
+      }
+    },
+    "noCertificateDefault": "'Single with Zero withholding allowance' per DE 4's own instructions: 'If you do not provide your employer a completed DE 4, your employer must use Single with Zero withholding allowance.'"
+  },
+  "verification": "PROVEN via calculatePaycheck() against ALL SIX of EDD's own published worked examples in the source document itself: Example A (weekly $210, single, below the low-income threshold -> $0), Example B (biweekly $1,600, married with 2 regular + 1 estimated-deduction allowance -> $2.38), Example C (monthly $5,100, married, 5 allowances -> $0.82), Example D (weekly $950, HOH, 3 allowances -> $1.69), Example E (semi-monthly $2,400, married, 4 allowances, annualized-and-divided -> $4.13), Example F (monthly $4,750/annual $57,000, married, 4 allowances, annual-period-then-prorated -> $7.17) -- all reproduced to the cent. This is the most thoroughly source-verified state in this project to date, since EDD is unusual in publishing six full worked examples rather than the usual one or two. See tests/engine.test.ts, describe('California').",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "California generally conforms to federal AGI for personal income tax purposes (R&TC largely incorporates IRC wage/deferral definitions with California-specific modifications that don't touch these categories) -- the same 'starts from federal AGI, no addback for these categories' tier as Wisconsin/Ohio/Nebraska, not yet upgraded to a direct EDD/FTB quote naming each category by name the way Arizona's A-4 or Michigan's RAB-1988-27 do.",
+  "reciprocity": {
+    "$comment": "GENUINELY UNRESOLVED, disclosed rather than asserted either way. Multiple secondary sources describe California as having 'reciprocity' with Arizona, Oregon, and Virginia (consistent with Arizona's own WEC form independently naming California as one of its 4 reciprocal-adjacent states, already documented in AZ-2026.json). BUT every source found this session describes this specifically as an OTHER STATE TAX CREDIT (OSTC) mechanism -- a RETURN-level credit-allocation rule about which state's return the credit gets claimed on -- not a DE-4-level WITHHOLDING exemption certificate the way MI/WI/IN/IL's reciprocity actually works. No mechanism resembling Form W-220 (WI) or Form K-4's box 4 (KY) was found on the DE 4 form itself or in EDD's own withholding guidance. This is the SAME shape of open question already flagged for Arizona's own CA leg (AZ-2026.json's reciprocity.caLegNotIndependentlyVerified) -- now checked from California's side and still not resolved into a clean answer. NOT modelled as reciprocalStates in this file; doing so without confirming an actual withholding-exemption mechanism exists risks repeating Oregon's exact mistake (where a search summary's 'reciprocity' claim turned out, on going to the primary source, to describe something that doesn't zero withholding at all)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No California city or county withholds a local income or wage tax from an employee's paycheck. RE-VERIFIED via a second, independent search pass after the initial build (Scott asked to check specifically): still no employee-side local withholding found anywhere in the state.",
+    "sfBusinessTaxesAreNotWageWithholding": "San Francisco levies several taxes closer in SPIRIT to a 'local tax' than most cities' — a Gross Receipts Tax, a Homelessness Gross Receipts Tax, and, notably, an Administrative Office Tax (AOT) that (unlike the others) is based on PAYROLL EXPENSE rather than gross receipts, for businesses (mainly HQ/back-office operations) with no local sales to tax on a receipts basis. Confirmed directly from sf.gov: a 2026 tax-credit program gives 'administrative office businesses' a credit of '0.7% of the businesses' taxable payroll expense' — confirming the AOT's tax BASE is payroll expense, though this session could not pin down its current RATE from a primary source (a secondary-source '1.4%' figure was found but not confirmed against sf.gov directly, so it is NOT recorded here rather than risk repeating this project's own Nevada-MBT-style stale-rate mistake). Structurally, none of this matters for payroll withholding regardless of the exact rate: the AOT taxes the EMPLOYER's total payroll expense as a lump business tax, the same way Nevada's MBT or Washington's B&O tax do — it never touches an individual employee's paycheck the way NYC or Yonkers' local tax does."
+  },
+  "stateDisabilityEmployee": {
+    "rate": 0.012,
+    "wageBase": null,
+    "exemptPretax": [
+      "section125",
+      "hsa",
+      "fsa",
+      "dependent_care",
+      "commuter"
+    ],
+    "$comment": "State Disability Insurance (SDI), which ALSO funds California's Paid Family Leave -- unlike NY/NJ/CT/OR/WA, California does NOT have a separate PFL payroll tax; it's the SAME 1.3% SDI contribution, structurally the simplest of any state's disability/paid-leave combination in this project (one tax, one rate, funds both programs). Uncapped: 'Effective January 1, 2024, all wages are subject to SDI contributions' (SB 951, permanent as of the 2026 rate notice, the third consecutive uncapped year). Reuses the existing generic stateDisabilityEmployeeTax() dispatch -- no new engine code needed.",
+    "$patchMasteryTax": "MasteryTax patch: SDI is levied on UI wages (CUIC defines one wage base for UI, ETT and SDI; only the cap differs), so the cafeteria-plan exclusions this engine already applies to CA UI apply to SDI too. Upstream had [] (no exclusions), which taxed Section 125 premiums for SDI. Elective deferrals (401k etc.) stay IN SDI wages, as they do for UI."
+  },
+  "knownGaps": [
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 7000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.034,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.015,
+      "max": 0.062
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalWages": {
+    "$comment": "DE 44's own two-tier flat rate — bonuses/stock options at the higher rate, everything else DE 44 also calls supplemental (overtime pay, commissions, sales awards, severance, vacation pay) at the lower one — read directly and quoted verbatim in this file's own sources[] entry above. Both are EMPLOYER OPTIONS ('you may use either of the following two options'), not a mandate — the alternative is aggregating the supplemental wage with the current regular payment (see supplementalAggregation below) — and BOTH options apply only when the supplemental wage is 'not given to the employee at the same time as the employee's regular wages'; when it IS paid alongside regular wages, DE 44 requires aggregation ('you are required to treat the sum of the payments as regular wages'), which is exactly what happens by default when neither this config's flat method nor the aggregation config fires — the dollars simply stay in the ordinary base californiaWithholding() already computes. Modelled as a bespoke two-rate split (californiaSupplementalTax() in src/taxes/state.ts) rather than the generic single-rate rules.supplementalWages.flatRate path every other state uses, because California is the first state in this project whose own flat rate genuinely differs by WHAT the supplemental payment is, not just by whether it's paid separately.",
+    "bonusAndStockOptionRate": 0.1023,
+    "otherRate": 0.066,
+    "election": "employer_option",
+    "codeConvention": "Read off Earning.code (case-insensitive substring match for 'bonus' or 'stock') rather than a new EarningCategory, since only California's own rate table needs this finer split. An earning categorized 'supplemental' whose code doesn't match either falls into DE 44's own 'other types' catch-all at 6.6% — matching the source's own structure (a named list of examples plus 'such as', not an exhaustive enumeration), not a guess layered on top of it."
+  },
+  "supplementalAggregation": {
+    "supported": true,
+    "source": "DE 44's own Option 1: \"Compute the amount of PIT to withhold from the supplemental wage based on the combined regular wages and the supplemental wage... From that amount, subtract the PIT you withheld from the regular wages. The difference is the PIT amount you should withhold from the supplemental wages.\" Wired via this project's existing aggregateWithPriorRegularPayment() mechanism — the same shape Connecticut/Idaho/Kentucky/Maine/Missouri/Montana/Nebraska/New York already use — reading input.priorRegularPayment for the prior/current regular cheque's taxable wages and tax withheld. DE 44 says 'the current regular gross wage payment,' not the prior one; the same caller-supplied-history boundary applies regardless, since a single calculatePaycheck() call cannot see any cheque but its own."
+  },
+  "$yearNote": "2025 ruleset: EDD's 2025 Method B tables (low-income exemption, estimated deduction, standard deduction, exemption allowance credit, and the three tax-rate schedules for every payroll period), parsed from the published text. SDI 1.2% with no wage cap (2026: 1.3%). Supplemental rates unchanged (10.23% bonus/stock options, 6.6% other)."
+}

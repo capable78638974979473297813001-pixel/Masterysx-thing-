@@ -1,0 +1,191 @@
+{
+  "code": "WI",
+  "name": "Wisconsin",
+  "year": 2026,
+  "method": "bracket_phaseout_deduction",
+  "$methodComment": "Genuinely novel shape, not a copy of any state built so far: a 4-bracket progressive schedule (like federal income tax) applied to wages AFTER subtracting (1) a STANDARD DEDUCTION that phases out linearly as annual income rises — full amount below a threshold, zero above a higher threshold, different max/thresholds/phase-out-rate for single vs. married — and (2) a small flat $400-per-exemption amount. No other state modelled in this project combines a phase-out deduction with brackets; Michigan/Indiana/Illinois all reduce the base by a flat per-exemption dollar amount only, no income-based phase-out. Proven against THREE of Publication W-166's own worked examples (2 single, 1 married), reproduced to the cent — see tests/engine.test.ts, describe('Wisconsin'). Supplemental (bonus) wages are ALSO modelled (bracketSupplementalTax()) — a flat, bracket-dependent rate looked up from the employee's estimated annual GROSS salary, per W-166's own alternate method — the first state in this project where supplemental wages get their own genuinely distinct calculation rather than either a flat constant or being left unmodelled.",
+  "sources": [
+    {
+      "title": "Publication W-166, Withholding Tax Guide (Effective for Withholding Periods Beginning on or After January 1, 2022; revision 1/26)",
+      "url": "https://www.revenue.wi.gov/DOR%20Publications/pb166.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "PDF downloaded and text-extracted directly this session. The 'Alternate Method of Withholding' section (brackets, standard-deduction phase-out formula, $400 exemption amount) and all THREE of its own worked examples were read directly and used to derive and then independently verify this file's bracketPhaseoutDeduction structure. Every example reproduced to the cent using this file's own numbers — not adjusted or curve-fit to match."
+    },
+    {
+      "title": "DOR General Withholding Tax Questions (reciprocity, thresholds, WT-4)",
+      "url": "https://www.revenue.wi.gov/Pages/FAQS/pcs-with.aspx",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "fetched directly via browser"
+    },
+    {
+      "title": "DOR Tax Rates FAQ (annual Form 1 individual income tax brackets)",
+      "url": "https://www.revenue.wi.gov/Pages/FAQS/pcs-taxrates.aspx",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "fetched directly via browser. IMPORTANT: this page's bracket thresholds ($14,680/$50,480/$323,290, labelled '2025 tax is') are HIGHER than the withholding-table thresholds in Publication W-166 ($12,760/$25,520/$280,950). This is not an error or a stale page — it's a real, disclosed structural fact: Wisconsin's WITHHOLDING tables have been static since the 'Effective...January 1, 2022' baseline (W-166 itself says 'Current withholding rates continue for 2025'), while the ANNUAL RETURN brackets ARE inflation-indexed each year. The two tables serve different purposes and are correctly different, not reconciled to each other. This payroll engine uses the WITHHOLDING table (W-166), which is what an employer's paycheck-by-paycheck withholding is legally based on."
+    },
+    {
+      "title": "UCT-1-E, 2026 Wisconsin Employer's Quarterly Contribution Report (SUTA initial rates)",
+      "url": "https://dwd.wisconsin.gov/dwd/forms/ui/pdf/uct-1-e-2026.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Quoted verbatim: 'The 2026 tax rate for new employers whose Wisconsin business activity is classified as \"construction\" is 2.50%. The rate for other new employers is 3.05%. Taxes are assessed on the first $14,000 in wages paid to each employee within a calendar year.'"
+    },
+    {
+      "title": "Wis. Stat. § 71.03(13) — 'Wisconsin adjusted gross income' defined",
+      "url": "https://docs.legis.wisconsin.gov/document/statutes/71.03",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "UPGRADED this session from a general FAQ-page mention to a direct statute read: fetched docs.legis.wisconsin.gov directly. Quoted verbatim: '\"Wisconsin adjusted gross income\" means federal adjusted gross income, with the modifications prescribed in s. 71.05 (6) to (12), (19), (20), (25), (25m), and (26).' This is the primary-source basis for exemptPretax below — now the same confidence tier as Indiana's IC 6-3-1-3.5 citation (a direct statute read establishing the federal-AGI anchor), though the specific enumerated modifications in s. 71.05(6)-(12) etc. were not individually read this session to confirm they don't add back 401(k)/125/HSA-type deferrals — that remains the one-tier-below-Michigan's-RAB-1988-27 caveat."
+    },
+    {
+      "title": "2026 Tax Rate Schedule for Employers (DWD, full Schedule D reserve-percentage rate table)",
+      "url": "https://dwd.wisconsin.gov/ui/employers/taxrates.htm",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "UPGRADED this session: fetched directly, full 26-row Schedule D table read and transcribed verbatim, split by Basic + Solvency components and by payroll size (<$500,000 vs. >=$500,000) — see unemploymentInsurance.experienceRatedSchedule below. This closes the 'Schedule D table not pulled' gap from the prior session and also surfaces a real refinement not previously captured: the new-employer and new-construction rates themselves differ by payroll size (3.05%/2.50% under $500k vs. 3.25%/2.70% at or above it), not a single flat figure regardless of size as first recorded."
+    }
+  ],
+  "bracketPhaseoutDeduction": {
+    "brackets": [
+      { "from": 0, "to": 12760, "base": 0, "rate": 0.0354 },
+      { "from": 12760, "to": 25520, "base": 451.70, "rate": 0.0465 },
+      { "from": 25520, "to": 280950, "base": 1045.04, "rate": 0.0530 },
+      { "from": 280950, "to": null, "base": 14582.83, "rate": 0.0765 }
+    ],
+    "bracketsComment": "Verbatim from Publication W-166's 'Schedule of Tax Rates for Withholding' (reconstructed from the document's own worked examples, since the raw table text extracted with its columns visually shifted by the PDF layout — the SAME kind of column-alignment artifact already seen and fixed in this project's Ohio school-district data. Base amounts cross-checked: 12,760 x 3.54% = 451.70 (matches); 451.70 + 4.65%x(25520-12760) = 1045.04 (matches); 1045.04 + 5.30%x(280950-25520) = 14582.83 (matches) — internally self-consistent as well as example-verified. Same schedule applies to BOTH single and married filers; only the standard-deduction phase-out below differs by status.",
+    "exemptionAmount": 400,
+    "exemptionComment": "WT-4 Line 1: a single combined exemption count (self + spouse + dependents, similar in spirit to Michigan's single 'allowances' count), NOT tiered like Indiana's four categories or Illinois's two. $400/exemption is a flat annual amount, subtracted AFTER the standard deduction, confirmed directly in all three W-166 worked examples (1 exemption = $400 subtracted; 3 exemptions = $1,200 subtracted).",
+    "standardDeduction": {
+      "single": { "max": 6702, "phaseOutStart": 17780, "phaseOutEnd": 73630, "phaseOutRate": 0.12 },
+      "married": { "max": 9461, "phaseOutStart": 25727, "phaseOutEnd": 73032, "phaseOutRate": 0.20 }
+    },
+    "standardDeductionComment": "Full deduction (single $6,702 / married $9,461) applies when ANNUAL gross earnings are below phaseOutStart. Between phaseOutStart and phaseOutEnd, the deduction shrinks by phaseOutRate per dollar over phaseOutStart (12% for single, 20% for married — note the married rate is not simply double, it is independently published). At/above phaseOutEnd, deduction is $0. This is the genuinely novel piece of Wisconsin's formula: MI/IN/IL all use a flat per-exemption dollar figure with no income-based phase-out.",
+    "certificateFields": "input.workState.certificate.{maritalStatus ('single'|'married', defaults to 'single' if absent or any other value — head-of-household has no separate band in Publication W-166 and is mapped to 'single' by engine convention, not a WI-published rule), exemptions (a single count, WT-4 Line 1)}."
+  },
+  "supplementalComment": "NOT a single flat rate, unlike OH's 2.75% or federal's 22% — Publication W-166's own 'Approved Flat Percentages' method estimates the employee's annual GROSS salary (regular wages only, annualized), finds which of the same four brackets it falls into, and applies THAT bracket's marginal rate (3.54% / 4.65% / 5.30% / 7.65%) flatly to the supplemental payment. NOW MODELLED (upgraded this session): state.ts's bracketSupplementalTax() implements exactly this — emits a separate WI_SIT_SUPP line, using the SAME bracket table as the regular calculation but a GROSS (not net-of-deduction) lookup basis, matching the source's own 'annual gross salary' wording. Proven against a hand-derived fixture in tests/engine.test.ts that deliberately lands the regular and supplemental lines in DIFFERENT brackets, to prove the gross-vs-net lookup distinction is real and not accidental.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "FURTHER UPGRADED this session, category by category rather than left as one blanket inference. (1) HSA: EXPLICIT PRIMARY CONFIRMATION — Publication W-166 Section M, quoted verbatim: 'Effective for taxable years beginning in 2011 and thereafter, Wisconsin follows federal provisions relating to HSAs. The only difference is the imposition of penalties [on non-qualified withdrawals, which does not affect withholding-exclusion status].' This is now the SAME confidence tier as Michigan's RAB-1988-27 explicit named enumeration for section125. (2) All other categories (section125, fsa, dependent_care, 401k/403b/457/SIMPLE deferrals, commuter): Wis. Stat. 71.03(13), fetched and read directly, confirms 'Wisconsin adjusted gross income' starts from FEDERAL adjusted gross income. Its cross-referenced 'Additions' list (Wis. Stat. 71.05(6)(a), items 1-7, fetched and read directly) — the list of things WI adds BACK to federal AGI — was checked line by line and contains NO mention of any pretax deferral or cafeteria-plan category; the additions are narrow items (interest on certain bonds, non-Wisconsin-apportioned losses, pre-1965/1975/1979 capital-loss carryovers, lump-sum retirement distributions under IRC 402(d), non-itemizer charitable deductions). Publication W-166 itself, searched for every one of these category names, never mentions any of them at all — consistent with WI simply relying on federal W-2 Box 1 wages as its starting point without exception, the same conclusion the addition-list absence supports. This combination (statute + checked addition-list + guide silence) is stronger than a bare structural inference, though still one tier below an explicit per-category enumeration the way HSA now has.",
+  "localIncomeTax": {
+    "rule": "NONE. Confirmed structurally: no Wisconsin city, county, or municipality levies a local income tax — the county/city rates that DO appear on Wisconsin DOR's own rate pages are SALES tax only (70 counties have adopted a 0.5% county sales tax; the City of Milwaukee has a 2% city sales tax), a genuinely different tax entirely from payroll withholding. Flagged explicitly because that sales-tax rate table could be mistaken for a local-income-tax table at a glance.",
+    "confidence": "STRENGTHENED this session with two more independent, more authoritative corroborating sources beyond the original two: the League of Wisconsin Municipalities (the state's own municipal association) states directly in a policy document that Wisconsin 'has no local income tax'; Richland County, WI's own county government describes it more strongly as something Wisconsin 'prohibits,' not merely something no municipality has happened to adopt. This is a common shape for this kind of claim in a state without home-rule taxing authority: municipalities in Wisconsin only have the specific taxing powers ch. 66/70/77, Wis. Stats. enumerate (property tax, the specific sales-tax-adoption mechanism already documented, room tax, etc.), and income tax is simply never among them — meaning there is no single 'income tax is prohibited' statute to cite so much as a consistent ABSENCE of any enabling one, confirmed now by four independent sources (2 government, 2 secondary) rather than 2."
+  },
+  "reciprocity": {
+    "source": {
+      "title": "Publication W-166, Section I ('Wages Paid to Nonresidents Who Work in Wisconsin')",
+      "url": "https://www.revenue.wi.gov/DOR%20Publications/pb166.pdf",
+      "verifiedOn": "2026-08-13",
+      "verifiedBy": "Fetched and read directly. Quoted verbatim: 'Wisconsin has reciprocity agreements with Illinois, Indiana, Kentucky, and Michigan. Persons who employ residents of those states are not required to withhold Wisconsin income taxes from wages paid to such employees.' Independently confirmed via the separate withholding FAQ page (identical four-state list), and via THREE other states already in this project (MI, IL, IN) each independently listing WI as reciprocal on their own side — a fully symmetric 5-state-cluster cross-check with zero contradictions across any of the five states' own primary sources."
+    },
+    "reciprocalStates": ["IL", "IN", "KY", "MI"],
+    "rule": "A resident of IL/IN/KY/MI working in Wisconsin is not subject to Wisconsin withholding on those wages, provided written verification is filed with the employer. Unlike Indiana's reciprocity (which exempts state tax but NOT county tax), Wisconsin's exemption is complete — Wisconsin itself has no local income tax for the exemption to carve around, so this is a clean full exemption, not a partial one.",
+    "mechanism": "Form W-220, Nonresident Employee's Withholding Reciprocity Declaration — filed with and held by the employer.",
+    "minimalEarningsThreshold": 2000.0,
+    "minimalEarningsThresholdResolved": "RESOLVED this session (previously disclosed as an unresolved $1,500-vs-$2,000 conflict). Wisconsin DOR's own '2024 Wisconsin Tax Update' presentation (revenue.wi.gov, fetched directly) states plainly: '2023 Wis. Act 146... [changed the threshold] From $1,500 to $2,000 on employee wages attributable to Wisconsin.' The withholding FAQ page's $2,000 is the current, post-Act-146 figure; Publication W-166's '$1,500' is stale text in that one clause that was not updated when the rest of the document was refreshed for 2026 — the same 'stale prose survives a document refresh' pattern already seen in this project (Illinois's 'Mary' example, Michigan's Muskegon Heights booklet). $2,000 is authoritative. This threshold only matters for non-reciprocal-state nonresidents with minimal WI earnings; it does not affect the IL/IN/KY/MI reciprocity rule above.",
+    "knownGap": "RESOLVED: state.ts's reciprocityExemptionReason() zeroes WI_SIT (and WI_SIT_SUPP) generically when input.residenceState is IL/IN/KY/MI, proven in tests/engine.test.ts. A clean case for this generic mechanism — as this file's own rule note already says, Wisconsin has no local income tax to carve around the way Indiana's does, so a full exemption is exactly correct here, no special-casing needed."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUTA) — no employee contribution. UPGRADED this session: the full Schedule D table (statutory authority Wis. Stat. 108.18) is now on file, not just the new-employer figures.",
+    "administeredBy": "Wisconsin Department of Workforce Development (DWD)",
+    "wageBase": 14000.0,
+    "statutoryAuthority": "Wis. Stat. § 108.18 — DWD's own page states directly: 'Under Wis. Stat. § 108.18, Schedule D is in effect for 2026,' confirmed as 'the schedule with the lowest contribution rates for employers,' in effect continuously since 2018 (per DWD's own 2026 Financial Outlook document: 'Schedule D... has been in effect since 2018. This is the tenth consecutive year').",
+    "rates": {
+      "newEmployerGeneral": { "under500k": 0.0305, "at500kOrMore": 0.0325 },
+      "newEmployerConstruction": { "under500k": 0.025, "at500kOrMore": 0.027 },
+      "newRatesComment": "REFINED this session: the new-employer rate is not one flat figure — it differs by the employer's total payroll size ($500,000 threshold), each composed of a 'Basic' + 'Solvency' component. General <$500k: 2.50 Basic + 0.55 Solvency = 3.05 Total. General >=$500k: 2.50 Basic + 0.75 Solvency = 3.25 Total. Construction <$500k: 2.00 Basic + 0.50 Solvency = 2.50 Total. Construction >=$500k: 2.00 Basic + 0.70 Solvency = 2.70 Total. All four read directly off DWD's own 2026 rate table."
+    },
+    "experienceRatedSchedule": {
+      "$comment": "Full Schedule D table for experience-rated employers, keyed by the employer's account RESERVE PERCENTAGE (a computed ratio DWD tracks per employer — not something this engine has any way to derive; it would need to come from the employer's actual DWD account data). Transcribed verbatim from dwd.wisconsin.gov/ui/employers/taxrates.htm, 26 rows, each split into Basic + Solvency + Total, and each split again by payroll size (<$500,000 vs. >=$500,000). This is comprehensive-but-unusable-without-an-input-this-engine-doesn't-have — included for completeness/audit purposes, not because the engine can act on it without a reserve-percentage field nothing in types.ts currently carries.",
+      "under500kPayroll": [
+        { "reservePercent": "15% or more", "basic": 0.00, "solvency": 0.00, "total": 0.00 },
+        { "reservePercent": "10% but under 15%", "basic": 0.00, "solvency": 0.12, "total": 0.12 },
+        { "reservePercent": "9.5% but under 10%", "basic": 0.05, "solvency": 0.22, "total": 0.27 },
+        { "reservePercent": "9% but under 9.5%", "basic": 0.15, "solvency": 0.22, "total": 0.37 },
+        { "reservePercent": "8.5% but under 9%", "basic": 0.35, "solvency": 0.30, "total": 0.65 },
+        { "reservePercent": "8% but under 8.5%", "basic": 0.50, "solvency": 0.30, "total": 0.80 },
+        { "reservePercent": "7.5% but under 8%", "basic": 0.60, "solvency": 0.30, "total": 0.90 },
+        { "reservePercent": "7% but under 7.5%", "basic": 0.75, "solvency": 0.35, "total": 1.10 },
+        { "reservePercent": "6.5% but under 7%", "basic": 1.00, "solvency": 0.35, "total": 1.35 },
+        { "reservePercent": "6% but under 6.5%", "basic": 1.30, "solvency": 0.40, "total": 1.70 },
+        { "reservePercent": "5.5% but under 6%", "basic": 1.65, "solvency": 0.45, "total": 2.10 },
+        { "reservePercent": "5% but under 5.5%", "basic": 2.00, "solvency": 0.50, "total": 2.50 },
+        { "reservePercent": "4.5% but under 5%", "basic": 2.35, "solvency": 0.55, "total": 2.90 },
+        { "reservePercent": "4% but under 4.5%", "basic": 2.70, "solvency": 0.60, "total": 3.30 },
+        { "reservePercent": "3.5% but under 4%", "basic": 3.15, "solvency": 0.60, "total": 3.75 },
+        { "reservePercent": "0% but under 3.5%", "basic": 3.70, "solvency": 0.60, "total": 4.30 },
+        { "reservePercent": "Overdrawn under (1%)", "basic": 5.30, "solvency": 1.10, "total": 6.40 },
+        { "reservePercent": "(1%) but under (2%)", "basic": 5.80, "solvency": 1.10, "total": 6.90 },
+        { "reservePercent": "(2%) but under (3%)", "basic": 6.30, "solvency": 1.10, "total": 7.40 },
+        { "reservePercent": "(3%) but under (4%)", "basic": 6.80, "solvency": 1.10, "total": 7.90 },
+        { "reservePercent": "(4%) but under (5%)", "basic": 7.30, "solvency": 1.20, "total": 8.50 },
+        { "reservePercent": "(5%) but under (6%)", "basic": 7.80, "solvency": 1.25, "total": 9.05 },
+        { "reservePercent": "(6%) but under (7%)", "basic": 8.50, "solvency": 1.25, "total": 9.75 },
+        { "reservePercent": "(7%) but under (8%)", "basic": 9.25, "solvency": 1.30, "total": 10.55 },
+        { "reservePercent": "(8%) but under (9%)", "basic": 10.00, "solvency": 1.30, "total": 11.30 },
+        { "reservePercent": "(9%) or more", "basic": 10.70, "solvency": 1.30, "total": 12.00 }
+      ],
+      "at500kOrMorePayroll": [
+        { "reservePercent": "15% or more", "basic": 0.00, "solvency": 0.05, "total": 0.05 },
+        { "reservePercent": "10% but under 15%", "basic": 0.00, "solvency": 0.15, "total": 0.15 },
+        { "reservePercent": "9.5% but under 10%", "basic": 0.05, "solvency": 0.25, "total": 0.30 },
+        { "reservePercent": "9% but under 9.5%", "basic": 0.15, "solvency": 0.25, "total": 0.40 },
+        { "reservePercent": "8.5% but under 9%", "basic": 0.35, "solvency": 0.35, "total": 0.70 },
+        { "reservePercent": "8% but under 8.5%", "basic": 0.50, "solvency": 0.40, "total": 0.90 },
+        { "reservePercent": "7.5% but under 8%", "basic": 0.60, "solvency": 0.45, "total": 1.05 },
+        { "reservePercent": "7% but under 7.5%", "basic": 0.75, "solvency": 0.50, "total": 1.25 },
+        { "reservePercent": "6.5% but under 7%", "basic": 1.00, "solvency": 0.55, "total": 1.55 },
+        { "reservePercent": "6% but under 6.5%", "basic": 1.30, "solvency": 0.60, "total": 1.90 },
+        { "reservePercent": "5.5% but under 6%", "basic": 1.65, "solvency": 0.65, "total": 2.30 },
+        { "reservePercent": "5% but under 5.5%", "basic": 2.00, "solvency": 0.70, "total": 2.70 },
+        { "reservePercent": "4.5% but under 5%", "basic": 2.35, "solvency": 0.75, "total": 3.10 },
+        { "reservePercent": "4% but under 4.5%", "basic": 2.70, "solvency": 0.75, "total": 3.45 },
+        { "reservePercent": "3.5% but under 4%", "basic": 3.15, "solvency": 0.75, "total": 3.90 },
+        { "reservePercent": "0% but under 3.5%", "basic": 3.70, "solvency": 0.75, "total": 4.45 },
+        { "reservePercent": "Overdrawn under (1%)", "basic": 5.30, "solvency": 1.10, "total": 6.40 },
+        { "reservePercent": "(1%) but under (2%)", "basic": 5.80, "solvency": 1.10, "total": 6.90 },
+        { "reservePercent": "(2%) but under (3%)", "basic": 6.30, "solvency": 1.10, "total": 7.40 },
+        { "reservePercent": "(3%) but under (4%)", "basic": 6.80, "solvency": 1.10, "total": 7.90 },
+        { "reservePercent": "(4%) but under (5%)", "basic": 7.30, "solvency": 1.20, "total": 8.50 },
+        { "reservePercent": "(5%) but under (6%)", "basic": 7.80, "solvency": 1.25, "total": 9.05 },
+        { "reservePercent": "(6%) but under (7%)", "basic": 8.50, "solvency": 1.25, "total": 9.75 },
+        { "reservePercent": "(7%) but under (8%)", "basic": 9.25, "solvency": 1.30, "total": 10.55 },
+        { "reservePercent": "(8%) but under (9%)", "basic": 10.00, "solvency": 1.30, "total": 11.30 },
+        { "reservePercent": "(9%) or more", "basic": 10.70, "solvency": 1.30, "total": 12.00 }
+      ]
+    },
+    "confidence": "primary_source_confirmed for wage base, both new-employer rates (now correctly split by payroll size), and the full 26-row Schedule D experience-rated table — all read directly off DWD's own current rate page. This is now the MOST complete SUTA rate table in this project (MI's formula is more precise per-employer but has no simple published table; OH/IN/IL only have min/max range figures, not the full schedule).",
+    "knownGap": "The RATE TABLE is now fully captured, but applying it requires an employer's account reserve percentage, which nothing in this engine's types.ts carries and no code path derives — same structural gap as every other state's experience-rated SUTA in this project, just with a more complete table sitting unused behind it."
+  },
+  "verification": {
+    "regularWagesCalculation": "PROVEN, not just plausible: 5 hand-derived fixtures — including Publication W-166's own 3 worked examples (2 single, 1 married), reproduced to the cent — run through the actual calculatePaycheck() engine. See tests/engine.test.ts, describe('Wisconsin'). This is the first state in this project with a genuine progressive-bracket withholding method, and the first to have its formula independently re-derived AND cross-checked against multiple worked examples from the primary source in the same session (rather than one example, as Indiana's was).",
+    "supplementalWagesCalculation": "UPGRADED this session, also PROVEN: 2 more fixtures cover bracketSupplementalTax() — one exercising the actual bracket-lookup mechanism (deliberately constructed so the regular and supplemental lines land in different brackets, proving the gross-vs-net distinction is real), one confirming no WI_SIT_SUPP line appears when there's no supplemental income. 7 total WI fixtures, 81/81 tests passing project-wide.",
+    "notCoveredByAnyFixtures": "Reciprocity and SUTA are not exercised by any test (neither is implemented in the calculation engine — see their own knownGap entries)."
+  },
+  "knownGaps": [
+    "exemptPretax's HSA claim is now explicitly confirmed (Publication W-166 Section M, direct quote) — same tier as Michigan's RAB-1988-27. The other 8 categories are backed by a direct statute citation (Wis. Stat. 71.03(13)) plus a checked addition-list (71.05(6)(a), items 1-7, none of which touch these categories) plus the withholding guide's own silence on them — stronger than a bare structural inference, but still one tier below an explicit per-category enumeration.",
+    "localIncomeTax's 'none' claim is now corroborated by 4 independent sources (up from 2), including Wisconsin's own municipal association and a county government document describing it as something the state 'prohibits' — but still not a single specific enabling-or-prohibiting statute citation, because Wisconsin's home-rule structure makes this an absence-of-authorization claim rather than a prohibition with one clean citation.",
+    "Reciprocity is implemented generically off rules.reciprocity — Wisconsin has had it since that mechanism landed. Verified: an Illinois resident working in Wisconsin owes $0 of WI_SIT instead of $147.17.",
+    "SUTA's experience-rated Schedule D table is now fully captured (26 rows x 2 payroll-size tiers), but applying it requires an employer's account reserve percentage, which nothing in types.ts carries — the table sits complete but unusable without that input.",
+    "Head-of-household filers are mapped to the 'single' standard-deduction band by engine convention; Publication W-166 itself has no third band, so this isn't a modelling gap so much as a disclosed choice about an ambiguity in the source.",
+    "No mechanism exists for the marital-status certificate field beyond the two values Wisconsin's own formula recognizes ('single'/'married') — any other input silently maps to 'single', matching the fallback the formula itself requires but not separately validated or flagged if the caller passes something unexpected."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.0305,
+    "newEmployerRateSource": "OnPay's published 2026 state-by-state SUI table (secondary), used only where this file had no figure of its own. Cross-source tier, not primary.",
+    "experienceRange": {
+      "min": 0,
+      "max": 0.12
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "cross_source_confirmed"
+  }
+}

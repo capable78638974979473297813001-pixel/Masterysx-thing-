@@ -1,0 +1,45 @@
+{
+  "code": "TX",
+  "name": "Texas",
+  "year": 2025,
+  "method": "no_income_tax",
+  "$scopeNote": "Texas has NO state individual wage income tax -- a constitutional prohibition (Tex. Const. Art. VIII, sec. 24, added by voter referendum in 2019) requiring a statewide voter referendum before one could ever be enacted, not a mere policy choice. Never has had one.",
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of.",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Texas has no income tax to be reciprocal about, same convention as this project's other no-income-tax states (SD, TN, FL)."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Texas city or county levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory. Texas has no state-run paid family/medical leave program and no state paid-sick-leave mandate. Texas Insurance Code Chapter 1255 (enacted 2023) authorizes licensed private carriers to offer VOLUNTARY group paid-family-leave insurance to employers on an opt-in basis -- no state fund, no mandatory deduction, same voluntary-insurance-only shape as several other states in this project. Additionally, and more forcefully than most other 'no local mandate' states here: the Texas Regulatory Consistency Act (H.B. 2127) affirmatively PREEMPTS cities/counties from creating their own paid-leave or paid-sick-leave ordinances at all, and this preemption has already been enforced in court against real municipal ordinances (Austin, Dallas, San Antonio).",
+    "confidence": "cross_source_confirmed."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 9000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.0,
+      "max": 0.06
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

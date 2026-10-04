@@ -1,0 +1,206 @@
+{
+  "code": "AL",
+  "name": "Alabama",
+  "year": 2026,
+  "method": "alabama_federal_subtraction",
+  "sources": [
+    {
+      "title": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26)",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/whbooklet_0126.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded (84 pages, 10,983 lines extracted) and read directly in full for the formula/instructions sections (wage-bracket tables not transcribed -- the formula is this project's standard approach and was verified exactly against the document's own worked example: married employee ('M-2'), weekly $850 -> GI $44,200 -> standard deduction $5,000 (floor, GI>=35,500) + personal exemption $3,000 + 2 dependents x $1,000 = $11,830 total deductions (federal withholding excluded from this hand-check, see federal-dependency note below) -> taxable $32,370 -> tax $1,538.50 (2%x$1,000 + 4%x$5,000 + 5%x$26,370 = $20+$200+$1,318.50) -- every one of these intermediate figures matches the booklet's own example exactly."
+    },
+    {
+      "title": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26) -- SECOND PASS, sections the first pass did not transcribe",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/whbooklet_0126.pdf",
+      "verifiedOn": "2026-08-26",
+      "verifiedBy": "Same PDF re-downloaded and re-extracted with pdftotext -layout (10,983 lines) for the 'build an Alabama input/output that can calculate any Alabama scenario' pass. The FORMULA section was re-read line by line and every figure already in this file re-confirmed character for character (all 4 standard-deduction schedules, all 5 personal exemptions, both dependent tiers, both bracket schedules, the booklet's own M-2 $850/week example). Four rules the first pass had NOT captured were read directly and are now modelled or recorded below, each quoted verbatim in its own block: the 5% supplemental/bonus option (supplementalWages), the classes of employment Alabama excludes from withholding entirely (exemptEmploymentCategories), the $50,000 severance exemption (severancePayExemption), the nonresident 'only wages earned in Alabama' sourcing rule (nonresidentAllocation), and the federal-law exemptions Alabama recognises (federalLawExemptions).",
+      "quotes": {
+        "supplemental": "Employers may withhold state income tax from bonuses and supplemental wage payments at the rate of 5%.",
+        "noCertificateOnFile": "If an employee fails to furnish the employer with a Form A-4, the employer should withhold using zero exemptions.",
+        "roundingOption": "When computing withholding tax using the formula, the tax amount may be rounded to the nearest dollar.",
+        "safeHarbor": "Act 2025-334 created a 30-day safe harbor rule exempting Alabama earnings from taxation for out-of-state workers performing services in Alabama for 30 or fewer days in a calendar year."
+      }
+    },
+    {
+      "title": "Form A4 (Rev. 4/2025) -- Employee's Withholding Tax Exemption Certificate",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2025/04/A4_0425.pdf",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "PDF downloaded and read directly, both pages. Confirms all 5 status/exemption codes (0/S/MS/M/H) and their exact personal-exemption dollar amounts, the dependent-count line, and the additional-withholding line. Zero reciprocity language on the form."
+    },
+    {
+      "title": "USDA National Finance Center -- Alabama State Income Tax Withholding bulletin (TAXES 22-24)",
+      "url": "https://help.nfc.usda.gov/bulletins/2022/1666037747.htm?taxmap=true",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Fetched directly ('verify Alabama and Georgia, make sure it's right' pass) -- an independent federal payroll shared-service that re-derives every state's own withholding formula for its own processing, the same source class that caught a real bug in this project's Georgia file the same pass. FULL INDEPENDENT CONFIRMATION, zero discrepancies: the federal-withholding-deduction mechanism, all 4 standard-deduction step schedules (exact base/floor/threshold figures for Single/MFS/MFJ/HoH), all 5 personal exemption amounts, both dependent-allowance income tiers, and both bracket schedules (including the $110/$220 base constants) match this file's own whbooklet_0126.pdf-derived figures exactly. No 2026-specific NFC bulletin exists for Alabama (only this 2022 one, TAXES 22-24) -- reasonably read as confirmation that Alabama's formula structure has been stable and unchanged since at least 2022, not a gap in NFC's own coverage."
+    },
+    {
+      "title": "Alabama Department of Labor -- 2026 UI wage base and rate figures (cross-source)",
+      "url": "https://www2.labor.alabama.gov/",
+      "verifiedOn": "2026-08-21",
+      "verifiedBy": "Cross-source confirmed only (WebSearch synthesis, not an independent primary fetch this pass): $8,000 wage base, 2.7% new-employer rate for the first 2 full years, experienced range 0.20%-6.80%."
+    }
+  ],
+  "alabamaFederalSubtraction": {
+    "$comment": "Genuinely unusual shape among every state built in this project so far: Alabama's OWN formula (Formula For Computing Alabama Withholding Tax, read directly) subtracts the employee's ANNUAL FEDERAL WITHHOLDING TAX as one of the deduction components, alongside a status/income-dependent standard deduction, a status-based personal exemption, and an income-band-dependent per-dependent allowance -- then applies one of TWO 3-bracket schedules (M vs everyone else) to what's left. This required calling federalIncomeTax() directly inside the state function (the exact same 'compute another tax's line and read its .amount' pattern this project's own Oregon federal-subtraction method (bracketFederalSubtractionPhaseout) already established for a DIFFERENT reason -- Oregon caps the subtraction, Alabama does not) -- no calculate.ts changes needed, since federalIncomeTax/federalRuleset were already imported into state.ts.",
+    "standardDeduction": {
+      "$comment": "A STEP FUNCTION of Alabama Adjusted Gross Income (GI), not a flat figure, and the step size/threshold genuinely differs by status (confirmed directly, not assumed uniform) -- verified algebraically against the booklet's own printed Schedule of Standard Deduction Amounts table (all 4 statuses, every $500/$250 band) before trusting the formula-only implementation: 'less $25 for each $500 increment or part thereof' for Single (e.g. GI $26,000-$26,499 -> $2,975 = $3,000-$25x1, since $1 above the $25,999 threshold rounds UP to 1 increment) reproduces the table exactly, band by band.",
+      "single_0": { "base": 3000.0, "floor": 2500.0, "threshold": 25999.0, "ceiling": 35500.0, "stepAmount": 25.0, "stepIncrement": 500.0 },
+      "marriedFilingSeparately": { "base": 4250.0, "floor": 2500.0, "threshold": 12999.0, "ceiling": 17750.0, "stepAmount": 88.0, "stepIncrement": 250.0 },
+      "marriedFilingJointly": { "base": 8500.0, "floor": 5000.0, "threshold": 25999.0, "ceiling": 35500.0, "stepAmount": 175.0, "stepIncrement": 500.0 },
+      "headOfFamily": { "base": 5200.0, "floor": 2500.0, "threshold": 25999.0, "ceiling": 35500.0, "stepAmount": 135.0, "stepIncrement": 500.0 },
+      "formula": "GI <= threshold: deduct base. threshold < GI < ceiling: deduct base - stepAmount x CEIL((GI - threshold) / stepIncrement). GI >= ceiling: deduct floor. 'Part thereof' in the source's own wording confirms the CEIL (round up), not round-nearest or truncate -- verified against the table (GI=$26,000 is $1 above the $25,999 threshold, which still counts as one full $500 increment)."
+    },
+    "personalExemption": { "code0": 0.0, "codeS": 1500.0, "codeMS": 1500.0, "codeM": 3000.0, "codeH": 3000.0 },
+    "dependentAllowance": {
+      "$comment": "Per-dependent amount is a step function of GROSS INCOME, not status -- the only deduction component in this formula keyed to GI rather than filing status.",
+      "tiers": [
+        { "giLessOrEqual": 50000.0, "perDependent": 1000.0 },
+        { "giLessOrEqual": 100000.0, "perDependent": 500.0 },
+        { "giGreaterThan": 100000.0, "perDependent": 300.0 }
+      ]
+    },
+    "brackets": {
+      "$comment": "TWO schedules only -- 'M' (married filing jointly) gets double-width brackets; every other status (0/S/MS/H) shares the SAME narrower schedule. Genuinely tiny brackets compared to most states -- the 5% top rate starts at just $3,000 (non-M) or $6,000 (M) of TAXABLE income (after all deductions), so most employees with any meaningful income are taxed almost entirely at the 5% marginal rate.",
+      "nonMarried": [
+        { "from": 0, "to": 500, "base": 0, "rate": 0.02 },
+        { "from": 500, "to": 3000, "base": 10, "rate": 0.04 },
+        { "from": 3000, "to": null, "base": 110, "rate": 0.05 }
+      ],
+      "married": [
+        { "from": 0, "to": 1000, "base": 0, "rate": 0.02 },
+        { "from": 1000, "to": 6000, "base": 20, "rate": 0.04 },
+        { "from": 6000, "to": null, "base": 220, "rate": 0.05 }
+      ]
+    }
+  },
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "Confirmed directly: the withholding booklet states 'the terms employer, employee, and wages have the same meaning as defined [federally]' and separately names '401(K) - Cash or Deferred Arrangement' and '401(K) Simple' among categories addressed by that federal-conformity framing. Same confidence tier as North Carolina's IRC 3401 citation.",
+    "supplementalWages": {
+      "$comment": "PRIMARY-SOURCE CONFIRMED, 2026 booklet page 6, quoted verbatim: \"Employers may withhold state income tax from bonuses and supplemental wage payments at the rate of 5%.\" Note the word MAY -- this is an employer OPTION, not a mandate (election: employer_option, so it fires only when the caller sets input.employer.supplementalFlatRateElection.AL = true), and note the absence of any 'paid separately' condition: unlike Ohio's separately-legislated rate, Alabama's own sentence attaches no condition about whether the bonus rides on its own cheque, so appliesWhen is 'always' rather than 'paid_separately'. 5% is also exactly Alabama's own top marginal rate, which is why the flat option lands so close to the formula for anyone earning enough to be in the top bracket -- most employees, given that bracket starts at $3,000 of TAXABLE income.",
+      "flatRate": 0.05,
+      "appliesWhen": "always",
+      "election": "employer_option",
+      "source": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26), page 6.",
+      "whenNotElected": "The bonus runs through the ordinary annualize-deduct-bracket formula together with the rest of the cheque, which is what the booklet's own formula does by default. DISCLOSED LIMIT: for a bonus paid on its OWN cheque with no regular wages, that default annualizes the bonus as though it were the employee's ordinary periodic wage, which over-withholds. Alabama's booklet states no aggregate-with-the-last-regular-payment instruction (the full extracted text was searched for one this pass and none exists), so supplementalAggregation is deliberately NOT declared here rather than borrowed from another state's rule -- the 5% election is Alabama's own published answer to that case, and src/alabama/ warns when a standalone bonus cheque is calculated without it.",
+      "confidence": "primary_source_confirmed"
+    },
+    "exemptEmploymentCategories": {
+      "$comment": "PRIMARY-SOURCE CONFIRMED, 2026 booklet page 1, quoted verbatim: \"Classes of employment exempt for federal purposes are also exempt for Alabama purposes. The chief classes of exempt employment are domestic services in private homes, merchant seamen, duly ordained ministers performing duties of their ministry, and agricultural employees. (Alabama does not follow the federal requirement to withhold income tax on cash payments to agricultural employees where the payments are considered wages for social security purposes and FICA withholding is required.)\" The parenthetical is the part that matters and the part a federal-conformity assumption gets WRONG: federally, an agricultural worker's cash wages DO become subject to income tax withholding once the $150/$2,500 tests are met, and Alabama explicitly declines to follow that. Modelled as a list of this engine's own EmploymentCategory values, applied by applyExemptEmploymentCategories() in src/taxes/state.ts -- it zeroes only the AL_SIT lines, never AL_LOCAL (a municipal occupational tax is levied under separate home-rule authority, Code of Ala. Sec. 11-51-90, and nothing in the state booklet speaks for it) and never the FICA/FUTA lines (federal categories are decided federally, in taxes/federal.ts, on their own terms).",
+      "categories": ["household", "agricultural", "clergy"],
+      "notRepresentable": "Merchant seamen are named in the same sentence but this engine has no 'merchant_seaman' EmploymentCategory, so that class is NOT covered by this list. A caller with a merchant seaman on the payroll must assert certificate.exempt with certificate.exemptReason instead -- the same caller-asserted route the federal-law exemptions below take.",
+      "source": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26), page 1, 'Introduction'.",
+      "confidence": "primary_source_confirmed"
+    },
+    "severancePayExemption": {
+      "$comment": "PRIMARY-SOURCE CONFIRMED, 2026 booklet pages 1-2, quoted verbatim: \"Upon employer approval up to $50,000 of an employees compensation may be exempt from Alabama income tax if the payments are received as severance pay, unemployment compensation, termination pay or pay from a supplemental income plan received as a result of administrative downsizing.\" and \"Employers must obtain approval from the Department of Revenue before exempting severance payments from Alabama withholding tax.\" Two facts decide the shape: the exemption is a DOLLAR CAP on wages (not a rate, not a whole-paycheck flag), and it is conditional on an approval this engine cannot see. So it is caller-asserted and caller-tracked: certificate.severanceApprovalOnFile must be true, certificate.severanceExemptWages carries this period's severance in cents, and certificate.severanceExemptYtd carries how much of the $50,000 earlier cheques already used -- the same 'the caller holds the payroll history' boundary input.priorRegularPayment and every ytd field in this engine already sit on. Without the approval flag nothing is exempted, because absence is not approval.",
+      "maximumPerEmployee": 50000.0,
+      "requiresDepartmentApproval": true,
+      "appliesTo": "severance pay, unemployment compensation, termination pay, or pay from a supplemental income plan received as a result of administrative downsizing",
+      "engineNote": "Wired inside alabamaWithholding() in src/taxes/state.ts, which subtracts the (capped) exempt severance from the period's taxable wages before annualizing. Deliberately NOT applied to the AL_LOCAL municipal occupational tax: this is an exemption from ALABAMA INCOME TAX granted by the Department of Revenue, and no evidence was found that a city's own occupational tax follows it.",
+      "source": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26), pages 1-2, 'Serverance Pay Exemption' [sic -- the booklet's own typo].",
+      "confidence": "primary_source_confirmed"
+    },
+    "nonresidentAllocation": {
+      "$comment": "PRIMARY-SOURCE CONFIRMED, 2026 booklet page 2, quoted verbatim: \"An employer who is a resident of Alabama is required to withhold tax from the wages of his employees who are not residents of Alabama only to the extent that the wages are earned in Alabama. In other words, a nonresident employee of an Alabama employer should have Alabama income tax withheld only on wages earned in Alabama.\" This is the ordinary work-state sourcing rule, but Alabama states it explicitly, so the generic applyNonresidentAllocation() mechanism already in src/taxes/state.ts is enabled here: a caller who knows the split supplies certificate.nonresidentAllocationFraction and the AL_SIT line is scaled to it. Absent that fraction nothing is scaled -- the whole cheque is treated as Alabama-earned, the conservative default, since a missing fraction is not a claim that some of the work happened elsewhere.",
+      "basis": "services_in_state",
+      "form": "the booklet's own 'Employers Required To Withhold' sourcing rule",
+      "orderingNote": "Runs AFTER the 30-day safe harbor: an employee already exempt under Act 2025-334 stays at $0 however the fraction is set.",
+      "source": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26), page 2, 'Employers Required To Withhold'.",
+      "confidence": "primary_source_confirmed"
+    },
+    "federalLawExemptions": {
+      "$comment": "Four federal statutes Alabama's own booklet (page 1) says it recognises as exemptions from ALABAMA withholding. Every one of them turns on a fact no paycheck contains -- what the employee earned last year, which states a route crosses, whose military orders sent a spouse here -- so none is derivable and none is modelled as its own mechanism. They are recorded here so a caller can see WHICH exemption they are asserting when they set certificate.exempt, and certificate.exemptReason carries that assertion into the line's own detail text instead of the generic wording. A deliberate boundary, not a gap: the engine computes the consequence, the caller adjudicates eligibility, exactly as with every exemption certificate in this project.",
+      "exemptions": [
+        { "id": "air_carrier", "law": "Public Law 91-569", "rule": "Employees of air carriers are exempt from Alabama withholding if the employee is not a resident of Alabama, or did not earn over 50% of their income in Alabama the previous year." },
+        { "id": "interstate_carrier", "law": "Public Law 101-322", "rule": "Employees of an interstate railroad and employees of an interstate motor carrier who work in two or more states are taxed based on their state of residency." },
+        { "id": "water_carrier", "law": "Public Law 106-489", "rule": "Employees of a water carrier -- pilot, master, officer or crewman -- who operate in the navigable waters of more than one state are taxed based on their state of residency." },
+        { "id": "military_spouse", "law": "Public Law 111-97 (Military Spouses Residency Relief Act)", "rule": "A nonresident employee whose spouse is an active member of the US Armed Services present in Alabama in compliance with military orders is exempt. Form A4-MS plus documentation must be on file with the employer." }
+      ],
+      "source": "Withholding Tax Tables and Instructions for Employers and Withholding Agents (Rev. 01/26), page 1, 'Introduction'.",
+      "confidence": "primary_source_confirmed"
+    },
+    "overtimeExemption": {
+      "$comment": "A rule that is EXPIRED, recorded because its absence is the answer and because a payroll system written in 2024 or 2025 would carry the opposite behaviour. Act 2023-421 (as amended by Act 2024-437) excluded overtime pay for hourly and salaried non-exempt employees from Alabama income tax from 2024-01-01 -- and it ended. The Department's own notice states: \"The Alabama state income tax exemption applicable to overtime wages ends on June 30, 2025\" and \"After this date, any amounts paid/received as overtime compensation are subject to income tax.\" So for every 2026 check date this file governs, overtime is ORDINARY TAXABLE WAGES with no special treatment -- which is exactly what this engine does, by doing nothing. No code, no flag, no earning category: recorded here so the next reader does not have to re-derive why there isn't one.",
+      "status": "expired",
+      "expiredOn": "2025-06-30",
+      "treatmentFrom2025_07_01": "fully taxable, no exclusion, no separate W-2 box 14 reporting for 2026 wages",
+      "source": {
+        "title": "Alabama Department of Revenue -- NOTICE: Overtime Exemption Ends June 30, 2025",
+        "url": "https://www.revenue.alabama.gov/notice-overtime-exemption-ends-june-30-2025/",
+        "verifiedOn": "2026-08-26",
+        "verifiedBy": "Fetched directly this pass; both sentences above quoted verbatim from the notice."
+      },
+      "confidence": "primary_source_confirmed"
+    },
+    "noCertificateOnFileDefault": {
+      "$comment": "STATE-STATED, not an engine convention borrowed from elsewhere -- 2026 booklet page 2, quoted verbatim: \"If an employee fails to furnish the employer with a Form A-4, the employer should withhold using zero exemptions.\" alabamaWithholding() already defaults certificate.alabamaExemptionCode to '0' and dependents to 0 when no certificate is supplied, which IS zero exemptions. Recorded so that default reads as Alabama's own instruction rather than a guess.",
+      "code": "0",
+      "dependents": 0,
+      "confidence": "primary_source_confirmed"
+    },
+    "roundingOption": {
+      "$comment": "2026 booklet page 2: \"When computing withholding tax using the formula, the tax amount may be rounded to the nearest dollar.\" An OPTION, so it is not baked in -- a caller who wants it sets input.roundToWholeDollars, the engine-wide flag calculate.ts already applies. Left off by default because cent-level withholding is what this engine emits everywhere else and what ties out against a penny-accurate quarterly return.",
+      "permitted": true,
+      "default": false,
+      "confidence": "primary_source_confirmed"
+    },
+  "reciprocity": {
+
+    "exemptWhenDaysWorkedAtMost": 30,
+
+    "$dayCountComment": "Alabama exempts a nonresident who works FEWER THAN 31 days a year in Alabama, so the exemption holds at 30 days and stops at 31. Recorded here as the threshold the engine tests; see this file's own nonresidentThirtyOneDayRule block for the rule as published.",
+    "$comment": "CHECKED, not assumed absent: the full 10,983-line booklet and Form A4 were both searched for 'reciprocal'/'reciprocity' and returned zero matches. Alabama has NO bilateral reciprocity agreement with any state.",
+    "reciprocalStates": []
+  },
+  "outOfStateWorkNote": "CONFIRMED directly, with the booklet's own worked example: an AL-resident employee working in a state WITH its own income tax does not get AL withholding, because the employer is already withholding that other state's tax -- 'If an employer and an employee are both residents of Alabama and the employee is working in Georgia, the employer would not be required to withhold Alabama income tax because he is withholding Georgia income tax.' But if the OTHER state has no income tax, AL withholding IS still required: 'If the same employee were working in Florida, the employer would be required to withhold Alabama income tax... because Florida has no individual income tax.' Same shape as North Carolina's and South Carolina's own default sourcing rules, and equally consistent with this engine's one-state-per-call architecture -- no special code needed.",
+  "nonresidentThirtyOneDayRule": {
+    "$comment": "Act 2025-334's 30-Day Safe Harbor Rule, re-read verbatim from the 2026 booklet page 2 this pass: \"Act 2025-334 created a 30-day safe harbor rule exempting Alabama earnings from taxation for out-of-state workers performing services in Alabama for 30 or fewer days in a calendar year. Until the 30 day threshold is exceeded, employees and employers will continue to pay and withhold to their state of residence if a state income tax exists. If the nonresident employment is 31 or more days in Alabama within the calendar year the income and withholdings are taxable and reportable to Alabama.\" A DAY-COUNT threshold, not a dollar one -- the shape this engine could not represent until nonresidentDayCountReason() in src/taxes/state.ts was built for it.",
+    "act": "Act 2025-334",
+    "threshold": "30 or fewer days worked in Alabama in the calendar year",
+    "status": "MODELLED",
+    "engineNote": "nonresidentDayCountReason() reads certificate.daysWorkedInStateThisYear against this file's reciprocity.exemptWhenDaysWorkedAtMost (30), and applies only when input.residenceState names a state other than AL. A MISSING day count still withholds -- absence is not a claim of few days -- so a caller who does not track days is never accidentally granted the safe harbor. Alabama attaches no further conditions this engine cannot see, so dayCountRequiresCallerEligibility is deliberately NOT set here (unlike Illinois/Indiana/Montana, whose own statutes do attach such conditions).",
+    "remainingLimit": "The day count itself is the caller's to keep. This engine sees one paycheck and cannot accumulate days across a year; it applies the threshold to whatever count it is handed. Same boundary as every ytd field in this project."
+  },
+  "localOccupationalTax": {
+    "$comment": "Alabama has real local occupational/license taxes, structurally similar to Kentucky's -- explicitly out of scope of the withholding booklet itself ('State unemployment tax and local occupational taxes are not [covered by this guide]... to obtain information concerning local occupational [taxes], call...'). WIRED (2026-08-25 pass, right after West Virginia): see data/local/AL-municipalities-2026.json (25 municipalities, sourced from the Alabama League of Municipalities' own tax-rate survey) and alabamaLocalTax() in src/taxes/state.ts. Proven via tests/engine.test.ts, describe('Alabama') > 'Municipal Occupational Tax (AL_LOCAL)'.",
+    "pointer": "data/local/AL-municipalities-2026.json",
+    "correction": "CORRECTED this same pass: the previous version of this note claimed 'Jefferson County (where Birmingham sits) ALSO levies its own separate county-level occupational tax, meaning some employees are subject to both a city AND a county layer' -- this was WRONG. The Jefferson County occupational tax was struck down by the Alabama Supreme Court in March 2011 (the Alabama Legislature had actually repealed its enabling statute back in 1999 and never validly replaced it) and does not currently exist -- primary-source confirmed via the Alabama State Comptroller's own 2011-03-23 memo instructing all payroll offices to stop withholding it immediately. No stacking exists; Birmingham's employees owe only the city's own 1%. Full detail in AL-municipalities-2026.json's own jeffersonCountyOccupationalTax block.",
+    "knownGap": "The 25-municipality list is ALM-survey-sourced (cross_source_confirmed, one tier below primary), not independently verified against each city's own ordinance -- see data/local/AL-municipalities-2026.json's own confidence/knownGaps fields, and note that list was re-fetched and found unchanged on 2026-08-26. Work-location-based only; no evidence was found that any Alabama municipality also taxes based on residence the way Ohio's cities do, so this engine only ever reads certificate.workCity, never a residence-based Alabama local field."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE for the private sector. The Alabama Public Employee Paid Parental Leave Act (Act 2025-81) extends paid parental leave only to state employees, K-12 public educators, and community college employees -- a public-employee-only benefit, same out-of-scope convention this project uses for West Virginia's SB 114.",
+    "confidence": "cross_source_confirmed."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "Alabama Department of Labor",
+    "wageBase": 8000.0,
+    "newEmployerRate": 0.027,
+    "newEmployerRateNote": "Applies for the employer's first 2 full years of measurable unemployment experience.",
+    "experiencedEmployerRateRange": [0.002, 0.068],
+    "confidence": "cross_source_confirmed only, not independently fetched from labor.alabama.gov this pass.",
+    "knownGap": "MODELLED. stateUnemploymentEmployerTax() in src/taxes/state.ts emits AL_SUI_ER from the normalized suiEmployer block below -- the employer's own assigned rate when the caller supplies input.employer.stateUnemploymentRate.AL, otherwise Alabama's published 2.7% new-employer rate, capped at the $8,000 wage base against input.ytd.stateUnemployment.AL. STILL OPEN: whether Alabama's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) -- elective deferrals are commonly included in the unemployment base while excluded from income tax. Also still cross-source only: the wage base and rate range were never independently fetched from labor.alabama.gov."
+  },
+  "knownGaps": [
+    "SUPPLEMENTAL WAGES, standalone bonus cheque: Alabama publishes a 5% flat option (supplementalWages above) but no aggregate-with-the-prior-regular-payment instruction, and none was invented here. An employer who does NOT elect the 5% method and pays a bonus on its own cheque gets the ordinary formula, which annualizes that bonus as if it were the employee's regular periodic wage and therefore over-withholds. src/alabama/ emits an explicit warning for exactly this combination rather than letting it pass silently.",
+    "MERCHANT SEAMEN: named by the booklet among Alabama's exempt classes of employment, but this engine has no such EmploymentCategory, so exemptEmploymentCategories cannot cover it. Reachable only via the caller-asserted certificate.exempt route, same as the four federal-law exemptions.",
+    "The four federal-law exemptions (air carrier / interstate carrier / water carrier / military spouse) are RECORDED, not adjudicated -- every one turns on facts outside a paycheck. The caller asserts certificate.exempt plus certificate.exemptReason; the engine never decides eligibility.",
+    "The $50,000 severance exemption is caller-tracked: this engine holds no running total of how much of the cap an employee has already used, so certificate.severanceExemptYtd must come from the caller's own payroll history. It also requires certificate.severanceApprovalOnFile, since the Department's approval is not something a paycheck can evidence.",
+    "Wage-bracket tables (pages 8-84 of the booklet) are not transcribed -- this file implements the FORMULA method, verified against the booklet's own worked example. The booklet itself states the two methods' results 'will differ slightly' because of each one's own rounding convention, so a caller reconciling against a table-based system should expect cent-level differences, not a defect.",
+    "Form A4-MS (nonresident military spouse) is reproduced inside the booklet and its conditions are recorded under federalLawExemptions, but the form's own seven true/false eligibility questions are not modelled -- the caller adjudicates them and sets certificate.exempt.",
+    "Employer-side UC figures ($8,000 base, 2.7% new-employer, 0.20%-6.80% experienced) remain cross-source confirmed rather than independently fetched from labor.alabama.gov -- see unemploymentInsurance.knownGap."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 8000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.002,
+      "max": 0.068
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

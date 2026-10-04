@@ -1,0 +1,58 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "HI",
+    "name": "Hawaii"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 16.0,
+    "hourlyCents": 1600,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All covered employers.",
+    "note": "Fourth step of Act 114 (2022): $12.00 (2022-10-01), $14.00 (2024), $16.00 (2026), $18.00 (2028). Hawaii's $2.00 jump on 2026-01-01 was the largest single-year increase of any state this year."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 14.75,
+    "cashWageCents": 1475,
+    "maxTipCredit": 1.25,
+    "maxTipCreditCents": 125,
+    "tippedEmployeeThreshold": null,
+    "note": "Hawaii's tip credit is $1.25/hr AND is conditional: it may be taken only if the employee's combined wages plus tips are at least $7.00/hr MORE than the applicable minimum wage. An employee whose tips are thin fails that test and is owed the full $16.00 in cash."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": false,
+    "note": "Act 114 is a fixed schedule with no CPI escalator; after 2028 the rate is flat until the legislature acts."
+  },
+  "scheduledChanges": [
+    {
+      "hourly": 18.0,
+      "hourlyCents": 1800,
+      "note": "Final legislated step of Act 114 (2022).",
+      "effectiveDate": "2028-01-01"
+    }
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

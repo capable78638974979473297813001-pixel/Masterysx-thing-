@@ -1,0 +1,69 @@
+{
+  "code": "NH",
+  "name": "New Hampshire",
+  "year": 2026,
+  "method": "no_income_tax",
+  "$scopeNote": "New Hampshire has NO state income tax of any kind for 2026. New Hampshire has never taxed wages/salaries directly. Its only individual-income tax, the Interest & Dividends (I&D) Tax, was phased down (5% -> 4% for periods ending on/after 2023-12-31 -> 3% for periods ending on/after 2024-12-31) and fully repealed effective 2025-01-01 -- so 2026 is unambiguously a $0 year, not merely 'still phasing out.' No local income tax anywhere (New Hampshire does not permit municipalities to levy one -- towns/cities fund themselves through property tax instead). No employee-paid unemployment, disability, or mandatory paid-leave program: Granite State Paid Family Leave is explicitly VOLUNTARY (the nation's first state-sponsored voluntary plan) for both employers and employees, capped at $5/week for an individual buying coverage directly -- not a payroll tax with a fixed statewide rate the way NJ/NY/CT's mandatory PFML programs are, so not engine-consumed, same convention as Vermont's VT-FMLI.",
+  "sources": [
+    {
+      "title": "NH Department of Revenue Administration -- Interest & Dividends Tax",
+      "url": "https://www.revenue.nh.gov/taxes-glance/interest-dividends-tax",
+      "verifiedOn": "2026-09-28",
+      "verifiedBy": "Fetched directly (via a remote fetcher; this repo's sandbox is still blocked). Verbatim: 'The State of New Hampshire does not have an income tax on an individual's reported W-2 wages. The tax was assessed at 5% for tax periods ending prior to December 31, 2023, 4% for taxable periods ending on or after December 31, 2023, and 3% for taxable periods ending on or after December 31, 2024. The I&D Tax was repealed for taxable periods beginning after December 31, 2024.' Primary confirmation of what the McLane Middleton alert below said."
+    },
+    {
+      "title": "NH Employment Security -- Tax Rate Chart (quarterly Fund Balance Reductions) and Employer Claims & Taxes",
+      "url": "https://www.nhes.nh.gov/employers/employer-claims-taxes/tax-rate-chart",
+      "verifiedOn": "2026-09-28",
+      "verifiedBy": "Fetched directly (remote fetcher). Employer Claims & Taxes: 'The New Hampshire new employer tax rate is 2.7 % Minus any Fund Balance Reduction in place for the applicable quarter' on 'the first $14,000 in annual wages'. Tax Rate Chart: Fund Balance Reduction 1.00% for 2026-1 and 2026-2 (2.7% - 1.0% = 1.7%). As of 2026-09-28 the chart's latest entry is still 'Effective 2026-Q2' -- NHES itself has not published a 2026-Q3 figure."
+    },
+    {
+      "title": "NH Interest and Dividends Tax Repeal — McLane Middleton client alert",
+      "url": "https://www.mclane.com/insights/nh-interest-and-dividends-tax-repealed-as-of-january-1/",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly. Verbatim: 'Starting January 1, 2025, New Hampshire taxpayers are no longer subject to the New Hampshire Interest & Dividends Tax.' Also gives the phase-down history (5% pre-2023, 4% for periods ending on/after 2023-12-31, 3% for periods ending on/after 2024-12-31, 0% from 2025-01-01). Used a New Hampshire-based LAW FIRM's own published client alert rather than a generic tax-content site, one tier below a direct revenue.nh.gov fetch (see note below) but a step above an anonymous secondary source.",
+      "note": "Follow-up verification pass (Scott: 'verify nh') tried harder to reach a genuine primary source and hit a wall documented here rather than silently retried into a false confidence: revenue.nh.gov (repeal press release, the general I&D Tax overview page, AND the specific TIR 2025-001 PDF directly linked from search results) all return the SAME Akamai edge-level 'Access Denied' regardless of URL or file type — a CDN block, not a bot-check, and the curl-with-browser-User-Agent workaround that succeeded for Vermont's governor.vermont.gov and law.justia.com does NOT bypass it. nhes.nh.gov (a DIFFERENT NH.gov subdomain, tried on the theory it might sit behind different infrastructure) hit the identical Akamai block. legiscan.com (the actual enacted-bill-text host, not a NH state site at all) hit a DIFFERENT block (a Cloudflare JS challenge page). Four independent domains, three distinct access methods, zero successes — a genuine infrastructure barrier, not an under-effort. Landed on: 3 independent secondary tax-guide sources (visaverge, countrytaxcalc, netchex) plus a NH-based LAW FIRM's own client alert (McLane Middleton, cited above) all agree on the 2025-01-01 effective date with zero dissent, and a legiscan search-result snippet (not fetched directly, only its indexed summary) corroborates that NH HB2 (2023) accelerated the repeal from an originally-scheduled 2027 to 2025 — treated as sufficient corroboration given genuinely exhausted primary-access options, disclosed as a real access limitation rather than silently presented as equivalent to a direct government fetch."
+    },
+    {
+      "title": "New Hampshire's Paid Family and Medical Leave Plan — Ogletree Deakins",
+      "url": "https://ogletree.com/insights-resources/blog-posts/new-hampshires-paid-family-and-medical-leave-plan-breaking-ground-in-the-granite-state/",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Fetched directly. Verbatim: 'the Granite State Paid Family Leave Plan[] is the nation's first and only voluntary, state-sponsored paid leave plan' and 'premium payments are capped at $5 per week or $260 annually' for an individual purchasing coverage directly. Employers with 50+ employees may opt in; if they don't, employees may buy individual coverage. No fixed statewide payroll-tax rate exists (unlike NJ/NY/CT PFML), so this is context-only, not engine-consumed — same convention as Vermont's VT-FMLI, which is voluntary for the identical reason."
+    },
+    {
+      "title": "New Hampshire local municipal income tax and UI — cross-source confirmation",
+      "url": "https://www.rippling.com/blog/payroll-tax-in-new-hampshire",
+      "verifiedOn": "2026-08-16",
+      "verifiedBy": "Cross-source confirmed (search-engine synthesis of this and other secondary sources, not independently fetched and read in full this session): New Hampshire does not permit municipalities to levy a local income tax, and unemployment insurance is funded entirely by employer payroll tax with no employee contribution — context-only, not engine-consumed, same convention as every other state's employer-only UI in this project. 2026 new-employer rate 1.7%, wage base $14,000 (recorded for completeness, not independently primary-verified)."
+    },
+    {
+      "title": "NHES WebTax -- Trust Fund Reductions notice (available thru 2026-Q3)",
+      "url": "https://www2.nhes.nh.gov/webtax/indexSecPg.jsp",
+      "verifiedOn": "2026-09-29",
+      "quote": "Trust Fund Reductions Available thru 2026-Q3 ... 1.0% reduction to tax rate of positive rated employers in good standing (Schedule I) effective with the tax due for wages paid each quarter thru Q3-2026."
+    }
+  ],
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable rather than 'checked, none found' — New Hampshire has no income tax to be reciprocal about, so no resident-vs-nonresident withholding question can arise here at all. reciprocalStates left structurally empty for consistency with every other state file's shape."
+  },
+  "knownGaps": [
+    "RESOLVED 2026-09-28: revenue.nh.gov and nhes.nh.gov were reached through a remote fetcher (this sandbox is still blocked), and both the I&D repeal and the UI new-employer rate/wage base are now primary-sourced (see sources[0] and [1]).",
+    "The 2026-Q4 Fund Balance Reduction (check dates from 2026-10-01) is decided by NHES from the Q3 trust-fund balance and was not yet published on 2026-09-29. Until it is, those check dates use 1.7% with an 'inferred' notice; update newEmployerRateConfirmedThrough when NHES posts Q4.",
+    "RE-CHECKED 2026-10-01: NHES's Tax Rate Chart (https://www.nhes.nh.gov/employers/employer-claims-taxes/tax-rate-chart, fetched live) still ends at 2026-Q2 (Fund Balance Reduction 1.00%, inverse rate surcharge 0.50%); neither 2026-Q3 nor 2026-Q4 has been posted. Check dates from 2026-07-01 therefore still use 1.7% with the 'inferred' notice. Update newEmployerRateConfirmedThrough when NHES posts."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 14000,
+    "wageBaseSource": "NHES Employer Claims & Taxes (fetched 2026-09-28): 'the first $14,000 in annual wages paid to each employee'.",
+    "newEmployerRate": 0.017,
+    "newEmployerRateSource": "PRIMARY 2026-09-28 (NHES, see sources): new-employer rate = 2.7% minus the quarter's Fund Balance Reduction; FBR 1.00% for 2026-Q1 and Q2 -> 1.7%. NHES's own chart has no 2026-Q3 or Q4 entry yet (checked 2026-09-28), so the rate is confirmed through 2026-06-30 only; checks dated after that use 1.7% with an 'inferred' notice (newEmployerRateConfirmedThrough) until NHES publishes. Earlier history of this field: nhes.nh.gov returned 403 to every direct attempt from this repo's sandbox (2026-09-05/06). EXTENDED 2026-09-29: NHES's WebTax notice (www2.nhes.nh.gov/webtax, shown to filers behind the filing agreement; text as indexed from that page): 'Trust Fund Reductions Available thru 2026-Q3 -- Pursuant to RSA 282-A:82 the Trust Fund maintained a balance of at least $350 million for an entire quarter resulting in a 1.0% reduction to tax rate of positive rated employers in good standing (Schedule I) effective with the tax due for wages paid each quarter thru Q3-2026.' So 1.7% is confirmed through 2026-09-30. Q4 (from 2026-10-01) is set by NHES from the Q3 fund balance and had not been published as of 2026-09-29.",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.075
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed through 2026-06-30 (NHES); later quarters await NHES's own publication",
+    "newEmployerRateConfirmedThrough": "2026-09-30"
+  }
+}

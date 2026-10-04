@@ -1,0 +1,55 @@
+{
+  "code": "AK",
+  "name": "Alaska",
+  "year": 2025,
+  "method": "no_income_tax",
+  "exemptPretax": [],
+  "exemptPretaxComment": "Not applicable -- no income tax exists for any pretax category to reduce the base of. Added for schema consistency with this project's other no-income-tax states (comprehensive-audit pass).",
+  "reciprocity": {
+    "reciprocalStates": [],
+    "note": "Not applicable -- Alaska has no income tax to be reciprocal about, same convention as this project's other no-income-tax states. Added for schema consistency (comprehensive-audit pass) -- this field was previously missing entirely from this file, unlike every other no-income-tax state's file."
+  },
+  "stateUnemploymentEmployee": {
+    "rate": 0.005,
+    "wageBase": 51700.0,
+    "$comment": "Wired via the existing generic stateUnemploymentEmployeeTax() mechanism (already used for PA/NJ) -- zero new code. Alaska is one of only three states in this project (with PA and NJ) that taxes the EMPLOYEE for unemployment insurance, not just the employer. Flat 0.50% for every employer regardless of the employer's own experience-rated class -- confirmed directly from the full 21-class rate table, not just the headline figure."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Alaska municipality or borough levies a local income/wage tax.",
+    "confidence": "cross_source_confirmed; not independently verified against a specific municipal-authority statute this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory. The Alaska Family Leave Act (50+ employees) provides only unpaid, job-protected leave -- not a payroll deduction. A 2023-2024 legislative proposal (HB 100) to create a paid program was not enacted.",
+    "confidence": "cross_source_confirmed via search synthesis, not independently fetched from a specific enacted statute this pass."
+  },
+  "$yearNote": "2025 ruleset, built 2026-09-28 for prior-year corrections and retro pay. Only the fields the engine computes from were re-sourced for 2025 (suiEmployer, stateUnemploymentEmployee). Descriptive fields (localIncomeTax.rule, reciprocity, paid-leave notes) are carried from the 2026 file; none of them changed between the two years.",
+  "suiEmployer": {
+    "wageBase": 51700,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.015,
+    "newEmployerRateSource": "Alaska DOLWD Employment Security Tax FAQ: 2025 wage base $51,700, standard rate 1.50%, employee rate 0.50% (the same 'standard rate' basis the 2026 file uses; DOL's table lists a 1.00% base rate before industry adjustment).",
+    "experienceRange": {
+      "min": 0.01,
+      "max": 0.054
+    },
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 -- experience-rated minimum and maximum, excluding surcharges and non-UI assessments (informational; the engine does not read it)",
+    "employerSuppliedRateRequired": false,
+    "confidence": "primary_source_confirmed"
+  },
+  "sources": [
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    },
+    {
+      "title": "Alaska DOLWD -- Employment Security Tax FAQ (wage base and rates by year)",
+      "url": "https://www.labor.alaska.gov/estax/faq/w1.htm",
+      "verifiedOn": "2026-09-28",
+      "quote": "2025 $51,700 1.50% 0.50% $258.50"
+    }
+  ],
+  "knownGaps": [
+    "Carried-over descriptive notes aside, this 2025 file models only employer unemployment (and, where the state has them, the employee unemployment, paid-leave, long-term-care and Seattle payroll-expense lines). Anything the 2026 file lists as unmodelled is unmodelled here too."
+  ]
+}

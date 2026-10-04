@@ -1,0 +1,56 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "CA",
+    "name": "California"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 16.9,
+    "hourlyCents": 1690,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "All employers, regardless of size -- California's 25-or-fewer-employee tier ended after 2022.",
+    "note": "Labor Code 1182.12 annual CPI adjustment, capped at 3.5%."
+  },
+  "tipped": {
+    "tipCreditAllowed": false,
+    "cashWage": 16.9,
+    "cashWageCents": 1690,
+    "maxTipCredit": 0.0,
+    "maxTipCreditCents": 0,
+    "tippedEmployeeThreshold": null,
+    "note": "This state allows NO tip credit: the full state minimum wage must be paid in cash before any tips. Labor Code 351 -- tips are the sole property of the employee and may never be credited against the minimum wage. California has the largest tipped-worker exposure of any no-tip-credit state."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W, capped at 3.5%",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "knownGaps": [
+    "California has more local minimum wage ordinances than the rest of the country combined -- 38 of them, in local/CA-local-2026.json.",
+    "California also runs two SECTORAL minimum wages well above the state rate (fast food, health care) -- see sectoral/CA-sectoral-2026.json.",
+    "Exempt-employee salary thresholds (2x the state minimum wage annualized) and the separate computer-professional and licensed-physician exemptions are derived from, but not the same as, this rate; they are out of scope here."
+  ],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    }
+  ],
+  "confidence": "primary_source_confirmed"
+}

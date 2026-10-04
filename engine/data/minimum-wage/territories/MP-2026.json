@@ -1,0 +1,54 @@
+{
+  "jurisdiction": {
+    "level": "territory",
+    "code": "MP",
+    "name": "Commonwealth of the Northern Mariana Islands"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasOwnMinimumWage": false,
+  "standard": {
+    "hourly": 7.25,
+    "hourlyCents": 725,
+    "effectiveFrom": "2018-09-30",
+    "coverage": "FLSA-covered employers.",
+    "note": "CNMI's own phase-in under P.L. 110-28 reached the full federal $7.25 on 2018-09-30; it now simply tracks the federal floor."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.13,
+    "cashWageCents": 213,
+    "maxTipCredit": 5.12,
+    "maxTipCreditCents": 512,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Federal figures."
+  },
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "id": "dol-consolidated",
+      "title": "U.S. DOL Wage and Hour Division -- Consolidated Minimum Wage Table",
+      "url": "https://www.dol.gov/agencies/whd/mw-consolidated",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched this session as a THIRD cross-check on the two tables above (which state is above / at / below the federal floor, plus the Montana, New Jersey, New York, Ohio and Oregon sub-rates)."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

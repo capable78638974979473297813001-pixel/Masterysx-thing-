@@ -1,0 +1,57 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "NV",
+    "name": "Nevada"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 12.0,
+    "hourlyCents": 1200,
+    "effectiveFrom": "2024-07-01",
+    "coverage": "All employers. Nevada's two-tier system (a lower rate for employers offering qualifying health benefits) was ABOLISHED by the 2022 constitutional amendment -- a table still carrying two Nevada rates is out of date.",
+    "note": "Nev. Const. art. 15 sec. 16 as amended by Question 2 (2022)."
+  },
+  "tipped": {
+    "tipCreditAllowed": false,
+    "cashWage": 12.0,
+    "cashWageCents": 1200,
+    "maxTipCredit": 0.0,
+    "maxTipCreditCents": 0,
+    "tippedEmployeeThreshold": null,
+    "note": "This state allows NO tip credit: the full state minimum wage must be paid in cash before any tips. Nevada has never permitted a tip credit."
+  },
+  "youthAndTraining": [],
+  "variants": [],
+  "indexation": {
+    "indexed": false,
+    "note": "Question 2 (2022) REPEALED Nevada's annual cost-of-living adjustment effective 2024-07-01, alongside abolishing the two tiers. The rate now moves only by constitutional amendment, or upward if the federal rate ever exceeds $12.00. This is why Nevada has been flat at $12.00 through two July cycles while its neighbours indexed."
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "Nevada Question 2, Minimum Wage Amendment (2022) -- text and effect",
+      "url": "https://ballotpedia.org/Nevada_Question_2,_Minimum_Wage_Amendment_(2022)",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session: the amendment set a flat $12.00 for all employers from 2024-07-01 and removed the constitution's own annual cost-of-living adjustment provisions."
+    }
+  ],
+  "confidence": "primary_source_confirmed",
+  "knownGaps": []
+}

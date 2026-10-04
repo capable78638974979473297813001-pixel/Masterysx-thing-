@@ -1,0 +1,649 @@
+{
+  "$comment": "All 92 Indiana counties, each levying a mandatory local income tax (LIT) -- unlike Michigan (24-city closed list) or Ohio (municipality-by-municipality), EVERY Indiana address falls inside exactly one of these 92 rates. There is no zero-rate default case. Rates transcribed directly from the Indiana Department of Revenue's own semi-annual Departmental Notice #1, not a secondary aggregator.",
+  "year": 2026,
+  "asOf": "2026-10-01",
+  "effectiveFrom": "2026-01-01",
+  "source": {
+    "title": "Departmental Notice #1 -- How to Compute Withholding for State and County Income Tax (R46 / 01-26)",
+    "url": "https://www.in.gov/dor/files/dn01.pdf",
+    "verifiedOn": "2026-08-12",
+    "verifiedBy": "PDF downloaded and text-extracted directly this session; all 92 county rows transcribed programmatically from the extracted table, not hand-typed or AI-recalled. Cross-checked: county codes form a contiguous 1-92 sequence with no gaps or duplicates, and the 6 counties the document itself marks changed-since-Oct-1-2025 (Carroll, Grant, Greene, Howard, Shelby, Union) were independently confirmed by the asterisk-parsing logic, not asserted. INDEPENDENTLY RE-VERIFIED 2026-08-12: the PDF was re-downloaded fresh (matching checksum against the original download, confirming a stable source) and re-extracted with a SECOND, differently-written parser (pdfplumber word-position clustering by row, rather than the original pdftotext/regex approach). The two independently-derived 92-county lists were diffed field-by-field (name, code, rate, changed-flag) against each other and against this file: zero discrepancies. This is the same exhaustive-diff discipline that caught the Ohio school-district row-merge bug -- here it found nothing to fix, which is itself the point of running it."
+  },
+  "rateBasis": {
+    "rule": "Indiana LIT is determined by COUNTY OF RESIDENCE as of January 1 of the tax year -- not county of work, which is the opposite default from Ohio's workplace-sourced municipal tax. If an individual resides in an Indiana county on Jan 1, that county's rate applies regardless of where they work (even in a different Indiana county, or out of state). ONLY if the individual resides OUT OF STATE on Jan 1 does the fallback apply: the rate of their Indiana county of principal work/business as of Jan 1.",
+    "quotedFromSource": "Both the county of residence and the county of principal business or employment of an individual are determined on Jan. 1 of the calendar year... If an individual resides in an Indiana county on Jan. 1, the rate corresponds to that county of residence. If the [individual] resides out-of-state on Jan. 1 but has his or her principal place of work or business in an Indiana county as of Jan. 1, he or she is subject to county tax at the rate corresponding to that Indiana county.",
+    "mechanism": "Captured on Form WH-4 (Employee's Withholding Exemption AND COUNTY STATUS Certificate) -- the county-status determination is built into the same certificate as the exemption count, not a separate form.",
+    "updateCadence": "Rates are republished TWICE A YEAR (Jan. 1 and Oct. 1) via a new Departmental Notice #1. This snapshot is the Jan. 1, 2026 table (R46/01-26); the immediately prior table was Oct. 1, 2025 (R45) -- see priorTable below, now captured."
+  },
+  "priorTable": {
+    "$comment": "Oct. 1, 2025 (R45) county rates -- in force for any Indiana paycheck with a period ending before 2026-01-01. RECONSTRUCTED rather than pulled from the R45 PDF directly: the Indiana DOR's own site (in.gov/dor/resources/tax-library/departmental-notices/) only publishes the CURRENT version of each Departmental Notice, not an archive, and automated fetches of the Wayback Machine's archived copy were rate-limited (HTTP 498) every attempt this session. Reconstructed instead from the fact that ONLY 6 of the 92 counties changed between R45 and R46 (the other 86 are identical in both tables, per R46's own asterisk-marking) plus each of those 6 counties' exact prior rate, independently reported by PayrollOrg (the American Payroll Association's professional trade body) in a named-author article dated 2025-12-12.",
+    "source": {
+      "title": "Six Indiana Counties, State Have Tax Rate Changes in 2026 (PayrollOrg / PayState Update, by Lia Coniglio, Esq.)",
+      "url": "https://payroll.org/news-resources/news/news-detail/2025/12/12/six-indiana-counties-state-have-tax-rate-changes-in-2026",
+      "verifiedOn": "2026-08-12",
+      "verifiedBy": "fetched directly via browser. Quoted verbatim: 'Carroll County, increasing to 0.024733 from 0.022733', 'Grant County, increasing to 0.0275 from 0.0255', 'Greene County, increasing to 0.0235 from 0.0215', 'Howard County, increasing to 0.0235 from 0.0195', 'Shelby County, increasing to 0.017 from 0.016', 'Union County, increasing to 0.0275 from 0.02'. All six NEW-rate figures match this file's Jan-2026 counties array exactly, which is itself a second, independent confirmation of the current table (a third-party industry source landed on the identical current numbers)."
+    },
+    "stateRateForThisPeriod": 0.03,
+    "stateRateComment": "Confirmed by the SAME PayrollOrg article ('the state withholding tax rate decreases to 2.95% from 3%') and independently corroborated by SmartAsset's Indiana tax explainer ('Now, in 2025, it's a flat 3.00%'). Indiana's state rate changes only at calendar-year boundaries (3.15% in 2023, 3.05% in 2024, 3.00% in 2025, 2.95% in 2026, one rate per full year) -- unlike the COUNTY layer, which can move at both Jan 1 and Oct 1. So the Oct-1-2025-to-Dec-31-2025 period uses R45's county rates together with the SAME 3.00% state rate that applied all year, not a separate state-rate table.",
+    "changedCounties": [
+      {
+        "name": "Carroll",
+        "countyCode": "08",
+        "priorRate": 0.022733
+      },
+      {
+        "name": "Grant",
+        "countyCode": "27",
+        "priorRate": 0.0255
+      },
+      {
+        "name": "Greene",
+        "countyCode": "28",
+        "priorRate": 0.0215
+      },
+      {
+        "name": "Howard",
+        "countyCode": "34",
+        "priorRate": 0.0195
+      },
+      {
+        "name": "Shelby",
+        "countyCode": "73",
+        "priorRate": 0.016
+      },
+      {
+        "name": "Union",
+        "countyCode": "81",
+        "priorRate": 0.02
+      }
+    ],
+    "allOtherCounties": "The remaining 86 counties are UNCHANGED between R45 (Oct 2025) and R46 (Jan 2026) -- use the same rate values as the main `counties` array above for any of them.",
+    "knownGap": "RE-CHECKED 2026-09-02: confirmed this priorTable is currently UNREACHABLE, not just unwired -- a genuinely different situation from Ohio's Aug-1 HB96 mid-year table (which IS reachable, since its threshold falls inside 2026 and got a real dispatch mechanism this same pass). Indiana's threshold (2026-01-01) is a YEAR boundary, not a mid-year one: any checkDate needing this priorTable has year 2025, and this project's registry.ts loads every ruleset (federal, state, and this county file) by yearOf(checkDate) with only 2026 data published anywhere in the project -- confirmed by direct test: a 2025 checkDate throws 'No ruleset at data/federal/2025.json' before calculatePaycheck() ever reaches Indiana's own county lookup, for ANY state, not just Indiana. Building a date-based dispatch inside countyAddOnLine() for this specific data would be dead code, untestable because no valid input can reach it. The correct fix, if this ever becomes reachable (i.e. once a 2025 federal/state dataset exists in this project), is a year-boundary one at the registry level, not a mid-year switch inside Indiana's own function -- and even then, no fix is needed for any 2026 checkDate: registry.ts's own year-only lookup already and correctly loads this file's current (Jan-2026 R46) counties array for every one of them, which is the right table for the whole of 2026's reachable range."
+  },
+  "reciprocityInteraction": {
+    "rule": "Reciprocity (see reciprocity in IN-2026.json) exempts a qualifying reciprocal-state resident from Indiana STATE tax only. Indiana COUNTY tax still applies and must still be withheld. Confirmed directly from Form WH-47 itself: \"Note: The employee understands that the employer remains responsible for withholding any applicable Indiana County taxes.\" This is a real, easy-to-miss trap: implementing reciprocity as a blanket Indiana-withholding exemption would be wrong for the county portion."
+  },
+  "counties": [
+    {
+      "name": "Adams",
+      "countyCode": "01",
+      "rate": 0.016,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Allen",
+      "countyCode": "02",
+      "rate": 0.0159,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Bartholomew",
+      "countyCode": "03",
+      "rate": 0.0175,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Benton",
+      "countyCode": "04",
+      "rate": 0.0179,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Blackford",
+      "countyCode": "05",
+      "rate": 0.025,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Boone",
+      "countyCode": "06",
+      "rate": 0.017,
+      "changedSinceOct2025": false,
+      "rateChanges": [
+        {
+          "on": "2026-10-01",
+          "rate": 0.0171
+        }
+      ]
+    },
+    {
+      "name": "Brown",
+      "countyCode": "07",
+      "rate": 0.025234,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Carroll",
+      "countyCode": "08",
+      "rate": 0.024733,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Cass",
+      "countyCode": "09",
+      "rate": 0.0295,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Clark",
+      "countyCode": "10",
+      "rate": 0.02,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Clay",
+      "countyCode": "11",
+      "rate": 0.0235,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Clinton",
+      "countyCode": "12",
+      "rate": 0.0265,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Crawford",
+      "countyCode": "13",
+      "rate": 0.0165,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Daviess",
+      "countyCode": "14",
+      "rate": 0.015,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "DeKalb",
+      "countyCode": "17",
+      "rate": 0.0213,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Dearborn",
+      "countyCode": "15",
+      "rate": 0.014,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Decatur",
+      "countyCode": "16",
+      "rate": 0.0245,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Delaware",
+      "countyCode": "18",
+      "rate": 0.015,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Dubois",
+      "countyCode": "19",
+      "rate": 0.012,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Elkhart",
+      "countyCode": "20",
+      "rate": 0.02,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Fayette",
+      "countyCode": "21",
+      "rate": 0.0282,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Floyd",
+      "countyCode": "22",
+      "rate": 0.0189,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Fountain",
+      "countyCode": "23",
+      "rate": 0.021,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Franklin",
+      "countyCode": "24",
+      "rate": 0.017,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Fulton",
+      "countyCode": "25",
+      "rate": 0.0288,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Gibson",
+      "countyCode": "26",
+      "rate": 0.013,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Grant",
+      "countyCode": "27",
+      "rate": 0.0275,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Greene",
+      "countyCode": "28",
+      "rate": 0.0235,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Hamilton",
+      "countyCode": "29",
+      "rate": 0.011,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Hancock",
+      "countyCode": "30",
+      "rate": 0.0194,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Harrison",
+      "countyCode": "31",
+      "rate": 0.01,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Hendricks",
+      "countyCode": "32",
+      "rate": 0.017,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Henry",
+      "countyCode": "33",
+      "rate": 0.0202,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Howard",
+      "countyCode": "34",
+      "rate": 0.0235,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Huntington",
+      "countyCode": "35",
+      "rate": 0.0195,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Jackson",
+      "countyCode": "36",
+      "rate": 0.021,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Jasper",
+      "countyCode": "37",
+      "rate": 0.02864,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Jay",
+      "countyCode": "38",
+      "rate": 0.025,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Jefferson",
+      "countyCode": "39",
+      "rate": 0.0103,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Jennings",
+      "countyCode": "40",
+      "rate": 0.025,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Johnson",
+      "countyCode": "41",
+      "rate": 0.014,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Knox",
+      "countyCode": "42",
+      "rate": 0.017,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Kosciusko",
+      "countyCode": "43",
+      "rate": 0.01,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "LaGrange",
+      "countyCode": "44",
+      "rate": 0.0165,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "LaPorte",
+      "countyCode": "46",
+      "rate": 0.0145,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Lake",
+      "countyCode": "45",
+      "rate": 0.015,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Lawrence",
+      "countyCode": "47",
+      "rate": 0.0175,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Madison",
+      "countyCode": "48",
+      "rate": 0.0225,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Marion",
+      "countyCode": "49",
+      "rate": 0.0202,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Marshall",
+      "countyCode": "50",
+      "rate": 0.0125,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Martin",
+      "countyCode": "51",
+      "rate": 0.025,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Miami",
+      "countyCode": "52",
+      "rate": 0.0254,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Monroe",
+      "countyCode": "53",
+      "rate": 0.0214,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Montgomery",
+      "countyCode": "54",
+      "rate": 0.0265,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Morgan",
+      "countyCode": "55",
+      "rate": 0.0272,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Newton",
+      "countyCode": "56",
+      "rate": 0.01,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Noble",
+      "countyCode": "57",
+      "rate": 0.0175,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Ohio",
+      "countyCode": "58",
+      "rate": 0.02,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Orange",
+      "countyCode": "59",
+      "rate": 0.0175,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Owen",
+      "countyCode": "60",
+      "rate": 0.025,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Parke",
+      "countyCode": "61",
+      "rate": 0.0265,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Perry",
+      "countyCode": "62",
+      "rate": 0.014,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Pike",
+      "countyCode": "63",
+      "rate": 0.012,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Porter",
+      "countyCode": "64",
+      "rate": 0.005,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Posey",
+      "countyCode": "65",
+      "rate": 0.0145,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Pulaski",
+      "countyCode": "66",
+      "rate": 0.0285,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Putnam",
+      "countyCode": "67",
+      "rate": 0.023,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Randolph",
+      "countyCode": "68",
+      "rate": 0.03,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Ripley",
+      "countyCode": "69",
+      "rate": 0.0238,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Rush",
+      "countyCode": "70",
+      "rate": 0.0215,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Scott",
+      "countyCode": "72",
+      "rate": 0.0216,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Shelby",
+      "countyCode": "73",
+      "rate": 0.017,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Spencer",
+      "countyCode": "74",
+      "rate": 0.008,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "St. Joseph",
+      "countyCode": "71",
+      "rate": 0.0175,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Starke",
+      "countyCode": "75",
+      "rate": 0.0171,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Steuben",
+      "countyCode": "76",
+      "rate": 0.0199,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Sullivan",
+      "countyCode": "77",
+      "rate": 0.017,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Switzerland",
+      "countyCode": "78",
+      "rate": 0.0145,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Tippecanoe",
+      "countyCode": "79",
+      "rate": 0.0128,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Tipton",
+      "countyCode": "80",
+      "rate": 0.026,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Union",
+      "countyCode": "81",
+      "rate": 0.0275,
+      "changedSinceOct2025": true
+    },
+    {
+      "name": "Vanderburgh",
+      "countyCode": "82",
+      "rate": 0.0125,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Vermillion",
+      "countyCode": "83",
+      "rate": 0.015,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Vigo",
+      "countyCode": "84",
+      "rate": 0.02,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Wabash",
+      "countyCode": "85",
+      "rate": 0.029,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Warren",
+      "countyCode": "86",
+      "rate": 0.0212,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Warrick",
+      "countyCode": "87",
+      "rate": 0.01,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Washington",
+      "countyCode": "88",
+      "rate": 0.02,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Wayne",
+      "countyCode": "89",
+      "rate": 0.0125,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Wells",
+      "countyCode": "90",
+      "rate": 0.021,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "White",
+      "countyCode": "91",
+      "rate": 0.0232,
+      "changedSinceOct2025": false
+    },
+    {
+      "name": "Whitley",
+      "countyCode": "92",
+      "rate": 0.016829,
+      "changedSinceOct2025": false
+    }
+  ],
+  "knownGaps": [
+    "CLOSED 2026-08-12: state.ts's flatRateMultiExemption() now resolves workState.certificate.county against this file and stacks a county add-on onto the state rate -- see data/states/IN-2026.json and tests/engine.test.ts, describe('Indiana'). What's genuinely still open is the county-STATUS determination itself (residence vs. work fallback) -- the engine takes the county name as an already-resolved input.",
+    "CLOSED 2026-08-12: the Oct 1, 2025 (R45) table is now captured -- see priorTable above (reconstructed from the 6-county diff plus PayrollOrg, not a direct PDF pull; disclosed as such). The mechanism gap remains: no date-based dispatch chooses between priorTable and the main table by check date.",
+    "The out-of-state-resident work-county fallback and the Jan-1 determination date are documented but not modelled -- current PaycheckInput/types.ts has no concept of a determination-date snapshot distinct from the check date.",
+    "County code values (01-92) are Indiana's own two-digit county codes as printed in Departmental Notice #1, included for cross-referencing against other Indiana state forms; not independently verified against, e.g., FIPS county codes, which differ.",
+    "2026-10-01: R47 / 10-26 read and diffed against all 92 rows; only Boone changed (see octoberUpdate). The notice keys the rate to periods BEGINNING on or after 2026-10-01 while this engine selects by check date."
+  ],
+  "octoberUpdate": {
+    "$comment": "Departmental Notice #1 R47 / 10-26, effective for withholding for periods beginning on or after 2026-10-01. READ DIRECTLY from the Indiana DOR's own PDF (https://www.in.gov/dor/files/dn01.pdf) on 2026-10-01 and all 92 rows diffed against the table above: exactly one county changed, Boone (06), 0.017 -> 0.0171, the only row the notice marks with an asterisk. Carried as a dated rateChanges entry on that county, so check dates before 2026-10-01 keep 0.017.",
+    "notice": "R47 / 10-26",
+    "effectiveFrom": "2026-10-01",
+    "changed": [
+      {
+        "county": "Boone",
+        "countyCode": "06",
+        "from": 0.017,
+        "to": 0.0171
+      }
+    ],
+    "verifiedOn": "2026-10-01",
+    "secondarySource": "PayrollOrg PayState Update, 2026-09-30: 'The tax rate in Boone County increases to 0.0171 from 0.017, effective October 1, 2026.'",
+    "periodNote": "The notice keys the new rate to pay PERIODS BEGINNING on or after 2026-10-01; this engine selects by check date, so a check dated on or after 2026-10-01 for a period that began in September is the one case where the two differ. The next notice, for changes effective 2027-01-01, is due in December."
+  }
+}

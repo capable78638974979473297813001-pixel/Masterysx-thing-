@@ -1,0 +1,66 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "WV",
+    "name": "West Virginia"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 8.75,
+    "hourlyCents": 875,
+    "effectiveFrom": "2016-01-01",
+    "coverage": "Employers with SIX OR MORE non-exempt employees at any one separate, distinct and permanent work location (W. Va. Code 21-5C-1). An employer under that threshold owes only the federal $7.25.",
+    "note": "Unchanged since 2016; no escalator."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 2.62,
+    "cashWageCents": 262,
+    "maxTipCredit": 6.13,
+    "maxTipCreditCents": 613,
+    "tippedEmployeeThreshold": null,
+    "note": "West Virginia allows the largest tip credit as a PERCENTAGE of any state -- 70% of the minimum wage."
+  },
+  "youthAndTraining": [
+    {
+      "hourly": 4.25,
+      "hourlyCents": 425,
+      "id": "federal_youth_opportunity_wage",
+      "label": "Federal youth opportunity wage",
+      "eligibility": "Employees under 20, first 90 consecutive calendar days -- 29 U.S.C. 206(g). Not a state figure; carried here because it is the only sub-minimum wage available in this state."
+    }
+  ],
+  "variants": [],
+  "indexation": {
+    "indexed": false
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "title": "West Virginia Division of Labor -- Minimum Wage",
+      "url": "https://labor.wv.gov/wage-hour/jobs-act/minimum-wage",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for the six-or-more-employees coverage rule at a single work location."
+    }
+  ],
+  "knownGaps": [
+    "This engine's garnishment data (data/garnishment/state-overrides-2026.json) deliberately uses the FEDERAL $7.25 for West Virginia's 30x floor, because W. Va. Code 38-5A-3 names the federal minimum wage specifically -- not this $8.75 state rate. The two files disagree on purpose."
+  ],
+  "confidence": "primary_source_confirmed"
+}

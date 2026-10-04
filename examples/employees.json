@@ -1,0 +1,132 @@
+{
+  "$comment": "W-4s and state/local certificates. federal_w4 and certificate fields use the tax engine's own field names (money in cents). Employees missing here are still processed; their income-tax withholding just can't be verified.",
+  "employees": [
+    {
+      "company_id": "ACME",
+      "employee_id": "A100",
+      "pay_frequency": "biweekly",
+      "federal_w4": {
+        "filingStatus": "single"
+      },
+      "work_state_certificate": {
+        "filingStatus": "single_or_married_two_incomes",
+        "regularAllowances": 1
+      }
+    },
+    {
+      "company_id": "ACME",
+      "employee_id": "A101",
+      "pay_frequency": "biweekly",
+      "federal_w4": {
+        "filingStatus": "married_joint",
+        "dependentCredit": 400000
+      },
+      "work_state_certificate": {
+        "filingStatus": "married_one_income",
+        "regularAllowances": 3
+      }
+    },
+    {
+      "company_id": "ACME",
+      "employee_id": "A102",
+      "pay_frequency": "biweekly",
+      "federal_w4": {
+        "filingStatus": "single",
+        "extraWithholding": 5000
+      },
+      "work_state_certificate": {
+        "filingStatus": "single_or_married_two_incomes",
+        "regularAllowances": 1
+      }
+    },
+    {
+      "company_id": "ACME",
+      "employee_id": "A103",
+      "pay_frequency": "biweekly",
+      "federal_w4": {
+        "filingStatus": "head_of_household"
+      },
+      "work_state_certificate": {
+        "filingStatus": "hoh",
+        "regularAllowances": 2
+      }
+    },
+    {
+      "company_id": "NORTHWIND",
+      "employee_id": "N200",
+      "pay_frequency": "semimonthly",
+      "federal_w4": {
+        "filingStatus": "single"
+      },
+      "work_state_certificate": {
+        "filingStatus": "single",
+        "allowances": 1,
+        "nycResident": true
+      }
+    },
+    {
+      "company_id": "NORTHWIND",
+      "employee_id": "N201",
+      "pay_frequency": "semimonthly",
+      "federal_w4": {
+        "filingStatus": "married_joint"
+      },
+      "work_state_certificate": {
+        "filingStatus": "married",
+        "allowances": 2
+      }
+    },
+    {
+      "company_id": "NORTHWIND",
+      "employee_id": "N202",
+      "pay_frequency": "semimonthly",
+      "federal_w4": {
+        "filingStatus": "single"
+      }
+    },
+    {
+      "company_id": "KEYSTONE",
+      "employee_id": "K300",
+      "pay_frequency": "weekly",
+      "federal_w4": {
+        "filingStatus": "single"
+      },
+      "work_state_certificate": {
+        "workPSD": "700102",
+        "residencePSD": "700102"
+      },
+      "address": {
+        "work": "414 Grant St, Pittsburgh, PA 15219"
+      }
+    },
+    {
+      "company_id": "KEYSTONE",
+      "employee_id": "K301",
+      "pay_frequency": "weekly",
+      "federal_w4": {
+        "filingStatus": "married_joint"
+      },
+      "work_state_certificate": {
+        "workPSD": "700102",
+        "residencePSD": "730105"
+      }
+    },
+    {
+      "company_id": "KEYSTONE",
+      "employee_id": "K302",
+      "pay_frequency": "weekly",
+      "federal_w4": {
+        "filingStatus": "single"
+      },
+      "work_state_certificate": {
+        "workCity": "Columbus",
+        "residenceCity": "Columbus",
+        "exemptions": 1
+      },
+      "address": {
+        "work": "90 W Broad St, Columbus, OH 43215",
+        "residence": "1 Nationwide Blvd, Columbus, OH 43215"
+      }
+    }
+  ]
+}

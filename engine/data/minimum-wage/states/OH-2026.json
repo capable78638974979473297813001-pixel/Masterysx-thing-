@@ -1,0 +1,86 @@
+{
+  "jurisdiction": {
+    "level": "state",
+    "code": "OH",
+    "name": "Ohio"
+  },
+  "year": 2026,
+  "asOf": "2026-09-08",
+  "hasStateMinimumWage": true,
+  "standard": {
+    "hourly": 11.0,
+    "hourlyCents": 1100,
+    "effectiveFrom": "2026-01-01",
+    "coverage": "Employers with annual gross receipts of MORE THAN $405,000. The threshold itself is indexed each year, so it must be re-read annually, not just the rate.",
+    "note": "Ohio Const. art. II sec. 34a annual CPI adjustment."
+  },
+  "tipped": {
+    "tipCreditAllowed": true,
+    "cashWage": 5.5,
+    "cashWageCents": 550,
+    "maxTipCredit": 5.5,
+    "maxTipCreditCents": 550,
+    "tippedEmployeeThreshold": {
+      "amount": 30.0,
+      "period": "month"
+    },
+    "note": "Ohio caps the tip credit at 50% of the state minimum wage."
+  },
+  "variants": [
+    {
+      "hourly": 7.25,
+      "hourlyCents": 725,
+      "id": "small_employer",
+      "label": "Employers with annual gross receipts of $405,000 or less",
+      "test": "Ohio Const. art. II sec. 34a. These employers owe the federal minimum wage instead.",
+      "note": "The $405,000 receipts figure is the indexed 2026 threshold."
+    },
+    {
+      "hourly": 7.25,
+      "hourlyCents": 725,
+      "id": "minor_14_15",
+      "label": "Employees aged 14 and 15",
+      "test": "Ohio exempts 14- and 15-year-olds from the state rate; the federal $7.25 applies."
+    }
+  ],
+  "youthAndTraining": [],
+  "indexation": {
+    "indexed": true,
+    "basis": "CPI-W, applied to BOTH the rate and the gross-receipts threshold",
+    "adjustmentDate": "01-01"
+  },
+  "scheduledChanges": [],
+  "sources": [
+    {
+      "id": "dol-state-mw",
+      "title": "U.S. DOL Wage and Hour Division -- State Minimum Wage Laws (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/minimum-wage/state",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. DOL's own state-by-state table is the spine of every standard rate in this database; where a state's own labor department was ALSO read directly, that source is listed too and wins on any disagreement (see South Dakota's tipped cash wage for the one case where they disagreed)."
+    },
+    {
+      "id": "dol-tipped-mw",
+      "title": "U.S. DOL Wage and Hour Division -- Minimum Wages for Tipped Employees (table current as of July 1, 2026)",
+      "url": "https://www.dol.gov/agencies/whd/state/minimum-wage/tipped",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched and read directly this session. Source of the combined rate / maximum tip credit / minimum cash wage triple and the 'tipped employee' monthly-tips definition for every state and territory in this database."
+    },
+    {
+      "id": "dol-consolidated",
+      "title": "U.S. DOL Wage and Hour Division -- Consolidated Minimum Wage Table",
+      "url": "https://www.dol.gov/agencies/whd/mw-consolidated",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "Fetched this session as a THIRD cross-check on the two tables above (which state is above / at / below the federal floor, plus the Montana, New Jersey, New York, Ohio and Oregon sub-rates)."
+    },
+    {
+      "title": "Ohio Department of Commerce -- Ohio Minimum Wage Set to Increase in 2026",
+      "url": "https://com.ohio.gov/about-us/media-center/news/ohio%20minimum%20wage%20set%20to%20increase%20in%202026",
+      "verifiedOn": "2026-09-08",
+      "verifiedBy": "cross_source_confirmed this session for $11.00, the $405,000 gross-receipts threshold, the $5.50 tipped cash wage and the 14-15 year-old carve-out. DOL's consolidated table independently carries the '$11.00 or $7.25' split and names the same $405,000 figure."
+    }
+  ],
+  "knownGaps": [
+    "This engine already models Ohio's municipal INCOME taxes (data/local/OH-municipalities-2026.json). Those are unrelated to minimum wage: Ohio municipalities do not set their own minimum wages, and no Ohio local rate is carried in this database."
+  ],
+  "confidence": "primary_source_confirmed"
+}

@@ -1,0 +1,150 @@
+{
+  "code": "DC",
+  "name": "District of Columbia",
+  "year": 2026,
+  "method": "bracket_annual_allowance_deduction",
+  "$methodComment": "Genuinely the SIMPLEST bracket shape in this project structurally, despite DC's real-world reputation for a steep top rate (10.75%): ONE bracket table for every filing status (like Rhode Island), and the ONLY reduction is a flat per-ALLOWANCE dollar amount subtracted BEFORE the bracket lookup -- no separate standard deduction line at all in the withholding formula (unlike the RETURN-level DC-1040, which does have a large standard deduction; several secondary sources conflated the two, the same withholding-formula-vs-return-level distinction already caught for California/Utah/Colorado in this project). D-4's own allowance count folds self/HOH/age/blind/spouse/dependents into ONE number, all valued identically at the same per-allowance dollar figure -- unlike DC's own field name ('Dependent Allowance = $X x Number of Dependents' in NFC's formula), the count is NOT literally dependents-only; it's the FULL D-4 Line total.",
+  "sources": [
+    {
+      "title": "NFC-22-1668460546, District of Columbia Income Tax Withholding (USDA National Finance Center bulletin, effective Pay Period 22, 2022)",
+      "url": "https://help.nfc.usda.gov/bulletins/2022/1668460546.htm",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly -- the fullest primary-adjacent source found this session for DC's actual WITHHOLDING formula (DC's own OTR did not have a current-year FR-230 booklet locatable this session; only pre-2018 archived versions were found via search). The bracket thresholds and rates ($0-$10k @4%, $10k-$40k @6%, $40k-$60k @6.5%, $60k-$250k @8.5%, $250k-$500k @9.25%, $500k-$1M @9.75%, $1M+ @10.75%) were cross-checked against MULTIPLE independent 2026-dated secondary sources and found to match EXACTLY -- strong evidence DC's brackets have been stable since 2022 and this formula is still current, though the allowance dollar amount specifically (see below) carries a real, disclosed staleness risk this cross-check does not resolve."
+    },
+    {
+      "title": "D-4, DC Employee Withholding Allowance Certificate instructions (secondary confirmation of the allowance-counting mechanism)",
+      "url": "https://www.dochub.com/fillable-form/160280-d-4-dc-withholding-allowances",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "cross_source_confirmed. Quoted: 'Total allowances are calculated by summing yourself, head of household status, age/blind allowances, spouse, and dependent allowances' -- confirms the NFC formula's 'Dependent Allowance = $X x Number of Dependents' label is really 'per-allowance amount x TOTAL D-4 allowance count,' not literally dependents-only, resolving what would otherwise look like a contradiction between the two sources."
+    },
+    {
+      "title": "D.C. Home Rule Act of 1973 nonresident-taxation prohibition",
+      "url": "https://code.dccouncil.gov/us/dc/council/code/sections/47-1806.04",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "cross_source_confirmed across multiple sources (a state-and-local-tax law blog, a fiscal policy institute analysis) agreeing: 'The federal 1973 Home Rule Act gave the District the power to levy taxes, including income taxes, but it barred the District from taxing the personal income of nonresidents.' A genuinely different, BROADER mechanism than reciprocity as modelled anywhere else in this project -- not a bilateral agreement with 2-4 named states, but a blanket federal-statutory prohibition applying to residents of ALL 50 states equally."
+    },
+    {
+      "title": "DC Universal Paid Leave (UPL) 0.75% employer-only rate",
+      "url": "https://www.rippling.com/blog/payroll-tax-in-washington-dc",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "cross_source_confirmed. Genuinely different shape from every other paid-leave program in this project: 100% EMPLOYER-funded, zero employee share -- Washington/Colorado/Oregon/New Jersey/Connecticut/New York's own paid-leave programs in this project all have at least some employee contribution; DC's has none."
+    }
+  ],
+  "bracketAnnualAllowanceDeduction": {
+    "brackets": [
+      {
+        "from": 0,
+        "to": 10000,
+        "base": 0,
+        "rate": 0.04
+      },
+      {
+        "from": 10000,
+        "to": 40000,
+        "base": 400,
+        "rate": 0.06
+      },
+      {
+        "from": 40000,
+        "to": 60000,
+        "base": 2200,
+        "rate": 0.065
+      },
+      {
+        "from": 60000,
+        "to": 250000,
+        "base": 3500,
+        "rate": 0.085
+      },
+      {
+        "from": 250000,
+        "to": 500000,
+        "base": 19650,
+        "rate": 0.0925
+      },
+      {
+        "from": 500000,
+        "to": 1000000,
+        "base": 42775,
+        "rate": 0.0975
+      },
+      {
+        "from": 1000000,
+        "to": null,
+        "base": 91525,
+        "rate": 0.1075
+      }
+    ],
+    "bracketsComment": "Verbatim from the NFC formula, and internally chain-verified before trusting it: 400 + (40000-10000)x0.06=400+1800=2200 (matches); 2200+(60000-40000)x0.065=2200+1300=3500 (matches); 3500+(250000-60000)x0.085=3500+16150=19650 (matches); 19650+(500000-250000)x0.0925=19650+23125=42775 (matches); 42775+(1000000-500000)x0.0975=42775+48750=91525 (matches) -- every published base independently reproduced from the one before it, zero discrepancies. ONE table for all filing statuses.",
+    "allowanceAmountAnnual": 4300,
+    "allowanceAmountComment": "STALENESS DISCLOSED, not hidden: this figure is from the 2022 NFC bulletin ('the annual deduction amount has changed from $4,150 to $4,300') -- no 2026-dated confirmation of this SPECIFIC dollar figure was found this session, unlike the bracket thresholds (which WERE cross-checked against fresh 2026 sources and held up). DC's allowance amount plausibly adjusts periodically the way many states' does; this could be understating a 2026 figure that has since increased. Flagged explicitly as the single least-confident number in this file, rather than presented with the same confidence as the brackets.",
+    "annualizeMultiplier": {
+      "annual": 1,
+      "semiannual": 2,
+      "quarterly": 4,
+      "monthly": 12,
+      "semimonthly": 24,
+      "biweekly": 26,
+      "weekly": 52,
+      "daily": 260
+    },
+    "noCertificateDefault": "Not explicitly stated in the sources found this session -- modelled as single/zero-allowances per this project's standing convention for a missing certificate (the least-generous outcome), NOT independently confirmed as DC's own stated rule the way Delaware's or Missouri's no-form defaults were."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "DC's withholding formula itself is built on federal AGI-adjacent wages (subtract TSP/401k-style deferrals and pretax health benefits BEFORE annualizing, per the NFC formula's own Steps 1-3) -- the clearest, most directly-sourced exemptPretax basis of any state in this project except Arizona's A-4/Michigan's RAB-1988-27, since the WITHHOLDING FORMULA ITSELF spells out the subtraction steps rather than requiring an inference from a general AGI-conformity statute.",
+  "reciprocity": {
+    "rule": "STRUCTURALLY DIFFERENT from reciprocity everywhere else in this project: DC does not tax NONRESIDENT wages AT ALL, for residents of any of the 50 states, under a blanket federal prohibition (the 1973 Home Rule Act), not a bilateral agreement with specific named states. certificate.nonresident (a boolean, not a reciprocalStates list lookup) should zero DC withholding entirely for any employee who does not reside in DC, regardless of which state they DO reside in.",
+    "notModelledAsReciprocalStatesList": "Deliberately NOT using this project's generic reciprocityExemptionReason()/reciprocalStates mechanism, because that mechanism checks residenceState.code against a closed LIST of specific states -- DC's actual rule is unconditional across all 50 states, which a finite list would have to (redundantly, and riskily forgettably) enumerate one by one. A dedicated nonresident check is the correct, not just convenient, way to model this specific fact."
+  },
+  "localIncomeTax": {
+    "rule": "N/A -- DC has no sub-jurisdictions (no counties, no cities within DC) to levy a SEPARATE local tax; the DC income tax modelled above already IS the whole story, the same way NH/WA/etc.'s 'no income tax' entries are complete in themselves."
+  },
+  "universalPaidLeave": {
+    "totalRate": 0.0075,
+    "payer": "employer",
+    "employeeShare": 0,
+    "$comment": "DC Universal Paid Leave — 100% employer-funded, genuinely the only paid-leave program in this project with ZERO employee contribution. Computed as DC_PFML_ER via the statePaidLeaveEmployer block below — employerSizeGated:false, since DC's programme has no headcount threshold and every covered employer owes it."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUI) -- no employee contribution. NOT researched this session -- no figures recorded rather than guessed.",
+    "administeredBy": "DC Department of Employment Services (DOES)",
+    "confidence": "NOT VERIFIED this session — a genuine, disclosed gap, not silently skipped."
+  },
+  "verification": "PROVEN via calculatePaycheck(): the bracket table's own internal base-chain was independently verified (see bracketsComment) before being used to hand-derive test fixtures, since no full worked example with a stated final dollar answer was found in the NFC bulletin the way California/Rhode Island's own sources provided. See tests/engine.test.ts, describe('District of Columbia').",
+  "knownGaps": [
+    "The $4,300 annual allowance amount is a 2022 figure, NOT re-confirmed for 2026 -- see allowanceAmountComment above. The BRACKETS were independently cross-checked against fresh 2026 sources and held up; the allowance amount was not.",
+    "No current-year (2026) FR-230 booklet was locatable from DC's own OTR site this session -- this file rests on a federal-payroll-oriented secondary-primary source (NFC) rather than DC's own primary withholding publication.",
+    "STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "Universal Paid Leave (0.75%, employer-only) is computed as DC_PFML_ER via the statePaidLeaveEmployer block — see universalPaidLeave.$comment above.",
+    "The no-certificate default is this project's own standing convention (single/zero), not independently confirmed as DC's own stated rule.",
+    "Supplemental wages: DC's own FR-230 Employer Withholding Instructions were checked directly (2018 revision, the most recent full booklet publicly available, cross-checked against the NFC bulletin already cited in this file for anything current-year might have added) -- neither contains a distinct supplemental-wage withholding procedure at all, only a general definition of taxable \"wages\" that happens to name bonuses as an example. Third-party guides describing a DC supplemental rate are actually describing the FEDERAL 22%/37% flat rate, not a DC-specific one. A standalone bonus therefore runs through the same formula as any other wages, which is what this engine already does by default -- the same conclusion reached for South Carolina, Utah, and Arkansas in this project, each checked directly rather than assumed.",
+    "CHECKED 2026-10-01: the FY2027 Budget Support (Emergency) Act cuts Universal Paid Leave BENEFITS for claims filed on or after 2026-10-01 (family leave 12 -> 6 weeks, medical 12 -> 10 weeks, weekly cap $1,190 -> $1,100) but leaves the employer contribution at 0.75% of covered wages with no employee contribution, so DC_PFML_ER is unchanged (Epstein Becker Green, 2026-09-23; secondary source, permanent act still in congressional review to about 2026-11-20). This engine computes the contribution, not benefits."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 9000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.027,
+    "newEmployerRateSource": "DC's 2026 unemployment rate announcement: the new-employer rate remains 2.7% on a $9,000 wage base, alongside a separate 0.2% administrative assessment that this engine does not add (it is an assessment, not the contribution rate, and is disclosed here rather than folded in).",
+    "experienceRange": null,
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026"
+  },
+  "statePaidLeaveEmployer": {
+    "totalRate": 0.0075,
+    "employeeShareFraction": 0,
+    "wageBase": null,
+    "employerSizeGated": false,
+    "$comment": "DC Universal Paid Leave, wired from this file's own universalPaidLeave block: 0.75% of covered wages, funded 100% by the employer — the only paid-leave programme in this project with ZERO employee contribution. employerSizeGated is false because DC's programme has no headcount threshold at all: every covered employer owes it, so requiring a caller to assert liability first would just suppress a tax that is always due. No wage cap."
+  }
+}

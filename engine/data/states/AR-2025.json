@@ -1,0 +1,339 @@
+{
+  "code": "AR",
+  "name": "Arkansas",
+  "year": 2025,
+  "method": "arkansas_bracket_credit",
+  "sources": [
+    {
+      "title": "USDA National Finance Center -- Arkansas State Income Tax Withholding (NFC-25-1736280741, 2025 formula)",
+      "url": "https://help.nfc.usda.gov/bulletins/2025/1736280741.htm",
+      "verifiedOn": "2026-09-30",
+      "quote": "The standard deduction amount has changed from $2,340 to $2,410 ... $0 but not over $5,500 0% ... $25,700 but not over $92,301 3.90% minus $409.86 ... $92,301 but not over $92,401 3.90% minus $397.40 ... $94,301 but not over $94,501 3.90% minus $197.40 ... Over $95,501 3.90% minus $87.40 ... Single (1 - (Annual Wages - $14,266*) / ($17,000 - $14,266)) x $109.20 ... Multiply the total number of withholding exemptions by $29"
+    },
+    {
+      "title": "State of Arkansas Withholding Tax -- Regular Income Tax Tables, Effective 01/01/2025",
+      "url": "https://www.dfa.arkansas.gov/wp-content/uploads/withholdTaxTablesRegularIncome_1.pdf",
+      "verifiedOn": "2026-09-30",
+      "quote": "Monthly Payroll Period ... 8059 8068 290.19 / 8068 8076 290.52 / 8076 8084 291.67 (the 3.9%-only step marks the 200-wide midrange band)"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "arkansasBracketCredit": {
+    "$comment": "Full formula, verified to the cent against the source's own worked example (see sources above). 1) Annualize wages using AR's own multiplier map (daily = x260, a 5-day workweek, NOT this engine's more common 5-day-week default elsewhere -- confirmed explicit, not assumed). 2) Subtract the flat $2,470 standard deduction (no filing-status variation at all in the withholding formula -- AR4EC's filing-status field only matters for the SEPARATE low-income election, not the standard formula). 3) For taxable income under $100,001, round to the nearest $50 MIDRANGE of each $100 band (e.g. $23,054 -> $23,050) BEFORE the bracket lookup -- a real, easily-missed step, confirmed necessary by the worked example (skipping it would look plausible but be wrong). 4) Look up the bracket: tax = taxableIncome x rate, MINUS a published adjustment constant (NOT a base+excess formula -- verified these two framings are NOT numerically interchangeable here, since AR's own adjustment constants carry small independent rounding baked in; converting to base+excess drifted 3 cents off the source's own answer in a spot check). Round that result to the nearest WHOLE DOLLAR. 5) Subtract $29 x total exemptions (a flat post-bracket CREDIT, not a pre-tax deduction) to get Annual Net Tax. 6) Divide by pay periods.",
+    "standardDeductionAnnual": 2410.0,
+    "personalCreditPerExemption": 29.0,
+    "annualizeMultiplier": {
+      "monthly": 12,
+      "semimonthly": 24,
+      "biweekly": 26,
+      "weekly": 52,
+      "daily": 260
+    },
+    "midrangeRoundingThreshold": 100001.0,
+    "midrangeRoundingComment": "Applies to EVERY bracket, not just the fine-grained $100-wide bands near the top -- confirmed against the worked example, which rounds $23,054 (deep inside the WIDE $16,000-$26,399 3.4% bracket) to $23,050 before the bracket lookup, not just for incomes near the phase-in zone.",
+    "brackets": [
+      {
+        "from": 0,
+        "to": 5500,
+        "rate": 0.0,
+        "adjustment": 0
+      },
+      {
+        "from": 5500,
+        "to": 10900,
+        "rate": 0.02,
+        "adjustment": 109.98
+      },
+      {
+        "from": 10900,
+        "to": 15600,
+        "rate": 0.03,
+        "adjustment": 218.97
+      },
+      {
+        "from": 15600,
+        "to": 25700,
+        "rate": 0.034,
+        "adjustment": 281.37
+      },
+      {
+        "from": 25700,
+        "to": 92301,
+        "rate": 0.039,
+        "adjustment": 409.86
+      },
+      {
+        "from": 92301,
+        "to": 92401,
+        "rate": 0.039,
+        "adjustment": 397.4
+      },
+      {
+        "from": 92401,
+        "to": 92501,
+        "rate": 0.039,
+        "adjustment": 387.4
+      },
+      {
+        "from": 92501,
+        "to": 92601,
+        "rate": 0.039,
+        "adjustment": 377.4
+      },
+      {
+        "from": 92601,
+        "to": 92701,
+        "rate": 0.039,
+        "adjustment": 367.4
+      },
+      {
+        "from": 92701,
+        "to": 92801,
+        "rate": 0.039,
+        "adjustment": 357.4
+      },
+      {
+        "from": 92801,
+        "to": 92901,
+        "rate": 0.039,
+        "adjustment": 347.4
+      },
+      {
+        "from": 92901,
+        "to": 93001,
+        "rate": 0.039,
+        "adjustment": 337.4
+      },
+      {
+        "from": 93001,
+        "to": 93101,
+        "rate": 0.039,
+        "adjustment": 327.4
+      },
+      {
+        "from": 93101,
+        "to": 93201,
+        "rate": 0.039,
+        "adjustment": 317.4
+      },
+      {
+        "from": 93201,
+        "to": 93301,
+        "rate": 0.039,
+        "adjustment": 307.4
+      },
+      {
+        "from": 93301,
+        "to": 93401,
+        "rate": 0.039,
+        "adjustment": 297.4
+      },
+      {
+        "from": 93401,
+        "to": 93501,
+        "rate": 0.039,
+        "adjustment": 287.4
+      },
+      {
+        "from": 93501,
+        "to": 93601,
+        "rate": 0.039,
+        "adjustment": 277.4
+      },
+      {
+        "from": 93601,
+        "to": 93701,
+        "rate": 0.039,
+        "adjustment": 267.4
+      },
+      {
+        "from": 93701,
+        "to": 93801,
+        "rate": 0.039,
+        "adjustment": 257.4
+      },
+      {
+        "from": 93801,
+        "to": 93901,
+        "rate": 0.039,
+        "adjustment": 247.4
+      },
+      {
+        "from": 93901,
+        "to": 94001,
+        "rate": 0.039,
+        "adjustment": 237.4
+      },
+      {
+        "from": 94001,
+        "to": 94101,
+        "rate": 0.039,
+        "adjustment": 227.4
+      },
+      {
+        "from": 94101,
+        "to": 94201,
+        "rate": 0.039,
+        "adjustment": 217.4
+      },
+      {
+        "from": 94201,
+        "to": 94301,
+        "rate": 0.039,
+        "adjustment": 207.4
+      },
+      {
+        "from": 94301,
+        "to": 94501,
+        "rate": 0.039,
+        "adjustment": 197.4
+      },
+      {
+        "from": 94501,
+        "to": 94601,
+        "rate": 0.039,
+        "adjustment": 187.4
+      },
+      {
+        "from": 94601,
+        "to": 94701,
+        "rate": 0.039,
+        "adjustment": 177.4
+      },
+      {
+        "from": 94701,
+        "to": 94801,
+        "rate": 0.039,
+        "adjustment": 167.4
+      },
+      {
+        "from": 94801,
+        "to": 94901,
+        "rate": 0.039,
+        "adjustment": 157.4
+      },
+      {
+        "from": 94901,
+        "to": 95001,
+        "rate": 0.039,
+        "adjustment": 147.4
+      },
+      {
+        "from": 95001,
+        "to": 95101,
+        "rate": 0.039,
+        "adjustment": 137.4
+      },
+      {
+        "from": 95101,
+        "to": 95201,
+        "rate": 0.039,
+        "adjustment": 127.4
+      },
+      {
+        "from": 95201,
+        "to": 95301,
+        "rate": 0.039,
+        "adjustment": 117.4
+      },
+      {
+        "from": 95301,
+        "to": 95401,
+        "rate": 0.039,
+        "adjustment": 107.4
+      },
+      {
+        "from": 95401,
+        "to": 95501,
+        "rate": 0.039,
+        "adjustment": 97.4
+      },
+      {
+        "from": 95501,
+        "to": null,
+        "rate": 0.039,
+        "adjustment": 87.4
+      }
+    ],
+    "bracketStructureNote": "REVISED 2026-09-23 for HB 1001 / SB 1 (2026 fiscal session), which cut the top individual rate from 3.9% to 3.7% retroactive to 2026-01-01; DFA reissued the Formula Method (same 'Effective 01/01/2026' header, now at dfa.arkansas.gov/wp-content/uploads/Withholding-Tax-Formula.pdf) with 3.7% brackets, and PaycheckCity's check-date-08/28/2026 results confirm the new table is live. 34 bands: from $26,400 to $94,700 the rate is 3.7% less $367.16; from $94,701 to $97,600 the rate stays 3.7% while the adjustment steps down $10.00 every $100 ($369.90 to $89.90, transcribed exactly as published, including the first fine band's adjustment sitting above the wide band's); $97,601 and over is 3.7% less $79.90. Lower four brackets, the $2,470 standard deduction and the $29 credit are unchanged from the original January release."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptPretaxComment": "UPGRADED ('fix any and all gaps' pass): Arkansas Code sec. 26-51-414(a)(1) directly adopts federal treatment for retirement/deferred-compensation plans -- 'a deduction pursuant to IRC secs. 72, 219, 401, 402-404, 406-416, 457' (26 U.S.C. secs. 72/219/402-404/406-416/457 as in effect 2017-01-01; sec. 401 as in effect 2010-03-30) -- an explicit statutory adoption of the 401(k)/403(b)/457/SIMPLE deferral categories by IRC section number, not just a general AGI-conformity inference. Same confidence tier as Michigan's RAB-1988-27 named enumeration, the strongest tier this project uses for this question. Section 125/cafeteria-plan treatment specifically was not independently re-confirmed this pass (26-51-414 is framed around retirement/annuity plans by section number, not cafeteria benefits) -- one small residual gap within an otherwise strong citation.",
+  "reciprocity": {
+    "$comment": "CHECKED, not assumed absent: the Formula Method document and AR4EC (both read in full) contain zero reciprocity language.",
+    "reciprocalStates": []
+  },
+  "lowIncomeElection": {
+    "$comment": "2025: AR4EC Line 5 election computed with the 2025 low-income credit formula (no 2025 Low Income Tax Tables are transcribed).",
+    "creditFormula": {
+      "$comment": "2025 low-income relief as a credit (NFC-25-1736280741): credit = (1 - (annual wages - floor) / (ceiling - floor)) x maxCredit, never below zero; annual wages below the floor zero the tax. Buckets keyed by certificate.filingStatus and certificate.dependents as in the 2026 tables.",
+      "single": {
+        "floor": 14266,
+        "ceiling": 17000,
+        "maxCredit": 109.2
+      },
+      "mfj_1orNone": {
+        "floor": 24058,
+        "ceiling": 28300,
+        "maxCredit": 379.6
+      },
+      "mfj_2orMore": {
+        "floor": 28954,
+        "ceiling": 35100,
+        "maxCredit": 517.92
+      },
+      "hoh_1orNone": {
+        "floor": 20283,
+        "ceiling": 24600,
+        "maxCredit": 260.52
+      },
+      "hoh_2orMore": {
+        "floor": 24177,
+        "ceiling": 28200,
+        "maxCredit": 366.08
+      }
+    }
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Arkansas city or county levies a tax on wages or earned income.",
+    "confidence": "cross_source_confirmed."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE. No mandatory or voluntary state-authorized paid family/medical leave program of any kind found for Arkansas -- a genuine structural difference from Tennessee/South Carolina, which at least authorize a voluntary private-insurance option.",
+    "confidence": "cross_source_confirmed."
+  },
+  "knownGaps": [
+    "DFA's own 2025 Formula Method PDF is no longer published (replaced by the 2026 document at the same URL); the bracket table comes from NFC's transcription and was cross-checked against DFA's 2025 wage-bracket tables.",
+    "2025 low-income election uses the credit formula; DFA's 2025 Low Income Tax Tables (wage-bracket form) are not transcribed and may differ by cents.",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 7000,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.019,
+    "newEmployerRateSource": "DOL Significant Provisions, January 2025 (New Employer Rate, base rate)",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.06
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "$yearNote": "2025 ruleset: Arkansas Formula Method for 2025 -- $2,410 standard deduction, brackets 0% / 2% / 3% / 3.4% / 3.9% with the $92,301-$95,501 midrange adjustments, $29 per-exemption credit, and the 2025 low-income credit formula. Bracket table as published in the USDA NFC bulletin of the 2025 formula and cross-checked against DFA's own Regular Income Tax Tables (Effective 01/01/2025), whose monthly column shows the single 200-wide band at $94,301-$94,501."
+}

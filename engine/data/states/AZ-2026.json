@@ -1,0 +1,240 @@
+{
+  "code": "AZ",
+  "name": "Arizona",
+  "year": 2026,
+  "method": "employee_elected_flat",
+  "$methodComment": "Genuinely the simplest withholding mechanism in this project: Arizona withholding is NOT computed from a bracket table, a standard deduction, or an exemption count at all. The employee picks a flat percentage of gross taxable wages (0.5% to 3.5%, in 0.5% steps) on Form A-4, or elects zero. No wage base, no filing-status distinction, no allowance mechanic. WIRED INTO CALC CODE via employeeElectedFlat() in state.ts, dispatched on 'employee_elected_flat'. 3 tests (elected rate, no-form 2.0% default, zero election) all pass — see tests/engine.test.ts, describe('Arizona').",
+  "sources": [
+    {
+      "title": "2026 Form A-4, Employee's Arizona Withholding Election",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_WITHHOLDING_2026_A-4_f.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Confirms the 7 selectable rates (0.5/1.0/1.5/2.0/2.5/3.0/3.5%), the 2.0% no-form default within 5 days of hire, the zero-withholding election (a SEPARATE checkbox on the same form, not one of the 7 percentages — an employee electing zero is certifying they expect NO Arizona tax liability, not just requesting the lowest rate), and an optional flat extra-dollar amount per paycheck (same shape as this project's generic applyAdditionalStateWithholding())."
+    },
+    {
+      "title": "2026 Form WEC, Employee Withholding Exemption Certificate (Instructions)",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_WITHHOLDING_2026_WECi.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly. Confirms Arizona's reciprocity-like nonresident exemption (see reciprocity block below) AND two unrelated exemption categories on the SAME form: qualifying Native Americans working on their own reservation, and qualifying military spouses under the federal Military Spouses Residency Relief Act."
+    },
+    {
+      "title": "UIT-0603A (FY26), Unemployment Insurance Tax Rate Chart",
+      "url": "https://des.az.gov/sites/default/files/dl/UIT-0603A_FY26.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly off Arizona DES's own site. CAUGHT AND FIXED A REAL ERROR from this file's first pass: the original experienceRatedRange (0.08%-20.60%) was wrong — that figure doesn't appear anywhere in DES's own chart and was likely a misread of a different state's or a stale figure from a secondary source. The correct 2026 range, read directly off the chart, is 0.03% (best positive-ratio group) to 8.36% (worst negative-ratio group)."
+    },
+    {
+      "title": "150-206-692, Oregon's out-of-state/nonresident-employer guide (cross-referenced from OR-2026.json)",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/withholding-transit-tax-non-resident_206-692.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Used to RESOLVE the reciprocity asymmetry flagged in reciprocalStates below — see reciprocity.orAsymmetryConfirmed. URL added (comprehensive-audit pass) -- this entry was previously missing it, unlike every other source in this file; the document itself was already fetched directly for OR-2026.json's own reciprocity.source (same URL, same fetch)."
+    }
+  ],
+  "employeeElectedFlat": {
+    "availableRates": [
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.035
+    ],
+    "defaultRate": 0.02,
+    "defaultRateNote": "Form A-4's own instruction, quoted verbatim: 'If you do not give this form to your employer the department requires your employer to withhold 2.0% of your gross taxable wages.' This is a genuinely different no-form default shape from every other state in this project — most default to 'single, zero allowances' on a bracket table; Arizona defaults to a specific flat RATE, because there's no bracket table to fall back to.",
+    "zeroElection": {
+      "mechanism": "A separate checkbox (Box 2) on Form A-4, NOT one of the 7 selectable percentages — the employee certifies 'I expect to have no Arizona tax liability for the current taxable year.' Must be renewed annually (expires if not refiled); an employer may resume withholding at 2.0% if the election lapses without a refiled form.",
+      "distinctFrom": "Not the same mechanism as this project's generic applyStateWithholdingExemption() certificate.exempt flag conceptually, but structurally analogous — both are an employee self-certifying no tax liability."
+    },
+    "taxableWagesBasis": "Gross taxable wages = federal W-2 Box 1 basis, i.e. gross wages LESS pretax deductions (Form A-4's own instructions: 'It is your gross wages less any pretax deductions, such as your share of health insurance premiums'). This means Arizona's withholding base already excludes 401(k)/125/HSA/etc. by the form's own explicit wording — the clearest, most directly-worded exemptPretax confirmation of any state in this project; no statute-inference chain needed."
+  },
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "Directly stated on Form A-4 itself (see taxableWagesBasis above) rather than inferred from a statute or AGI-conformity chain — the strongest-sourced exemptPretax claim in this project to date.",
+  "reciprocity": {
+    "source": {
+      "title": "2026 Form WEC Instructions, 'Nonresidents' section",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_WITHHOLDING_2026_WECi.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly. Quoted verbatim: 'If you are a nonresident working in Arizona, you may claim an exemption from Arizona income tax withholding if you are: 1. A resident of one of the following states: California, Indiana, Oregon, or Virginia; AND 2. Allowed to claim a tax credit against your Arizona tax for taxes paid to your state of residence on Form 140NR filed for the year.'"
+    },
+    "reciprocalStates": [
+      "CA",
+      "IN",
+      "OR",
+      "VA"
+    ],
+    "creditEligibilityRequiredStates": [
+      "CA",
+      "IN",
+      "OR",
+      "VA"
+    ],
+    "notARealBilateralAgreement": "IMPORTANT, disclosed rather than glossed over: this is NOT the same legal shape as MI/WI/IN/OH's mutual reciprocity agreements elsewhere in this project (a simple 'residents of state X owe $0 to state Y' pact). Arizona's own form conditions the exemption on being 'ALLOWED to claim a tax credit... on Form 140NR' — i.e. it's really a nonresident-credit-eligibility gate dressed up in reciprocity-like language, not an unconditional bilateral pact. WIRED 2026-09-10: all four states are ALSO listed in creditEligibilityRequiredStates, so reciprocityExemptionReason() (src/taxes/state.ts) now requires certificate.nonresidentCreditEligible === true on the employee's own (residence-state) certificate before granting this exemption — absent that assertion, this engine withholds AZ tax in full rather than silently assuming a Form 140NR eligibility no paycheck alone can evidence. Before this fix, this file's own reciprocalStates list made the exemption UNCONDITIONAL, which was too generous relative to what Form WEC itself requires.",
+    "orAsymmetryConfirmed": "CONFIRMED ASYMMETRIC for the OR leg this session: Oregon's own out-of-state/nonresident-employer guide (150-206-692, fetched directly — see OR-2026.json) makes NO mention of Arizona or any state-of-residence-based exemption at all; Oregon withholds from every nonresident regardless of home state, with only a small de-minimis income exception. So an OREGON resident working in Arizona gets the AZ exemption described here, but an ARIZONA resident working in Oregon gets NO matching Oregon exemption — genuinely one-directional, not a mutual pact, despite Arizona's own form using reciprocity-like language.",
+    "caLegNotIndependentlyVerified": "The CA leg specifically was NOT independently confirmed from California's own Franchise Tax Board this session — a direct FTB reciprocal-states page was searched for but not found at a working URL (a guessed URL 404'd). Still resting on Arizona's own primary-sourced WEC form plus general secondary corroboration that CA-AZ reciprocity exists for wage income specifically (distinct from CA's much stricter general nonresident-withholding regime under Rev. & Tax. Code 18662, which is NOT what's being described here). Given the OR leg just turned out to be asymmetric despite reading the same way on Arizona's form, this is flagged as genuinely uncertain rather than assumed symmetric — the Kansas-style caution this file already carried was well-placed.",
+    "mechanism": "Form WEC (Employee Withholding Exemption Certificate), Part 3 — filed with and held by the employer, renewed annually."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Arizona city or county levies a local income or wage tax (Arizona cities levy sales/transaction-privilege tax and some have a separate business license tax, but no payroll withholding tax)."
+  },
+  "unemploymentInsurance": {
+    "$comment": "Employer-only (SUTA) — no employee contribution.",
+    "administeredBy": "Arizona Department of Economic Security (DES)",
+    "wageBase": 8000.0,
+    "newEmployerRate": 0.02,
+    "newEmployerDuration": "Minimum 2 calendar years before experience rating applies.",
+    "experienceRatedRange": {
+      "min": 0.0003,
+      "max": 0.0836
+    },
+    "experienceRatedRangeCorrection": "CORRECTED this session — the original figure (0.08%-20.60%) was wrong and did not match Arizona DES's own chart at all. Verified min/max: 0.03% (13% or more positive ratio) to 8.36% (13% or more negative ratio).",
+    "positiveRatioGroupRates": [
+      {
+        "group": "13% or over",
+        "rate": 0.0003
+      },
+      {
+        "group": "12% but less than 13%",
+        "rate": 0.0023
+      },
+      {
+        "group": "11% but less than 12%",
+        "rate": 0.0062
+      },
+      {
+        "group": "10% but less than 11%",
+        "rate": 0.0101
+      },
+      {
+        "group": "9% but less than 10%",
+        "rate": 0.0139
+      },
+      {
+        "group": "8% but less than 9%",
+        "rate": 0.0178
+      },
+      {
+        "group": "7% but less than 8%",
+        "rate": 0.0217
+      },
+      {
+        "group": "6% but less than 7%",
+        "rate": 0.0256
+      },
+      {
+        "group": "5% but less than 6%",
+        "rate": 0.0294
+      },
+      {
+        "group": "4% but less than 5%",
+        "rate": 0.0333
+      },
+      {
+        "group": "3% but less than 4%",
+        "rate": 0.0372
+      },
+      {
+        "group": "Less than 3%",
+        "rate": 0.0403
+      },
+      {
+        "group": "Zero",
+        "rate": 0.0418
+      }
+    ],
+    "negativeRatioGroupRates": [
+      {
+        "group": "Less than 3%",
+        "rate": 0.0441
+      },
+      {
+        "group": "3% but less than 4%",
+        "rate": 0.0472
+      },
+      {
+        "group": "4% but less than 5%",
+        "rate": 0.0511
+      },
+      {
+        "group": "5% but less than 6%",
+        "rate": 0.055
+      },
+      {
+        "group": "6% but less than 7%",
+        "rate": 0.0588
+      },
+      {
+        "group": "7% but less than 8%",
+        "rate": 0.0627
+      },
+      {
+        "group": "8% but less than 9%",
+        "rate": 0.0666
+      },
+      {
+        "group": "9% but less than 10%",
+        "rate": 0.0705
+      },
+      {
+        "group": "10% but less than 11%",
+        "rate": 0.0743
+      },
+      {
+        "group": "11% but less than 12%",
+        "rate": 0.0782
+      },
+      {
+        "group": "12% but less than 13%",
+        "rate": 0.0821
+      },
+      {
+        "group": "13% or more",
+        "rate": 0.0836
+      }
+    ],
+    "confidence": "primary_source_confirmed — full rate chart (both ratio-group tables, all 25 rows) read directly off Arizona DES's own UIT-0603A (FY26) PDF, not cross-sourced."
+  },
+  "verification": "PROVEN via calculatePaycheck(): 4 fixtures (elected 2.5%, no-form 2.0% default, zero election, and an unrecognized-rate rejection) — see tests/engine.test.ts, describe('Arizona'). No supplemental-wage path is exercised (Arizona has no separate supplemental method). RECIPROCITY IS LIVE but, as of 2026-09-10, CONDITIONAL: reciprocityExemptionReason() reads this file's own reciprocity.reciprocalStates (CA, IN, OR, VA) generically AND its creditEligibilityRequiredStates entry — a CA/IN/OR/VA resident working in Arizona owes $0 AZ_SIT only when the caller also asserts certificate.nonresidentCreditEligible === true on their own residence-state certificate; without it, full AZ tax applies. (An earlier version of this note claimed the exemption was unconditional, which was too generous relative to Form WEC's own 'ALLOWED to claim a tax credit... on Form 140NR' condition — see reciprocity.notARealBilateralAgreement above for the fix.) A bug-audit pass found and closed a real gap: employeeElectedFlat() originally cast certificate.electedRate straight to a number and applied it with no check against Form A-4's closed list of 7 legal rates — a typo'd or copy-pasted rate (e.g. 12% instead of 1.2%) would have silently withheld a wildly wrong amount with no error. Fixed to validate against cfg.availableRates and throw, matching every other state's own enum-like certificate field convention in this project.",
+  "knownGaps": [
+    "Reciprocity's CA leg remains genuinely uncertain — see reciprocity.caLegNotIndependentlyVerified. The OR leg was actively checked and found ASYMMETRIC this session (see reciprocity.orAsymmetryConfirmed), which raises rather than lowers suspicion about whether the CA leg is truly mutual too.",
+    "RESOLVED: both are reachable via the existing generic certificate.exempt + certificate.exemptReason mechanism (already unconditional for every state) — see this file's own certificateBasedExemptions block for the verbatim Form WEC text. The earlier claim that new certificate fields were needed was incorrect and is corrected here."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 8000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.02,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.0003,
+      "max": 0.0836
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  },
+  "certificateBasedExemptions": {
+    "$comment": "Form WEC (2026 rev.), read directly and quoted verbatim in this file's own sources[] entry above. Three exemption categories, ALL reachable through the existing generic certificate.exempt + certificate.exemptReason route (applyStateWithholdingExemption() in src/taxes/state.ts, already unconditional for every state) rather than needing new certificate fields — the earlier claim in this file's own verification note (\"would need new certificate fields this engine doesn't have\") was WRONG about the generic mechanism, corrected this pass. Two are recorded here for completeness; the third (nonresidents of CA/IN/OR/VA) is Arizona's own reciprocity mechanism and is ALREADY live via this file's own reciprocity.reciprocalStates block — also previously mis-stated as unimplemented, also corrected.",
+    "exemptions": [
+      {
+        "id": "native_american_reservation",
+        "form": "Form WEC Part 1",
+        "rule": "Wages are exempt from Arizona withholding if the employee: 1. Lives on the reservation; 2. Works on that reservation; AND 3. Is an affiliated and enrolled member of the tribe for which that reservation was established. \"Any wages earned off the reservation for work done in Arizona are subject to Arizona withholding\" — a three-part, ALL-conditions test the employer verifies against documentation, not something this engine could derive from an address alone."
+      },
+      {
+        "id": "military_spouse",
+        "form": "Form WEC Part 2",
+        "rule": "The federal Military Spouses Residency Relief Act exemption for a nonresident spouse of an active-duty servicemember present in Arizona solely due to military orders — same shape as every other state's MSRRA exemption in this project."
+      }
+    ]
+  }
+}

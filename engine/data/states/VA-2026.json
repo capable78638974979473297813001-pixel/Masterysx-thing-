@@ -1,0 +1,115 @@
+{
+  "code": "VA",
+  "name": "Virginia",
+  "year": 2026,
+  "method": "virginia_annual_dual_allowance",
+  "$scopeNote": "WIRED TO CALC-CODE (2026-08-21, follow-up pass): originally a DATA-ONLY pass (Scott: 'do the Dakotas and the Virginias, just for the data'), left unwired deliberately. Built out to real calc-code once Scott asked to close PA reciprocity's open items, since VA's own outbound-reciprocity direction couldn't be proven through the engine without it. Virginia's real structure: a 4-bracket progressive annualized formula (2%-5.75%) with a genuinely surprising quirk -- the standard deduction used in WITHHOLDING is a FLAT figure regardless of marital status (spouse is captured as an extra $930 exemption, not a doubled deduction), unlike the actual INCOME TAX RETURN's separate single/joint standard deduction amounts. A temporary 2025-2026 standard-deduction increase is baked into the current formula and is scheduled to sunset after this exact tax year. Also has a genuinely non-obvious ROUNDING step: the Guide's own worked example rounds the marginal (excess x rate) component to the nearest WHOLE DOLLAR before adding it to the bracket's base tax -- confirmed necessary, not cosmetic: computing with full-precision cents throughout produces $109.48/period for the worked example below, not the Guide's own stated $109.50 -- a 2-cent difference that would be wrong on every single paycheck if skipped.",
+  "sources": [
+    {
+      "title": "Income Tax Withholding Guide for Employers (Rev. 05/25, 'Effective for wages paid after July 1, 2025')",
+      "url": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/employer-withholding-instructions.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly (pdftotext -layout, clean extraction). Read the full 'Formula for Computing Tax to be Withheld' section, its own worked example (John, semi-monthly, 5 exemptions), the supplemental-wage flat-rate note, and the standard-deduction sunset language."
+    },
+    {
+      "title": "Form VA-4, Employee's Virginia Income Tax Withholding Exemption Certificate (Rev. 04/26) + Personal Exemption Worksheet",
+      "url": "https://www.tax.virginia.gov/sites/default/files/taxforms/withholding/any/va-4-any.pdf",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "PDF downloaded and text-extracted directly, both the worksheet and the certificate/instructions pages. This is what surfaced the flat-standard-deduction finding: VA-4's own worksheet never asks for marital status as a deduction-doubling input -- Line 2 ('spouse not claimed on his/her own certificate') is worth exactly the same $930 as any other personal exemption (E1), and the formula's $8,750 constant never varies by status. Also the direct source for the reciprocity conditions on Line 3(c)/(d)."
+    },
+    {
+      "title": "Virginia unemployment insurance -- VEC's own wage-base FAQ",
+      "url": "https://www.vec.virginia.gov/FAQs/employers/what-wage-base-each-employee-i-will-pay-taxes",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Fetched and read directly. Quoted verbatim: 'The taxable wage base in Virginia is the first $8,000 that each employee earns per year.' CAUGHT A REAL ERROR mid-pass: an initial WebSearch synthesis reported a $32,100 wage base and 2.43%-5.4% experienced range for '2026 Virginia unemployment' -- those figures turned out to be the U.S. VIRGIN ISLANDS Department of Labor's rates (the source URL was unemployment.vidol.gov, 'VI DOL', not a Virginia state site at all, despite ranking top for a Virginia-specific query). Caught by directly fetching that URL and reading its own content rather than trusting the search snippet, which explicitly self-corrected once read. The real Virginia (VEC) wage base is an order of magnitude smaller ($8,000, not $32,100) -- this would have been a serious, embarrassing data error if not verified against the source directly. Worth flagging as a standing lesson: a domain that LOOKS like it could be the right state's agency (vidol.gov reads like 'VI-DOL' or could be misread as Virginia) is not proof it is -- fetch and read before trusting."
+    },
+    {
+      "title": "VEC new-employer and experienced-employer SUI rate figures -- cross-source",
+      "url": "https://www.tri-countybookkeeping.com/questions/virginia-new-employer-unemployment-tax",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Cross-source confirmed only (new-employer 2.5% base + 0.2% Fund Building Charge + 0.03% Pool Cost Charge; experienced range 0.1%-6.2%) -- not independently fetched from vec.virginia.gov's own rate-notice page this pass, one tier below the wage-base figure above which WAS directly confirmed."
+    },
+    {
+      "title": "Virginia Paid Family and Medical Leave Insurance Program -- Governor's own press release",
+      "url": "https://www.governor.virginia.gov/newsroom/news-releases/2026/may-releases/name-1117602-en.html",
+      "verifiedOn": "2026-08-20",
+      "verifiedBy": "Cross-source confirmed via search synthesis (multiple outlets, including the Governor's own newsroom listing, agree on the same timeline) -- not independently fetched and read in full this pass. Virginia enacted a mandatory PFML program in 2026 (signed by Gov. Spanberger), but contributions do not begin until April 2028 and benefits until December 2028 -- explicitly NOT applicable to any 2026 payroll, recorded here for forward context only, not as a 2026 engine input."
+    }
+  ],
+  "withholdingStructure": {
+    "mechanism": "Annualize (A = gross-per-period x pay periods/year), subtract a flat standard deduction PLUS per-exemption amounts to get taxable income T, apply a 4-bracket schedule to T for annual tax W, divide by pay periods for the per-period withholding.",
+    "formula": "T = A - [$8,750 + (E1 x $930) + (E2 x $800)]",
+    "formulaLegend": {
+      "E1": "Personal and Dependent Exemptions (VA-4 Personal Exemption Worksheet line 4: self + spouse-if-not-claimed-elsewhere + dependents, EACH worth $930 -- a single flat per-unit amount, no tiering by category the way Kansas's K-4 has).",
+      "E2": "Age 65-and-over & Blind Exemptions (VA-4 worksheet line 7, each worth $800)."
+    },
+    "standardDeductionQuirk": "THE STANDARD DEDUCTION IS A SINGLE FLAT $8,750 REGARDLESS OF MARITAL STATUS -- confirmed directly against VA-4's own worksheet, which has no marital-status field of any kind and treats a spouse purely as one more $930 exemption unit, not as a trigger for a doubled deduction. This is a genuine departure from the actual INCOME TAX RETURN, where the standard deduction genuinely differs ($8,750 single / $17,500 MFJ per the 2025 General Assembly's temporary increase) -- Virginia's WITHHOLDING formula simply never implements that distinction; every employee's withholding is computed against the $8,750 figure no matter how VA-4 is filled out. Would have been an easy, plausible-looking mistake to model 'married = double deduction' the way most other states in this project work -- flagged prominently because it's the kind of error that looks structurally reasonable and is simply wrong for this specific state.",
+    "standardDeductionAnnual": 8750.0,
+    "personalExemptionAnnual": 930.0,
+    "ageOrBlindExemptionAnnual": 800.0,
+    "$structuredFieldsNote": "The three numeric fields directly above are what src/taxes/state.ts's virginiaWithholding() actually reads (rules.withholdingStructure.standardDeductionAnnual etc.) -- added this pass alongside the narrative fields above, which were already correct but not machine-readable on their own.",
+    "standardDeductionSunset": "The $8,750 figure (up from a pre-2025 baseline of $8,500) is a TEMPORARY increase enacted by the 2025 General Assembly, 'scheduled to sunset after Taxable Year 2026 and revert to the standard deduction amounts that applied prior to Taxable Year 2019: $3,000.' For 2026 specifically (this file's target year) $8,750 is correct and current; a 2027 rebuild of this file would need to re-check whether the sunset actually occurred or was extended -- flagged explicitly as a near-term expiration risk, the same class of watch-item as Delaware's HB13 bracket-restructuring check.",
+    "brackets": {
+      "annual": [
+        { "from": 0, "to": 3000, "base": 0, "rate": 0.02 },
+        { "from": 3000, "to": 5000, "base": 60, "rate": 0.03 },
+        { "from": 5000, "to": 17000, "base": 120, "rate": 0.05 },
+        { "from": 17000, "to": null, "base": 720, "rate": 0.0575 }
+      ],
+      "note": "Identical for every filing status -- Virginia publishes ONE bracket schedule, unlike ND/DE/WV/most other states in this project, which vary the bracket schedule itself by status. Marital/dependent status only ever enters through the E1/E2 exemption count, never through a different rate table."
+    },
+    "workedExample": "John, semimonthly, gross $2,649, 5 personal/dependent exemptions (E1=5, E2=0): A = 2,649 x 24 = $63,576. T = 63,576 - [8,750 + 5x930] = 63,576 - 13,400 = $50,176. T is over $17,000: W = 720 + 5.75%x(50,176-17,000) = 720 + 1,908.12 -- the Guide's own example rounds to $720 + $1,908 = $2,628 (i.e. rounds the marginal-tax component to the nearest dollar before adding, not the final total). W/H = 2,628 / 24 = $109.50/period. Reproduced verbatim from the Guide's own text, not independently recomputed to a different rounding convention.",
+    "supplementalWages": "A flat 5.75% (the top marginal rate), 'without allowance for exemptions,' may be used for supplemental wages paid separately from regular wages -- explicitly optional per the Guide's own wording ('the employer MAY determine'), not mandatory, structurally similar to this project's other permissive (not required) supplemental methods."
+  },
+  "reciprocity": {
+    "reciprocalStates": ["MD", "PA", "WV", "KY", "DC"],
+    "commuterOnlyStates": ["KY", "DC"],
+    "narrowerCommuterException": {
+      "states": ["KY", "DC"],
+      "condition": "Residents of Kentucky or the District of Columbia who COMMUTE DAILY to a Virginia workplace are exempt -- a narrower, commute-pattern-gated condition (VA-4 Line 3(c)), genuinely different in kind from the broader MD/PA/WV 'domiciliary resident, VA-source income is only wages' condition on Line 3(d). Recorded as a separate field rather than folded into reciprocalStates because the underlying test is different (commute pattern vs. domicile-and-income-type), even though the practical effect (VA withholding exemption) is the same.",
+      "engineEnforcementNote": "CLOSED FOR REAL this pass (2026-08-21): VA is now wired to calc-code (method: virginia_annual_dual_allowance), and KY/DC are added to reciprocalStates ABOVE (they were missing from that array entirely before -- only MD/PA/WV were listed, even though this same file already documented the KY/DC commuter exception in prose) with commuterOnlyStates gating them on certificate.dailyCommuter, the same generic mechanism Kentucky's own file already used from its side. Proven end-to-end in tests/engine.test.ts, describe('Virginia'): a KY resident who commutes daily gets $0 VA tax; a KY resident who does NOT check dailyCommuter owes full VA tax (the safer default). Previously this field only closed the bug on Kentucky's already-wired side; now both directions actually run through real code."
+    },
+    "mechanism": "Form VA-4, Line 3 checkbox ('I certify that I am not subject to Virginia withholding'), filed annually with the employer.",
+    "confidence": "primary_source_confirmed -- read directly off VA-4's own instructions text, the strongest sourcing tier this project uses.",
+    "crossCheck": "CONSISTENT with West Virginia's own reciprocity list (KY, MD, OH, PA, VA) built in this same session: VA and WV each name the other, a clean mutual match. VA does NOT list OH (WV's reciprocity with OH is evidently a separate bilateral agreement not involving VA) -- no contradiction found, a genuine positive cross-check the same way this project verified WI/MI/IL/IN's 5-state cluster."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "Virginia Employment Commission (VEC)",
+    "wageBase": 8000.0,
+    "wageBaseNote": "CORRECTED mid-pass from an initially-reported $32,100 figure that turned out to belong to the U.S. Virgin Islands, not Virginia -- see the sources array for the full story. $8,000 is directly confirmed from vec.virginia.gov's own FAQ page.",
+    "newEmployerRate": { "base": 0.025, "fundBuildingCharge": 0.002, "poolCostCharge": 0.0003, "note": "Base rate plus two small add-on charges that apply broadly regardless of experience rating, per cross-source figures." },
+    "experiencedEmployerRateRange": [0.001, 0.062],
+    "confidence": "Wage base primary_source_confirmed (direct VEC fetch). New-employer/experienced-range figures are cross_source_confirmed only, not independently fetched from vec.virginia.gov's own rate-notice page this pass -- flagged explicitly given the wage-base scare above, so this tier distinction is not glossed over."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. Virginia has no local wage/income tax of any kind in any city or county -- confirmed across every source checked with no dissent. Virginia localities instead rely on real estate tax, personal property tax (notably taxing vehicles, a genuinely distinctive Virginia-specific local levy), and the BPOL (Business, Professional and Occupational License) tax on businesses -- none of which are payroll withholding.",
+    "confidence": "cross_source_confirmed, consistent with this project's standing 'no locals' finding pattern (e.g. New Jersey, Idaho) -- not tied to one specific Virginia Code citation this pass."
+  },
+  "paidLeave": {
+    "rule": "NONE applicable to 2026. Virginia enacted a mandatory Paid Family and Medical Leave Insurance program in 2026 (signed by Gov. Spanberger, described as the first such program in the South), but its own timeline is explicit: employer contribution rates aren't even announced until October 2027, contributions begin April 2028, and benefits become payable December 2028. This is a real, sourced FUTURE fact, not a current gap -- recorded for forward planning (a 2028-vintage rebuild of this file will need the actual contribution rate once announced) but genuinely NOT a 2026 payroll input, unlike every other paidLeave entry in this project which describes a program already in force or explicitly confirmed absent.",
+    "confidence": "cross_source_confirmed via search synthesis; not independently fetched from the Governor's own press release text this pass."
+  },
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "RESOLVED this pass (was previously an open item with no array value at all, which broke the engine outright the moment VA got wired to calc-code -- ctx.taxableWagesFor() requires an array). Confirmed via Code of Virginia sec. 58.1-322: 'Virginia taxable income of a resident individual means his federal adjusted gross income' -- VA starts from FAGI, which already excludes 401(k)/125/HSA/etc. deferrals at the point of measurement, and none of secs. 58.1-322.01/.02's own addition/subtraction lists add those categories back. Same confidence tier as Indiana's/Kentucky's list-read confirmation (a completed statute read confirming absence of add-back), one tier below Michigan's named-enumeration RAB. Does NOT address whether the WITHHOLDING formula's own 'Gross pay' (G) definition in the Guide independently confirms this (it doesn't discuss it directly) -- but VTI's own FAGI-conformity is now source-confirmed regardless of what the Guide itself says, since withholding cannot logically use a broader base than the return-level income the withholding is supposed to approximate.",
+  "knownGaps": [
+    "WIRED to calc-code this pass (virginiaWithholding() in src/taxes/state.ts, method virginia_annual_dual_allowance) -- reproduces the Guide's own worked example to the cent (semimonthly $2,649, 5 exemptions -> $109.50), including the non-obvious whole-dollar mid-formula rounding step. Proven via tests/engine.test.ts, describe('Virginia').",
+    "Per-period (non-annual) wage-bracket tables (the Guide publishes full daily/weekly/biweekly/semimonthly/monthly tables by exemption count) were seen in the raw extraction but NOT transcribed or cell-checked against the annualize-then-divide formula this engine actually uses -- unlike West Virginia (whose per-period tables WERE fully transcribed this same pass because they don't cleanly derive from the annual one), Virginia's own Guide explicitly presents annualize-then-divide as ITS formula (confirmed by the worked example matching exactly), so this is a lower-risk gap than WV's would have been, but the per-period tables remain unverified as an independent cross-check.",
+    "UI new-employer/experienced-range figures: CLOSED 2026-09-02, primary-source confirmed directly against vec.virginia.gov -- fetched vec.virginia.gov/employers (2026-09-02) directly and it states in its own words: 'New Virginia employers receive the initial base tax rate of 2.5% (plus add-ons) until eligible for a calculated rate' and 'Base tax rates normally vary from a minimum of .1% up to a maximum of 6.2%' -- both match this file's existing newEmployerRate (0.025) and experienceRange (0.001-0.062) exactly, so no correction was needed, only upgraded confidence. Also fetched vec.virginia.gov's own wage-base FAQ page directly ('What is the wage base for each employee that I will pay taxes on?'), confirming in VEC's own words: 'The taxable wage base in Virginia is the first $8,000 that each employee earns per year' -- matches this file's existing $8,000 wage base.",
+    "exemptPretax RESOLVED (see exemptPretaxComment above) -- VA conforms to federal AGI, confirmed via Code of Virginia sec. 58.1-322 directly.",
+    "The 2026 Paid Family and Medical Leave program's contribution rate (not yet announced as of this pass -- due October 2027) is obviously not capturable yet; this file only records the timeline, not a rate.",
+    "VA-4's own de minimis / no-liability exemption conditions (Line 3(a)/(b): no VA tax liability last year, or VAGI below $11,950 single / $23,900 married) were transcribed but not cross-checked against this engine's existing generic nonresidentDeMinimisReason()/applyStateWithholdingExemption() mechanism for fit -- a plausible future reuse, not evaluated this pass."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 8000,
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.025,
+    "newEmployerRateSource": "This state's own unemploymentInsurance block above, researched in an earlier pass — kept in preference to any aggregate table.",
+    "experienceRange": {
+      "min": 0.001,
+      "max": 0.062
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file"
+  }
+}

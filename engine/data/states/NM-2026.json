@@ -1,0 +1,409 @@
+{
+  "code": "NM",
+  "name": "New Mexico",
+  "year": 2026,
+  "method": "new_mexico_percentage_method",
+  "sources": [
+    {
+      "title": "FYI-104 (REV. 11/2025) -- New Mexico Withholding Tax, effective January 1, 2026",
+      "url": "https://realfile.tax.newmexico.gov/FYI-104.pdf",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "PDF downloaded directly (the more commonly-linked www.tax.newmexico.gov/.../FYI-104_2025.pdf URL 404's; this realfile.tax.newmexico.gov URL is the department's own live file host) and read in full via pdftotext, both WITH and WITHOUT -layout. The -layout extraction has a genuine multi-column hazard (same class as CT/NJ/PA elsewhere in this project): it shifts every bracket's printed BASE value one tier too early. Caught via the document's OWN worked example (Section 'How to use the Withholding Tax Tables': weekly $1,000 married wages, 'over $790 but not over $1,098... $12.77 + 4.3% of excess over $790') -- the -layout extraction had attributed $12.77 to the $617-$790 bracket instead, which the worked example directly disproves. Re-extracted all 8 payroll-period tables (daily/weekly/biweekly/semimonthly/monthly/quarterly/semiannual/annual) x 3 filing statuses from the WITHOUT-layout text instead, and independently verified all 24 bracket schedules by recomputing each bracket's own base from the previous bracket's base + rate x width and confirming it lands within a cent or two of the printed figure throughout (small residual drift expected -- the source's own bases are independently rounded per bracket, not chained, the same documented phenomenon as Wisconsin's tables elsewhere in this project). The corrected extraction reproduces the worked example exactly: (1,000-790)*.043+12.77=$21.80."
+    },
+    {
+      "title": "New Mexico Revised Statutes 7-2-2 -- Definitions ('adjusted gross income', 'base income')",
+      "url": "https://law.justia.com/codes/new-mexico/chapter-7/article-2/section-7-2-2",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "Fetched directly (curl, since a plain WebFetch 403'd). Quoted verbatim: '\"adjusted gross income\" means adjusted gross income as defined in Section 62 of the Internal Revenue Code'; '\"base income\" ... means, for taxpayers other than estates or trusts, that part of the taxpayer's income defined as adjusted gross income plus' a short specific add-back list (pre-1991 NOL deduction treatment, a 2023+ pass-through-entity credit add-back) -- confirms New Mexico's own taxable-income concept starts directly from FEDERAL adjusted gross income. Same evidentiary tier as Virginia's/West Virginia's/Louisiana's FAGI-conformity citations elsewhere in this project (one inferential step removed from the withholding wage base itself, but a genuine direct statute read, not an inference from silence)."
+    },
+    {
+      "title": "Texas Workforce Commission cross-reference for New Mexico UI figures -- New Mexico DWS 'How UI Tax Rates Are Calculated' + Bloomberg Tax",
+      "url": "https://www.dws.state.nm.us/Unemployment/Unemployment-for-a-Business/Unemployment-Insurance-Tax-Information/How-UI-Tax-Rates-Are-Calculated",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "dws.state.nm.us's own top-level UI-Tax-Information page returns a WAF block ('Request Rejected') to a plain fetch; this specific sub-page fetched successfully (curl with a browser User-Agent) but is a glossary/mechanism page (confirms 'Taxable Wage Base' and 'New Employer Industry Rates by NAICS code' as real DWS-defined concepts) rather than a page stating the actual 2026 dollar figures, which appear to be rendered client-side elsewhere on the site. The actual 2026 numbers ($31,700 wage base, 0.33%-5.4% experienced range, industry-based new-employer rate) are cross-source confirmed via Bloomberg Tax's 'New Mexico Releases 2026 Unemployment Insurance Information' article plus multiple independent payroll-guide aggregators agreeing with no dissent -- one tier below a direct DWS dollar-figure quote, disclosed as such."
+    },
+    {
+      "title": "USDA National Finance Center -- New Mexico State Income Tax Withholding bulletin (2025)",
+      "url": "https://help.nfc.usda.gov/bulletins/2025/1741189057.htm",
+      "verifiedOn": "2026-08-22",
+      "verifiedBy": "'Verify' pass, fetched directly -- an independent federal payroll shared-service, the same source class that caught real formula bugs for Massachusetts/Georgia elsewhere in this project. No 2026 NM bulletin exists on NFC as of this check (confirmed by search), so this is the prior year (effective 2025-01-01), but it strongly corroborates the STRUCTURE of this file's own transcription, which is exactly what needed independent confirmation after catching a real base-value shift bug in FYI-104's own -layout PDF extraction (see the FYI-104 source note above). NFC's own annual-equivalent brackets for Single: bases $82.50/$306.50/$434.50/$821.50/$1,165.50/$1,964.50 at rates 1.5%/3.2%/3.2%/4.3%/4.3%/4.7% -- EVERY base figure matches this file's own 2026 Annual/Single table EXACTLY, byte-for-byte, even though the 2025 THRESHOLDS are correctly lower (a consistent +$550/tier shift to 2026, matching FYI-104's own annual inflation-indexing). Same exact-base-match pattern for Married ($120/$376/$664/$1,352, thresholds consistently +$1,100/tier to 2026 -- exactly double Single's shift, consistent with Married's thresholds being 2x Single's throughout this file). This is strong independent evidence the CORRECTED bracket-to-base mapping (not FYI-104's own -layout-scrambled ordering) is the right one."
+    }
+  ],
+  "percentageMethodTables": {
+    "$comment": "FYI-104's own 'Percentage Method of Withholding' tables: 8 independently-published per-period bracket schedules (no annualize/divide step at all, unlike almost every other bracket state in this project) x 3 filing statuses (Single, Married, Head of Household). Each bracket is {from, to, base, rate} in this project's standard WIBracket shape -- base is taken VERBATIM from the published table, not recomputed, per this project's standing convention (see Wisconsin's own bracket-shape precedent). A real, disclosed correction: the SEMI-MONTHLY table's own 'Not Over' summary line prints $304/$608/$456, which conflicts with that same table's own first bracket row AND with algebraic scaling from the (internally self-consistent) Annual table -- both independently point to the correct figures being $335/$671/$503. The values below use the corrected figures; see the FYI-104 source note above for the full resolution.",
+    "brackets": {
+      "single": {
+        "daily": [
+          { "from": 0, "to": 31.00, "base": 0, "rate": 0 },
+          { "from": 31.00, "to": 52.10, "base": 0, "rate": 0.015 },
+          { "from": 52.10, "to": 79.00, "base": 0.32, "rate": 0.032 },
+          { "from": 79.00, "to": 94.40, "base": 1.18, "rate": 0.032 },
+          { "from": 94.40, "to": 129.00, "base": 1.67, "rate": 0.043 },
+          { "from": 129.00, "to": 159.80, "base": 3.16, "rate": 0.043 },
+          { "from": 159.80, "to": 225.20, "base": 4.48, "rate": 0.047 },
+          { "from": 225.20, "to": 286.70, "base": 7.56, "rate": 0.047 },
+          { "from": 286.70, "to": 838.70, "base": 10.45, "rate": 0.049 },
+          { "from": 838.70, "to": null, "base": 37.49, "rate": 0.059 }
+        ],
+        "weekly": [
+          { "from": 0, "to": 155, "base": 0, "rate": 0 },
+          { "from": 155, "to": 261, "base": 0, "rate": 0.015 },
+          { "from": 261, "to": 395, "base": 1.59, "rate": 0.032 },
+          { "from": 395, "to": 472, "base": 5.89, "rate": 0.032 },
+          { "from": 472, "to": 645, "base": 8.36, "rate": 0.043 },
+          { "from": 645, "to": 799, "base": 15.80, "rate": 0.043 },
+          { "from": 799, "to": 1126, "base": 22.41, "rate": 0.047 },
+          { "from": 1126, "to": 1434, "base": 37.78, "rate": 0.047 },
+          { "from": 1434, "to": 4193, "base": 52.24, "rate": 0.049 },
+          { "from": 4193, "to": null, "base": 187.46, "rate": 0.059 }
+        ],
+        "biweekly": [
+          { "from": 0, "to": 310, "base": 0, "rate": 0 },
+          { "from": 310, "to": 521, "base": 0, "rate": 0.015 },
+          { "from": 521, "to": 790, "base": 3.17, "rate": 0.032 },
+          { "from": 790, "to": 944, "base": 11.79, "rate": 0.032 },
+          { "from": 944, "to": 1290, "base": 16.71, "rate": 0.043 },
+          { "from": 1290, "to": 1598, "base": 31.60, "rate": 0.043 },
+          { "from": 1598, "to": 2252, "base": 44.83, "rate": 0.047 },
+          { "from": 2252, "to": 2867, "base": 75.56, "rate": 0.047 },
+          { "from": 2867, "to": 8387, "base": 104.48, "rate": 0.049 },
+          { "from": 8387, "to": null, "base": 374.92, "rate": 0.059 }
+        ],
+        "semimonthly": [
+          { "from": 0, "to": 335, "base": 0, "rate": 0 },
+          { "from": 335, "to": 565, "base": 0, "rate": 0.015 },
+          { "from": 565, "to": 856, "base": 3.44, "rate": 0.032 },
+          { "from": 856, "to": 1023, "base": 12.77, "rate": 0.032 },
+          { "from": 1023, "to": 1398, "base": 18.10, "rate": 0.043 },
+          { "from": 1398, "to": 1731, "base": 34.23, "rate": 0.043 },
+          { "from": 1731, "to": 2440, "base": 48.56, "rate": 0.047 },
+          { "from": 2440, "to": 3106, "base": 81.85, "rate": 0.047 },
+          { "from": 3106, "to": 9085, "base": 113.19, "rate": 0.049 },
+          { "from": 9085, "to": null, "base": 406.17, "rate": 0.059 }
+        ],
+        "monthly": [
+          { "from": 0, "to": 671, "base": 0, "rate": 0 },
+          { "from": 671, "to": 1129, "base": 0, "rate": 0.015 },
+          { "from": 1129, "to": 1713, "base": 6.88, "rate": 0.032 },
+          { "from": 1713, "to": 2046, "base": 25.54, "rate": 0.032 },
+          { "from": 2046, "to": 2796, "base": 36.21, "rate": 0.043 },
+          { "from": 2796, "to": 3463, "base": 68.46, "rate": 0.043 },
+          { "from": 3463, "to": 4879, "base": 97.13, "rate": 0.047 },
+          { "from": 4879, "to": 6213, "base": 163.71, "rate": 0.047 },
+          { "from": 6213, "to": 18171, "base": 226.38, "rate": 0.049 },
+          { "from": 18171, "to": null, "base": 812.33, "rate": 0.059 }
+        ],
+        "quarterly": [
+          { "from": 0, "to": 2013, "base": 0, "rate": 0 },
+          { "from": 2013, "to": 3388, "base": 0, "rate": 0.015 },
+          { "from": 3388, "to": 5138, "base": 20.63, "rate": 0.032 },
+          { "from": 5138, "to": 6138, "base": 76.63, "rate": 0.032 },
+          { "from": 6138, "to": 8388, "base": 108.63, "rate": 0.043 },
+          { "from": 8388, "to": 10388, "base": 205.38, "rate": 0.043 },
+          { "from": 10388, "to": 14638, "base": 291.38, "rate": 0.047 },
+          { "from": 14638, "to": 18638, "base": 491.13, "rate": 0.047 },
+          { "from": 18638, "to": 54513, "base": 679.13, "rate": 0.049 },
+          { "from": 54513, "to": null, "base": 2437.00, "rate": 0.059 }
+        ],
+        "semiannual": [
+          { "from": 0, "to": 4025, "base": 0, "rate": 0 },
+          { "from": 4025, "to": 6775, "base": 0, "rate": 0.015 },
+          { "from": 6775, "to": 10275, "base": 41.25, "rate": 0.032 },
+          { "from": 10275, "to": 12275, "base": 153.25, "rate": 0.032 },
+          { "from": 12275, "to": 16775, "base": 217.25, "rate": 0.043 },
+          { "from": 16775, "to": 20775, "base": 410.75, "rate": 0.043 },
+          { "from": 20775, "to": 29275, "base": 582.75, "rate": 0.047 },
+          { "from": 29275, "to": 37275, "base": 982.25, "rate": 0.047 },
+          { "from": 37275, "to": 109025, "base": 1358.25, "rate": 0.049 },
+          { "from": 109025, "to": null, "base": 4874.00, "rate": 0.059 }
+        ],
+        "annual": [
+          { "from": 0, "to": 8050, "base": 0, "rate": 0 },
+          { "from": 8050, "to": 13550, "base": 0, "rate": 0.015 },
+          { "from": 13550, "to": 20550, "base": 82.50, "rate": 0.032 },
+          { "from": 20550, "to": 24550, "base": 306.50, "rate": 0.032 },
+          { "from": 24550, "to": 33550, "base": 434.50, "rate": 0.043 },
+          { "from": 33550, "to": 41550, "base": 821.50, "rate": 0.043 },
+          { "from": 41550, "to": 58550, "base": 1165.50, "rate": 0.047 },
+          { "from": 58550, "to": 74550, "base": 1964.50, "rate": 0.047 },
+          { "from": 74550, "to": 218050, "base": 2716.50, "rate": 0.049 },
+          { "from": 218050, "to": null, "base": 9748.00, "rate": 0.059 }
+        ]
+      },
+      "married": {
+        "daily": [
+          { "from": 0, "to": 61.90, "base": 0, "rate": 0 },
+          { "from": 61.90, "to": 92.70, "base": 0, "rate": 0.015 },
+          { "from": 92.70, "to": 123.50, "base": 0.46, "rate": 0.032 },
+          { "from": 123.50, "to": 158.10, "base": 1.45, "rate": 0.032 },
+          { "from": 158.10, "to": 219.60, "base": 2.55, "rate": 0.043 },
+          { "from": 219.60, "to": 254.20, "base": 5.20, "rate": 0.043 },
+          { "from": 254.20, "to": 392.70, "base": 6.69, "rate": 0.047 },
+          { "from": 392.70, "to": 446.50, "base": 13.20, "rate": 0.047 },
+          { "from": 446.50, "to": 1273.50, "base": 15.73, "rate": 0.049 },
+          { "from": 1273.50, "to": null, "base": 56.25, "rate": 0.059 }
+        ],
+        "weekly": [
+          { "from": 0, "to": 310, "base": 0, "rate": 0 },
+          { "from": 310, "to": 463, "base": 0, "rate": 0.015 },
+          { "from": 463, "to": 617, "base": 2.31, "rate": 0.032 },
+          { "from": 617, "to": 790, "base": 7.23, "rate": 0.032 },
+          { "from": 790, "to": 1098, "base": 12.77, "rate": 0.043 },
+          { "from": 1098, "to": 1271, "base": 26.00, "rate": 0.043 },
+          { "from": 1271, "to": 1963, "base": 33.44, "rate": 0.047 },
+          { "from": 1963, "to": 2233, "base": 65.98, "rate": 0.047 },
+          { "from": 2233, "to": 6367, "base": 78.63, "rate": 0.049 },
+          { "from": 6367, "to": null, "base": 281.23, "rate": 0.059 }
+        ],
+        "biweekly": [
+          { "from": 0, "to": 619, "base": 0, "rate": 0 },
+          { "from": 619, "to": 927, "base": 0, "rate": 0.015 },
+          { "from": 927, "to": 1235, "base": 4.62, "rate": 0.032 },
+          { "from": 1235, "to": 1581, "base": 14.46, "rate": 0.032 },
+          { "from": 1581, "to": 2196, "base": 25.54, "rate": 0.043 },
+          { "from": 2196, "to": 2542, "base": 52.00, "rate": 0.043 },
+          { "from": 2542, "to": 3927, "base": 66.88, "rate": 0.047 },
+          { "from": 3927, "to": 4465, "base": 131.96, "rate": 0.047 },
+          { "from": 4465, "to": 12735, "base": 157.27, "rate": 0.049 },
+          { "from": 12735, "to": null, "base": 562.46, "rate": 0.059 }
+        ],
+        "semimonthly": [
+          { "from": 0, "to": 671, "base": 0, "rate": 0 },
+          { "from": 671, "to": 1004, "base": 0, "rate": 0.015 },
+          { "from": 1004, "to": 1338, "base": 5.00, "rate": 0.032 },
+          { "from": 1338, "to": 1713, "base": 15.67, "rate": 0.032 },
+          { "from": 1713, "to": 2379, "base": 27.67, "rate": 0.043 },
+          { "from": 2379, "to": 2754, "base": 56.33, "rate": 0.043 },
+          { "from": 2754, "to": 4254, "base": 72.46, "rate": 0.047 },
+          { "from": 4254, "to": 4838, "base": 142.96, "rate": 0.047 },
+          { "from": 4838, "to": 13796, "base": 170.38, "rate": 0.049 },
+          { "from": 13796, "to": null, "base": 609.33, "rate": 0.059 }
+        ],
+        "monthly": [
+          { "from": 0, "to": 1342, "base": 0, "rate": 0 },
+          { "from": 1342, "to": 2008, "base": 0, "rate": 0.015 },
+          { "from": 2008, "to": 2675, "base": 10.00, "rate": 0.032 },
+          { "from": 2675, "to": 3425, "base": 31.33, "rate": 0.032 },
+          { "from": 3425, "to": 4758, "base": 55.33, "rate": 0.043 },
+          { "from": 4758, "to": 5508, "base": 112.67, "rate": 0.043 },
+          { "from": 5508, "to": 8508, "base": 144.92, "rate": 0.047 },
+          { "from": 8508, "to": 9675, "base": 285.92, "rate": 0.047 },
+          { "from": 9675, "to": 27592, "base": 340.75, "rate": 0.049 },
+          { "from": 27592, "to": null, "base": 1218.67, "rate": 0.059 }
+        ],
+        "quarterly": [
+          { "from": 0, "to": 4025, "base": 0, "rate": 0 },
+          { "from": 4025, "to": 6025, "base": 0, "rate": 0.015 },
+          { "from": 6025, "to": 8025, "base": 30.00, "rate": 0.032 },
+          { "from": 8025, "to": 10275, "base": 94.00, "rate": 0.032 },
+          { "from": 10275, "to": 14275, "base": 166.00, "rate": 0.043 },
+          { "from": 14275, "to": 16525, "base": 338.00, "rate": 0.043 },
+          { "from": 16525, "to": 25525, "base": 434.75, "rate": 0.047 },
+          { "from": 25525, "to": 29025, "base": 857.75, "rate": 0.047 },
+          { "from": 29025, "to": 82775, "base": 1022.25, "rate": 0.049 },
+          { "from": 82775, "to": null, "base": 3656.00, "rate": 0.059 }
+        ],
+        "semiannual": [
+          { "from": 0, "to": 8050, "base": 0, "rate": 0 },
+          { "from": 8050, "to": 12050, "base": 0, "rate": 0.015 },
+          { "from": 12050, "to": 16050, "base": 60.00, "rate": 0.032 },
+          { "from": 16050, "to": 20550, "base": 188.00, "rate": 0.032 },
+          { "from": 20550, "to": 28550, "base": 332.00, "rate": 0.043 },
+          { "from": 28550, "to": 33050, "base": 676.00, "rate": 0.043 },
+          { "from": 33050, "to": 51050, "base": 869.50, "rate": 0.047 },
+          { "from": 51050, "to": 58050, "base": 1715.50, "rate": 0.047 },
+          { "from": 58050, "to": 165550, "base": 2044.50, "rate": 0.049 },
+          { "from": 165550, "to": null, "base": 7312.00, "rate": 0.059 }
+        ],
+        "annual": [
+          { "from": 0, "to": 16100, "base": 0, "rate": 0 },
+          { "from": 16100, "to": 24100, "base": 0, "rate": 0.015 },
+          { "from": 24100, "to": 32100, "base": 120.00, "rate": 0.032 },
+          { "from": 32100, "to": 41100, "base": 376.00, "rate": 0.032 },
+          { "from": 41100, "to": 57100, "base": 664.00, "rate": 0.043 },
+          { "from": 57100, "to": 66100, "base": 1352.00, "rate": 0.043 },
+          { "from": 66100, "to": 102100, "base": 1739.00, "rate": 0.047 },
+          { "from": 102100, "to": 116100, "base": 3431.00, "rate": 0.047 },
+          { "from": 116100, "to": 331100, "base": 4089.00, "rate": 0.049 },
+          { "from": 331100, "to": null, "base": 14624.00, "rate": 0.059 }
+        ]
+      },
+      "hoh": {
+        "daily": [
+          { "from": 0, "to": 46.40, "base": 0, "rate": 0 },
+          { "from": 46.40, "to": 77.20, "base": 0, "rate": 0.015 },
+          { "from": 77.20, "to": 108.00, "base": 0.46, "rate": 0.032 },
+          { "from": 108.00, "to": 142.60, "base": 1.45, "rate": 0.032 },
+          { "from": 142.60, "to": 204.10, "base": 2.55, "rate": 0.043 },
+          { "from": 204.10, "to": 238.80, "base": 5.20, "rate": 0.043 },
+          { "from": 238.80, "to": 377.20, "base": 6.69, "rate": 0.047 },
+          { "from": 377.20, "to": 431.10, "base": 13.20, "rate": 0.047 },
+          { "from": 431.10, "to": 1258.00, "base": 15.73, "rate": 0.049 },
+          { "from": 1258.00, "to": null, "base": 56.25, "rate": 0.059 }
+        ],
+        "weekly": [
+          { "from": 0, "to": 232, "base": 0, "rate": 0 },
+          { "from": 232, "to": 386, "base": 0, "rate": 0.015 },
+          { "from": 386, "to": 540, "base": 2.31, "rate": 0.032 },
+          { "from": 540, "to": 713, "base": 7.23, "rate": 0.032 },
+          { "from": 713, "to": 1021, "base": 12.77, "rate": 0.043 },
+          { "from": 1021, "to": 1194, "base": 26.00, "rate": 0.043 },
+          { "from": 1194, "to": 1886, "base": 33.44, "rate": 0.047 },
+          { "from": 1886, "to": 2155, "base": 65.98, "rate": 0.047 },
+          { "from": 2155, "to": 6290, "base": 78.63, "rate": 0.049 },
+          { "from": 6290, "to": null, "base": 281.23, "rate": 0.059 }
+        ],
+        "biweekly": [
+          { "from": 0, "to": 464, "base": 0, "rate": 0 },
+          { "from": 464, "to": 772, "base": 0, "rate": 0.015 },
+          { "from": 772, "to": 1080, "base": 4.62, "rate": 0.032 },
+          { "from": 1080, "to": 1426, "base": 14.46, "rate": 0.032 },
+          { "from": 1426, "to": 2041, "base": 25.54, "rate": 0.043 },
+          { "from": 2041, "to": 2388, "base": 52.00, "rate": 0.043 },
+          { "from": 2388, "to": 3772, "base": 66.88, "rate": 0.047 },
+          { "from": 3772, "to": 4311, "base": 131.96, "rate": 0.047 },
+          { "from": 4311, "to": 12580, "base": 157.27, "rate": 0.049 },
+          { "from": 12580, "to": null, "base": 562.46, "rate": 0.059 }
+        ],
+        "semimonthly": [
+          { "from": 0, "to": 503, "base": 0, "rate": 0 },
+          { "from": 503, "to": 836, "base": 0, "rate": 0.015 },
+          { "from": 836, "to": 1170, "base": 5.00, "rate": 0.032 },
+          { "from": 1170, "to": 1545, "base": 15.67, "rate": 0.032 },
+          { "from": 1545, "to": 2211, "base": 27.67, "rate": 0.043 },
+          { "from": 2211, "to": 2586, "base": 56.33, "rate": 0.043 },
+          { "from": 2586, "to": 4086, "base": 72.46, "rate": 0.047 },
+          { "from": 4086, "to": 4670, "base": 142.96, "rate": 0.047 },
+          { "from": 4670, "to": 13628, "base": 170.38, "rate": 0.049 },
+          { "from": 13628, "to": null, "base": 609.33, "rate": 0.059 }
+        ],
+        "monthly": [
+          { "from": 0, "to": 1006, "base": 0, "rate": 0 },
+          { "from": 1006, "to": 1673, "base": 0, "rate": 0.015 },
+          { "from": 1673, "to": 2340, "base": 10.00, "rate": 0.032 },
+          { "from": 2340, "to": 3090, "base": 31.33, "rate": 0.032 },
+          { "from": 3090, "to": 4423, "base": 55.33, "rate": 0.043 },
+          { "from": 4423, "to": 5173, "base": 112.67, "rate": 0.043 },
+          { "from": 5173, "to": 8173, "base": 144.92, "rate": 0.047 },
+          { "from": 8173, "to": 9340, "base": 285.92, "rate": 0.047 },
+          { "from": 9340, "to": 27256, "base": 340.75, "rate": 0.049 },
+          { "from": 27256, "to": null, "base": 1218.67, "rate": 0.059 }
+        ],
+        "quarterly": [
+          { "from": 0, "to": 3019, "base": 0, "rate": 0 },
+          { "from": 3019, "to": 5019, "base": 0, "rate": 0.015 },
+          { "from": 5019, "to": 7019, "base": 30.00, "rate": 0.032 },
+          { "from": 7019, "to": 9269, "base": 94.00, "rate": 0.032 },
+          { "from": 9269, "to": 13269, "base": 166.00, "rate": 0.043 },
+          { "from": 13269, "to": 15519, "base": 338.00, "rate": 0.043 },
+          { "from": 15519, "to": 24519, "base": 434.75, "rate": 0.047 },
+          { "from": 24519, "to": 28019, "base": 857.75, "rate": 0.047 },
+          { "from": 28019, "to": 81769, "base": 1022.25, "rate": 0.049 },
+          { "from": 81769, "to": null, "base": 3656.00, "rate": 0.059 }
+        ],
+        "semiannual": [
+          { "from": 0, "to": 6038, "base": 0, "rate": 0 },
+          { "from": 6038, "to": 10038, "base": 0, "rate": 0.015 },
+          { "from": 10038, "to": 14038, "base": 60.00, "rate": 0.032 },
+          { "from": 14038, "to": 18538, "base": 188.00, "rate": 0.032 },
+          { "from": 18538, "to": 26538, "base": 332.00, "rate": 0.043 },
+          { "from": 26538, "to": 31038, "base": 676.00, "rate": 0.043 },
+          { "from": 31038, "to": 49038, "base": 869.50, "rate": 0.047 },
+          { "from": 49038, "to": 56038, "base": 1715.50, "rate": 0.047 },
+          { "from": 56038, "to": 163538, "base": 2044.50, "rate": 0.049 },
+          { "from": 163538, "to": null, "base": 7312.00, "rate": 0.059 }
+        ],
+        "annual": [
+          { "from": 0, "to": 12075, "base": 0, "rate": 0 },
+          { "from": 12075, "to": 20075, "base": 0, "rate": 0.015 },
+          { "from": 20075, "to": 28075, "base": 120.00, "rate": 0.032 },
+          { "from": 28075, "to": 37075, "base": 376.00, "rate": 0.032 },
+          { "from": 37075, "to": 53075, "base": 664.00, "rate": 0.043 },
+          { "from": 53075, "to": 62075, "base": 1352.00, "rate": 0.043 },
+          { "from": 62075, "to": 98075, "base": 1739.00, "rate": 0.047 },
+          { "from": 98075, "to": 112075, "base": 3431.00, "rate": 0.047 },
+          { "from": 112075, "to": 327075, "base": 4089.00, "rate": 0.049 },
+          { "from": 327075, "to": null, "base": 14624.00, "rate": 0.059 }
+        ]
+      }
+    }
+  },
+  "filingStatusNote": "New Mexico has no state-specific withholding certificate -- FYI-104 itself instructs employees to complete a copy of the FEDERAL Form W-4 and write 'For New Mexico State Withholding Only' across the top. The federal 2020+ W-4's own 3 checkboxes ('Single or Married filing separately' / 'Married filing jointly' / 'Head of household') map 1:1 onto FYI-104's own three lettered tables. This engine reuses certificate.filingStatus with the SAME vocabulary as federalW4 (single/married_joint/married_separate/head_of_household) rather than inventing an NM-specific field; married_separate resolves to the Single table exactly as the federal checkbox bundles it. No certificate on file defaults to Single (the narrowest brackets) -- not itself FYI-104-stated (there is no NM form to fail to file), but consistent with this project's standing least-generous-default convention. FYI-104's own note that 'a married employee who elected withholding at the higher single rate for FEDERAL purposes' must also use the single NM table describes the PRE-2020 W-4's Line 3 checkbox, which no longer exists on the 2020+ form this project's federalW4 model represents -- disclosed as legacy guidance not modelled, not silently ignored.",
+  "supplementalWages": {
+    "flatRate": 0.059,
+    "note": "FYI-104's own instruction: 'If the federal withholding is calculated using a flat percent, a flat 5.9% of the supplemental wage or fringe benefit amount should be withheld for state tax purposes' -- 5.9% is also the top marginal percentage-method rate. Dispatched generically via flatRateSupplementalFromConfig(), the same mechanism NY/other states already use -- zero new code needed. BUG FOUND AND FIXED (a later 'go to every state' pass): newMexicoWithholding() was NOT carving supplemental cash out of its own bracket base, so a bonus was taxed once via NM_SIT's regular bracket AND again via NM_SIT_SUPP's flat 5.9% -- a genuine double-taxation defect, caught by a direct calculatePaycheck() check, not by the existing test suite (the original supplemental test only asserted NM_SIT_SUPP, never NM_SIT, so it couldn't see the bug). Fixed to match computeNYSStyleTax()'s (NY) already-correct pattern: periodWages = fullBase minus supplementalCash."
+  },
+  "roundFinalToWholeDollar": false,
+  "stateQuarterlyHeadFee": {
+    "idSuffix": "WC_FEE",
+    "name": "Workers' Compensation Fee",
+    "employeeQuarterly": 2.25,
+    "employerQuarterly": 2.55,
+    "exemptEmploymentCategories": ["household", "agricultural"],
+    "$comment": "New Mexico Workers' Compensation Administration FAQ (workerscomp.nm.gov/faqs/, read directly 2026-09-23): 'a quarterly assessment fee of $4.80 for each covered employee working for their business on the last working day of each quarter ($2.25 is paid by the workers and $2.55 is paid by employers)', filed with Taxation and Revenue on the WC-1. Up from $4.30 ($2.00 / $2.30) under TRD's RPD-41108 instructions; the increase applies from 2025-07-01 (TRD notice: \"the WKC fee per employee has increased from $4.30 to $4.80, effective starting July 1, 2025\"), so all of 2026 uses the new amounts. Domestic servants and farm and ranch laborers are exempt (RPD-41108), mapped to the household/agricultural employment categories; real estate salespersons and 10%+ owner-officers aren't representable here, so those employers pass employer.quarterlyHeadFeeCollection.NM = 'skip'. Collected evenly across the quarter's cheques by default, which is what PaycheckCity does ($0.38 semimonthly, $0.75 monthly, matching to the cent)."
+  },
+  "roundingComment": "FYI-104's own worked example is cent-precision ($21.80) -- no whole-dollar rounding step anywhere in the document.",
+  "exemptPretax": ["section125", "hsa", "fsa", "dependent_care", "deferral_401k", "deferral_403b", "deferral_457", "deferral_simple", "commuter"],
+  "exemptPretaxComment": "Confirmed via NMSA 7-2-2's own text: New Mexico 'base income' for individual taxpayers is federal adjusted gross income (IRC sec. 62) plus a short specific add-back list untouched by 401(k)/125/HSA/FSA elective deferrals. Same evidentiary tier as Virginia's/West Virginia's/Louisiana's FAGI-conformity citations elsewhere in this project -- one inferential step removed from the withholding wage base itself (FYI-104 doesn't independently define 'wages'), but a genuine direct statute read.",
+  "additionalOrReducedWithholding": {
+    "rule": "FYI-104's own worked example itself demonstrates additional withholding as a plain add-on ('$21.80 + $20.00 (Additional withholding requested by employee) = $41.80') requested via the same New-Mexico-labeled federal W-4 copy -- already covered generically via certificate.additionalWithholding, the same mechanism every other state in this project uses, zero new code needed.",
+    "confidence": "primary_source_confirmed -- FYI-104's own worked example."
+  },
+  "exemptCertificateNote": "FYI-104 documents specific NM-exempt income categories (enrolled tribal members' income earned and domiciled on their own nation's/pueblo's land; active-duty military pay and certain military spouse income) that should not have NM tax withheld at all, via the federal W-4's own Step 4(c) exempt election -- already covered generically via the existing certificate.exempt mechanism (applyStateWithholdingExemption), zero new code needed.",
+  "reciprocity": {
+
+    "exemptWhenDaysWorkedAtMost": 15,
+
+    "$dayCountComment": "FYI-104, quoted directly: 'Employers are not required to withhold New Mexico income tax from wages of nonresident employees working in New Mexico for 15 or fewer days during the calendar year' — so 15 days is itself exempt, unlike Alabama's and Illinois's 'fewer than' phrasing.",
+    "$comment": "New Mexico does NOT use this project's usual bilateral-reciprocity mechanism -- FYI-104 states directly: residents are subject to NM tax on ALL income regardless of work location, and 'if that income is also taxed by another state, New Mexico allows a credit for the other state's income tax on that income on their personal income tax return... withholding tax can be reduced or eliminated on such wages' via the employee's own federal-W4-for-NM copy. This is the ordinary return-level-credit baseline this project uses for every other no-reciprocity state, not a special NM mechanism -- reciprocalStates stays empty, no special code needed.",
+    "reciprocalStates": []
+  },
+  "localIncomeTax": {
+    "rule": "NONE. New Mexico law does not authorize municipalities or counties to levy a local income/wage tax.",
+    "confidence": "cross_source_confirmed via search synthesis; not independently fetched from a specific NM statute barring local income taxation this pass."
+  },
+  "paidFamilyMedicalLeave": {
+    "rule": "NONE mandatory as of 2026. A Paid Family and Medical Leave Act (HB 11, 2025 session -- the 'Welcome Child and Family Wellness Leave Act') cleared committee with a proposed $4/$1,000-wages employer / $5/$1,000-wages employee funding structure, but was not enacted into law this session.",
+    "confidence": "cross_source_confirmed via search synthesis, including a look at the bill's own 2025 committee status; not independently fetched from the bill text or NM Legislature's own tracker this pass."
+  },
+  "unemploymentInsurance": {
+    "administeredBy": "New Mexico Department of Workforce Solutions (DWS)",
+    "wageBase": 34800.0,
+    "wageBaseNote": "UPDATED 2026-09-06 to match suiEmployer.wageBase below (this field previously carried a stale prior-year 31700 figure while the normalized suiEmployer block below had already been corrected to 34800, with its own note explaining the change -- this field just hadn't been kept in sync). No calc-code impact either way: stateUnemploymentEmployerTax() only ever reads suiEmployer.wageBase, never this detailed-research copy.",
+    "experiencedEmployerRateRange": [0.0033, 0.054],
+    "experiencedEmployerRateNote": "Bloomberg Tax's own 2026 coverage additionally notes a possible maximum TOTAL rate of 6.4% when an excess-claims premium applies on top of the 5.4% base ceiling -- a real, disclosed nuance beyond the bare min/max range.",
+    "newEmployerRateNote": "NOT a single flat figure by design (same shape as Louisiana's own new-employer mechanism elsewhere in this project) -- DWS's own glossary page confirms new employers are assigned 'New Employer Industry Rates' based on their NAICS code, with no single number published on the pages this pass could reach; secondary sources estimate roughly 1%-2% depending on industry.",
+    "confidence": "cross_source_confirmed -- dws.state.nm.us's own top-level rate page returned a WAF block to every fetch attempted this pass ('Request Rejected'); figures rest on Bloomberg Tax plus multiple independent payroll-guide aggregators agreeing with no dissent, one tier below a direct DWS dollar-figure quote.",
+    "knownGap": "This state's UI rate is experience-rated -- an individual employer's actual rate depends on employer-specific history a static jurisdiction file can't hold, which is why stateUnemploymentEmployerTax() (src/taxes/state.ts) takes the caller-supplied rate (input.employer.stateUnemploymentRate) when given. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax."
+  },
+  "knownGaps": [
+    "The 15-day nonresident de minimis threshold (FYI-104: 'Employers are not required to withhold New Mexico income tax from wages of nonresident employees working in New Mexico for 15 or fewer days during the calendar year') is modelled via nonresidentDayCountReason() (src/taxes/state.ts) — a day-count check kept separate from this file's own dollar-based nonresidentDeMinimisThreshold mechanism, which measures a different thing entirely. It reads certificate.daysWorkedInStateThisYear against reciprocity.exemptWhenDaysWorkedAtMost; a missing day count still withholds, and the caller must also assert certificate.nonresidentDeMinimisEligible where the statute attaches conditions a paycheck alone can't evidence.",
+    "The monthly sub-one-dollar de minimis (FYI-104: 'No withholding is required if the total withholding for an employee during any one month is less than one dollar') is applied by applyMonthlyWithholdingFloor() from the monthlyDeMinimis block below. The floor is MONTHLY, so it fires only when the caller supplies the month's running total (certificate.stateTaxWithheldThisMonth) or one cheque is a month or longer — a weekly $0.68 is $2.72 a month and stays withheld; waiving it on the strength of one cheque would under-withhold all year.",
+    "This state's UI wage base and rate range are cross-source only -- dws.state.nm.us's own rate pages returned a WAF block ('Request Rejected') to every fetch attempted. STILL OPEN: whether this state's unemployment wage base excludes the same pretax categories as its income tax withholding (the engine currently applies exemptPretax to both) — elective deferrals are commonly included in the unemployment base while excluded from income tax.",
+    "Gambling-winnings withholding (6%) and pension/annuity withholding are documented in FYI-104 but out of scope for a wage-withholding-only engine, same convention as every other state's out-of-scope withholding categories in this project.",
+    "The 'married but elected higher-single-rate for federal purposes' instruction describes the PRE-2020 federal W-4's Line 3 checkbox, which doesn't exist on the 2020+ form this project's federalW4 model represents -- disclosed as inapplicable legacy guidance, not modelled."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 34800,
+    "wageBaseNote": "This file previously carried $31700; the 2026 table publishes $34800. The 2026 figure is used, and the discrepancy is recorded here rather than dropped.",
+    "wageBaseSource": "2026 taxable wage bases cross-checked against EY's published 2026 state-by-state table; where this file already carried a numeric wage base, the two agreed unless noted in wageBaseNote.",
+    "newEmployerRate": 0.01,
+    "newEmployerRateSource": "New Mexico's 2026 UI release — wage base $34,800 (up from $33,200). This CORRECTS the $31,700 figure previously carried in this file, which was a prior year's base.",
+    "experienceRange": {
+      "min": 0.0033,
+      "max": 0.064
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "source_dated_2026"
+  },
+  "monthlyDeMinimis": {
+    "monthlyWithholdingFloor": 1,
+    "$comment": "FYI-104, quoted directly: 'No withholding is required if the total withholding for an employee during any one month is less than one dollar.' A MONTHLY test, so it needs a monthly running figure — certificate.stateTaxWithheldThisMonth — which the caller keeps, exactly as Denver's monthly head tax already requires. With nothing supplied the test runs on this cheque alone, which is right for a monthly payroll and conservative everywhere else: it can only ever zero an amount already under a dollar.",
+    "source": {
+      "title": "New Mexico Taxation and Revenue Department — FYI-104, New Mexico Withholding Tax",
+      "url": "https://www.tax.newmexico.gov/forms-publications/",
+      "verifiedOn": "2026-08-25"
+    }
+  }
+}

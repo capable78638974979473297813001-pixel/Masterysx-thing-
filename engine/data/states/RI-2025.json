@@ -1,0 +1,265 @@
+{
+  "code": "RI",
+  "name": "Rhode Island",
+  "year": 2025,
+  "method": "bracket_per_period_single_table",
+  "$methodComment": "2026 Rhode Island Withholding Tax Booklet (RI Division of Taxation, fetched and read directly): the simplest bracket state in this project by one real measure -- 'TABLES ARE FOR ALL FILING STATUS TYPES,' i.e. ONE shared 3-tier bracket schedule (3.75/4.75/5.99%) regardless of filing status, unlike every other bracket state built this session (CA/MD/UT all branch by status). Subtract (exemptions x per-period exemption amount), look up the SAME table for everyone, done -- except for a genuine wrinkle: the exemption amount is NOT a flat per-exemption figure at every income level -- once PERIOD wages exceed a threshold (annualized: $290,800), the exemption amount becomes $0 entirely (a cliff, not Wisconsin's gradual phase-out). Genuine PER-PERIOD tables (all 8 frequencies) transcribed verbatim, not derived from the annual table, since the source's OWN worked example ($87.57) only reproduces exactly via the direct weekly table -- an annualize-then-divide reconstruction lands one cent off ($87.56), the same two-valid-methods divergence already documented for California/Missouri in this project.",
+  "sources": [
+    {
+      "title": "Rhode Island Division of Taxation -- 2025 Rhode Island Withholding Tax Booklet",
+      "url": "https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2025%20Withholding%20Tax%20Booklet_0.pdf",
+      "verifiedOn": "2026-09-30",
+      "quote": "FOR THE PERIOD BEGINNING ON OR AFTER JANUARY 1, 2025 ... $ 0 $ 79,900 $ 0.00 PLUS 3.75% ... 79,900 181,650 2,996.25 PLUS 4.75% ... 181,650 ... 7,829.38 PLUS 5.99% ... 283,250.00 ... An unmarried employee has a weekly payroll period, for which he is paid $2,195.00 ... 87.98"
+    },
+    {
+      "title": "RI DLT -- 2025 Tax Rates for Unemployment Insurance and Temporary Disability Insurance (2024-12-20)",
+      "url": "https://dlt.ri.gov/press-releases/2025-tax-rates-unemployment-insurance-and-temporary-disability-insurance",
+      "verifiedOn": "2026-09-30",
+      "quote": "The 2025 TDI Taxable Wage Base for Rhode Island employees will be $89,200 ... The TDI contribution rate will be set at 1.3 percent for calendar year 2025 ... The 2025 UI Taxable Wage Base for most employers will be $29,800 ... $31,300 ... The new employer rate will be 1.21 percent"
+    },
+    {
+      "title": "U.S. Department of Labor, ETA -- Significant Provisions of State Unemployment Insurance Laws, Effective January 2025",
+      "url": "https://oui.doleta.gov/unemploy/content/sigpros/2020-2029/January2025.pdf",
+      "verifiedOn": "2026-09-28"
+    }
+  ],
+  "bracketPerPeriodSingleTable": {
+    "exemptionAmountPerPeriod": {
+      "weekly": 19.23,
+      "biweekly": 38.46,
+      "semimonthly": 41.67,
+      "monthly": 83.33,
+      "quarterly": 250.0,
+      "semiannual": 500.0,
+      "annual": 1000.0,
+      "daily": 3.85
+    },
+    "exemptionAmountComment": "$1,000/year per exemption, cleanly divisible into every one of the engine's 8 native pay periods (weekly 1000/52=19.23, biweekly 1000/26=38.46, etc. -- no NJ/MD-style daily-divisor mismatch here).",
+    "exemptionPhaseOutThresholdPerPeriod": {
+      "weekly": 5447.12,
+      "biweekly": 10894.23,
+      "semimonthly": 11802.08,
+      "monthly": 23604.17,
+      "quarterly": 70812.5,
+      "semiannual": 141625.0,
+      "annual": 283250.0,
+      "daily": 1089.42
+    },
+    "exemptionPhaseOutComment": "A CLIFF, not a gradual phase-out (unlike Wisconsin's own phasing-out deduction already in this project): if the employee's wages FOR THE PERIOD exceed this threshold, the exemption amount is $0 for that period entirely, not partially reduced. Booklet's own words: '$290,800... $0.00' in the annual row of the exemption table, with every other period's threshold being $290,800 divided by that period's count (verified: weekly 290,800/52=5,592.31 exact match, daily 290,800/260=1,118.46 exact match) -- confirmed after an initial extraction pass had the threshold VALUES shifted one row off from their period LABELS (the same class of column-shift artifact already documented elsewhere in this project), resolved by cross-checking against the document's own later prose statement ('if your annual wages exceed $290,800, your exemption amount will be phased out') as an independent anchor.",
+    "brackets": {
+      "weekly": [
+        {
+          "from": 0,
+          "to": 1537,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 1537,
+          "to": 3493,
+          "base": 57.64,
+          "rate": 0.0475
+        },
+        {
+          "from": 3493,
+          "to": null,
+          "base": 150.55,
+          "rate": 0.0599
+        }
+      ],
+      "biweekly": [
+        {
+          "from": 0,
+          "to": 3073,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 3073,
+          "to": 6987,
+          "base": 115.24,
+          "rate": 0.0475
+        },
+        {
+          "from": 6987,
+          "to": null,
+          "base": 301.16,
+          "rate": 0.0599
+        }
+      ],
+      "semimonthly": [
+        {
+          "from": 0,
+          "to": 3329,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 3329,
+          "to": 7569,
+          "base": 124.84,
+          "rate": 0.0475
+        },
+        {
+          "from": 7569,
+          "to": null,
+          "base": 326.24,
+          "rate": 0.0599
+        }
+      ],
+      "monthly": [
+        {
+          "from": 0,
+          "to": 6658,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 6658,
+          "to": 15138,
+          "base": 249.68,
+          "rate": 0.0475
+        },
+        {
+          "from": 15138,
+          "to": null,
+          "base": 652.48,
+          "rate": 0.0599
+        }
+      ],
+      "quarterly": [
+        {
+          "from": 0,
+          "to": 19975,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 19975,
+          "to": 45413,
+          "base": 749.06,
+          "rate": 0.0475
+        },
+        {
+          "from": 45413,
+          "to": null,
+          "base": 1957.37,
+          "rate": 0.0599
+        }
+      ],
+      "semiannual": [
+        {
+          "from": 0,
+          "to": 39950,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 39950,
+          "to": 90825,
+          "base": 1498.13,
+          "rate": 0.0475
+        },
+        {
+          "from": 90825,
+          "to": null,
+          "base": 3914.69,
+          "rate": 0.0599
+        }
+      ],
+      "annual": [
+        {
+          "from": 0,
+          "to": 79900,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 79900,
+          "to": 181650,
+          "base": 2996.25,
+          "rate": 0.0475
+        },
+        {
+          "from": 181650,
+          "to": null,
+          "base": 7829.38,
+          "rate": 0.0599
+        }
+      ],
+      "daily": [
+        {
+          "from": 0,
+          "to": 307.31,
+          "base": 0,
+          "rate": 0.0375
+        },
+        {
+          "from": 307.31,
+          "to": 698.65,
+          "base": 11.52,
+          "rate": 0.0475
+        },
+        {
+          "from": 698.65,
+          "to": null,
+          "base": 30.11,
+          "rate": 0.0599
+        }
+      ]
+    }
+  },
+  "supplementalRate": 0.0599,
+  "supplementalComment": "Flat 5.99% (the top marginal rate) on supplemental wages paid separately from regular wages, per the booklet's own instruction ('The Supplemental withholding rate is 5.99%') — computed by flatRateSupplementalFromConfig() as an XX_SIT_SUPP line, with the bonus carved out of the regular base so it's taxed once. Scoped to a bonus paid on its OWN cheque; paid alongside regular wages, the ordinary tables run on the combined amount, which is what this state's own instruction calls for.",
+  "exemptPretax": [
+    "section125",
+    "hsa",
+    "fsa",
+    "dependent_care",
+    "deferral_401k",
+    "deferral_403b",
+    "deferral_457",
+    "deferral_simple",
+    "commuter"
+  ],
+  "exemptComment": "Rhode Island taxable income starts from federal AGI (R.I. Gen. Laws 44-30), which already nets out these categories at the federal level -- the same 'starts from a federal figure' inference tier as several other states in this project, not yet upgraded to a direct booklet quote naming each category.",
+  "reciprocity": {
+    "rule": "NONE. Rhode Island has no reciprocal withholding agreements with Massachusetts or Connecticut (its only bordering states) -- cross-source confirmed. The booklet does offer 'CONVENIENCE WITHHOLDING' (an employer may voluntarily withhold RI tax for an out-of-state RI resident employee as a courtesy), which is opt-in, not a reciprocity exemption.",
+    "convenienceWithholdingKnownGap": "RESOLVED (2026-09-02): this is no longer RI-specific unmodelled behavior -- residenceStateWithholdingLine() in state.ts now computes it generically for every state via input.residenceStateWithholding.voluntary (or .nexus for the mandatory case), gated off whenever a real reciprocity exemption/swap already applies. See tests/engine.test.ts's 'Voluntary / nexus-based residence-state withholding' describe block. Trusts the caller's own assertion at face value -- no verification that the employer actually elected this, the same simplification this engine already makes for reciprocity certificates generally."
+  },
+  "localIncomeTax": {
+    "rule": "NONE. No Rhode Island city or town levies a local income or wage tax."
+  },
+  "stateDisabilityEmployee": {
+    "rate": 0.013,
+    "wageBase": 89200,
+    "exemptPretax": [],
+    "$comment": "TDI (Temporary Disability Insurance), which ALSO funds TCI (Temporary Caregiver Insurance, Rhode Island's paid-family-leave equivalent) -- the SAME single contribution funds both programs, structurally the same 'one tax, two benefit programs' shape already documented for California's SDI/PFL combination in this project. Reuses the existing generic stateDisabilityEmployeeTax() dispatch -- no new engine code needed. Rate DECREASED from 1.3% (2025) to 1.1% (2026); wage base INCREASED from $89,200 to $100,000 -- both real year-over-year changes, not typos, confirmed by two independent sources agreeing."
+  },
+  "verification": "PROVEN via calculatePaycheck() against the 2025 booklet's own worked example (weekly $2,195.00, one exemption: $2,175.77 subject, $57.64 + $30.34 = $87.98).",
+  "knownGaps": [
+    "UI wage base for employers at the highest experience rate is $31,300 (not modelled separately; the engine uses the $29,800 base, as the 2026 file does with its standard base).",
+    "Descriptive notes carried from the 2026 file (reciprocity, local-tax rules, method comments) were checked against the 2025 source for the fields this engine computes from; narrative text that only describes 2026 history should be read as background."
+  ],
+  "suiEmployer": {
+    "$comment": "Normalized employer-side unemployment parameters — the shape src/taxes/state.ts reads. The detailed unemploymentInsurance block above stays the record of research; this exists because that block's shape varies too much between states to compute from directly (wage bases as objects, industry-keyed rate maps, differently-named keys).",
+    "wageBase": 29800,
+    "wageBaseSource": "DOL Significant Provisions, January 2025 (Wages Subject to Tax)",
+    "newEmployerRate": 0.0121,
+    "newEmployerRateSource": "RI DLT press release 2024-12-20: new employer rate 1.21% for 2025 (before the 0.21% Job Development Assessment offset), same convention as the 2026 file",
+    "experienceRange": {
+      "min": 0.0089,
+      "max": 0.0949
+    },
+    "employerSuppliedRateRequired": false,
+    "confidence": "inherited_from_this_file",
+    "experienceRangeSource": "DOL Significant Provisions, January 2025 (informational)"
+  },
+  "supplementalWages": {
+    "$comment": "RI Section 12: \"The Supplemental withholding rate is 5.99%.\" Modelled as UNCONDITIONAL (no employer election field) rather than optional, matching Ohio's own mandatory-flat-rate shape in this project: Section 12's own wording is declarative (\"the rate IS 5.99%\"), not permissive (\"the employer MAY elect\"), unlike Missouri's or California's own genuinely optional flat methods. See this file's own sources[] entry for the ambiguity against Section 4's aggregate-only description -- Section 4's aggregate option is not separately wired since this engine always resolves the flat rate first for a standalone supplemental payment once a supplementalWages config exists, so a supplementalAggregation block would be unreachable dead configuration here, not a real alternative path.",
+    "flatRate": 0.0599,
+    "appliesWhen": "paid_separately",
+    "confidence": "primary_source_confirmed_but_ambiguous"
+  },
+  "$yearNote": "2025 ruleset: Rhode Island 2025 Withholding Tax Booklet (percentage method for periods beginning on or after January 1, 2025): 3.75% / 4.75% / 5.99% with annual brackets $79,900 and $181,650, $1,000 per exemption, exemption phase-out above $283,250 annual wages. TDI 1.3% on the first $89,200 (DLT 2024-12-20). Supplemental 5.99%."
+}
