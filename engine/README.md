@@ -22,18 +22,13 @@ cd engine && node --test tests/*.test.ts
 
 ## Local patches
 
-Each patch is marked in the file with a `$patchMasteryTax` key that explains the change.
-
-1. **California cafeteria-plan and HSA treatment** (`data/states/CA-2025.json`, `CA-2026.json`), checked against
-   EDD DE 231EB and DE 231TP (see `docs/verification.md`):
-   - `stateDisabilityEmployee.exemptPretax`: upstream `[]` charged SDI on cafeteria-plan health/dependent-care
-     deductions. It's now `section125, fsa, dependent_care, commuter`.
-   - `suiEmployer.exemptPretax`: upstream used the engine default, which also excludes HSA. California taxes HSA
-     contributions for UI/ETT, so it's now `section125, fsa, dependent_care, commuter`.
-   - `exemptPretax` (PIT): `hsa` removed. California doesn't conform to the federal HSA exclusion
-     (RTC 17131.4/17131.5).
+1. **California cafeteria-plan and HSA treatment** (`data/states/CA-2025.json`, `CA-2026.json`,
+   `tests/california-pretax.test.ts`). This is taken from upstream branch `claude/awesome-mayer-joo38p`, which is
+   not merged into upstream `main` yet; `UPSTREAM` points at that branch's commit. HSA is taxed for CA PIT, UI and
+   SDI, and cafeteria-plan premiums are excluded from SDI, per EDD DE 231EB / DE 231TP (see
+   `docs/verification.md`). Once that branch merges, this stops being a local difference.
 2. **`tests/tax-year-2025.test.ts`**: removed the one test that exercised the upstream website's API validator
    (`site/lib/validate.ts`), which isn't part of the engine.
 
 To re-sync, copy `src/`, `data/`, `payroll/ytd.ts` and `payroll/types.ts` from upstream. Then reapply the
-patches above (search for `$patchMasteryTax`), update `UPSTREAM`, and run both test suites.
+patches above, update `UPSTREAM`, and run both test suites.
