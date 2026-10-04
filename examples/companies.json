@@ -1,0 +1,22 @@
+{
+  "companies": [
+    {
+      "id": "ACME",
+      "name": "Acme Robotics Inc.",
+      "fein": "94-1234567",
+      "lookback_941_liability": "612000",
+      "state_accounts": {
+        "CA": {"account": "123-4567-8", "sui_rate": "0.029"}
+      }
+    },
+    {
+      "id": "NORTHWIND",
+      "name": "Northwind Traders LLC",
+      "fein": "13-7654321",
+      "state_accounts": {
+        "NY": {"account": "50-12345"},
+        "TX": {"account": "99-887766-5", "sui_rate": "0.0215"}
+      }
+    }
+  ]
+}

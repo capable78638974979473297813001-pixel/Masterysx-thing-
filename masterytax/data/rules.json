@@ -1,0 +1,124 @@
+{
+  "disclaimer": "Rates and wage bases are effective-dated and sourced, but this file is maintained by humans. Verify every value against the agency before filing. Company-specific rates (SUI experience rates) belong in the company file, not here.",
+  "deposit_groups": {
+    "US-941": {"name": "Federal 941 taxes (FIT, Social Security, Medicare)", "agency": "IRS", "schedule": "federal_941", "return": "941", "penalty": "irc6656"},
+    "US-940": {"name": "Federal unemployment (FUTA)", "agency": "IRS", "schedule": "futa", "threshold": "500", "return": "940", "penalty": "irc6656"},
+    "CA-PIT": {"name": "California PIT + SDI", "agency": "CA EDD", "schedule": "follows_federal", "return": "DE 9 / DE 9C"},
+    "CA-UI": {"name": "California UI + ETT", "agency": "CA EDD", "schedule": "quarterly", "return": "DE 9 / DE 9C"},
+    "NY-WT": {"name": "New York withholding", "agency": "NY DTF", "schedule": "accumulated_threshold", "threshold": "700", "business_days": 5, "return": "NYS-45"},
+    "NY-UI": {"name": "New York unemployment insurance", "agency": "NY DOL", "schedule": "quarterly", "return": "NYS-45"},
+    "TX-UI": {"name": "Texas unemployment tax", "agency": "TWC", "schedule": "quarterly", "return": "C-3"},
+    "FL-UI": {"name": "Florida reemployment tax", "agency": "FL DOR", "schedule": "quarterly", "return": "RT-6"}
+  },
+  "taxes": [
+    {
+      "code": "FED_FIT", "name": "Federal income tax withheld", "jurisdiction": "US", "payer": "employee",
+      "kind": "withholding", "deposit_group": "US-941", "reported_column": "fit_withheld",
+      "exempt_deductions": ["k401", "s125"],
+      "versions": [{"effective": "2000-01-01", "source": "IRC 3402; withholding computed by the payroll system"}]
+    },
+    {
+      "code": "FED_SS_EE", "name": "Social Security (employee)", "jurisdiction": "US", "payer": "employee",
+      "kind": "rate", "deposit_group": "US-941", "reported_column": "ss_withheld",
+      "exempt_deductions": ["s125"],
+      "versions": [
+        {"effective": "2024-01-01", "rate": "0.062", "wage_base": "168600", "source": "SSA 2024 COLA fact sheet"},
+        {"effective": "2025-01-01", "rate": "0.062", "wage_base": "176100", "source": "SSA 2025 COLA fact sheet"},
+        {"effective": "2026-01-01", "rate": "0.062", "wage_base": "184500", "source": "SSA announcement 2025-10-24"}
+      ]
+    },
+    {
+      "code": "FED_SS_ER", "name": "Social Security (employer)", "jurisdiction": "US", "payer": "employer",
+      "kind": "rate", "deposit_group": "US-941",
+      "exempt_deductions": ["s125"],
+      "versions": [
+        {"effective": "2024-01-01", "rate": "0.062", "wage_base": "168600", "source": "SSA 2024 COLA fact sheet"},
+        {"effective": "2025-01-01", "rate": "0.062", "wage_base": "176100", "source": "SSA 2025 COLA fact sheet"},
+        {"effective": "2026-01-01", "rate": "0.062", "wage_base": "184500", "source": "SSA announcement 2025-10-24"}
+      ]
+    },
+    {
+      "code": "FED_MED_EE", "name": "Medicare (employee)", "jurisdiction": "US", "payer": "employee",
+      "kind": "rate", "deposit_group": "US-941", "reported_column": "medicare_withheld",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "rate": "0.0145", "source": "IRC 3101(b)(1)"}]
+    },
+    {
+      "code": "FED_MED_ER", "name": "Medicare (employer)", "jurisdiction": "US", "payer": "employer",
+      "kind": "rate", "deposit_group": "US-941",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "rate": "0.0145", "source": "IRC 3111(b)"}]
+    },
+    {
+      "code": "FED_ADDL_MED", "name": "Additional Medicare (employee)", "jurisdiction": "US", "payer": "employee",
+      "kind": "threshold", "deposit_group": "US-941", "reported_column": "medicare_withheld",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2013-01-01", "rate": "0.009", "threshold": "200000", "source": "IRC 3101(b)(2); employer withholding threshold"}]
+    },
+    {
+      "code": "FED_FUTA", "name": "Federal unemployment (FUTA)", "jurisdiction": "US", "payer": "employer",
+      "kind": "rate", "deposit_group": "US-940",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2011-07-01", "rate": "0.006", "wage_base": "7000", "source": "IRC 3301 net of maximum 5.4% state credit"}],
+      "credit_reductions": {
+        "2024": {"CA": "0.009", "VI": "0.042"},
+        "2025": {"CA": "0.012", "VI": "0.045"}
+      }
+    },
+    {
+      "code": "CA_SIT", "name": "California personal income tax withheld", "jurisdiction": "CA", "payer": "employee",
+      "kind": "withholding", "deposit_group": "CA-PIT", "reported_column": "sit_withheld",
+      "exempt_deductions": ["k401", "s125"],
+      "versions": [{"effective": "2000-01-01", "source": "CA UIC 13020; computed by the payroll system"}]
+    },
+    {
+      "code": "CA_SDI", "name": "California SDI (employee)", "jurisdiction": "CA", "payer": "employee",
+      "kind": "rate", "deposit_group": "CA-PIT", "reported_column": "sdi_withheld",
+      "exempt_deductions": ["s125"],
+      "versions": [
+        {"effective": "2024-01-01", "rate": "0.011", "source": "EDD 2024 rates (SB 951 removed wage ceiling)"},
+        {"effective": "2025-01-01", "rate": "0.012", "source": "EDD 2025 rates"},
+        {"effective": "2026-01-01", "rate": "0.013", "source": "EDD 2026 rates"}
+      ]
+    },
+    {
+      "code": "CA_SUI", "name": "California UI (employer)", "jurisdiction": "CA", "payer": "employer",
+      "kind": "rate", "rate_source": "company", "default_rate": "0.034", "deposit_group": "CA-UI",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "wage_base": "7000", "source": "CA UIC 930; new-employer rate 3.4%"}]
+    },
+    {
+      "code": "CA_ETT", "name": "California Employment Training Tax", "jurisdiction": "CA", "payer": "employer",
+      "kind": "rate", "deposit_group": "CA-UI",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "rate": "0.001", "wage_base": "7000", "source": "CA UIC 976.6"}]
+    },
+    {
+      "code": "NY_SIT", "name": "New York income tax withheld", "jurisdiction": "NY", "payer": "employee",
+      "kind": "withholding", "deposit_group": "NY-WT", "reported_column": "sit_withheld",
+      "exempt_deductions": ["k401", "s125"],
+      "versions": [{"effective": "2000-01-01", "source": "NY Tax Law 671; computed by the payroll system"}]
+    },
+    {
+      "code": "NY_SUI", "name": "New York UI (employer)", "jurisdiction": "NY", "payer": "employer",
+      "kind": "rate", "rate_source": "company", "default_rate": "0.041", "deposit_group": "NY-UI",
+      "exempt_deductions": ["s125"],
+      "versions": [
+        {"effective": "2025-01-01", "wage_base": "12800", "source": "NY DOL 2025"},
+        {"effective": "2026-01-01", "wage_base": "17600", "source": "NY DOL 2026 (18% of state average annual wage)"}
+      ]
+    },
+    {
+      "code": "TX_SUI", "name": "Texas unemployment tax (employer)", "jurisdiction": "TX", "payer": "employer",
+      "kind": "rate", "rate_source": "company", "default_rate": "0.027", "deposit_group": "TX-UI",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "wage_base": "9000", "source": "TX Labor Code 201.082"}]
+    },
+    {
+      "code": "FL_SUI", "name": "Florida reemployment tax (employer)", "jurisdiction": "FL", "payer": "employer",
+      "kind": "rate", "rate_source": "company", "default_rate": "0.027", "deposit_group": "FL-UI",
+      "exempt_deductions": ["s125"],
+      "versions": [{"effective": "2000-01-01", "wage_base": "7000", "source": "FL Stat. 443.1217"}]
+    }
+  ]
+}
